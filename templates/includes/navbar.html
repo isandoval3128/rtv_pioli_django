@@ -1,0 +1,40 @@
+{% load static %}
+<nav class="navbar navbar-expand-lg navbar-dark fixed-top" id="mainNav"
+    style="background-color: {{ site_config.navbar_bg_color|default:'#212529' }}; color: {{ site_config.navbar_text_color|default:'#fff' }}; transition: background-color 0.3s;">
+    <div class="container">
+        <a class="navbar-brand" href="#page-top" style="color: {{ site_config.navbar_text_color|default:'#fff' }};">
+            {% if site_config.site_logo %}
+                <img src="{{ site_config.site_logo.url }}" alt="{{ site_config.site_title }}" />
+            {% else %}
+                <img src="{% static 'assets/img/navbar-logo.svg' %}" alt="{{ site_config.site_title }}" />
+            {% endif %}
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+            Menu
+            <i class="fas fa-bars ms-1"></i>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+            <ul class="navbar-nav text-uppercase ms-auto py-4 py-lg-0">
+                <li class="nav-item"><a class="nav-link" href="#services" style="color: {{ site_config.navbar_text_color|default:'#fff' }};">Servicios</a></li>
+                <li class="nav-item"><a class="nav-link" href="#portfolio" style="color: {{ site_config.navbar_text_color|default:'#fff' }};">Portfolio</a></li>
+                <li class="nav-item"><a class="nav-link" href="#about" style="color: {{ site_config.navbar_text_color|default:'#fff' }};">Nosotros</a></li>
+                <li class="nav-item"><a class="nav-link" href="#team" style="color: {{ site_config.navbar_text_color|default:'#fff' }};">Equipo</a></li>
+                <li class="nav-item"><a class="nav-link" href="#contact" style="color: {{ site_config.navbar_text_color|default:'#fff' }};">Contacto</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var navbar = document.getElementById('mainNav');
+    var defaultColor = '{{ site_config.navbar_bg_color|default:'#212529' }}';
+    var scrolledColor = '{{ site_config.navbar_bg_color_scrolled|default:'#272EF5' }}';
+    window.addEventListener('scroll', function() {
+        if (window.scrollY > 40) {
+            navbar.style.backgroundColor = scrolledColor;
+        } else {
+            navbar.style.backgroundColor = defaultColor;
+        }
+    });
+});
+</script>

@@ -1,0 +1,597 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    .hero-btn-fixed {
+        opacity: 0.85 !important;
+        background-color: rgba(2,25,122,0.85) !important;
+        color: #fff !important;
+        transition: opacity 0.2s, background-color 0.2s;
+    }
+    .hero-btn-fixed:hover {
+        opacity: 1 !important;
+    }
+    @media (max-width: 575px) {
+        .hero-btn-fixed {
+            font-size: 0.95rem !important;
+            width: 90vw !important;
+            min-width: 250px !important;
+            max-width: 98vw !important;
+            padding-left: 1rem !important;
+            padding-right: 1rem !important;
+            text-align: center !important;
+            white-space: normal !important;
+            display: block !important;
+            margin: 0.5rem auto !important;
+            opacity: 0.8 !important;
+            background-color: rgba(2,25,122,0.85) !important;
+            color: #fff !important;
+            transition: opacity 0.2s, background-color 0.2s;
+        }
+        .hero-btn-fixed:hover {
+            opacity: 1 !important;
+        }
+        .hero-btns-group {
+            flex-direction: column !important;
+            gap: 0.5rem !important;
+            align-items: center !important;
+        }
+    }
+    @media (max-width: 991px) and (orientation: landscape) {
+        .masthead video {
+            height: 60vh !important;
+            min-height: 320px;
+            max-height: 420px;
+        }
+        .masthead-card {
+            margin-top: 0 !important;
+            margin-bottom: 0 !important;
+            padding-top: 0.25rem !important;
+            padding-bottom: 0.25rem !important;
+        }
+        .hero-btns-group {
+            flex-direction: row !important;
+            gap: 0.25rem !important;
+            justify-content: center !important;
+            margin-top: 0 !important;
+        }
+        .hero-btn-fixed {
+            min-width: 140px;
+            max-width: 45vw;
+            flex: 1 1 140px;
+            font-size: 0.95rem;
+            padding-left: 0.5rem;
+            padding-right: 0.5rem;
+            margin: 0;
+            opacity: 0.85 !important;
+            background-color: rgba(2,25,122,0.85) !important;
+            color: #fff !important;
+            transition: opacity 0.2s, background-color 0.2s;
+        }
+        .hero-btn-fixed:hover {
+            opacity: 1 !important;
+        }
+    }
+
+    @media (max-width: 740px) and (max-height: 400px) and (orientation: landscape) {
+        .hero-btns-group {
+            flex-direction: row !important;
+            gap: 0.5rem !important;
+            justify-content: center !important;
+            margin-top: 0 !important;
+            width: 100% !important;
+            margin-left: 0 !important;
+        }
+        .hero-btn-fixed {
+            min-width: 100px !important;
+            max-width: 40vw !important;
+            flex: 1 1 100px !important;
+            font-size: 0.95rem !important;
+            padding-left: 0.5rem !important;
+            padding-right: 0.5rem !important;
+            margin: 0 !important;
+            opacity: 0.85 !important;
+            background-color: rgba(2,25,122,0.85) !important;
+            color: #fff !important;
+            transition: opacity 0.2s, background-color 0.2s;
+        }
+        .hero-btn-fixed:hover {
+            opacity: 1 !important;
+        }
+    }
+
+    .masthead-card-overlay {
+        position: absolute;
+        inset: 0;
+        border-radius: 1.5rem;
+        pointer-events: none;
+        z-index: 0;
+        transition: opacity 0.2s;
+    }
+</style>
+<style>
+    #portfolio .portfolio-item .portfolio-link .portfolio-hover {
+        background: {{ site_config.portfolio_hover_bgcolor|default:'rgba(255,200,0,0.9)' }} !important;
+    }
+</style>
+<style>
+    .portfolio-thumb-hover:hover {
+        background-color: {{ site_config.portfolio_hover_bgcolor|default:'#e0e0e0' }} !important;
+        box-shadow: 0 8px 24px rgba(2,25,122,0.18);
+        transition: box-shadow 0.2s, background-color 0.2s;
+    }
+</style>
+<!-- Masthead-->
+{# HEADER: 4 SITUACIONES #}
+{% if site_config.header_background_video %}
+    <!-- 1. Video de fondo -->
+    <header class="masthead" style="position: relative; overflow: hidden;">
+        <video autoplay loop muted playsinline style="position: absolute; top: 0; left: 0; width: {{ site_config.header_video_width|default:'100%' }}; height: {{ site_config.header_video_height|default:'100%' }}; object-fit: cover; z-index: 0; filter: brightness({{ site_config.header_video_brightness|default:0.5 }}) contrast({{ site_config.header_video_contrast|default:1.0 }});">
+            <source src="{{ site_config.header_background_video.url }}" type="video/mp4">
+            Tu navegador no soporta el video de fondo.
+        </video>
+        <div class="container" style="position: relative; z-index: 1;">
+            <div class="masthead-card"
+                style="
+                    position: relative;
+                    max-width: 900px;
+                    /*margin: 0 auto 0.25rem auto;
+                    padding: 0.25rem 0.5rem;*/
+                    border-radius: 1.5rem;
+                    box-shadow: 0 4px {{ site_config.hero_card_elevation|default:8 }}px rgba(2,25,122,0.18);
+                    {% if site_config.hero_card_bg_image %}
+                        background-image: url('{{ site_config.hero_card_bg_image.url }}');
+                        background-size: cover;
+                        background-position: center;
+                    {% endif %}
+                    background-color: {{ site_config.hero_card_bg_color }};
+                    opacity: {{ site_config.hero_card_bg_opacity|stringformat:'f' }};
+                    overflow: hidden;
+                    transition: box-shadow 0.2s, background-color 0.2s, opacity 0.2s;
+                "
+                onmouseover="this.style.boxShadow='0 8px {{ site_config.hero_card_hover_elevation|default:24 }}px rgba(2,25,122,0.28)';"
+                onmouseout="this.style.boxShadow='0 4px {{ site_config.hero_card_elevation|default:8 }}px rgba(2,25,122,0.18)';"
+            >
+                <div style="position: relative; z-index: 1;">
+                    <div class="masthead-subheading">{{ site_config.hero_subtitle }}</div>
+                    <div class="masthead-heading text-uppercase">{{ site_config.hero_title }}</div>
+                </div>
+            </div>
+            <div class="d-flex flex-wrap justify-content-center gap-3 mt-3 hero-btns-group">
+                <a class="btn btn-xl text-uppercase header-btn hero-btn-fixed" href="{{ site_config.header_btn1_url }}" target="_blank" style="background-color: {{ site_config.header_btn_bgcolor }}; color: #fff; transition: transform 0.2s cubic-bezier(.4,2,.3,1), box-shadow 0.2s; box-shadow: 0 2px 8px rgba(2,25,122,0.08);" onmouseover="this.style.transform='translateY(-6px) scale(1.04)';this.style.boxShadow='0 8px 24px rgba(2,25,122,0.18)';" onmouseout="this.style.transform='none';this.style.boxShadow='0 2px 8px rgba(2,25,122,0.08)';">{{ site_config.header_btn1_text }}</a>
+                <a class="btn btn-xl text-uppercase header-btn hero-btn-fixed" href="{{ site_config.header_btn2_url }}" target="_blank" style="background-color: {{ site_config.header_btn_bgcolor }}; color: #fff; transition: transform 0.2s cubic-bezier(.4,2,.3,1), box-shadow 0.2s; box-shadow: 0 2px 8px rgba(2,25,122,0.08);" onmouseover="this.style.transform='translateY(-6px) scale(1.04)';this.style.boxShadow='0 8px 24px rgba(2,25,122,0.18)';" onmouseout="this.style.transform='none';this.style.boxShadow='0 2px 8px rgba(2,25,122,0.08)';">{{ site_config.header_btn2_text }}</a>
+            </div>
+        </div>
+    </header>
+{% elif site_config.header_background %}
+    <!-- 2. Imagen de fondo -->
+    <header class="masthead" style="background-image: url('{{ site_config.header_background.url }}'); position: relative; overflow: hidden;">
+        <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; background-image: url('{{ site_config.header_background.url }}'); background-size: cover; background-position: center;" class="masthead-animated-bg"></div>
+        <div class="container" style="position: relative; z-index: 1;">
+            <div class="masthead-card"
+                style="
+                    position: relative;
+                    max-width: 900px;
+                    /*margin: 0 auto 0.25rem auto;
+                    padding: 0.25rem 0.5rem;*/
+                    border-radius: 1.5rem;
+                    box-shadow: 0 4px {{ site_config.hero_card_elevation|default:8 }}px rgba(2,25,122,0.18);
+                    {% if site_config.hero_card_bg_image %}
+                        background-image: url('{{ site_config.hero_card_bg_image.url }}');
+                        background-size: cover;
+                        background-position: center;
+                    {% endif %}
+                    background-color: {{ site_config.hero_card_bg_color }};
+                    opacity: {{ site_config.hero_card_bg_opacity|stringformat:'f' }};
+                    overflow: hidden;
+                    transition: box-shadow 0.2s, background-color 0.2s, opacity 0.2s;
+                "
+                onmouseover="this.style.boxShadow='0 8px {{ site_config.hero_card_hover_elevation|default:24 }}px rgba(2,25,122,0.28)';"
+                onmouseout="this.style.boxShadow='0 4px {{ site_config.hero_card_elevation|default:8 }}px rgba(2,25,122,0.18)';"
+            >
+                <div style="position: relative; z-index: 1;">
+                    <div class="masthead-subheading">{{ site_config.hero_subtitle }}</div>
+                    <div class="masthead-heading text-uppercase">{{ site_config.hero_title }}</div>
+                </div>
+            </div>
+            <div class="d-flex flex-wrap justify-content-center gap-3 mt-3">
+                <a class="btn btn-xl text-uppercase header-btn" href="{{ site_config.header_btn1_url }}" target="_blank" style="background-color: {{ site_config.header_btn_bgcolor }}; color: #fff; min-width: 220px; transition: transform 0.2s cubic-bezier(.4,2,.3,1), box-shadow 0.2s; box-shadow: 0 2px 8px rgba(2,25,122,0.08);" onmouseover="this.style.transform='translateY(-6px) scale(1.04)';this.style.boxShadow='0 8px 24px rgba(2,25,122,0.18)';" onmouseout="this.style.transform='none';this.style.boxShadow='0 2px 8px rgba(2,25,122,0.08)';">{{ site_config.header_btn1_text }}</a>
+                <a class="btn btn-xl text-uppercase header-btn" href="{{ site_config.header_btn2_url }}" target="_blank" style="background-color: {{ site_config.header_btn_bgcolor }}; color: #fff; min-width: 220px; transition: transform 0.2s cubic-bezier(.4,2,.3,1), box-shadow 0.2s; box-shadow: 0 2px 8px rgba(2,25,122,0.08);" onmouseover="this.style.transform='translateY(-6px) scale(1.04)';this.style.boxShadow='0 8px 24px rgba(2,25,122,0.18)';" onmouseout="this.style.transform='none';this.style.boxShadow='0 2px 8px rgba(2,25,122,0.08)';">{{ site_config.header_btn2_text }}</a>
+            </div>
+        </div>
+    </header>
+{% elif site_config.hero_card_bg_color %}
+    <!-- 3. Color de fondo -->
+    <header class="masthead" style="background-color: {{ site_config.hero_card_bg_color }}; position: relative; overflow: hidden;">
+        <div class="container" style="position: relative; z-index: 1;">
+            <div class="masthead-card"
+                style="
+                    position: relative;
+                    max-width: 900px;
+                    margin: 0 auto 0.25rem auto;
+                    /*margin: 0 auto 0.25rem auto;
+                    padding: 0.25rem 0.5rem;*/
+                    box-shadow: 0 4px {{ site_config.hero_card_elevation|default:8 }}px rgba(2,25,122,0.18);
+                    {% if site_config.hero_card_bg_image %}
+                        background-image: url('{{ site_config.hero_card_bg_image.url }}');
+                        background-size: cover;
+                        background-position: center;
+                    {% endif %}
+                    background-color: {{ site_config.hero_card_bg_color }};
+                    opacity: {{ site_config.hero_card_bg_opacity|stringformat:'f' }};
+                    overflow: hidden;
+                    transition: box-shadow 0.2s, background-color 0.2s, opacity 0.2s;
+                "
+                onmouseover="this.style.boxShadow='0 8px {{ site_config.hero_card_hover_elevation|default:24 }}px rgba(2,25,122,0.28)';"
+                onmouseout="this.style.boxShadow='0 4px {{ site_config.hero_card_elevation|default:8 }}px rgba(2,25,122,0.18)';"
+            >
+                <div style="position: relative; z-index: 1;">
+                    <div class="masthead-subheading">{{ site_config.hero_subtitle }}</div>
+                    <div class="masthead-heading text-uppercase">{{ site_config.hero_title }}</div>
+                </div>
+            </div>
+            <div class="d-flex flex-wrap justify-content-center gap-3 mt-3">
+                <a class="btn btn-xl text-uppercase header-btn" href="{{ site_config.header_btn1_url }}" target="_blank" style="background-color: {{ site_config.header_btn_bgcolor }}; color: #fff; min-width: 220px; transition: transform 0.2s cubic-bezier(.4,2,.3,1), box-shadow 0.2s; box-shadow: 0 2px 8px rgba(2,25,122,0.08);" onmouseover="this.style.transform='translateY(-6px) scale(1.04)';this.style.boxShadow='0 8px 24px rgba(2,25,122,0.18)';" onmouseout="this.style.transform='none';this.style.boxShadow='0 2px 8px rgba(2,25,122,0.08)';">{{ site_config.header_btn1_text }}</a>
+                <a class="btn btn-xl text-uppercase header-btn" href="{{ site_config.header_btn2_url }}" target="_blank" style="background-color: {{ site_config.header_btn_bgcolor }}; color: #fff; min-width: 220px; transition: transform 0.2s cubic-bezier(.4,2,.3,1), box-shadow 0.2s; box-shadow: 0 2px 8px rgba(2,25,122,0.08);" onmouseover="this.style.transform='translateY(-6px) scale(1.04)';this.style.boxShadow='0 8px 24px rgba(2,25,122,0.18)';" onmouseout="this.style.transform='none';this.style.boxShadow='0 2px 8px rgba(2,25,122,0.08)';">{{ site_config.header_btn2_text }}</a>
+            </div>
+        </div>
+    </header>
+{% else %}
+    <!-- 4. Sin video, imagen ni color -->
+    <header class="masthead" style="background: #f8f9fa; position: relative; overflow: hidden;">
+        <div class="container" style="position: relative; z-index: 1;">
+            <div class="masthead-card"
+                style="
+                    position: relative;
+                    max-width: 900px;
+                    /*margin: 0 auto 0.25rem auto;
+                    padding: 0.25rem 0.5rem;*/
+                    border-radius: 1.5rem;
+                    box-shadow: 0 4px {{ site_config.hero_card_elevation|default:8 }}px rgba(2,25,122,0.18);
+                    {% if site_config.hero_card_bg_image %}
+                        background-image: url('{{ site_config.hero_card_bg_image.url }}');
+                        background-size: cover;
+                        background-position: center;
+                    {% endif %}
+                    background-color: #fff;
+                    opacity: 1;
+                    overflow: hidden;
+                    transition: box-shadow 0.2s, background-color 0.2s, opacity 0.2s;
+                "
+                onmouseover="this.style.boxShadow='0 8px {{ site_config.hero_card_hover_elevation|default:24 }}px rgba(2,25,122,0.28)';"
+                onmouseout="this.style.boxShadow='0 4px {{ site_config.hero_card_elevation|default:8 }}px rgba(2,25,122,0.18)';"
+            >
+                <div style="position: relative; z-index: 1;">
+                    <div class="masthead-subheading">{{ site_config.hero_subtitle }}</div>
+                    <div class="masthead-heading text-uppercase">{{ site_config.hero_title }}</div>
+                </div>
+            </div>
+            <div class="d-flex flex-wrap justify-content-center gap-3 mt-3">
+                <a class="btn btn-xl text-uppercase header-btn" href="{{ site_config.header_btn1_url }}" target="_blank" style="background-color: {{ site_config.header_btn_bgcolor|default:'#007bff' }}; color: #fff; min-width: 220px; transition: transform 0.2s cubic-bezier(.4,2,.3,1), box-shadow 0.2s; box-shadow: 0 2px 8px rgba(2,25,122,0.08);" onmouseover="this.style.transform='translateY(-6px) scale(1.04)';this.style.boxShadow='0 8px 24px rgba(2,25,122,0.18)';" onmouseout="this.style.transform='none';this.style.boxShadow='0 2px 8px rgba(2,25,122,0.08)';">{{ site_config.header_btn1_text }}</a>
+                <a class="btn btn-xl text-uppercase header-btn" href="{{ site_config.header_btn2_url }}" target="_blank" style="background-color: {{ site_config.header_btn_bgcolor|default:'#007bff' }}; color: #fff; min-width: 220px; transition: transform 0.2s cubic-bezier(.4,2,.3,1), box-shadow 0.2s; box-shadow: 0 2px 8px rgba(2,25,122,0.08);" onmouseover="this.style.transform='translateY(-6px) scale(1.04)';this.style.boxShadow='0 8px 24px rgba(2,25,122,0.18)';" onmouseout="this.style.transform='none';this.style.boxShadow='0 2px 8px rgba(2,25,122,0.08)';">{{ site_config.header_btn2_text }}</a>
+            </div>
+        </div>
+    </header>
+{% endif %}
+
+<!-- Services-->
+<section class="page-section" id="services">
+    <div class="container">
+        <div class="text-center">
+            <h2 class="section-heading text-uppercase">Servicios</h2>
+            <h3 class="section-subheading text-muted">Nuestros servicios profesionales</h3>
+        </div>
+        <div class="row text-center">
+            {% for service in services %}
+            <div class="col-md-4">
+                <span class="fa-stack fa-4x" onmouseover="this.style.transform='translateY(-8px) scale(1.08)';this.style.transition='transform 0.2s cubic-bezier(.4,2,.3,1)';" onmouseout="this.style.transform='none';">
+                    <i class="fas fa-circle fa-stack-2x" style="color: {{ site_config.service_icon_bgcolor }};"></i>
+                    <i class="fas {{ service.icon }} fa-stack-1x" style="color: {{ site_config.service_icon_fgcolor }};"></i>
+                </span>
+                <h4 class="my-3">{{ service.title }}</h4>
+                {% if service.excel_table_html %}
+                    <div class="table-responsive excel-table-elevated" style="margin-bottom: 1rem; box-shadow: 0 4px 24px rgba(2,25,122,0.18); border-radius: 1rem; transition: box-shadow 0.2s;">
+                        {{ service.excel_table_html|safe }}
+                    </div>
+                {% else %}
+                    <p class="text-muted">{{ service.description }}</p>
+                {% endif %}
+            </div>
+            {% empty %}
+            <p class="text-center text-muted">No hay servicios disponibles.</p>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Portfolio Grid-->
+<section class="page-section bg-light" id="portfolio">
+    <div class="container">
+        <div class="text-center">
+            <h2 class="section-heading text-uppercase">Portfolio</h2>
+            <h3 class="section-subheading text-muted">Nuestros proyectos</h3>
+        </div>
+        <div class="row">
+            {% for item in portfolio_items %}
+            <div class="col-lg-4 col-sm-6 mb-4">
+                <div class="portfolio-item">
+                    <a class="portfolio-link" data-bs-toggle="modal" href="#portfolioModal{{ item.id }}">
+                        <div class="portfolio-hover">
+                            <div class="portfolio-hover-content"><i class="fas fa-plus fa-3x"></i></div>
+                        </div>
+                        <img class="img-fluid portfolio-thumb-hover" src="{{ item.thumbnail.url }}" alt="{{ item.title }}" style="transition: box-shadow 0.2s, background-color 0.2s;" onmouseover="this.style.backgroundColor='{{ site_config.portfolio_hover_bgcolor|default:'#e0e0e0' }}';this.style.boxShadow='0 8px 24px rgba(2,25,122,0.18)';" onmouseout="this.style.backgroundColor='';this.style.boxShadow='none';" />
+                    </a>
+                    <div class="portfolio-caption">
+                        <div class="portfolio-caption-heading">{{ item.title }}</div>
+                        <div class="portfolio-caption-subheading text-muted">{{ item.subtitle }}</div>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <p class="text-center text-muted">No hay proyectos disponibles.</p>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- About-->
+<section class="page-section" id="about">
+    <div class="container">
+        <div class="text-center">
+            <h2 class="section-heading text-uppercase">Nosotros</h2>
+            <h3 class="section-subheading text-muted">Nuestra historia</h3>
+        </div>
+        <ul class="timeline">
+            {% for event in timeline_events %}
+            <li {% if event.inverted %}class="timeline-inverted"{% endif %}>
+                {% if event.is_final %}
+                <div class="timeline-image">
+                    <h4>
+                        Se Parte
+                        <br />
+                        De Nuestra
+                        <br />
+                        Historia!
+                    </h4>
+                </div>
+                {% else %}
+                <div class="timeline-image">
+                    {% if event.image %}
+                    <div class="timeline-img-circle timeline-img-elevated timeline-img-bg" style="background-image: url('{{ event.image.url }}');"></div>
+                    {% endif %}
+                </div>
+                <div class="timeline-panel">
+                    <div class="timeline-heading">
+                        <h4>{{ event.date }}</h4>
+                        <h4 class="subheading">{{ event.title }}</h4>
+                    </div>
+                    <div class="timeline-body"><p class="text-muted">{{ event.description }}</p></div>
+                </div>
+                {% endif %}
+            </li>
+            {% empty %}
+            <p class="text-center text-muted">No hay eventos disponibles.</p>
+            {% endfor %}
+        </ul>
+    </div>
+</section>
+
+<!-- Team-->
+<section class="page-section bg-light" id="team">
+    <div class="container">
+        <div class="text-center">
+            <h2 class="section-heading text-uppercase">Nuestro Equipo</h2>
+            <h3 class="section-subheading text-muted">Los profesionales detrás del proyecto</h3>
+        </div>
+        <div class="row">
+            {% for member in team_members %}
+            <div class="col-lg-4">
+                <div class="team-member">
+                    <img class="mx-auto rounded-circle team-img-elevated" src="{{ member.photo.url }}" alt="{{ member.name }}" />
+                    <h4>{{ member.name }}</h4>
+                    <p class="text-muted">{{ member.position }}</p>
+                    {% if member.twitter_url %}
+                    <a class="btn btn-dark btn-social mx-2" href="{{ member.twitter_url }}" aria-label="{{ member.name }} Twitter" target="_blank"><i class="fab fa-twitter"></i></a>
+                    {% endif %}
+                    {% if member.facebook_url %}
+                    <a class="btn btn-dark btn-social mx-2" href="{{ member.facebook_url }}" aria-label="{{ member.name }} Facebook" target="_blank"><i class="fab fa-facebook-f"></i></a>
+                    {% endif %}
+                    {% if member.linkedin_url %}
+                    <a class="btn btn-dark btn-social mx-2" href="{{ member.linkedin_url }}" aria-label="{{ member.name }} LinkedIn" target="_blank"><i class="fab fa-linkedin-in"></i></a>
+                    {% endif %}
+                </div>
+            </div>
+            {% empty %}
+            <p class="text-center text-muted">No hay miembros del equipo disponibles.</p>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Contact-->
+<section class="page-section" id="contact"
+    style="
+        position: relative;
+        background-color: {{ site_config.contact_section_bg_color }};
+        {% if site_config.contact_section_bg_image %}
+            background-image: url('{{ site_config.contact_section_bg_image.url }}');
+            background-size: cover;
+            background-position: center;
+        {% endif %}
+        {% if site_config.contact_section_bg_opacity %}
+            opacity: {{ site_config.contact_section_bg_opacity|stringformat:'f' }};
+        {% endif %}
+        background-repeat: no-repeat;
+        background-position: center;
+    "
+>
+    {% if site_config.contact_section_bg_video %}
+    <video autoplay loop muted playsinline style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; opacity: {{ site_config.contact_section_bg_opacity|stringformat:'f'|default:'1' }};" id="contact-bg-video">
+        <source src="{{ site_config.contact_section_bg_video.url }}" type="video/mp4">
+        Tu navegador no soporta el video de fondo.
+    </video>
+    {% endif %}
+    <div class="container">
+        <div class="text-center">
+            <h2 class="section-heading text-uppercase">Contáctanos</h2>
+            <h3 class="section-subheading text-muted">Envíanos un mensaje</h3>
+        </div>
+
+        {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endfor %}
+        {% endif %}
+
+        <form id="contactForm" method="post" action="{% url 'contact_submit' %}">
+            {% csrf_token %}
+            <div class="row align-items-stretch mb-5">
+                <div class="col-md-6">
+                    <div class="form-group mb-3">
+                        {{ form.name }}
+                        {% if form.name.errors %}
+                        <div class="invalid-feedback d-block">{{ form.name.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="form-group mb-3">
+                        {{ form.email }}
+                        {% if form.email.errors %}
+                        <div class="invalid-feedback d-block">{{ form.email.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="form-group mb-3">
+                        {{ form.phone }}
+                        {% if form.phone.errors %}
+                        <div class="invalid-feedback d-block">{{ form.phone.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group form-group-textarea mb-md-0">
+                        {{ form.message }}
+                        {% if form.message.errors %}
+                        <div class="invalid-feedback d-block">{{ form.message.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <div class="text-center">
+                <button class="btn btn-xl text-uppercase" type="submit"
+                    style="background-color: {{ site_config.contact_btn_bgcolor }}; color: {{ site_config.contact_btn_fgcolor }}; transition: background-color 0.2s;"
+                    onmouseover="this.style.backgroundColor='{{ site_config.contact_btn_hover_bgcolor }}'"
+                    onmouseout="this.style.backgroundColor='{{ site_config.contact_btn_bgcolor }}'"
+                >{{ site_config.contact_btn_text }}</button>
+            </div>
+        </form>
+    </div>
+</section>
+
+<!-- Portfolio Modals-->
+{% for item in portfolio_items %}
+<div class="portfolio-modal modal fade" id="portfolioModal{{ item.id }}" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="close-modal" data-bs-dismiss="modal"><img src="{% static 'assets/img/close-icon.svg' %}" alt="Close modal" /></div>
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-lg-8">
+                        <div class="modal-body">
+                            <h2 class="text-uppercase">{{ item.title }}</h2>
+                            <p class="item-intro text-muted">{{ item.subtitle }}</p>
+                            <img class="img-fluid d-block mx-auto" src="{{ item.full_image.url }}" alt="{{ item.title }}" />
+                            <p>{{ item.description }}</p>
+                            <ul class="list-inline">
+                                <li>
+                                    <strong>Cliente:</strong>
+                                    {{ item.client }}
+                                </li>
+                                <li>
+                                    <strong>Categoría:</strong>
+                                    {{ item.category }}
+                                </li>
+                            </ul>
+                            <button class="btn btn-primary btn-xl text-uppercase" data-bs-dismiss="modal" type="button">
+                                <i class="fas fa-xmark me-1"></i>
+                                Cerrar Proyecto
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+<style>
+        .timeline-img-circle {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            display: block;
+            margin: 0 auto;
+            box-shadow: 0 2px 8px rgba(2,25,122,0.08);
+            overflow: hidden;
+            position: relative;
+        }
+        .timeline-img-bg {
+            background-size: cover;
+            background-position: center;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            display: block;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+    .timeline-img-elevated, .team-img-elevated {
+        box-shadow: 0 2px 8px rgba(2,25,122,0.08);
+        transition: box-shadow 0.2s;
+        cursor: pointer;
+    }
+    .timeline-img-elevated:hover, .team-img-elevated:hover {
+        box-shadow: 0 8px 32px rgba(2,25,122,0.22);
+        transition: box-shadow 0.2s;
+  }
+  @media (max-width: 575px) {
+    .timeline-img-circle {
+      width: 90px;
+      height: 90px;
+    }
+    .timeline-image {
+      width: 90px !important;
+      height: 90px !important;
+      min-width: 90px !important;
+      min-height: 90px !important;
+    }
+  }
+  @media (max-width: 991px) {
+    .timeline-img-circle {
+      width: 100px;
+      height: 100px;
+    }
+    .timeline-image {
+      width: 100px !important;
+      height: 100px !important;
+      min-width: 100px !important;
+      min-height: 100px !important;
+      margin: 0 auto;
+    }
+    .timeline-panel {
+      width: 100%;
+      margin-left: 0;
+      margin-right: 0;
+      float: none;
+    }
+    .timeline li.timeline-inverted .timeline-panel {
+      float: none;
+    }
+  }
+</style>
+
+{% endblock %}

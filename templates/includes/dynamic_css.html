@@ -1,0 +1,64 @@
+<style>
+:root {
+    --primary-color: {{ config.primary_color }};
+    --secondary-color: {{ config.secondary_color }};
+    --font-family: '{{ config.font_family }}', sans-serif;
+    --base-font-size: {{ config.base_font_size }}px;
+    --h1-size: {{ config.heading_font_size_h1 }}px;
+    --h2-size: {{ config.heading_font_size_h2 }}px;
+    --h3-size: {{ config.heading_font_size_h3 }}px;
+    --h4-size: {{ config.heading_font_size_h4 }}px;
+}
+
+body {
+    font-family: var(--font-family);
+    font-size: var(--base-font-size);
+}
+
+.btn-primary {
+    background-color: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+}
+
+.btn-primary:hover {
+    background-color: var(--secondary-color) !important;
+    border-color: var(--secondary-color) !important;
+}
+
+.text-primary {
+    color: var(--primary-color) !important;
+}
+
+h1, .h1 {
+    font-size: var(--h1-size);
+}
+
+h2, .h2 {
+    font-size: var(--h2-size);
+}
+
+h3, .h3 {
+    font-size: var(--h3-size);
+}
+
+h4, .h4 {
+    font-size: var(--h4-size);
+}
+
+.navbar-brand img {
+    max-height: 40px;
+}
+
+/* Aplicar color primario a elementos específicos del tema */
+#mainNav .navbar-nav .nav-item .nav-link:hover {
+    color: var(--primary-color);
+}
+
+.timeline > li .timeline-image {
+    background-color: var(--primary-color);
+}
+
+.fa-stack .text-primary {
+    color: var(--primary-color) !important;
+}
+</style>
