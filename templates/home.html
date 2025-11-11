@@ -12,6 +12,39 @@
     .hero-btn-fixed:hover {
         opacity: 1 !important;
     }
+        .btn-download-attachment {
+            background-color: #003466;
+            color: #fff;
+            border: none;
+            box-shadow: 0 2px 8px rgba(2,25,122,0.08);
+            transition: background-color 0.2s, box-shadow 0.2s;
+            font-size: 1.08rem;
+            padding: 0.65rem 1.5rem;
+            border-radius: 6px;
+            display: inline-block;
+            margin-bottom: 0.7rem;
+            margin-right: 0.5rem;
+            text-align: center;
+            white-space: nowrap;
+            font-weight: 600;
+            text-decoration: underline;
+            letter-spacing: 0.5px;
+            position: relative;
+        }
+        .btn-download-attachment::before {
+            content: '\f019'; /* FontAwesome download icon */
+            font-family: 'Font Awesome 5 Free';
+            font-weight: 900;
+            margin-right: 0.5em;
+            font-size: 1.1em;
+            vertical-align: middle;
+        }
+        .btn-download-attachment:hover {
+            background-color: #0056b3;
+            color: #fff;
+            box-shadow: 0 8px 24px rgba(2,25,122,0.18);
+            text-decoration: underline;
+        }
     @media (max-width: 575px) {
         .hero-btn-fixed {
             font-size: 0.95rem !important;
@@ -277,6 +310,55 @@
 
 <!-- Services-->
 <section class="page-section" id="services">
+<style>
+    .pdf-preview iframe {
+        width: 100%;
+        min-height: 400px;
+        max-height: 70vh;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(2,25,122,0.08);
+        background: #f8f9fa;
+        margin-bottom: 1rem;
+    }
+    .excel-table-responsive {
+        width: 100%;
+        overflow-x: auto;
+        margin-bottom: 1rem;
+    }
+    .excel-table-responsive table {
+        min-width: 600px;
+        max-width: 100%;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(2,25,122,0.08);
+        background: #fff;
+        margin-bottom: 0;
+    }
+    .excel-table-responsive table thead th {
+        background-color: #003466;
+        color: #fff;
+        font-weight: bold;
+        border: 1px solid #003466;
+        text-align: center;
+        font-size: 1.05em;
+        padding: 0.6em 0.4em;
+    }
+    .excel-table-responsive table tbody td {
+        text-align: left;
+        padding: 0.5em 0.4em;
+    }
+    @media (max-width: 991px) {
+        .excel-table-responsive table {
+            min-width: 400px;
+            font-size: 0.95rem;
+        }
+    }
+    @media (max-width: 575px) {
+        .excel-table-responsive table {
+            min-width: 320px;
+            font-size: 0.92rem;
+        }
+    }
+</style>
     <div class="container">
         <div class="text-center">
             <h2 class="section-heading text-uppercase">Servicios</h2>
@@ -290,12 +372,31 @@
                     <i class="fas {{ service.icon }} fa-stack-1x" style="color: {{ site_config.service_icon_fgcolor }};"></i>
                 </span>
                 <h4 class="my-3">{{ service.title }}</h4>
-                {% if service.excel_table_html %}
-                    <div class="table-responsive excel-table-elevated" style="margin-bottom: 1rem; box-shadow: 0 4px 24px rgba(2,25,122,0.18); border-radius: 1rem; transition: box-shadow 0.2s;">
-                        {{ service.excel_table_html|safe }}
+                <p class="text-muted text-justify" style="text-align: justify; text-justify: inter-word;">{{ service.description }}</p>
+                {% if service.attachment_html %}
+                    <button type="button" class="btn btn-sm mt-2 mb-2" data-bs-toggle="modal" data-bs-target="#attachmentModal{{ service.id }}" style="background-color: #003466; color: #fff; border: none; box-shadow: 0 2px 8px rgba(2,25,122,0.08); transition: background-color 0.2s, box-shadow 0.2s;"
+                        onmouseover="this.style.boxShadow='0 8px 24px rgba(2,25,122,0.18)';" onmouseout="this.style.boxShadow='0 2px 8px rgba(2,25,122,0.08)';">
+                        Ver adjunto de {{ service.title }}
+                    </button>
+                    <!-- Modal para archivo adjunto -->
+                    <div class="modal fade" id="attachmentModal{{ service.id }}" tabindex="-1" aria-labelledby="attachmentModalLabel{{ service.id }}" aria-hidden="true">
+                        <div class="modal-dialog modal-lg modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="attachmentModalLabel{{ service.id }}">Archivo adjunto - {{ service.title }}</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="attachment-preview">
+                                        {{ service.attachment_html|safe }}
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                {% else %}
-                    <p class="text-muted">{{ service.description }}</p>
                 {% endif %}
             </div>
             {% empty %}
@@ -438,13 +539,88 @@
             <h3 class="section-subheading text-muted">Envíanos un mensaje</h3>
         </div>
 
-        {% if messages %}
-        {% for message in messages %}
-        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-            {{ message }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-        {% endfor %}
+        {% if messages or form.errors %}
+            <style>
+            /* SweetAlert2 custom styles for mobile */
+            @media (max-width: 575px) {
+                .swal2-popup.swal2-elevated {
+                    width: 95vw !important;
+                    min-width: 0 !important;
+                    max-width: 98vw !important;
+                    padding: 1.2em 0.7em !important;
+                    font-size: 1.05em !important;
+                    border-radius: 16px !important;
+                }
+                .swal2-title {
+                    font-size: 1.15em !important;
+                    padding: 0.5em 0.2em !important;
+                }
+                .swal2-html-container {
+                    font-size: 1em !important;
+                    padding: 0.3em 0.2em !important;
+                }
+                .swal2-timer-progress-bar {
+                    height: 5px !important;
+                    border-radius: 3px !important;
+                }
+            }
+            /* General SweetAlert2 popup style */
+            .swal2-popup.swal2-elevated {
+                box-shadow: 0 8px 32px rgba(2,25,122,0.22) !important;
+                border-radius: 18px !important;
+                font-family: 'Segoe UI', 'Roboto', Arial, sans-serif !important;
+            }
+            .swal2-btn-confirm {
+                background-color: #003466 !important;
+                color: #fff !important;
+                font-weight: 600 !important;
+                border-radius: 8px !important;
+                padding: 0.6em 1.5em !important;
+                font-size: 1em !important;
+            }
+            </style>
+            <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+            <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                {% for message in messages %}
+                    Swal.fire({
+                        icon: '{{ message.tags|default:"info" }}',
+                        title: '{{ message|escapejs }}',
+                        showConfirmButton: false,
+                        timer: 5000,
+                        timerProgressBar: true,
+                        customClass: {
+                            popup: 'swal2-elevated'
+                        }
+                    });
+                {% endfor %}
+                {% if form.errors %}
+                let errorHtml = '';
+                {% for field in form %}
+                    {% for error in field.errors %}
+                        errorHtml += '<div><b>{{ field.label }}:</b> {{ error|escapejs }}</div>';
+                    {% endfor %}
+                {% endfor %}
+                {% for error in form.non_field_errors %}
+                    errorHtml += '<div>{{ error|escapejs }}</div>';
+                {% endfor %}
+                if (errorHtml) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Errores en el formulario',
+                        html: errorHtml,
+                        showConfirmButton: true,
+                        confirmButtonColor: '#003466',
+                        confirmButtonText: 'Corregir',
+                        customClass: {
+                            popup: 'swal2-elevated',
+                            confirmButton: 'swal2-btn-confirm'
+                        }
+                    });
+                }
+                {% endif %}
+            });
+            </script>
         {% endif %}
 
         <form id="contactForm" method="post" action="{% url 'contact_submit' %}">

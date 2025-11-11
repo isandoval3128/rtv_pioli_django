@@ -13,9 +13,9 @@ def home_view(request):
 
     # Obtener todos los datos activos
     services = Service.objects.filter(active=True).order_by('order', 'title')
-    # Generar tabla HTML para cada servicio si tiene Excel
+    # Generar HTML para cada archivo adjunto del servicio
     for service in services:
-        service.excel_table_html = service.get_excel_table_html()
+        service.attachment_html = service.get_attachment_html()
     portfolio_items = PortfolioItem.objects.filter(active=True).order_by('order', 'title')
     timeline_events = TimelineEvent.objects.filter(active=True).order_by('order', 'date')
     team_members = TeamMember.objects.filter(active=True).order_by('order', 'name')
@@ -45,7 +45,7 @@ def contact_submit(request):
         if form.is_valid():
             # Guardar el mensaje
             form.save()
-            messages.success(request, '¡Gracias por contactarnos! Hemos recibido tu mensaje y te responderemos pronto.')
+            messages.success(request, '¡Gracias por contactarnos!')
             return redirect('home')
         else:
             messages.error(request, 'Hubo un error en el formulario. Por favor verifica los datos.')

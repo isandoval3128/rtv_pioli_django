@@ -15,7 +15,7 @@ class ServiceAdmin(admin.ModelAdmin):
 
     fieldsets = (
         ('Información del Servicio', {
-            'fields': ('icon', 'title', 'description', 'excel_file')
+            'fields': ('icon', 'title', 'description', 'attachment')
         }),
         ('Configuración', {
             'fields': ('order', 'active')

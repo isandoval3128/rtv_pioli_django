@@ -7,12 +7,12 @@ class Service(models.Model):
     icon = models.CharField(max_length=50, help_text="Clase de FontAwesome (ej: fa-shopping-cart)")
     title = models.CharField(max_length=100, verbose_name="Título")
     description = models.TextField(verbose_name="Descripción")
-    excel_file = models.FileField(
-        upload_to='service/excel/',
+    attachment = models.FileField(
+        upload_to='service/attachments/',
         blank=True,
         null=True,
-        verbose_name="Archivo Excel de tabla de precios",
-        help_text="Sube una tabla de precios en formato Excel (xlsx, xls). Se mostrará como tabla en la descripción si está presente.")
+        verbose_name="Archivo adjunto",
+        help_text="Sube un archivo adjunto (Excel, Word, imagen, etc). Se mostrará en la descripción si está presente.")
     order = models.IntegerField(default=0, verbose_name="Orden")
     active = models.BooleanField(default=True, verbose_name="Activo")
     created_at = models.DateTimeField(auto_now_add=True)
@@ -26,18 +26,64 @@ class Service(models.Model):
     def __str__(self):
         return self.title
 
-    def get_excel_table_html(self):
-        """Convierte el archivo Excel en una tabla HTML si existe."""
-        if self.excel_file:
+    def get_attachment_html(self):
+        """Renderiza solo Excel y PDF, ambos con botón de descarga."""
+        if not self.attachment:
+            return None
+        name = self.attachment.name.lower()
+        download_btn = f'<a href="{self.attachment.url}" download class="btn btn-download-attachment mb-3">Descargar archivo</a>'
+        if name.endswith('.xlsx') or name.endswith('.xls'):
             try:
                 import pandas as pd
-                excel_path = self.excel_file.path
-                df = pd.read_excel(excel_path, header=None)
-                # Opcional: puedes personalizar el estilo de la tabla aquí
-                return df.to_html(index=False, header=False, classes="table table-bordered table-striped", border=0)
+                df = pd.read_excel(self.attachment.path)
+                # Paginación solo frontend: mostrar todas las filas en la tabla
+                page_size = 10
+                total_rows = len(df)
+                # Reemplazar NaN/null por string vacío para mostrar celdas vacías
+                df = df.fillna("")
+                table_html = df.to_html(classes='table table-striped table-bordered excel-paginated-table', index=False)
+                num_pages = (total_rows + page_size - 1) // page_size
+                pagination_html = ''
+                if num_pages > 1:
+                    pagination_html += f'<nav class="excel-pagination"><ul class="pagination justify-content-center">'
+                    for i in range(1, num_pages + 1):
+                        active = 'active' if i == 1 else ''
+                        pagination_html += f'<li class="page-item {active}"><a class="page-link" href="#" onclick="showExcelPage(this, {i}, {page_size}, {total_rows}); return false;">{i}</a></li>'
+                    pagination_html += '</ul></nav>'
+                script = '''
+<script>
+function showExcelPage(el, page, pageSize, totalRows) {
+    var table = el.closest('.attachment-preview').querySelector('table');
+    var rows = Array.from(table.querySelectorAll('tbody tr'));
+    var start = (page - 1) * pageSize;
+    var end = start + pageSize;
+    rows.forEach(function(row, idx) {
+        row.style.display = (idx >= start && idx < end) ? '' : 'none';
+    });
+    // Actualizar paginación activa
+    var pagItems = el.closest('.excel-pagination').querySelectorAll('.page-item');
+    pagItems.forEach(function(item, idx) {
+        if (idx + 1 === page) item.classList.add('active');
+        else item.classList.remove('active');
+    });
+}
+window.addEventListener('DOMContentLoaded', function() {
+    var paginations = document.querySelectorAll('.excel-pagination');
+    paginations.forEach(function(nav) {
+        var first = nav.querySelector('.page-link');
+        if (first) first.click();
+    });
+});
+</script>
+'''
+                return f'{download_btn}<div class="excel-table-responsive">{table_html}{pagination_html}</div>{script}'
             except Exception as e:
-                return f"<div class='alert alert-warning'>No se pudo mostrar la tabla de precios: {e}</div>"
-        return None
+                return f"<div class='alert alert-warning'>No se pudo mostrar la tabla de precios: {e}</div>{download_btn}"
+        elif name.endswith('.pdf'):
+            # Mostrar PDF embebido en el modal con botón de descarga
+            return f'{download_btn}<iframe src="{self.attachment.url}" width="100%" height="600px" style="border:none;">Este navegador no soporta la visualización de PDF.</iframe>'
+        else:
+            return f"<div class='alert alert-warning'>Solo se permiten archivos Excel (.xlsx, .xls) y PDF (.pdf).</div>"
 
 
 class PortfolioItem(models.Model):
