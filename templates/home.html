@@ -45,47 +45,48 @@
             box-shadow: 0 8px 24px rgba(2,25,122,0.18);
             text-decoration: underline;
         }
-            @media (max-width: 575px) {
-                .masthead {
-                    min-height: 100vh !important;
-                    height: 100vh !important;
-                    display: flex !important;
-                    align-items: center !important;
-                    justify-content: center !important;
-                    position: relative !important;
-                    overflow: hidden !important;
-                }
-                .masthead-card {
-                    min-height: 60vh !important;
-                    display: flex !important;
-                    flex-direction: column !important;
-                    justify-content: center !important;
-                }
-                .hero-btn-fixed {
-                    font-size: 0.95rem !important;
-                    width: 90vw !important;
-                    min-width: 250px !important;
-                    max-width: 98vw !important;
-                    padding-left: 1rem !important;
-                    padding-right: 1rem !important;
-                    text-align: center !important;
-                    white-space: normal !important;
-                    display: block !important;
-                    margin: 0.5rem auto !important;
-                    opacity: 0.8 !important;
-                    background-color: rgba(2,25,122,0.85) !important;
-                    color: #fff !important;
-                    transition: opacity 0.2s, background-color 0.2s;
-                }
-                .hero-btn-fixed:hover {
-                    opacity: 1 !important;
-                }
-                .hero-btns-group {
-                    flex-direction: column !important;
-                    gap: 0.5rem !important;
-                    align-items: center !important;
-                }
-            }
+                    @media (max-width: 575px) {
+                        .masthead {
+                            min-height: 100vh !important;
+                            height: 100vh !important;
+                            display: flex !important;
+                            align-items: center !important;
+                            justify-content: center !important;
+                            position: relative !important;
+                            overflow: hidden !important;
+                        }
+                        .masthead-card {
+                            min-height: 60vh !important;
+                            display: flex !important;
+                            flex-direction: column !important;
+                            justify-content: center !important;
+                        }
+                        .hero-btns-group {
+                            flex-direction: column !important;
+                            gap: 0.5rem !important;
+                            align-items: center !important;
+                            margin-bottom: 2.5rem !important;
+                        }
+                        .hero-btn-fixed {
+                            font-size: 0.95rem !important;
+                            width: 90vw !important;
+                            min-width: 250px !important;
+                            max-width: 98vw !important;
+                            padding-left: 1rem !important;
+                            padding-right: 1rem !important;
+                            text-align: center !important;
+                            white-space: normal !important;
+                            display: block !important;
+                            margin: 1.2rem auto 0.2rem auto !important;
+                            opacity: 0.8 !important;
+                            background-color: rgba(2,25,122,0.85) !important;
+                            color: #fff !important;
+                            transition: opacity 0.2s, background-color 0.2s;
+                        }
+                        .hero-btn-fixed:hover {
+                            opacity: 1 !important;
+                        }
+                    }
     @media (max-width: 991px) and (orientation: landscape) {
         .masthead video {
             height: 60vh !important;
