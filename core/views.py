@@ -23,6 +23,25 @@ def home_view(request):
     # Crear form de contacto vacío
     form = ContactForm()
 
+    # Obtener ubicaciones dinámicas
+    try:
+        from ubicacion.models import Ubicacion
+        ubicaciones = Ubicacion.objects.all()
+    except ImportError:
+        ubicaciones = []
+
+    # Obtener la tarifa y la tabla HTML
+    try:
+        from tarifas.models import Tarifa
+        from tarifas.utils import excel_to_html
+        tarifa = Tarifa.objects.first()
+        tabla_html = None
+        if tarifa and tarifa.archivo_excel:
+            tabla_html = excel_to_html(tarifa.archivo_excel.path)
+    except ImportError:
+        tarifa = None
+        tabla_html = None
+
     context = {
         'site_config': site_config,
         'services': services,
@@ -30,6 +49,9 @@ def home_view(request):
         'timeline_events': timeline_events,
         'team_members': team_members,
         'form': form,
+        'ubicaciones': ubicaciones,
+            'tarifa': tarifa,
+            'tabla_html': tabla_html,
     }
 
     return render(request, 'home.html', context)
