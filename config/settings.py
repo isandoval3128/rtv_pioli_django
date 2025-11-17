@@ -138,12 +138,4 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# Configuración de correo para contacto
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp-mail.outlook.com'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'pachaen@hotmail.com'
-# EMAIL_HOST_PASSWORD = 'TU_CONTRASEÑA_AQUÍ'  # Pendiente
-DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
-CONTACT_ADMIN_EMAIL = 'pachaen@hotmail.com'  # Destinatario de los mensajes de contacto
+## La configuración de correo ahora se gestiona desde el modelo EmailConfig en el panel de administración

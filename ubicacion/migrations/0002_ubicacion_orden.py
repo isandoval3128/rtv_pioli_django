@@ -16,3 +16,4 @@ class Migration(migrations.Migration):
             field=models.IntegerField(blank=True, help_text='Orden de aparición en la lista', null=True),
         ),
     ]
+# Eliminado para limpieza de migraciones
