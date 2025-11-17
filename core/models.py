@@ -1,6 +1,28 @@
 from django.db import models
 from django.core.exceptions import ValidationError
 
+class AboutSection(models.Model):
+    title = models.CharField(max_length=200, verbose_name="Título")
+    description = models.TextField(verbose_name="Descripción")
+    visible = models.BooleanField(default=True, verbose_name="¿Mostrar título?")
+
+    class Meta:
+        verbose_name = "Sección Nosotros"
+        verbose_name_plural = "Sección Nosotros"
+
+    def __str__(self):
+        return self.title
+
+class AboutImage(models.Model):
+    about_section = models.ForeignKey(AboutSection, related_name="images", on_delete=models.CASCADE)
+    image = models.ImageField(upload_to="about_images/", verbose_name="Imagen")
+
+    class Meta:
+        verbose_name = "Imagen de Nosotros"
+        verbose_name_plural = "Imágenes de Nosotros"
+
+    def __str__(self):
+        return f"Imagen para {self.about_section.title}"
 
 class Service(models.Model):
     """Modelo para los servicios mostrados en la página"""
@@ -175,6 +197,32 @@ class ContactMessage(models.Model):
 
 
 class SiteConfiguration(models.Model):
+    show_hero_title = models.BooleanField(
+        default=True,
+        verbose_name='¿Mostrar título del Hero?',
+        help_text='Si está desactivado, el título principal del Hero no se mostrará.')
+    show_hero_subtitle = models.BooleanField(
+        default=True,
+        verbose_name='¿Mostrar subtítulo del Hero?',
+        help_text='Si está desactivado, el subtítulo del Hero no se mostrará.')
+    header_btns_text_color = models.CharField(
+        max_length=20,
+        default='#fff',
+        verbose_name='Color del texto tutorial sobre los botones',
+        help_text='Color del texto sobre los botones de turno. Ejemplo: #fff, #003466, #ffd700')
+    # Texto y video tutorial para los botones de turno
+    header_btns_text = models.CharField(
+        max_length=120,
+        blank=True,
+        null=True,
+        verbose_name='Texto sobre los botones de turno',
+        help_text='Texto breve que se muestra sobre los botones de turno. Ejemplo: "Listo para solicitar tu turno? Ver tutorial"')
+    header_btns_video = models.FileField(
+        upload_to='tutorial_videos/',
+        blank=True,
+        null=True,
+        verbose_name='Video tutorial de turnos',
+        help_text='Video tutorial que se muestra al hacer clic en "Ver tutorial".')
     hero_card_bg_opacity = models.FloatField(
         default=0.85,
         verbose_name='Opacidad del fondo de la card hero',
@@ -289,8 +337,8 @@ class SiteConfiguration(models.Model):
     site_logo = models.ImageField(upload_to='site/', verbose_name="Logo", blank=True, null=True)
 
     # Hero section
-    hero_title = models.CharField(max_length=200, default="It's Nice To Meet You", verbose_name="Título del Hero")
-    hero_subtitle = models.CharField(max_length=200, default="Welcome To Our Studio!", verbose_name="Subtítulo del Hero")
+    hero_title = models.CharField(max_length=200, default="It's Nice To Meet You", verbose_name="Título del Hero", blank=True, null=True)
+    hero_subtitle = models.CharField(max_length=200, default="Welcome To Our Studio!", verbose_name="Subtítulo del Hero", blank=True, null=True)
     hero_button_text = models.CharField(max_length=50, default="Tell Me More", verbose_name="Texto del botón")
 
     # Footer

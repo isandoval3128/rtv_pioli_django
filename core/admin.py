@@ -1,7 +1,25 @@
+from .models import AboutSection, AboutImage
 from django.contrib import admin
 from django.utils.html import format_html
 from .models import Service, PortfolioItem, TimelineEvent, TeamMember, ContactMessage, SiteConfiguration
 
+class AboutImageInline(admin.TabularInline):
+    model = AboutImage
+    extra = 1
+    fields = ('image',)
+    show_change_link = True
+
+@admin.register(AboutSection)
+class AboutSectionAdmin(admin.ModelAdmin):
+    list_display = ['title', 'visible']
+    search_fields = ['title', 'description']
+    list_editable = ['visible']
+    inlines = [AboutImageInline]
+
+@admin.register(AboutImage)
+class AboutImageAdmin(admin.ModelAdmin):
+    list_display = ['about_section', 'image']
+    search_fields = ['about_section__title']
 
 @admin.register(Service)
 class ServiceAdmin(admin.ModelAdmin):
@@ -168,10 +186,11 @@ class SiteConfigurationAdmin(admin.ModelAdmin):
 
     fieldsets = (
             ('Información General', {
-            'fields': ('site_title', 'site_logo', 'header_background', 'header_background_video', 'header_video_brightness', 'header_video_contrast', 'header_video_width', 'header_video_height', 'header_btn1_text', 'header_btn1_url', 'header_btn2_text', 'header_btn2_url', 'header_btn_bgcolor', 'service_icon_bgcolor', 'service_icon_fgcolor', 'portfolio_hover_bgcolor', 'contact_section_bg_color', 'contact_section_bg_opacity', 'contact_section_bg_image', 'contact_section_bg_video', 'contact_btn_text', 'contact_btn_bgcolor', 'contact_btn_fgcolor', 'contact_btn_hover_bgcolor', 'hero_card_bg_color', 'navbar_bg_color_scrolled', 'hero_card_bg_image', 'hero_card_elevation', 'hero_card_hover_elevation', 'hero_card_bg_opacity')
+            'fields': ('site_title', 'site_logo', 'header_background', 'header_background_video', 'header_video_brightness', 'header_video_contrast', 'header_video_width', 'header_video_height', 'header_btn1_text', 'header_btn1_url', 'header_btn2_text', 'header_btn2_url', 'header_btn_bgcolor', 'header_btns_text', 'header_btns_video', 'header_btns_text_color', 'service_icon_bgcolor', 'service_icon_fgcolor', 'portfolio_hover_bgcolor', 'contact_section_bg_color', 'contact_section_bg_opacity', 'contact_section_bg_image', 'contact_section_bg_video', 'contact_btn_text', 'contact_btn_bgcolor', 'contact_btn_fgcolor', 'contact_btn_hover_bgcolor', 'hero_card_bg_color', 'navbar_bg_color_scrolled', 'hero_card_bg_image', 'hero_card_elevation', 'hero_card_hover_elevation', 'hero_card_bg_opacity')
         }),
         ('Hero Section', {
-            'fields': ('hero_title', 'hero_subtitle', 'hero_button_text')
+            'fields': ('show_hero_title', 'show_hero_subtitle', 'hero_title', 'hero_subtitle', 'hero_button_text'),
+            'description': 'Título y subtítulo del Hero ahora son opcionales.'
         }),
         ('Footer', {
             'fields': ('footer_copyright',)

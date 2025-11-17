@@ -11313,3 +11313,13 @@ section#contact form#contactForm :-ms-input-placeholder {
   font-size: 0.9rem;
   font-family: "Montserrat", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 }
+/* Corrige desplazamiento horizontal innecesario en la tabla de tarifas */
+.excel-table-responsive {
+  overflow-x: auto;
+  width: 100%;
+}
+@media (min-width: 992px) {
+  .excel-table-responsive {
+    overflow-x: visible;
+  }
+}

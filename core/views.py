@@ -2,7 +2,10 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from .models import Service, PortfolioItem, TimelineEvent, TeamMember, SiteConfiguration
 from .forms import ContactForm
-
+import json
+from .models import AboutSection
+from tarifas.models import Tarifa
+from tarifas.utils import excel_to_html
 
 def home_view(request):
     """
@@ -30,17 +33,26 @@ def home_view(request):
     except ImportError:
         ubicaciones = []
 
-    # Obtener la tarifa y la tabla HTML
+    # Obtener la tarifa, la tabla HTML y la lista para móviles
     try:
-        from tarifas.models import Tarifa
-        from tarifas.utils import excel_to_html
         tarifa = Tarifa.objects.first()
+        try:
+            print("[DEPURACION] tarifa obtenida:", json.dumps(str(tarifa)))
+        except Exception as e:
+            print("[DEPURACION] tarifa obtenida:", tarifa)
         tabla_html = None
+        tarifas_list = []
         if tarifa and tarifa.archivo_excel:
             tabla_html = excel_to_html(tarifa.archivo_excel.path)
+            from tarifas.utils import excel_to_list
+            tarifas_list = excel_to_list(tarifa.archivo_excel.path)
+            print("[DEPURACION] tarifas_list:", tarifas_list)
     except ImportError:
         tarifa = None
         tabla_html = None
+        tarifas_list = []
+
+    about_section = AboutSection.objects.first()
 
     context = {
         'site_config': site_config,
@@ -50,8 +62,10 @@ def home_view(request):
         'team_members': team_members,
         'form': form,
         'ubicaciones': ubicaciones,
-            'tarifa': tarifa,
-            'tabla_html': tabla_html,
+        'tarifa': tarifa,
+        'tabla_html': tabla_html,
+        'tarifas_list': tarifas_list,
+        'about_section': about_section,
     }
 
     return render(request, 'home.html', context)
@@ -65,9 +79,42 @@ def contact_submit(request):
         form = ContactForm(request.POST)
 
         if form.is_valid():
-            # Guardar el mensaje
-            form.save()
-            messages.success(request, '¡Gracias por contactarnos!')
+            data = form.cleaned_data
+            from django.conf import settings
+            from django.core.mail import send_mail, BadHeaderError
+            subject = f"Nuevo mensaje RTV Pioli web de {data['name']}"
+            body = (
+                f"Has recibido un nuevo mensaje de contacto desde la web:\n\n"
+                f"Nombre: {data['name']}\n"
+                f"Email: {data['email']}\n"
+                f"Teléfono: {data['phone']}\n"
+                f"Mensaje:\n{data['message']}\n"
+            )
+            sent_successfully = False
+            error_message = ""
+            try:
+                send_mail(
+                    subject,
+                    body,
+                    settings.DEFAULT_FROM_EMAIL,
+                    [settings.CONTACT_ADMIN_EMAIL],
+                    fail_silently=False,
+                )
+                sent_successfully = True
+                messages.success(request, '¡Gracias por contactarnos! Tu mensaje fue enviado correctamente.')
+            except Exception as e:
+                error_message = str(e)
+                # Guardar el mensaje en el modelo si falla el envío
+                from .models import ContactMessage
+                ContactMessage.objects.create(
+                    name=data['name'],
+                    email=data['email'],
+                    phone=data['phone'],
+                    message=data['message'],
+                    read=False,
+                    replied=False,
+                )
+                messages.error(request, 'No se pudo enviar el mensaje por correo. Tu mensaje fue guardado y será revisado por el administrador.')
             return redirect('home')
         else:
             messages.error(request, 'Hubo un error en el formulario. Por favor verifica los datos.')

@@ -3,6 +3,112 @@
 
 {% block content %}
 <style>
+    /* Ajustes para el modal de video tutorial en pantallas pequeñas */
+    @media (max-width: 575px) {
+                                /* Eliminada la declaración repetida de .hero-btns-block .d-flex.flex-wrap */
+                        .hero-btns-block {
+                            width: 100vw !important;
+                            max-width: 100vw !important;
+                            box-sizing: border-box !important;
+                            padding-left: 0 !important;
+                            padding-right: 0 !important;
+                            margin-left: 0 !important;
+                            margin-right: 0 !important;
+                            overflow-x: hidden !important;
+                            align-items: center !important;
+                        }
+                        .hero-btns-block .d-flex.flex-wrap {
+                            width: 100% !important;
+                            max-width: 100% !important;
+                            box-sizing: border-box !important;
+                            padding-left: 0 !important;
+                             padding-right: 20px !important;
+                            margin-left: 0 !important;
+                            margin-right: 0 !important;
+                            justify-content: center !important;
+                            overflow-x: hidden !important;
+                            flex-wrap: wrap !important;
+                            gap: 0 !important;
+                        }
+                .hero-btns-block .d-flex {
+                    margin-right: 0 !important;
+                    margin-left: 0 !important;
+                    padding-right: 0 !important;
+                    padding-left: 0 !important;
+                    justify-content: center !important;
+                    width: 100vw !important;
+                    max-width: 100vw !important;
+                }
+                .hero-btn-fixed {
+                    margin-right: 0 !important;
+                    margin-left: 0 !important;
+                    display: block !important;
+                    width: 90vw !important;
+                    max-width: 98vw !important;
+                    min-width: 220px !important;
+                    text-align: center !important;
+                }
+        html, body {
+            overflow-x: hidden !important;
+            width: 100vw !important;
+            max-width: 100vw !important;
+            box-sizing: border-box !important;
+        }
+        .container, .row, .col-12, .col-lg-6, .masthead, .masthead-card, .hero-btns-block, .modal-dialog, .modal-content, .modal-body {
+            max-width: 100vw !important;
+            width: 100vw !important;
+            box-sizing: border-box !important;
+            overflow-x: hidden !important;
+        }
+        * {
+            box-sizing: border-box !important;
+        }
+        #tutorialVideoModal .modal-dialog {
+            max-width: 100vw !important;
+            width: 100vw !important;
+            margin: 0.5rem auto !important;
+            box-sizing: border-box !important;
+            overflow-x: hidden !important;
+        }
+        #tutorialVideoModal .modal-content {
+            border-radius: 12px !important;
+            padding: 0.5rem !important;
+            max-width: 100vw !important;
+            width: 100vw !important;
+            box-sizing: border-box !important;
+            overflow-x: hidden !important;
+        }
+        #tutorialVideoModal .modal-header {
+            padding: 0.5rem 1rem !important;
+            max-width: 100vw !important;
+            width: 100vw !important;
+            box-sizing: border-box !important;
+        }
+        #tutorialVideoModal .modal-title {
+            font-size: 1.05rem !important;
+        }
+        #tutorialVideoModal .btn-close {
+            font-size: 1.2rem !important;
+            top: 0.5rem !important;
+            right: 0.5rem !important;
+            position: absolute !important;
+        }
+        #tutorialVideoModal .modal-body {
+            min-height: 180px !important;
+            padding: 0.5rem !important;
+            max-width: 100vw !important;
+            width: 100vw !important;
+            box-sizing: border-box !important;
+            overflow-x: hidden !important;
+        }
+        #tutorialVideoModal video {
+            max-width: 98vw !important;
+            width: 100vw !important;
+            max-height: 40vh !important;
+            box-sizing: border-box !important;
+            overflow-x: hidden !important;
+        }
+    }
     .hero-btn-fixed {
         opacity: 0.85 !important;
         background-color: rgba(2,25,122,0.85) !important;
@@ -49,7 +155,7 @@
             box-shadow: 0 8px 24px rgba(2,25,122,0.18);
             text-decoration: underline;
         }
-                    @media (max-width: 575px) {
+        @media (max-width: 575px) {
                         .masthead {
                             min-height: 100vh !important;
                             height: 100vh !important;
@@ -58,9 +164,21 @@
                             justify-content: center !important;
                             position: relative !important;
                             overflow: hidden !important;
+                            z-index: 0 !important;
                         }
+                            /* Corrige el z-index del modal para que esté por encima del fondo y backdrop */
+                            .modal {
+                                z-index: 1055 !important;
+                            }
+                            .modal-backdrop {
+                                z-index: 1050 !important;
+                                background-color: rgba(0,0,0,0.5) !important;
+                            }
+                            body.modal-open {
+                                overflow-y: auto !important;
+                            }
                         .masthead-card {
-                            min-height: 60vh !important;
+                            min-height: 50vh !important;
                             display: flex !important;
                             flex-direction: column !important;
                             justify-content: center !important;
@@ -74,14 +192,14 @@
                         .hero-btn-fixed {
                             font-size: 0.95rem !important;
                             width: 90vw !important;
-                            min-width: 250px !important;
+                            min-width: 220px !important;
                             max-width: 98vw !important;
-                            padding-left: 1rem !important;
-                            padding-right: 1rem !important;
+                            padding-left: 0 !important;
+                            padding-right: 0 !important;
                             text-align: center !important;
                             white-space: normal !important;
                             display: block !important;
-                            margin: 1.2rem auto 0.2rem auto !important;
+                            margin: 0 0 0.7rem 0 !important;
                             opacity: 0.8 !important;
                             background-color: rgba(2,25,122,0.85) !important;
                             color: #fff !important;
@@ -90,11 +208,16 @@
                         .hero-btn-fixed:hover {
                             opacity: 1 !important;
                         }
-                    }
+        }
+    @media (min-width: 992px) {
+        .masthead video {
+            object-position: center 50%; /* Ajusta el centro vertical, puedes probar 50% a 70% */
+        }
+    }
     @media (max-width: 991px) and (orientation: landscape) {
         .masthead video {
             height: 60vh !important;
-            min-height: 320px;
+            min-height: 390px;
             max-height: 420px;
         }
         .masthead-card {
@@ -102,6 +225,7 @@
             margin-bottom: 0 !important;
             padding-top: 0.25rem !important;
             padding-bottom: 0.25rem !important;
+            min-height: 0px !important;
         }
         .hero-btns-group {
             flex-direction: row !important;
@@ -175,48 +299,113 @@
         transition: box-shadow 0.2s, background-color 0.2s;
     }
 </style>
+
 <!-- Masthead-->
 {# HEADER: 4 SITUACIONES #}
 {% if site_config.header_background_video %}
-    <!-- 1. Video de fondo -->
-    <header class="masthead" style="position: relative; overflow: hidden;">
-        <video autoplay loop muted playsinline style="position: absolute; top: 0; left: 0; width: {{ site_config.header_video_width|default:'100%' }}; height: {{ site_config.header_video_height|default:'100%' }}; object-fit: cover; z-index: 0; filter: brightness({{ site_config.header_video_brightness|default:0.5 }}) contrast({{ site_config.header_video_contrast|default:1.0 }});">
-            <source src="{{ site_config.header_background_video.url }}" type="video/mp4">
-            Tu navegador no soporta el video de fondo.
-        </video>
-        <div class="container" style="position: relative; z-index: 1;">
-            <div class="masthead-card"
-                style="
-                    position: relative;
-                    max-width: 900px;
-                    /*margin: 0 auto 0.25rem auto;
-                    padding: 0.25rem 0.5rem;*/
-                    border-radius: 1.5rem;
-                    box-shadow: 0 4px {{ site_config.hero_card_elevation|default:8 }}px rgba(2,25,122,0.18);
-                    {% if site_config.hero_card_bg_image %}
-                        background-image: url('{{ site_config.hero_card_bg_image.url }}');
-                        background-size: cover;
-                        background-position: center;
-                    {% endif %}
-                    background-color: {{ site_config.hero_card_bg_color }};
-                    opacity: {{ site_config.hero_card_bg_opacity|stringformat:'f' }};
-                    overflow: hidden;
-                    transition: box-shadow 0.2s, background-color 0.2s, opacity 0.2s;
-                "
-                onmouseover="this.style.boxShadow='0 8px {{ site_config.hero_card_hover_elevation|default:24 }}px rgba(2,25,122,0.28)';"
-                onmouseout="this.style.boxShadow='0 4px {{ site_config.hero_card_elevation|default:8 }}px rgba(2,25,122,0.18)';"
-            >
-                <div style="position: relative; z-index: 1;">
-                    <div class="masthead-subheading">{{ site_config.hero_subtitle }}</div>
-                    <div class="masthead-heading text-uppercase">{{ site_config.hero_title }}</div>
+    
+        <!-- 1. Video de fondo -->
+        <header class="masthead" style="position: relative; overflow: hidden;">
+            <video autoplay loop muted playsinline style="position: absolute; top: 0; left: 0; width: {{ site_config.header_video_width|default:'100%' }}; height: {{ site_config.header_video_height|default:'100%' }}; object-fit: cover; z-index: 0; filter: brightness({{ site_config.header_video_brightness|default:0.5 }}) contrast({{ site_config.header_video_contrast|default:1.0 }});">
+                <source src="{{ site_config.header_background_video.url }}" type="video/mp4">
+                Tu navegador no soporta el video de fondo.
+            </video>
+            <div class="container" style="position: relative; z-index: 1;">
+                <div class="masthead-card"
+                    style="
+                        position: relative;
+                        max-width: 900px;
+                        min-height: 180px;
+                        /*margin: 0 auto 0.25rem auto;
+                        padding: 0.25rem 0.5rem;*/
+                        border-radius: 1.5rem;
+                        box-shadow: 0 4px {{ site_config.hero_card_elevation|default:8 }}px rgba(2,25,122,0.18);
+                        {% if site_config.hero_card_bg_image %}
+                            background-image: url('{{ site_config.hero_card_bg_image.url }}');
+                            background-size: cover;
+                            background-position: center;
+                        {% endif %}
+                        background-color: rgba(2,25,122,{{ site_config.hero_card_bg_opacity|stringformat:'f'|default:'0.85' }});
+                        overflow: hidden;
+                        transition: box-shadow 0.2s, background-color 0.2s;
+                    "
+                    onmouseover="this.style.boxShadow='0 8px {{ site_config.hero_card_hover_elevation|default:24 }}px rgba(2,25,122,0.28)';"
+                    onmouseout="this.style.boxShadow='0 4px {{ site_config.hero_card_elevation|default:8 }}px rgba(2,25,122,0.18)';"
+                >
+                    <div style="position: relative; z-index: 1;">
+                        {% if site_config.show_hero_subtitle and site_config.hero_subtitle %}
+                            <div class="masthead-subheading">{{ site_config.hero_subtitle }}</div>
+                        {% endif %}
+                        {% if site_config.show_hero_title and site_config.hero_title %}
+                            <div class="masthead-heading text-uppercase">{{ site_config.hero_title }}</div>
+                        {% endif %}
+                    </div>
+
+                </div>
+                <div class="d-flex flex-wrap justify-content-center gap-3 mt-3 hero-btns-group">
+                                            <!-- Modal para video tutorial -->
+                                            <div class="modal fade" id="tutorialVideoModal" tabindex="-1" aria-labelledby="tutorialVideoModalLabel" aria-hidden="true">
+                                                <div class="modal-dialog modal-dialog-centered modal-lg">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title" id="tutorialVideoModalLabel">Tutorial de Turno</h5>
+                                                        </div>
+                                                        <div class="modal-body d-flex justify-content-center align-items-center" style="min-height:350px;">
+                                                            {% if site_config.header_btns_video %}
+                                                            <video id="tutorialVideo" controls style="max-width:100%; max-height:70vh; border-radius:8px; box-shadow:0 2px 8px rgba(2,25,122,0.08);">
+                                                                    <source src="{{ site_config.header_btns_video.url }}" type="video/mp4">
+                                                                    Tu navegador no soporta el video.
+                                                            </video>
+                                                            {% else %}
+                                                            <div class="text-muted">No hay video tutorial disponible.</div>
+                                                            {% endif %}
+                                                        </div>
+                                                        <div class="modal-footer d-flex justify-content-center">
+                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <script>
+                                            document.addEventListener('DOMContentLoaded', function() {
+                                                var openBtn = document.getElementById('openTutorialModal');
+                                                if (openBtn) {
+                                                    openBtn.addEventListener('click', function(e) {
+                                                        e.preventDefault();
+                                                        var modal = new bootstrap.Modal(document.getElementById('tutorialVideoModal'), { backdrop: false });
+                                                        modal.show();
+                                                    });
+                                                }
+                                            });
+                                            </script>
+                    <!-- Texto tutorial sobre los botones -->
+                    <div class="hero-btns-block d-flex flex-column align-items-center w-100">
+
+
+
+                        <div class="d-flex flex-wrap justify-content-center gap-3 w-100">
+                            <a class="btn btn-xl text-uppercase header-btn hero-btn-fixed" href="{{ site_config.header_btn1_url }}" target="_blank" style="background-color: {{ site_config.header_btn_bgcolor }}; color: #fff; transition: transform 0.2s cubic-bezier(.4,2,.3,1), box-shadow 0.2s; box-shadow: 0 2px 8px rgba(2,25,122,0.08); min-width:220px;" onmouseover="this.style.transform='translateY(-6px) scale(1.04)';this.style.boxShadow='0 8px 24px rgba(2,25,122,0.18)';" onmouseout="this.style.transform='none';this.style.boxShadow='0 2px 8px rgba(2,25,122,0.08)';">{{ site_config.header_btn1_text }}</a>
+                            <a class="btn btn-xl text-uppercase header-btn hero-btn-fixed" href="{{ site_config.header_btn2_url }}" target="_blank" style="background-color: {{ site_config.header_btn_bgcolor }}; color: #fff; transition: transform 0.2s cubic-bezier(.4,2,.3,1), box-shadow 0.2s; box-shadow: 0 2px 8px rgba(2,25,122,0.08); min-width:220px;" onmouseover="this.style.transform='translateY(-6px) scale(1.04)';this.style.boxShadow='0 8px 24px rgba(2,25,122,0.18)';" onmouseout="this.style.transform='none';this.style.boxShadow='0 2px 8px rgba(2,25,122,0.08)';">{{ site_config.header_btn2_text }}</a>
+                        </div>
+                        {% if site_config.header_btns_text %}
+                        <div class="text-center mt-3 px-2" style="font-size:1.15rem; color:{{ site_config.header_btns_text_color|default:'#fff' }}; font-weight:500; max-width:600px; width:100%;">
+                            {% with txt=site_config.header_btns_text %}
+                            {% if 'Ver tutorial' in txt %}
+                                {% with parts=txt|cut:'Ver tutorial' %}
+                                    {{ parts }}<a href="#" id="openTutorialModal" style="color:{{ site_config.header_btns_text_color|default:'#fff' }}; text-decoration:underline; font-weight:600;">Ver tutorial</a>
+                                {% endwith %}
+                            {% else %}
+                                {{ txt }}
+                            {% endif %}
+                            {% endwith %}
+                        </div>
+                        {% endif %}
+
+                    </div>
                 </div>
             </div>
-            <div class="d-flex flex-wrap justify-content-center gap-3 mt-3 hero-btns-group">
-                <a class="btn btn-xl text-uppercase header-btn hero-btn-fixed" href="{{ site_config.header_btn1_url }}" target="_blank" style="background-color: {{ site_config.header_btn_bgcolor }}; color: #fff; transition: transform 0.2s cubic-bezier(.4,2,.3,1), box-shadow 0.2s; box-shadow: 0 2px 8px rgba(2,25,122,0.08);" onmouseover="this.style.transform='translateY(-6px) scale(1.04)';this.style.boxShadow='0 8px 24px rgba(2,25,122,0.18)';" onmouseout="this.style.transform='none';this.style.boxShadow='0 2px 8px rgba(2,25,122,0.08)';">{{ site_config.header_btn1_text }}</a>
-                <a class="btn btn-xl text-uppercase header-btn hero-btn-fixed" href="{{ site_config.header_btn2_url }}" target="_blank" style="background-color: {{ site_config.header_btn_bgcolor }}; color: #fff; transition: transform 0.2s cubic-bezier(.4,2,.3,1), box-shadow 0.2s; box-shadow: 0 2px 8px rgba(2,25,122,0.08);" onmouseover="this.style.transform='translateY(-6px) scale(1.04)';this.style.boxShadow='0 8px 24px rgba(2,25,122,0.18)';" onmouseout="this.style.transform='none';this.style.boxShadow='0 2px 8px rgba(2,25,122,0.08)';">{{ site_config.header_btn2_text }}</a>
-            </div>
-        </div>
-    </header>
+        </header>
+   
 {% elif site_config.header_background %}
     <!-- 2. Imagen de fondo -->
     <header class="masthead" style="background-image: url('{{ site_config.header_background.url }}'); position: relative; overflow: hidden;">
@@ -244,9 +433,27 @@
                 onmouseout="this.style.boxShadow='0 4px {{ site_config.hero_card_elevation|default:8 }}px rgba(2,25,122,0.18)';"
             >
                 <div style="position: relative; z-index: 1;">
-                    <div class="masthead-subheading">{{ site_config.hero_subtitle }}</div>
-                    <div class="masthead-heading text-uppercase">{{ site_config.hero_title }}</div>
+                    {% if site_config.show_hero_subtitle and site_config.hero_subtitle %}
+                        <div class="masthead-subheading">{{ site_config.hero_subtitle }}</div>
+                    {% endif %}
+                    {% if site_config.show_hero_title and site_config.hero_title %}
+                        <div class="masthead-heading text-uppercase">{{ site_config.hero_title }}</div>
+                    {% endif %}
                 </div>
+                <!-- Texto tutorial sobre los botones -->
+                {% if site_config.header_btns_text %}
+                <div class="text-center mb-2" style="font-size:1.08rem; color:{{ site_config.header_btns_text_color|default:'#fff' }}; font-weight:400;">
+                    {% with txt=site_config.header_btns_text %}
+                    {% if 'Ver tutorial' in txt %}
+                        {% with parts=txt|cut:'Ver tutorial' %}
+                            {{ parts }}<a href="#" id="openTutorialModal" style="color:#0056b3; text-decoration:underline; font-weight:500;">Ver tutorial</a>
+                        {% endwith %}
+                    {% else %}
+                        {{ txt }}
+                    {% endif %}
+                    {% endwith %}
+                </div>
+                {% endif %}
             </div>
             <div class="d-flex flex-wrap justify-content-center gap-3 mt-3">
                 <a class="btn btn-xl text-uppercase header-btn" href="{{ site_config.header_btn1_url }}" target="_blank" style="background-color: {{ site_config.header_btn_bgcolor }}; color: #fff; min-width: 220px; transition: transform 0.2s cubic-bezier(.4,2,.3,1), box-shadow 0.2s; box-shadow: 0 2px 8px rgba(2,25,122,0.08);" onmouseover="this.style.transform='translateY(-6px) scale(1.04)';this.style.boxShadow='0 8px 24px rgba(2,25,122,0.18)';" onmouseout="this.style.transform='none';this.style.boxShadow='0 2px 8px rgba(2,25,122,0.08)';">{{ site_config.header_btn1_text }}</a>
@@ -280,14 +487,34 @@
                 onmouseout="this.style.boxShadow='0 4px {{ site_config.hero_card_elevation|default:8 }}px rgba(2,25,122,0.18)';"
             >
                 <div style="position: relative; z-index: 1;">
-                    <div class="masthead-subheading">{{ site_config.hero_subtitle }}</div>
-                    <div class="masthead-heading text-uppercase">{{ site_config.hero_title }}</div>
+                    {% if site_config.show_hero_subtitle and site_config.hero_subtitle %}
+                        <div class="masthead-subheading">{{ site_config.hero_subtitle }}</div>
+                    {% endif %}
+                    {% if site_config.show_hero_title and site_config.hero_title %}
+                        <div class="masthead-heading text-uppercase">{{ site_config.hero_title }}</div>
+                    {% endif %}
                 </div>
+               
+                <!-- Texto tutorial sobre los botones -->
+                {% if site_config.header_btns_text %}
+                <div class="text-center mb-2" style="font-size:1.08rem; color:#003466; font-weight:400;">
+                    {% with txt=site_config.header_btns_text %}
+                    {% if 'Ver tutorial' in txt %}
+                        {% with parts=txt|cut:'Ver tutorial' %}
+                            {{ parts }}<a href="#" id="openTutorialModal" style="color:#0056b3; text-decoration:underline; font-weight:500;">Ver tutorial</a>
+                        {% endwith %}
+                    {% else %}
+                        {{ txt }}
+                    {% endif %}
+                    {% endwith %}
+                </div>
+                {% endif %}
             </div>
             <div class="d-flex flex-wrap justify-content-center gap-3 mt-3">
                 <a class="btn btn-xl text-uppercase header-btn" href="{{ site_config.header_btn1_url }}" target="_blank" style="background-color: {{ site_config.header_btn_bgcolor }}; color: #fff; min-width: 220px; transition: transform 0.2s cubic-bezier(.4,2,.3,1), box-shadow 0.2s; box-shadow: 0 2px 8px rgba(2,25,122,0.08);" onmouseover="this.style.transform='translateY(-6px) scale(1.04)';this.style.boxShadow='0 8px 24px rgba(2,25,122,0.18)';" onmouseout="this.style.transform='none';this.style.boxShadow='0 2px 8px rgba(2,25,122,0.08)';">{{ site_config.header_btn1_text }}</a>
                 <a class="btn btn-xl text-uppercase header-btn" href="{{ site_config.header_btn2_url }}" target="_blank" style="background-color: {{ site_config.header_btn_bgcolor }}; color: #fff; min-width: 220px; transition: transform 0.2s cubic-bezier(.4,2,.3,1), box-shadow 0.2s; box-shadow: 0 2px 8px rgba(2,25,122,0.08);" onmouseover="this.style.transform='translateY(-6px) scale(1.04)';this.style.boxShadow='0 8px 24px rgba(2,25,122,0.18)';" onmouseout="this.style.transform='none';this.style.boxShadow='0 2px 8px rgba(2,25,122,0.08)';">{{ site_config.header_btn2_text }}</a>
             </div>
+
         </div>
     </header>
 {% else %}
@@ -316,9 +543,27 @@
                 onmouseout="this.style.boxShadow='0 4px {{ site_config.hero_card_elevation|default:8 }}px rgba(2,25,122,0.18)';"
             >
                 <div style="position: relative; z-index: 1;">
-                    <div class="masthead-subheading">{{ site_config.hero_subtitle }}</div>
-                    <div class="masthead-heading text-uppercase">{{ site_config.hero_title }}</div>
+                    {% if site_config.show_hero_subtitle and site_config.hero_subtitle %}
+                        <div class="masthead-subheading">{{ site_config.hero_subtitle }}</div>
+                    {% endif %}
+                    {% if site_config.show_hero_title and site_config.hero_title %}
+                        <div class="masthead-heading text-uppercase">{{ site_config.hero_title }}</div>
+                    {% endif %}
                 </div>
+                <!-- Texto tutorial sobre los botones -->
+                {% if site_config.header_btns_text %}
+                <div class="text-center mb-2" style="font-size:1.08rem; color:#003466; font-weight:400;">
+                    {% with txt=site_config.header_btns_text %}
+                    {% if 'Ver tutorial' in txt %}
+                        {% with parts=txt|cut:'Ver tutorial' %}
+                            {{ parts }}<a href="#" id="openTutorialModal" style="color:#0056b3; text-decoration:underline; font-weight:500;">Ver tutorial</a>
+                        {% endwith %}
+                    {% else %}
+                        {{ txt }}
+                    {% endif %}
+                    {% endwith %}
+                </div>
+                {% endif %}
             </div>
             <div class="d-flex flex-wrap justify-content-center gap-3 mt-3">
                 <a class="btn btn-xl text-uppercase header-btn" href="{{ site_config.header_btn1_url }}" target="_blank" style="background-color: {{ site_config.header_btn_bgcolor|default:'#007bff' }}; color: #fff; min-width: 220px; transition: transform 0.2s cubic-bezier(.4,2,.3,1), box-shadow 0.2s; box-shadow: 0 2px 8px rgba(2,25,122,0.08);" onmouseover="this.style.transform='translateY(-6px) scale(1.04)';this.style.boxShadow='0 8px 24px rgba(2,25,122,0.18)';" onmouseout="this.style.transform='none';this.style.boxShadow='0 2px 8px rgba(2,25,122,0.08)';">{{ site_config.header_btn1_text }}</a>
@@ -392,7 +637,13 @@
                     <i class="fas {{ service.icon }} fa-stack-1x" style="color: {{ site_config.service_icon_fgcolor }};"></i>
                 </span>
                 <h4 class="my-3">{{ service.title }}</h4>
-                <p class="text-muted text-justify" style="text-align: justify; text-justify: inter-word;">{{ service.description|linebreaksbr }}</p>
+                <div class="service-desc-card shadow-sm border-0 mb-4 animate__animated animate__fadeIn" style="background: #f8f9fa; border-radius: 1rem; transition: box-shadow 0.2s;">
+                    <div class="card-body p-3">
+                        <p class="service-desc-text" style="font-size:1.08rem; color:#003466; text-align:justify; margin-bottom:0;">
+                            {{ service.description|linebreaksbr }}
+                        </p>
+                    </div>
+                </div>
                 {% if service.attachment_html %}
                     <button type="button" class="btn btn-sm mt-2 mb-2" data-bs-toggle="modal" data-bs-target="#attachmentModal{{ service.id }}" style="background-color: #003466; color: #fff; border: none; box-shadow: 0 2px 8px rgba(2,25,122,0.08); transition: background-color 0.2s, box-shadow 0.2s;"
                         onmouseover="this.style.boxShadow='0 8px 24px rgba(2,25,122,0.18)';" onmouseout="this.style.boxShadow='0 2px 8px rgba(2,25,122,0.08)';">
@@ -433,8 +684,9 @@
 
 <!-- About-->
 <section class="page-section" id="about">
-    <div class="container">
-        <div class="text-center">
+    <div class="container" style="display:none;">
+        <!-- Contenido original oculto -->
+         <div class="text-center">
             <h2 class="section-heading text-uppercase">Nosotros</h2>
             <h3 class="section-subheading text-muted">Nuestra historia</h3>
         </div>
@@ -470,6 +722,152 @@
             <p class="text-center text-muted">No hay eventos disponibles.</p>
             {% endfor %}
         </ul>
+    </div>
+    <div class="container">
+        <div class="text-center">
+            <h2 class="section-heading text-uppercase">Nosotros</h2>
+            <h3 class="section-subheading text-muted">Nuestra historia</h3>
+        </div>
+        <div class="row d-flex align-items-stretch justify-content-center">
+            <div class="col-lg-6 col-12 mb-4 mb-lg-0 d-flex flex-column justify-content-center align-items-center h-100">
+                <div class="about-description w-100" style="font-size:1.15rem; color:#003466; text-align:justify; white-space:pre-line; margin-top:0; padding-top:0;">
+                    {{ about_section.description|linebreaksbr }}
+                </div>
+            </div>
+            <div class="col-lg-6 col-12 d-flex flex-column justify-content-center align-items-center h-100">
+                <div id="aboutCarousel" class="carousel slide shadow-sm rounded h-100 d-flex flex-column justify-content-center w-100" data-bs-ride="carousel">
+                    <div class="carousel-inner h-100" style="margin-top: 2em;">
+                                    {% for image in about_section.images.all %}
+                                    <div class="carousel-item {% if forloop.first %}active{% endif %} h-100">
+                                        <img src="{{ image.image.url }}" class="d-block w-100 rounded h-100 about-carousel-img" alt="Imagen Nosotros" style="object-fit:cover; cursor:pointer;" data-bs-toggle="modal" data-bs-target="#aboutImageModal" data-img-url="{{ image.image.url }}">
+                                    </div>
+                                    {% endfor %}
+                    </div>
+                    <button class="carousel-control-prev" type="button" data-bs-target="#aboutCarousel" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Anterior</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#aboutCarousel" data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Siguiente</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <style>
+        @media (max-width: 991px) {
+            #about .row {
+                justify-content: center !important;
+            }
+            #about .col-lg-6.col-12 {
+                display: flex !important;
+                flex-direction: column !important;
+                align-items: center !important;
+                justify-content: center !important;
+            }
+                #about .about-description {
+                    text-align: justify !important;
+                    max-width: 98vw !important;
+                }
+            #about #aboutCarousel {
+                max-width: 98vw !important;
+            }
+        }
+        </style>
+                <!-- Modal para imagen ampliada del carrusel -->
+                <div class="modal fade" id="aboutImageModal" tabindex="-1" aria-labelledby="aboutImageModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="aboutImageModalLabel">Imagen ampliada</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                            </div>
+                            <div class="modal-body d-flex justify-content-center align-items-center" style="min-height:350px;">
+                                <img id="aboutModalImg" src="" alt="Imagen ampliada" class="img-fluid rounded shadow" style="max-height:70vh; max-width:100%; object-fit:contain;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    var aboutImgs = document.querySelectorAll('.about-carousel-img');
+                    var modalImg = document.getElementById('aboutModalImg');
+                    var modalImgContainer = modalImg.parentElement;
+                    let scale = 1, originX = 0, originY = 0, isDragging = false, startX = 0, startY = 0, lastX = 0, lastY = 0;
+
+                    function resetZoom() {
+                        scale = 1;
+                        originX = 0;
+                        originY = 0;
+                        lastX = 0;
+                        lastY = 0;
+                        modalImg.style.transform = 'scale(1) translate(0px, 0px)';
+                        modalImg.style.cursor = 'zoom-in';
+                    }
+
+                    aboutImgs.forEach(function(img) {
+                        img.addEventListener('click', function() {
+                            var url = img.getAttribute('data-img-url');
+                            if (modalImg) {
+                                modalImg.src = url;
+                                resetZoom();
+                            }
+                        });
+                    });
+
+                    // Zoom con rueda del mouse
+                    modalImg.addEventListener('wheel', function(e) {
+                        e.preventDefault();
+                        let delta = e.deltaY > 0 ? -0.15 : 0.15;
+                        let newScale = Math.min(Math.max(scale + delta, 1), 3);
+                        if (newScale !== scale) {
+                            scale = newScale;
+                            modalImg.style.transform = `scale(${scale}) translate(${originX}px, ${originY}px)`;
+                            modalImg.style.cursor = scale > 1 ? 'grab' : 'zoom-in';
+                        }
+                    });
+
+                    // Arrastrar imagen cuando está ampliada
+                    modalImg.addEventListener('mousedown', function(e) {
+                        if (scale === 1) return;
+                        isDragging = true;
+                        startX = e.clientX;
+                        startY = e.clientY;
+                        modalImg.style.cursor = 'grabbing';
+                    });
+                    document.addEventListener('mousemove', function(e) {
+                        if (!isDragging) return;
+                        let dx = e.clientX - startX;
+                        let dy = e.clientY - startY;
+                        originX = lastX + dx;
+                        originY = lastY + dy;
+                        modalImg.style.transform = `scale(${scale}) translate(${originX}px, ${originY}px)`;
+                    });
+                    document.addEventListener('mouseup', function(e) {
+                        if (!isDragging) return;
+                        lastX = originX;
+                        lastY = originY;
+                        isDragging = false;
+                        modalImg.style.cursor = scale > 1 ? 'grab' : 'zoom-in';
+                    });
+
+                    // Doble click para resetear zoom
+                    modalImg.addEventListener('dblclick', function(e) {
+                        resetZoom();
+                    });
+
+                    // Limpiar imagen y zoom al cerrar el modal
+                    var aboutImageModal = document.getElementById('aboutImageModal');
+                    if (aboutImageModal) {
+                        aboutImageModal.addEventListener('hidden.bs.modal', function () {
+                            if (modalImg) {
+                                modalImg.src = '';
+                                resetZoom();
+                            }
+                        });
+                    }
+                });
+                </script>
     </div>
 </section>
 
@@ -522,7 +920,7 @@
                         <p class="mb-2"><i class="fas fa-phone me-2"></i><strong>Teléfono:</strong> {{ ubicacion.telefono }}</p>
                         <p class="mb-2"><i class="fas fa-map-marker-alt me-2"></i><strong>Provincia:</strong> {{ ubicacion.provincia }}</p>
                         <p class="mb-2"><i class="fas fa-clock me-2"></i><strong>Horario:</strong> {{ ubicacion.horario }}</p>
-                        <button class="btn btn-sm mt-2 ubicar-btn" style="background-color:#003466;color:#fff;border:none;box-shadow:0 2px 8px rgba(2,25,122,0.08);transition:background-color 0.2s,box-shadow 0.2s;" onmouseover="this.style.boxShadow='0 8px 24px rgba(2,25,122,0.18)';this.style.backgroundColor='#0056b3';" onmouseout="this.style.boxShadow='0 2px 8px rgba(2,25,122,0.08)';this.style.backgroundColor='#003466';" onclick="ubicarEnMapa({{ ubicacion.latitud|stringformat:'f' }}, {{ ubicacion.longitud|stringformat:'f' }})" disabled>Ubicar en el mapa</button>
+                            <a class="btn btn-sm mt-2 ms-2 waze-btn" href="https://waze.com/ul?ll={{ ubicacion.latitud|stringformat:'f' }},{{ ubicacion.longitud|stringformat:'f' }}&navigate=yes" target="_blank" style="background-color:#25d366;color:#fff;border:none;box-shadow:0 2px 8px rgba(2,25,122,0.08);transition:background-color 0.2s,box-shadow 0.2s;" onmouseover="this.style.boxShadow='0 8px 24px rgba(2,25,122,0.18)';this.style.backgroundColor='#1ebea5';" onmouseout="this.style.boxShadow='0 2px 8px rgba(2,25,122,0.08)';this.style.backgroundColor='#25d366';"><i class="fab fa-waze me-1"></i>Ir con Waze</a>
                     </div>
                 </div>
             </div>
@@ -530,7 +928,7 @@
         </div>
         <div class="row justify-content-center mb-5">
             <div class="col-12">
-                <div id="mapa-plantas" style="width: 100%; height: 350px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);"></div>
+                <div id="mapa-plantas" hidden style="width: 100%; height: 350px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);"></div>
             </div>
         </div>
     <!-- Leaflet.js para OpenStreetMap -->
@@ -585,6 +983,14 @@
     </div>
     <style>
         #ubicacion .card { border-radius: 1.2rem; }
+        #ubicacion .planta-card {
+            transition: box-shadow 0.25s cubic-bezier(.4,2,.3,1), transform 0.25s cubic-bezier(.4,2,.3,1);
+        }
+        #ubicacion .planta-card.elevada {
+            box-shadow: 0 12px 32px rgba(2,25,122,0.22), 0 2px 8px rgba(2,25,122,0.08);
+            transform: translateY(-8px) scale(1.03);
+            z-index: 2;
+        }
         #ubicacion h2.section-heading { font-size: 2.1rem; font-weight: 700; }
         #ubicacion h3.section-subheading { font-size: 1.15rem; }
         #ubicacion .card-title { font-size: 1.15rem; font-weight: 600; }
@@ -878,7 +1284,7 @@
     border-radius: 50%;
     width: 56px;
     height: 56px;
-    display: flex;
+    display: none !important;
     align-items: center;
     justify-content: center;
     box-shadow: 0 4px 16px rgba(0,0,0,0.18);
@@ -905,6 +1311,95 @@
         font-size: 1.5rem;
         max-width: 44px;
         max-height: 44px;
+    }
+    body {
+        overflow-x: hidden;
+    }
+}
+</style>
+
+<!-- Botón flotante para volver arriba -->
+<a href="#top" id="scrollToTopBtn" class="scroll-top-float" aria-label="Volver arriba" style="display:none;">
+    <i class="fas fa-arrow-up"></i>
+</a>
+<script>
+window.addEventListener('scroll', function() {
+    var scrollBtn = document.getElementById('scrollToTopBtn');
+    var whatsappBtn = document.querySelector('.whatsapp-float');
+    if (window.scrollY > 250) {
+        if (scrollBtn) scrollBtn.style.display = 'flex';
+        if (whatsappBtn) whatsappBtn.style.setProperty('display', 'flex', 'important');
+    } else {
+        if (scrollBtn) scrollBtn.style.display = 'none';
+        if (whatsappBtn) whatsappBtn.style.setProperty('display', 'none', 'important');
+    }
+});
+if (document.getElementById('scrollToTopBtn')) {
+    document.getElementById('scrollToTopBtn').addEventListener('click', function(e) {
+        e.preventDefault();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+}
+</script>
+<style>
+/* WhatsApp arriba, Scroll abajo */
+/* Unificar tamaño de botones flotantes */
+.whatsapp-float, .scroll-top-float {
+    position: fixed;
+    right: 18px;
+    border-radius: 50%;
+    width: 56px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+    font-size: 2.2rem;
+    transition: background 0.2s, box-shadow 0.2s;
+    text-decoration: none;
+}
+.whatsapp-float {
+    bottom: 140px;
+    z-index: 9999;
+    background: #25d366;
+    color: #fff;
+}
+.whatsapp-float:hover {
+    box-shadow: 0 8px 32px rgba(0,0,0,0.28);
+}
+.whatsapp-float i {
+    color: #fff;
+    transition: color 0.2s;
+}
+.scroll-top-float {
+    bottom: 18px;
+    z-index: 9998;
+    background: #003466;
+    color: #fff;
+    opacity: 0.92;
+}
+.scroll-top-float:hover {
+    box-shadow: 0 8px 32px rgba(0,0,0,0.28);
+    background: #0056b3;
+}
+.scroll-top-float i {
+    color: #fff;
+    transition: color 0.2s;
+}
+@media (max-width: 575px) {
+    .whatsapp-float, .scroll-top-float {
+        right: 4vw;
+        width: 44px;
+        height: 44px;
+        font-size: 1.5rem;
+        max-width: 44px;
+        max-height: 44px;
+    }
+    .whatsapp-float {
+        bottom: 22vw;
+    }
+    .scroll-top-float {
+        bottom: 4vw;
     }
     body {
         overflow-x: hidden;
