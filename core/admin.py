@@ -1,7 +1,35 @@
 from django.contrib import admin
-from .models import AboutSection, AboutImage, EmailConfig
+from .models import AboutSection, AboutImage, EmailConfig, WhatsAppConfig
+from django.contrib import admin
+from django.utils.html import format_html
+from .models import Service, PortfolioItem, TimelineEvent, TeamMember, ContactMessage, SiteConfiguration
+from django import forms
+
+@admin.register(WhatsAppConfig)
+class WhatsAppConfigAdmin(admin.ModelAdmin):
+    list_display = ['nombre', 'pais', 'codigo_pais', 'provincia', 'numero_local', 'numero_internacional', 'descripcion', 'created_at', 'updated_at']
+    search_fields = ['nombre', 'pais', 'provincia', 'numero_local', 'numero_internacional', 'descripcion']
+    readonly_fields = ['numero_internacional', 'created_at', 'updated_at']
+    fieldsets = (
+        (None, {
+            'fields': ('nombre', 'pais', 'codigo_pais', 'provincia', 'numero_local', 'numero_internacional', 'descripcion', 'created_at', 'updated_at')
+        }),
+    )
+
+class EmailConfigForm(forms.ModelForm):
+    class Meta:
+        model = EmailConfig
+        fields = '__all__'
+        widgets = {
+            'email_host_password': forms.PasswordInput(render_value=True, attrs={'style': 'width: 300px;'}),
+        }
+
+    class Media:
+        js = ('admin/js/emailconfig_password_toggle.js',)
+
 @admin.register(EmailConfig)
 class EmailConfigAdmin(admin.ModelAdmin):
+    form = EmailConfigForm
     list_display = ['email_host_user', 'contact_admin_email', 'email_host', 'email_port', 'email_use_tls']
     search_fields = ['email_host_user', 'contact_admin_email']
     fieldsets = (
@@ -15,9 +43,6 @@ class EmailConfigAdmin(admin.ModelAdmin):
             'fields': ('default_from_email', 'contact_admin_email')
         }),
     )
-from django.contrib import admin
-from django.utils.html import format_html
-from .models import Service, PortfolioItem, TimelineEvent, TeamMember, ContactMessage, SiteConfiguration
 
 class AboutImageInline(admin.TabularInline):
     model = AboutImage
@@ -55,60 +80,6 @@ class ServiceAdmin(admin.ModelAdmin):
             'fields': ('order', 'active')
         }),
     )
-
-
-@admin.register(PortfolioItem)
-class PortfolioItemAdmin(admin.ModelAdmin):
-    """Admin para el modelo PortfolioItem"""
-    list_display = ['title', 'subtitle', 'client', 'category', 'thumbnail_preview', 'order', 'active']
-    list_filter = ['active', 'category', 'created_at']
-    search_fields = ['title', 'subtitle', 'client', 'description']
-    list_editable = ['order', 'active']
-    ordering = ['order', 'title']
-    date_hierarchy = 'created_at'
-
-    fieldsets = (
-        ('Información del Proyecto', {
-            'fields': ('title', 'subtitle', 'client', 'category', 'description')
-        }),
-        ('Imágenes', {
-            'fields': ('thumbnail', 'full_image')
-        }),
-        ('Configuración', {
-            'fields': ('order', 'active')
-        }),
-    )
-
-    def thumbnail_preview(self, obj):
-        """Muestra preview de la imagen thumbnail"""
-        if obj.thumbnail:
-            return format_html(
-                '<img src="{}" width="50" height="50" style="object-fit: cover; border-radius: 5px;" />',
-                obj.thumbnail.url
-            )
-        return '-'
-    thumbnail_preview.short_description = 'Preview'
-
-
-@admin.register(TimelineEvent)
-class TimelineEventAdmin(admin.ModelAdmin):
-    """Admin para el modelo TimelineEvent"""
-    list_display = ['date', 'title', 'order', 'inverted', 'is_final', 'active']
-    list_filter = ['active', 'inverted', 'is_final', 'created_at']
-    search_fields = ['date', 'title', 'description']
-    list_editable = ['order', 'inverted', 'is_final', 'active']
-    ordering = ['order', 'date']
-    date_hierarchy = 'created_at'
-
-    fieldsets = (
-        ('Información del Evento', {
-            'fields': ('date', 'title', 'description', 'image')
-        }),
-        ('Configuración', {
-            'fields': ('order', 'inverted', 'is_final', 'active')
-        }),
-    )
-
 
 @admin.register(TeamMember)
 class TeamMemberAdmin(admin.ModelAdmin):

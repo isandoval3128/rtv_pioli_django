@@ -6,6 +6,12 @@ import json
 from .models import AboutSection
 from tarifas.models import Tarifa
 from tarifas.utils import excel_to_html
+from django.conf import settings
+from django.core.mail import send_mail, BadHeaderError
+from .models import EmailConfig
+from .models import ContactMessage
+from .models import WhatsAppConfig
+from ubicacion.models import Ubicacion
 
 def home_view(request):
     """
@@ -23,12 +29,13 @@ def home_view(request):
     timeline_events = TimelineEvent.objects.filter(active=True).order_by('order', 'date')
     team_members = TeamMember.objects.filter(active=True).order_by('order', 'name')
 
-    # Crear form de contacto vacío
     form = ContactForm()
+    
+    # Obtener configuración de WhatsApp flotante
+    whatsapp_config = WhatsAppConfig.objects.first()
 
     # Obtener ubicaciones dinámicas
     try:
-        from ubicacion.models import Ubicacion
         ubicaciones = Ubicacion.objects.all()
     except ImportError:
         ubicaciones = []
@@ -62,10 +69,10 @@ def home_view(request):
         'tabla_html': tabla_html,
         'tarifas_list': tarifas_list,
         'about_section': about_section,
+        'whatsapp_config': whatsapp_config,
     }
 
     return render(request, 'home.html', context)
-
 
 def contact_submit(request):
     """
@@ -76,9 +83,8 @@ def contact_submit(request):
 
         if form.is_valid():
             data = form.cleaned_data
-            from django.conf import settings
-            from django.core.mail import send_mail, BadHeaderError
-            subject = f"Nuevo mensaje RTV Pioli web de {data['name']}"
+
+            subject = f"Nuevo mensaje RTV Pioli Web de {data['name']}"
             body = (
                 f"Has recibido un nuevo mensaje de contacto desde la web:\n\n"
                 f"Nombre: {data['name']}\n"
@@ -89,7 +95,7 @@ def contact_submit(request):
             sent_successfully = False
             error_message = ""
             try:
-                from .models import EmailConfig
+                
                 email_config = EmailConfig.objects.first()
                 if email_config:
                     from django.core.mail import EmailMessage, get_connection
@@ -133,7 +139,7 @@ def contact_submit(request):
             except Exception as e:
                 error_message = str(e)
                 # Guardar el mensaje en el modelo si falla el envío
-                from .models import ContactMessage
+                
                 ContactMessage.objects.create(
                     name=data['name'],
                     email=data['email'],

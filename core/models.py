@@ -13,8 +13,8 @@ class EmailConfig(models.Model):
     contact_admin_email = models.EmailField(max_length=255, verbose_name='Correo destinatario', blank=True)
 
     class Meta:
-        verbose_name = 'Configuración de correo'
-        verbose_name_plural = 'Configuración de correo'
+        verbose_name = 'Configuración de Correo'
+        verbose_name_plural = 'Configuración de Correo'
 
     def __str__(self):
         return f"Config correo: {self.email_host_user}"
@@ -36,11 +36,47 @@ class AboutImage(models.Model):
     image = models.ImageField(upload_to="about_images/", verbose_name="Imagen")
 
     class Meta:
-        verbose_name = "Imagen de Nosotros"
-        verbose_name_plural = "Imágenes de Nosotros"
+        verbose_name = "Imagen de Seccion Nosotros"
+        verbose_name_plural = "Imágenes de Seccion Nosotros"
 
     def __str__(self):
         return f"Imagen para {self.about_section.title}"
+
+class WhatsAppConfig(models.Model):
+    nombre = models.CharField(max_length=100, verbose_name="Nombre")
+    pais = models.CharField(max_length=50, verbose_name="País", default="Argentina")
+    codigo_pais = models.CharField(max_length=6, verbose_name="Código de país", default="+54")
+    provincia = models.CharField(max_length=50, verbose_name="Provincia", blank=True)
+    numero_local = models.CharField(max_length=20, verbose_name="Número local", default="")
+    numero_internacional = models.CharField(max_length=20, verbose_name="Número internacional", blank=True, editable=False)
+    descripcion = models.TextField(blank=True, verbose_name="Descripción")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Fecha de creación")
+    updated_at = models.DateTimeField(auto_now=True, verbose_name="Fecha de actualización")
+
+    class Meta:
+        verbose_name = "Configuración WhatsApp"
+        verbose_name_plural = "Configuración WhatsApp"
+
+    def clean(self):
+        import phonenumbers
+        # Construir el número internacional
+        raw_number = f"{self.codigo_pais}{self.numero_local}".replace(" ", "")
+        try:
+            phone_obj = phonenumbers.parse(raw_number, None)
+            if not phonenumbers.is_valid_number(phone_obj):
+                raise ValidationError({
+                    'numero_local': 'El número de teléfono no es válido para el país seleccionado.'
+                })
+            self.numero_internacional = phonenumbers.format_number(phone_obj, phonenumbers.PhoneNumberFormat.E164)
+        except Exception as e:
+            raise ValidationError({'numero_local': f'Número inválido: {e}'})
+
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"{self.nombre} ({self.numero_internacional or self.numero_local})"
 
 class Service(models.Model):
     """Modelo para los servicios mostrados en la página"""
@@ -59,8 +95,8 @@ class Service(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        verbose_name = "Servicio"
-        verbose_name_plural = "Servicios"
+        verbose_name = "Seccion Servicio"
+        verbose_name_plural = "Seccion Servicios"
         ordering = ['order', 'title']
 
     def __str__(self):
@@ -187,8 +223,8 @@ class TeamMember(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        verbose_name = "Miembro del Equipo"
-        verbose_name_plural = "Miembros del Equipo"
+        verbose_name = "Seccion Miembro Equipo"
+        verbose_name_plural = "Seccion Miembros Equipo"
         ordering = ['order', 'name']
 
     def __str__(self):
@@ -206,8 +242,8 @@ class ContactMessage(models.Model):
     replied = models.BooleanField(default=False, verbose_name="Respondido")
 
     class Meta:
-        verbose_name = "Mensaje de Contacto"
-        verbose_name_plural = "Mensajes de Contacto"
+        verbose_name = "Mensaje de Seccion Contacto"
+        verbose_name_plural = "Mensajes de Seccion Contacto"
         ordering = ['-created_at']
 
     def __str__(self):
