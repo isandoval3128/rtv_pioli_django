@@ -1270,9 +1270,12 @@
 </style>
 
 <!-- Botón flotante de WhatsApp -->
-<a href="https://wa.me/5493881234567" target="_blank" class="whatsapp-float" aria-label="WhatsApp">
+{% if whatsapp_config and whatsapp_config.numero_internacional %}
+<a href="https://wa.me/{{ whatsapp_config.numero_internacional|cut:'+' }}" target="_blank" class="whatsapp-float" aria-label="WhatsApp">
     <i class="fab fa-whatsapp"></i>
+    <span class="visually-hidden">{{ whatsapp_config.nombre }}: {{ whatsapp_config.descripcion }}</span>
 </a>
+{% endif %}
 <style>
 .whatsapp-float {
     position: fixed;
