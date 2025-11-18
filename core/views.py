@@ -36,17 +36,13 @@ def home_view(request):
     # Obtener la tarifa, la tabla HTML y la lista para móviles
     try:
         tarifa = Tarifa.objects.first()
-        try:
-            print("[DEPURACION] tarifa obtenida:", json.dumps(str(tarifa)))
-        except Exception as e:
-            print("[DEPURACION] tarifa obtenida:", tarifa)
         tabla_html = None
         tarifas_list = []
         if tarifa and tarifa.archivo_excel:
             tabla_html = excel_to_html(tarifa.archivo_excel.path)
             from tarifas.utils import excel_to_list
             tarifas_list = excel_to_list(tarifa.archivo_excel.path)
-            print("[DEPURACION] tarifas_list:", tarifas_list)
+            #print("[DEPURACION] tarifas_list:", tarifas_list)
     except ImportError:
         tarifa = None
         tabla_html = None
@@ -105,18 +101,31 @@ def contact_submit(request):
                         password=email_config.email_host_password,
                         use_tls=email_config.email_use_tls,
                     )
-                    destinatario = data.get('email') or email_config.contact_admin_email
-                    print('DEBUG EMAIL CONFIG:', email_config)
-                    print('DEBUG DESTINATARIO:', destinatario)
-                    email = EmailMessage(
+                    # 1. Enviar mensaje del usuario al administrador
+                    admin_email = email_config.contact_admin_email or email_config.email_host_user
+                    email_admin = EmailMessage(
                         subject,
                         body,
                         email_config.default_from_email or email_config.email_host_user,
-                        [destinatario],
+                        [admin_email],
                         connection=connection
                     )
-                    print('DEBUG EMAIL OBJ:', email)
-                    email.send(fail_silently=False)
+                    email_admin.send(fail_silently=False)
+                    # 2. Enviar mensaje de confirmación al usuario
+                    confirm_subject = "RTV Pioli - Confirmación de contacto"
+                    confirm_body = (
+                        f"Estimado/a {data['name']},\n\n"
+                        f"RTV Pioli recibió su mensaje. Le estaremos respondiendo a la brevedad.\n\n"
+                        f"Gracias por contactarnos."
+                    )
+                    email_user = EmailMessage(
+                        confirm_subject,
+                        confirm_body,
+                        email_config.default_from_email or email_config.email_host_user,
+                        [data['email']],
+                        connection=connection
+                    )
+                    email_user.send(fail_silently=False)
                     sent_successfully = True
                     messages.success(request, '¡Gracias por contactarnos! Tu mensaje fue enviado correctamente.')
                 else:

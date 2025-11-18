@@ -20,8 +20,26 @@ def excel_to_list(file_path):
         # Eliminar columnas con nombre vacío
         df = df.loc[:, df.columns != '']
         # Formatear todos los campos numéricos como moneda
-        for col in df.select_dtypes(include=['float', 'int']).columns:
-            df[col] = df[col].apply(lambda x: f"${x:,.2f}".replace(",", ".").replace(".", ",", 1) if x != "" else "")
+        import re
+        def limpiar_y_formatear(val):
+            if isinstance(val, str):
+                # Eliminar símbolo de pesos, espacios y puntos de miles
+                val_limpio = val.replace('$', '').replace(' ', '').replace('.', '').replace(',', '.')
+                # Si es vacío, devolver tal cual
+                if not val_limpio.strip():
+                    return val
+                # Si es numérico, formatear
+                try:
+                    num = float(val_limpio)
+                    return f"${num:,.2f}".replace(",", ".").replace(".", ",", 1)
+                except ValueError:
+                    return val
+            elif isinstance(val, (int, float)):
+                return f"${val:,.2f}".replace(",", ".").replace(".", ",", 1)
+            return val
+        # Aplicar a todas las columnas excepto la primera (descriptiva)
+        for col in df.columns[1:]:
+            df[col] = df[col].apply(limpiar_y_formatear)
         return df.to_dict(orient='records')
     except Exception as e:
         return []
@@ -32,8 +50,22 @@ def excel_to_html(file_path):
         # Reemplazar NaN/null por string vacío
         df = df.fillna("")
         # Formatear todos los campos numéricos como moneda
-        for col in df.select_dtypes(include=['float', 'int']).columns:
-            df[col] = df[col].apply(lambda x: f"${x:,.2f}".replace(",", ".").replace(".", ",", 1) if x != "" else "")
+        import re
+        def limpiar_y_formatear(val):
+            if isinstance(val, str):
+                val_limpio = val.replace('$', '').replace(' ', '').replace('.', '').replace(',', '.')
+                if not val_limpio.strip():
+                    return val
+                try:
+                    num = float(val_limpio)
+                    return f"${num:,.2f}".replace(",", ".").replace(".", ",", 1)
+                except ValueError:
+                    return val
+            elif isinstance(val, (int, float)):
+                return f"${val:,.2f}".replace(",", ".").replace(".", ",", 1)
+            return val
+        for col in df.columns[1:]:
+            df[col] = df[col].apply(limpiar_y_formatear)
         # Generar tabla con clases Bootstrap y encabezados en negrita
         html = df.to_html(
             classes="table table-hover excel-table-responsive",
