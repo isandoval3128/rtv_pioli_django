@@ -16,3 +16,4 @@ class Migration(migrations.Migration):
             field=models.FloatField(default=0.85, help_text='Valor entre 0 (transparente) y 1 (opaco). Ejemplo: 0.85', verbose_name='Opacidad del fondo de la card hero'),
         ),
     ]
+# Eliminado para limpieza de migraciones

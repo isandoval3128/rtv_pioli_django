@@ -16,3 +16,4 @@ class Migration(migrations.Migration):
             field=models.CharField(default='#e0e0e0', help_text='Ejemplo: #e0e0e0, #ffffff, rgba(0,0,0,0.1)', max_length=20, verbose_name='Color de fondo hover en portfolio'),
         ),
     ]
+# Eliminado para limpieza de migraciones

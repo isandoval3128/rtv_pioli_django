@@ -20,3 +20,4 @@ class Migration(migrations.Migration):
             field=models.FileField(blank=True, help_text='Sube un archivo adjunto (Excel, Word, imagen, etc). Se mostrará en la descripción si está presente.', null=True, upload_to='service/attachments/', verbose_name='Archivo adjunto'),
         ),
     ]
+# Eliminado para limpieza de migraciones

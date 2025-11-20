@@ -31,3 +31,4 @@ class Migration(migrations.Migration):
             field=models.CharField(default='24px', help_text='Ejemplo: 24px, 32px', max_length=10, verbose_name='Elevación hover de la card hero'),
         ),
     ]
+# Eliminado para limpieza de migraciones

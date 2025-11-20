@@ -36,3 +36,4 @@ class Migration(migrations.Migration):
             },
         ),
     ]
+# Eliminado para limpieza de migraciones

@@ -21,3 +21,4 @@ class Migration(migrations.Migration):
             field=models.BooleanField(default=True, help_text='Si está desactivado, el título principal del Hero no se mostrará.', verbose_name='¿Mostrar título del Hero?'),
         ),
     ]
+# Eliminado para limpieza de migraciones

@@ -16,3 +16,4 @@ class Migration(migrations.Migration):
             field=models.CharField(default='#ffd700', help_text='Color de fondo del botón cuando el mouse pasa por encima. Ejemplo: #ffd700, #212529, rgba(255,200,0,0.9)', max_length=20, verbose_name='Color de fondo del botón de contacto (hover)'),
         ),
     ]
+# Eliminado para limpieza de migraciones

@@ -16,3 +16,4 @@ class Migration(migrations.Migration):
             field=models.BooleanField(default=True, verbose_name='¿Mostrar título?'),
         ),
     ]
+# Eliminado para limpieza de migraciones

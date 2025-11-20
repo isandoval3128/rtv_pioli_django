@@ -21,3 +21,4 @@ class Migration(migrations.Migration):
             field=models.CharField(default='100%', help_text='Ejemplo: 100%, 1920px, 80vw', max_length=10, verbose_name='Ancho del video de fondo'),
         ),
     ]
+# Eliminado para limpieza de migraciones

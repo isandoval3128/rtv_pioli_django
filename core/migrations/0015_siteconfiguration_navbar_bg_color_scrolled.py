@@ -16,3 +16,4 @@ class Migration(migrations.Migration):
             field=models.CharField(default='#272EF5', help_text='Ejemplo: #272EF5, #ffffff, rgba(0,0,0,0.1)', max_length=20, verbose_name='Color de fondo del navbar al hacer scroll'),
         ),
     ]
+# Eliminado para limpieza de migraciones

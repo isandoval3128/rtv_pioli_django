@@ -26,3 +26,4 @@ class Migration(migrations.Migration):
             field=models.CharField(default='Enviar Mensaje', help_text='Texto que aparece en el botón de enviar del formulario de contacto.', max_length=50, verbose_name='Texto del botón de contacto'),
         ),
     ]
+# Eliminado para limpieza de migraciones

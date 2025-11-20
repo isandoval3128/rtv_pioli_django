@@ -21,3 +21,4 @@ class Migration(migrations.Migration):
             field=models.FileField(blank=True, help_text='Formato recomendado: MP4, WebM. El video se mostrará en lugar de la imagen si está presente.', null=True, upload_to='contact_bg/video/', verbose_name='Video de fondo de la sección contacto'),
         ),
     ]
+# Eliminado para limpieza de migraciones

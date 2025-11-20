@@ -46,3 +46,4 @@ class Migration(migrations.Migration):
             field=models.CharField(default='#02197A', help_text='Ejemplo: #02197A o text-inverse', max_length=20, verbose_name='Color del ícono (FA)'),
         ),
     ]
+# Eliminado para limpieza de migraciones

@@ -16,3 +16,4 @@ class Migration(migrations.Migration):
             field=models.CharField(default='#fff', help_text='Color del texto sobre los botones de turno. Ejemplo: #fff, #003466, #ffd700', max_length=20, verbose_name='Color del texto tutorial sobre los botones'),
         ),
     ]
+# Eliminado para limpieza de migraciones

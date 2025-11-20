@@ -16,3 +16,4 @@ class Migration(migrations.Migration):
             field=models.FileField(blank=True, help_text='Sube una tabla de precios en formato Excel (xlsx, xls). Se mostrará como tabla en la descripción si está presente.', null=True, upload_to='service/excel/', verbose_name='Archivo Excel de tabla de precios'),
         ),
     ]
+# Eliminado para limpieza de migraciones

@@ -21,3 +21,4 @@ class Migration(migrations.Migration):
             field=models.FileField(blank=True, help_text='Video tutorial que se muestra al hacer clic en "Ver tutorial".', null=True, upload_to='tutorial_videos/', verbose_name='Video tutorial de turnos'),
         ),
     ]
+# Eliminado para limpieza de migraciones

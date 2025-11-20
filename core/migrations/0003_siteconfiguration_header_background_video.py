@@ -16,3 +16,4 @@ class Migration(migrations.Migration):
             field=models.FileField(blank=True, help_text='Formato recomendado: MP4, WebM. El video se mostrará en lugar de la imagen si está presente.', null=True, upload_to='site/header/video/', verbose_name='Video de fondo del header'),
         ),
     ]
+# Eliminado para limpieza de migraciones

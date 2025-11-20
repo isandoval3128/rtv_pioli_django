@@ -21,3 +21,4 @@ class Migration(migrations.Migration):
             field=models.ImageField(blank=True, help_text='Imagen que se mostrará como fondo en la sección contacto. Tiene prioridad sobre el color.', null=True, upload_to='contact_bg/', verbose_name='Imagen de fondo de la sección contacto'),
         ),
     ]
+# Eliminado para limpieza de migraciones

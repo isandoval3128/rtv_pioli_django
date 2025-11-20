@@ -2,7 +2,7 @@ from django.contrib import admin
 from .models import AboutSection, AboutImage, EmailConfig, WhatsAppConfig
 from django.contrib import admin
 from django.utils.html import format_html
-from .models import Service, PortfolioItem, TimelineEvent, TeamMember, ContactMessage, SiteConfiguration
+from .models import Service, PortfolioItem, TimelineEvent, ContactMessage, SiteConfiguration
 from django import forms
 
 @admin.register(WhatsAppConfig)
@@ -81,10 +81,10 @@ class ServiceAdmin(admin.ModelAdmin):
         }),
     )
 
-@admin.register(TeamMember)
-class TeamMemberAdmin(admin.ModelAdmin):
-    """Admin para el modelo TeamMember"""
-    list_display = ['name', 'position', 'photo_preview', 'order', 'active', 'has_social_links']
+# @admin.register(TeamMember)
+# class TeamMemberAdmin(admin.ModelAdmin):
+#     """Admin para el modelo TeamMember"""
+"""     list_display = ['name', 'position', 'photo_preview', 'order', 'active', 'has_social_links']
     list_filter = ['active', 'created_at']
     search_fields = ['name', 'position']
     list_editable = ['order', 'active']
@@ -105,7 +105,7 @@ class TeamMemberAdmin(admin.ModelAdmin):
     )
 
     def photo_preview(self, obj):
-        """Muestra preview de la foto"""
+
         if obj.photo:
             return format_html(
                 '<img src="{}" width="50" height="50" style="object-fit: cover; border-radius: 50%;" />',
@@ -115,12 +115,12 @@ class TeamMemberAdmin(admin.ModelAdmin):
     photo_preview.short_description = 'Foto'
 
     def has_social_links(self, obj):
-        """Indica si tiene redes sociales configuradas"""
+   
         has_links = any([obj.twitter_url, obj.facebook_url, obj.linkedin_url])
         if has_links:
             return format_html('<span style="color: green;">✓</span>')
         return format_html('<span style="color: red;">✗</span>')
-    has_social_links.short_description = 'Redes'
+    has_social_links.short_description = 'Redes' """
 
 
 @admin.register(ContactMessage)

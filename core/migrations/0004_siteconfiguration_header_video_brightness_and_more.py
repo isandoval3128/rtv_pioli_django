@@ -21,3 +21,4 @@ class Migration(migrations.Migration):
             field=models.FloatField(default=1.0, help_text='Valor 1 = normal, menor para menos contraste, mayor para más contraste.', verbose_name='Contraste del video de fondo'),
         ),
     ]
+# Eliminado para limpieza de migraciones

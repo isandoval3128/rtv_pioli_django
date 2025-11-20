@@ -21,3 +21,4 @@ class Migration(migrations.Migration):
             field=models.CharField(choices=[('Montserrat', 'Montserrat'), ('Roboto', 'Roboto'), ('Open Sans', 'Open Sans'), ('Lato', 'Lato'), ('Poppins', 'Poppins')], default='Poppins', max_length=50, verbose_name='Fuente principal'),
         ),
     ]
+# Eliminado para limpieza de migraciones

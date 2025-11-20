@@ -21,3 +21,4 @@ class Migration(migrations.Migration):
             field=models.CharField(blank=True, default="It's Nice To Meet You", max_length=200, null=True, verbose_name='Título del Hero'),
         ),
     ]
+# Eliminado para limpieza de migraciones

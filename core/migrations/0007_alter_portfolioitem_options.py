@@ -15,3 +15,4 @@ class Migration(migrations.Migration):
             options={'ordering': ['order', 'title'], 'verbose_name': 'Portafolio', 'verbose_name_plural': 'Portafolios'},
         ),
     ]
+# Eliminado para limpieza de migraciones
