@@ -400,9 +400,10 @@ class SiteConfiguration(models.Model):
                                        verbose_name="Copyright del footer")
 
     # Redes sociales
-    twitter_url = models.URLField(blank=True, verbose_name="URL de Twitter")
+    twitter_url = models.URLField(blank=True, verbose_name="URL de X (Twitter)")
     facebook_url = models.URLField(blank=True, verbose_name="URL de Facebook")
     linkedin_url = models.URLField(blank=True, verbose_name="URL de LinkedIn")
+    instagram_url = models.URLField(blank=True, verbose_name="URL de Instagram")
 
     # Información de contacto
     contact_email = models.EmailField(blank=True, verbose_name="Email de contacto")

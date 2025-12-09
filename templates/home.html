@@ -3,300 +3,616 @@
 
 {% block content %}
 <style>
+
+    /* ========================================
+    ESTILOS CONSOLIDADOS
+    ======================================== */
+
+
+    /* Bloque de estilo #1 */
     /* Ajustes para el modal de video tutorial en pantallas pequeñas */
-    @media (max-width: 575px) {
-                                /* Eliminada la declaración repetida de .hero-btns-block .d-flex.flex-wrap */
-                        .hero-btns-block {
-                            width: 100vw !important;
-                            max-width: 100vw !important;
-                            box-sizing: border-box !important;
-                            padding-left: 0 !important;
-                            padding-right: 0 !important;
-                            margin-left: 0 !important;
-                            margin-right: 0 !important;
-                            overflow-x: hidden !important;
-                            align-items: center !important;
-                        }
-                        .hero-btns-block .d-flex.flex-wrap {
-                            width: 100% !important;
-                            max-width: 100% !important;
-                            box-sizing: border-box !important;
-                            padding-left: 0 !important;
-                             padding-right: 20px !important;
-                            margin-left: 0 !important;
-                            margin-right: 0 !important;
-                            justify-content: center !important;
-                            overflow-x: hidden !important;
-                            flex-wrap: wrap !important;
-                            gap: 0 !important;
-                        }
-                .hero-btns-block .d-flex {
-                    margin-right: 0 !important;
-                    margin-left: 0 !important;
-                    padding-right: 0 !important;
-                    padding-left: 0 !important;
-                    justify-content: center !important;
-                    width: 100vw !important;
-                    max-width: 100vw !important;
-                }
-                .hero-btn-fixed {
-                    margin-right: 0 !important;
-                    margin-left: 0 !important;
-                    display: block !important;
-                    width: 90vw !important;
-                    max-width: 98vw !important;
-                    min-width: 220px !important;
-                    text-align: center !important;
-                }
-        html, body {
-            overflow-x: hidden !important;
-            width: 100vw !important;
-            max-width: 100vw !important;
-            box-sizing: border-box !important;
+        @media (max-width: 575px) {
+                                    /* Eliminada la declaración repetida de .hero-btns-block .d-flex.flex-wrap */
+                            .hero-btns-block {
+                                width: 100% !important;
+                                max-width: 100% !important;
+                                box-sizing: border-box !important;
+                                padding-left: 0 !important;
+                                padding-right: 0 !important;
+                                margin-left: 0 !important;
+                                margin-right: 0 !important;
+                                overflow-x: hidden !important;
+                                align-items: center !important;
+                            }
+                            .hero-btns-block .d-flex.flex-wrap {
+                                width: 100% !important;
+                                max-width: 100% !important;
+                                box-sizing: border-box !important;
+                                padding-left: 0 !important;
+                                padding-right: 0 !important;
+                                margin-left: 0 !important;
+                                margin-right: 0 !important;
+                                justify-content: center !important;
+                                overflow-x: hidden !important;
+                                flex-wrap: wrap !important;
+                                gap: 0 !important;
+                            }
+                            .hero-btns-block .d-flex {
+                                margin-right: 0 !important;
+                                margin-left: 0 !important;
+                                padding-right: 0 !important;
+                                padding-left: 0 !important;
+                                justify-content: center !important;
+                                width: 100% !important;
+                                max-width: 100% !important;
+                            }
+                            .hero-btn-fixed {
+                                margin-right: 0 !important;
+                                margin-left: 0 !important;
+                                display: block !important;
+                                width: 90% !important;
+                                max-width: 95% !important;
+                                min-width: 220px !important;
+                                text-align: center !important;
+                            }
+            html, body {
+                overflow-x: hidden !important;
+                width: 100% !important;
+                max-width: 100% !important;
+                box-sizing: border-box !important;
+                position: relative !important;
+            }
+            .container, .row, .col-12, .col-lg-6, .masthead, .masthead-card, .hero-btns-block, .modal-dialog, .modal-content, .modal-body {
+                /*max-width: 100% !important;*/
+                box-sizing: border-box !important;
+                overflow-x: hidden !important;
+            }
+            * {
+                box-sizing: border-box !important;
+            }
+            #tutorialVideoModal .modal-dialog {
+                max-width: 95% !important;
+                width: 95% !important;
+                margin: 0.5rem auto !important;
+                box-sizing: border-box !important;
+                overflow-x: hidden !important;
+            }
+            #tutorialVideoModal .modal-content {
+                border-radius: 12px !important;
+                padding: 0.5rem !important;
+                max-width: 100% !important;
+                width: 100% !important;
+                box-sizing: border-box !important;
+                overflow-x: hidden !important;
+            }
+            #tutorialVideoModal .modal-header {
+                padding: 0.5rem 1rem !important;
+                max-width: 100% !important;
+                width: 100% !important;
+                box-sizing: border-box !important;
+            }
+            #tutorialVideoModal .modal-title {
+                font-size: 1.05rem !important;
+            }
+            #tutorialVideoModal .btn-close {
+                font-size: 1.2rem !important;
+                top: 0.5rem !important;
+                right: 0.5rem !important;
+                position: absolute !important;
+            }
+            #tutorialVideoModal .modal-body {
+                min-height: 180px !important;
+                padding: 0.5rem !important;
+                max-width: 100% !important;
+                width: 100% !important;
+                box-sizing: border-box !important;
+                overflow-x: hidden !important;
+            }
+            #tutorialVideoModal video {
+                max-width: 100% !important;
+                width: 100% !important;
+                max-height: 40vh !important;
+                box-sizing: border-box !important;
+                overflow-x: hidden !important;
+            }
         }
-        .container, .row, .col-12, .col-lg-6, .masthead, .masthead-card, .hero-btns-block, .modal-dialog, .modal-content, .modal-body {
-            max-width: 100vw !important;
-            width: 100vw !important;
-            box-sizing: border-box !important;
-            overflow-x: hidden !important;
+        .hero-btn-fixed {
+            opacity: 0.85 !important;
+            background-color: rgba(2,25,122,0.85) !important;
+            color: #fff !important;
+            transition: opacity 0.2s, background-color 0.2s;
         }
-        * {
-            box-sizing: border-box !important;
+        .hero-btn-fixed:hover {
+            opacity: 1 !important;
         }
-        #tutorialVideoModal .modal-dialog {
-            max-width: 100vw !important;
-            width: 100vw !important;
-            margin: 0.5rem auto !important;
-            box-sizing: border-box !important;
-            overflow-x: hidden !important;
+            .btn-download-attachment {
+                background-color: #003466;
+                color: #fff;
+                border: none;
+                box-shadow: 0 2px 8px rgba(2,25,122,0.08);
+                transition: background-color 0.2s, box-shadow 0.2s;
+                font-size: 1.08rem;
+                padding: 0.65rem 1.5rem;
+                border-radius: 6px;
+                display: inline-block;
+                margin-bottom: 0.7rem;
+                margin-right: 0.5rem;
+                text-align: center;
+                white-space: nowrap;
+                font-weight: 600;
+                text-decoration: underline;
+                letter-spacing: 0.5px;
+                position: relative;
+            }
+        /* Oculta el botón de descarga de adjuntos en los modales de Servicios */
+        .btn-download-attachment.mb-3 {
+            display: none !important;
         }
-        #tutorialVideoModal .modal-content {
-            border-radius: 12px !important;
-            padding: 0.5rem !important;
-            max-width: 100vw !important;
-            width: 100vw !important;
-            box-sizing: border-box !important;
-            overflow-x: hidden !important;
+            .btn-download-attachment::before {
+                content: '\f019'; /* FontAwesome download icon */
+                font-family: 'Font Awesome 5 Free';
+                font-weight: 900;
+                margin-right: 0.5em;
+                font-size: 1.1em;
+                vertical-align: middle;
+            }
+            .btn-download-attachment:hover {
+                background-color: #0056b3;
+                color: #fff;
+                box-shadow: 0 8px 24px rgba(2,25,122,0.18);
+                text-decoration: underline;
+            }
+            @media (max-width: 575px) {
+                            .masthead {
+                                min-height: 100vh !important;
+                                height: 100vh !important;
+                                display: flex !important;
+                                align-items: center !important;
+                                justify-content: center !important;
+                                position: relative !important;
+                                overflow: hidden !important;
+                                z-index: 0 !important;
+                            }
+                                /* Corrige el z-index del modal para que esté por encima del fondo y backdrop */
+                                .modal {
+                                    z-index: 1055 !important;
+                                }
+                                .modal-backdrop {
+                                    z-index: 1050 !important;
+                                    background-color: rgba(0,0,0,0.5) !important;
+                                }
+                                body.modal-open {
+                                    overflow-y: auto !important;
+                                }
+                            .masthead-card {
+                                min-height: 50vh !important;
+                                display: flex !important;
+                                flex-direction: column !important;
+                                justify-content: center !important;
+                            }
+                            .hero-btns-group {
+                                flex-direction: column !important;
+                                gap: 0.5rem !important;
+                                align-items: center !important;
+                                margin-bottom: 2.5rem !important;
+                            }
+                            .hero-btn-fixed {
+                                font-size: 0.95rem !important;
+                                width: 90vw !important;
+                                min-width: 220px !important;
+                                max-width: 98vw !important;
+                                padding-left: 0 !important;
+                                padding-right: 0 !important;
+                                text-align: center !important;
+                                white-space: normal !important;
+                                display: block !important;
+                                margin: 0 0 0.7rem 0 !important;
+                                opacity: 0.8 !important;
+                                background-color: rgba(2,25,122,0.85) !important;
+                                color: #fff !important;
+                                transition: opacity 0.2s, background-color 0.2s;
+                            }
+                            .hero-btn-fixed:hover {
+                                opacity: 1 !important;
+                            }
+            }
+        @media (min-width: 992px) {
+            .masthead video {
+                object-position: center 50%; /* Ajusta el centro vertical, puedes probar 50% a 70% */
+            }
         }
-        #tutorialVideoModal .modal-header {
-            padding: 0.5rem 1rem !important;
-            max-width: 100vw !important;
-            width: 100vw !important;
-            box-sizing: border-box !important;
+        @media (max-width: 991px) and (orientation: landscape) {
+            .masthead video {
+                height: 60vh !important;
+                min-height: 390px;
+                max-height: 420px;
+            }
+            .masthead-card {
+                margin-top: 0 !important;
+                margin-bottom: 0 !important;
+                padding-top: 0.25rem !important;
+                padding-bottom: 0.25rem !important;
+                min-height: 0px !important;
+            }
+            .hero-btns-group {
+                flex-direction: row !important;
+                gap: 0.25rem !important;
+                justify-content: center !important;
+                margin-top: 0 !important;
+            }
+            .hero-btn-fixed {
+                min-width: 140px;
+                max-width: 45vw;
+                flex: 1 1 140px;
+                font-size: 0.95rem;
+                padding-left: 0.5rem;
+                padding-right: 0.5rem;
+                margin: 0;
+                opacity: 0.85 !important;
+                background-color: rgba(2,25,122,0.85) !important;
+                color: #fff !important;
+                transition: opacity 0.2s, background-color 0.2s;
+            }
+            .hero-btn-fixed:hover {
+                opacity: 1 !important;
+            }
         }
-        #tutorialVideoModal .modal-title {
-            font-size: 1.05rem !important;
+
+        @media (max-width: 740px) and (max-height: 400px) and (orientation: landscape) {
+            .hero-btns-group {
+                flex-direction: row !important;
+                gap: 0.5rem !important;
+                justify-content: center !important;
+                margin-top: 0 !important;
+                width: 100% !important;
+                margin-left: 0 !important;
+            }
+            .hero-btn-fixed {
+                min-width: 100px !important;
+                max-width: 40vw !important;
+                flex: 1 1 100px !important;
+                font-size: 0.95rem !important;
+                padding-left: 0.5rem !important;
+                padding-right: 0.5rem !important;
+                margin: 0 !important;
+                opacity: 0.85 !important;
+                background-color: rgba(2,25,122,0.85) !important;
+                color: #fff !important;
+                transition: opacity 0.2s, background-color 0.2s;
+            }
+            .hero-btn-fixed:hover {
+                opacity: 1 !important;
+            }
         }
-        #tutorialVideoModal .btn-close {
-            font-size: 1.2rem !important;
-            top: 0.5rem !important;
-            right: 0.5rem !important;
-            position: absolute !important;
+
+        .masthead-card-overlay {
+            position: absolute;
+            inset: 0;
+            border-radius: 1.5rem;
+            pointer-events: none;
+            z-index: 0;
+            transition: opacity 0.2s;
         }
-        #tutorialVideoModal .modal-body {
-            min-height: 180px !important;
-            padding: 0.5rem !important;
-            max-width: 100vw !important;
-            width: 100vw !important;
-            box-sizing: border-box !important;
-            overflow-x: hidden !important;
+
+    /* Bloque de estilo #2 */
+    #portfolio .portfolio-item .portfolio-link .portfolio-hover {
+            background: {{ site_config.portfolio_hover_bgcolor|default:'rgba(255,200,0,0.9)' }} !important;
         }
-        #tutorialVideoModal video {
-            max-width: 98vw !important;
-            width: 100vw !important;
-            max-height: 40vh !important;
-            box-sizing: border-box !important;
-            overflow-x: hidden !important;
+
+    /* Bloque de estilo #3 */
+    .portfolio-thumb-hover:hover {
+            background-color: {{ site_config.portfolio_hover_bgcolor|default:'#e0e0e0' }} !important;
+            box-shadow: 0 8px 24px rgba(2,25,122,0.18);
+            transition: box-shadow 0.2s, background-color 0.2s;
         }
-    }
-    .hero-btn-fixed {
-        opacity: 0.85 !important;
-        background-color: rgba(2,25,122,0.85) !important;
-        color: #fff !important;
-        transition: opacity 0.2s, background-color 0.2s;
-    }
-    .hero-btn-fixed:hover {
-        opacity: 1 !important;
-    }
-        .btn-download-attachment {
+
+    /* Bloque de estilo #4 */
+    .pdf-preview iframe {
+            width: 100%;
+            min-height: 400px;
+            max-height: 70vh;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(2,25,122,0.08);
+            background: #f8f9fa;
+            margin-bottom: 1rem;
+        }
+        .excel-table-responsive {
+            width: 100%;
+            overflow-x: auto;
+            margin-bottom: 1rem;
+        }
+        .excel-table-responsive table {
+            min-width: 600px;
+            max-width: 100%;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(2,25,122,0.08);
+            background: #fff;
+            margin-bottom: 0;
+        }
+        .excel-table-responsive table thead th {
             background-color: #003466;
             color: #fff;
-            border: none;
-            box-shadow: 0 2px 8px rgba(2,25,122,0.08);
-            transition: background-color 0.2s, box-shadow 0.2s;
-            font-size: 1.08rem;
-            padding: 0.65rem 1.5rem;
-            border-radius: 6px;
-            display: inline-block;
-            margin-bottom: 0.7rem;
-            margin-right: 0.5rem;
+            font-weight: bold;
+            border: 1px solid #003466;
             text-align: center;
-            white-space: nowrap;
-            font-weight: 600;
-            text-decoration: underline;
-            letter-spacing: 0.5px;
-            position: relative;
+            font-size: 1.05em;
+            padding: 0.6em 0.4em;
         }
-    /* Oculta el botón de descarga de adjuntos en los modales de Servicios */
-    .btn-download-attachment.mb-3 {
-        display: none !important;
-    }
-        .btn-download-attachment::before {
-            content: '\f019'; /* FontAwesome download icon */
-            font-family: 'Font Awesome 5 Free';
-            font-weight: 900;
-            margin-right: 0.5em;
-            font-size: 1.1em;
-            vertical-align: middle;
+        .excel-table-responsive table tbody td {
+            text-align: left;
+            padding: 0.5em 0.4em;
         }
-        .btn-download-attachment:hover {
-            background-color: #0056b3;
-            color: #fff;
-            box-shadow: 0 8px 24px rgba(2,25,122,0.18);
-            text-decoration: underline;
+        @media (max-width: 991px) {
+            .excel-table-responsive table {
+                min-width: 400px;
+                font-size: 0.95rem;
+            }
         }
         @media (max-width: 575px) {
-                        .masthead {
-                            min-height: 100vh !important;
-                            height: 100vh !important;
-                            display: flex !important;
-                            align-items: center !important;
-                            justify-content: center !important;
-                            position: relative !important;
-                            overflow: hidden !important;
-                            z-index: 0 !important;
-                        }
-                            /* Corrige el z-index del modal para que esté por encima del fondo y backdrop */
-                            .modal {
-                                z-index: 1055 !important;
-                            }
-                            .modal-backdrop {
-                                z-index: 1050 !important;
-                                background-color: rgba(0,0,0,0.5) !important;
-                            }
-                            body.modal-open {
-                                overflow-y: auto !important;
-                            }
-                        .masthead-card {
-                            min-height: 50vh !important;
-                            display: flex !important;
-                            flex-direction: column !important;
-                            justify-content: center !important;
-                        }
-                        .hero-btns-group {
-                            flex-direction: column !important;
-                            gap: 0.5rem !important;
-                            align-items: center !important;
-                            margin-bottom: 2.5rem !important;
-                        }
-                        .hero-btn-fixed {
-                            font-size: 0.95rem !important;
-                            width: 90vw !important;
-                            min-width: 220px !important;
-                            max-width: 98vw !important;
-                            padding-left: 0 !important;
-                            padding-right: 0 !important;
-                            text-align: center !important;
-                            white-space: normal !important;
-                            display: block !important;
-                            margin: 0 0 0.7rem 0 !important;
-                            opacity: 0.8 !important;
-                            background-color: rgba(2,25,122,0.85) !important;
-                            color: #fff !important;
-                            transition: opacity 0.2s, background-color 0.2s;
-                        }
-                        .hero-btn-fixed:hover {
-                            opacity: 1 !important;
-                        }
+            .excel-table-responsive table {
+                min-width: 320px;
+                font-size: 0.92rem;
+            }
         }
-    @media (min-width: 992px) {
-        .masthead video {
-            object-position: center 50%; /* Ajusta el centro vertical, puedes probar 50% a 70% */
+
+    /* Bloque de estilo #5 */
+    @media (max-width: 991px) {
+                #about .row {
+                    justify-content: center !important;
+                }
+                #about .col-lg-6.col-12 {
+                    display: flex !important;
+                    flex-direction: column !important;
+                    align-items: center !important;
+                    justify-content: center !important;
+                }
+                    #about .about-description {
+                        text-align: justify !important;
+                        max-width: 98vw !important;
+                    }
+                #about #aboutCarousel {
+                    max-width: 98vw !important;
+                }
+            }
+
+    /* Bloque de estilo #6 */
+    #ubicacion .card { border-radius: 1.2rem; }
+            #ubicacion .planta-card {
+                transition: box-shadow 0.25s cubic-bezier(.4,2,.3,1), transform 0.25s cubic-bezier(.4,2,.3,1);
+            }
+            #ubicacion .planta-card.elevada {
+                box-shadow: 0 12px 32px rgba(2,25,122,0.22), 0 2px 8px rgba(2,25,122,0.08);
+                transform: translateY(-8px) scale(1.03);
+                z-index: 2;
+            }
+            #ubicacion h2.section-heading { font-size: 2.1rem; font-weight: 700; }
+            #ubicacion h3.section-subheading { font-size: 1.15rem; }
+            #ubicacion .card-title { font-size: 1.15rem; font-weight: 600; }
+            #ubicacion ul { font-size: 1.05rem; }
+            @media (max-width: 991px) {
+                #ubicacion .card { margin-bottom: 1.2rem; }
+                #ubicacion iframe { height: 260px !important; }
+            }
+            @media (max-width: 575px) {
+                #ubicacion h2.section-heading { font-size: 1.25rem; }
+                #ubicacion h3.section-subheading { font-size: 1rem; }
+                #ubicacion .card-title { font-size: 1rem; }
+                #ubicacion ul { font-size: 0.98rem; }
+                #ubicacion iframe { height: 180px !important; }
+            }
+
+    /* Bloque de estilo #7 */
+    /* SweetAlert2 custom styles for mobile */
+                @media (max-width: 575px) {
+                    .swal2-popup.swal2-elevated {
+                        width: 95vw !important;
+                        min-width: 0 !important;
+                        max-width: 98vw !important;
+                        padding: 1.2em 0.7em !important;
+                        font-size: 1.05em !important;
+                        border-radius: 16px !important;
+                    }
+                    .swal2-title {
+                        font-size: 1.15em !important;
+                        padding: 0.5em 0.2em !important;
+                    }
+                    .swal2-html-container {
+                        font-size: 1em !important;
+                        padding: 0.3em 0.2em !important;
+                    }
+                    .swal2-timer-progress-bar {
+                        height: 5px !important;
+                        border-radius: 3px !important;
+                    }
+                }
+                /* General SweetAlert2 popup style */
+                .swal2-popup.swal2-elevated {
+                    box-shadow: 0 8px 32px rgba(2,25,122,0.22) !important;
+                    border-radius: 18px !important;
+                    font-family: 'Segoe UI', 'Roboto', Arial, sans-serif !important;
+                }
+                .swal2-btn-confirm {
+                    background-color: #003466 !important;
+                    color: #fff !important;
+                    font-weight: 600 !important;
+                    border-radius: 8px !important;
+                    padding: 0.6em 1.5em !important;
+                    font-size: 1em !important;
+                }
+
+    /* Bloque de estilo #8 */
+    .timeline-img-circle {
+                width: 140px;
+                height: 140px;
+                border-radius: 50%;
+                display: block;
+                margin: 0 auto;
+                box-shadow: 0 2px 8px rgba(2,25,122,0.08);
+                overflow: hidden;
+                position: relative;
+            }
+            .timeline-img-bg {
+                background-size: cover;
+                background-position: center;
+                width: 100%;
+                height: 100%;
+                border-radius: 50%;
+                display: block;
+                position: absolute;
+                top: 0;
+                left: 0;
+            }
+        .timeline-img-elevated, .team-img-elevated {
+            box-shadow: 0 2px 8px rgba(2,25,122,0.08);
+            transition: box-shadow 0.2s;
+            cursor: pointer;
+        }
+        .timeline-img-elevated:hover, .team-img-elevated:hover {
+            box-shadow: 0 8px 32px rgba(2,25,122,0.22);
+            transition: box-shadow 0.2s;
+    }
+    @media (max-width: 575px) {
+        .timeline-img-circle {
+        width: 90px;
+        height: 90px;
+        }
+        .timeline-image {
+        width: 90px !important;
+        height: 90px !important;
+        min-width: 90px !important;
+        min-height: 90px !important;
         }
     }
-    @media (max-width: 991px) and (orientation: landscape) {
-        .masthead video {
-            height: 60vh !important;
-            min-height: 390px;
-            max-height: 420px;
+    @media (max-width: 991px) {
+        .timeline-img-circle {
+        width: 100px;
+        height: 100px;
         }
-        .masthead-card {
-            margin-top: 0 !important;
-            margin-bottom: 0 !important;
-            padding-top: 0.25rem !important;
-            padding-bottom: 0.25rem !important;
-            min-height: 0px !important;
+        .timeline-image {
+        width: 100px !important;
+        height: 100px !important;
+        min-width: 100px !important;
+        min-height: 100px !important;
+        margin: 0 auto;
         }
-        .hero-btns-group {
-            flex-direction: row !important;
-            gap: 0.25rem !important;
-            justify-content: center !important;
-            margin-top: 0 !important;
+        .timeline-panel {
+        width: 100%;
+        margin-left: 0;
+        margin-right: 0;
+        float: none;
         }
-        .hero-btn-fixed {
-            min-width: 140px;
-            max-width: 45vw;
-            flex: 1 1 140px;
-            font-size: 0.95rem;
-            padding-left: 0.5rem;
-            padding-right: 0.5rem;
-            margin: 0;
-            opacity: 0.85 !important;
-            background-color: rgba(2,25,122,0.85) !important;
-            color: #fff !important;
-            transition: opacity 0.2s, background-color 0.2s;
-        }
-        .hero-btn-fixed:hover {
-            opacity: 1 !important;
+        .timeline li.timeline-inverted .timeline-panel {
+        float: none;
         }
     }
 
-    @media (max-width: 740px) and (max-height: 400px) and (orientation: landscape) {
-        .hero-btns-group {
-            flex-direction: row !important;
-            gap: 0.5rem !important;
-            justify-content: center !important;
-            margin-top: 0 !important;
-            width: 100% !important;
-            margin-left: 0 !important;
+    /* Bloque de estilo #9 */
+    .whatsapp-float {
+        position: fixed;
+        right: 18px;
+        bottom: 18px;
+        z-index: 9999;
+        background: #25d366;
+        color: #fff;
+        border-radius: 50%;
+        width: 56px;
+        height: 56px;
+        display: none !important;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+        font-size: 2.2rem;
+        transition: background 0.2s, box-shadow 0.2s;
+        text-decoration: none;
+    }
+    .whatsapp-float:hover {
+        box-shadow: 0 8px 32px rgba(0,0,0,0.28);
+    }
+    .whatsapp-float i {
+        color: #fff;
+        transition: color 0.2s;
+    }
+    .whatsapp-float:hover i {
+        color: #fff;
+    }
+    @media (max-width: 575px) {
+        .whatsapp-float {
+            right: 4vw;
+            bottom: 4vw;
+            width: 44px;
+            height: 44px;
+            font-size: 1.5rem;
+            max-width: 44px;
+            max-height: 44px;
         }
-        .hero-btn-fixed {
-            min-width: 100px !important;
-            max-width: 40vw !important;
-            flex: 1 1 100px !important;
-            font-size: 0.95rem !important;
-            padding-left: 0.5rem !important;
-            padding-right: 0.5rem !important;
-            margin: 0 !important;
-            opacity: 0.85 !important;
-            background-color: rgba(2,25,122,0.85) !important;
-            color: #fff !important;
-            transition: opacity 0.2s, background-color 0.2s;
-        }
-        .hero-btn-fixed:hover {
-            opacity: 1 !important;
+        body {
+            overflow-x: hidden;
         }
     }
 
-    .masthead-card-overlay {
-        position: absolute;
-        inset: 0;
-        border-radius: 1.5rem;
-        pointer-events: none;
-        z-index: 0;
-        transition: opacity 0.2s;
+    /* Bloque de estilo #10 */
+    /* WhatsApp arriba, Scroll abajo */
+    /* Unificar tamaño de botones flotantes */
+    .whatsapp-float, .scroll-top-float {
+        position: fixed;
+        right: 18px;
+        border-radius: 50%;
+        width: 56px;
+        height: 56px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+        font-size: 2.2rem;
+        transition: background 0.2s, box-shadow 0.2s;
+        text-decoration: none;
     }
-</style>
-<style>
-    #portfolio .portfolio-item .portfolio-link .portfolio-hover {
-        background: {{ site_config.portfolio_hover_bgcolor|default:'rgba(255,200,0,0.9)' }} !important;
+    .whatsapp-float {
+        bottom: 140px;
+        z-index: 9999;
+        background: #25d366;
+        color: #fff;
     }
-</style>
-<style>
-    .portfolio-thumb-hover:hover {
-        background-color: {{ site_config.portfolio_hover_bgcolor|default:'#e0e0e0' }} !important;
-        box-shadow: 0 8px 24px rgba(2,25,122,0.18);
-        transition: box-shadow 0.2s, background-color 0.2s;
+    .whatsapp-float:hover {
+        box-shadow: 0 8px 32px rgba(0,0,0,0.28);
+    }
+    .whatsapp-float i {
+        color: #fff;
+        transition: color 0.2s;
+    }
+    .scroll-top-float {
+        bottom: 18px;
+        z-index: 9998;
+        background: #003466;
+        color: #fff;
+        opacity: 0.92;
+    }
+    .scroll-top-float:hover {
+        box-shadow: 0 8px 32px rgba(0,0,0,0.28);
+        background: #0056b3;
+    }
+    .scroll-top-float i {
+        color: #fff;
+        transition: color 0.2s;
+    }
+    @media (max-width: 575px) {
+        .whatsapp-float, .scroll-top-float {
+            right: 3.5vw;
+            width: 44px;
+            height: 44px;
+            font-size: 1.5rem;
+            max-width: 44px;
+            max-height: 44px;
+        }
+        .whatsapp-float {
+            bottom: 100px;  /* Espacio fijo de 90px desde abajo */
+        }
+        .scroll-top-float {
+            bottom: 18px;  /* Espacio fijo de 18px desde abajo */
+        }
+        body {
+            overflow-x: hidden;
+        }
     }
 </style>
 
@@ -567,7 +883,8 @@
             </div>
             <div class="d-flex flex-wrap justify-content-center gap-3 mt-3">
                 <a class="btn btn-xl text-uppercase header-btn" href="{{ site_config.header_btn1_url }}" target="_blank" style="background-color: {{ site_config.header_btn_bgcolor|default:'#007bff' }}; color: #fff; min-width: 220px; transition: transform 0.2s cubic-bezier(.4,2,.3,1), box-shadow 0.2s; box-shadow: 0 2px 8px rgba(2,25,122,0.08);" onmouseover="this.style.transform='translateY(-6px) scale(1.04)';this.style.boxShadow='0 8px 24px rgba(2,25,122,0.18)';" onmouseout="this.style.transform='none';this.style.boxShadow='0 2px 8px rgba(2,25,122,0.08)';">{{ site_config.header_btn1_text }}</a>
-                <a class="btn btn-xl text-uppercase header-btn" href="{{ site_config.header_btn2_url }}" target="_blank" style="background-color: {{ site_config.header_btn_bgcolor|default:'#007bff' }}; color:
+                
+                <a class="btn btn-xl text-uppercase header-btn" href="{{ site_config.header_btn2_url }}" target="_blank" style="background-color: {{ site_config.header_btn_bgcolor|default:'#007bff' }}; color: #fff; min-width: 220px; transition: transform 0.2s cubic-bezier(.4,2,.3,1), box-shadow 0.2s; box-shadow: 0 2px 8px rgba(2,25,122,0.08);" onmouseover="this.style.transform='translateY(-6px) scale(1.04)';this.style.boxShadow='0 8px 24px rgba(2,25,122,0.18)';" onmouseout="this.style.transform='none';this.style.boxShadow='0 2px 8px rgba(2,25,122,0.08)';">{{ site_config.header_btn1_text }}</a>
             </div>
         </div>
     </header>
@@ -575,55 +892,6 @@
 
 <!-- Services-->
 <section class="page-section" id="services">
-<style>
-    .pdf-preview iframe {
-        width: 100%;
-        min-height: 400px;
-        max-height: 70vh;
-        border-radius: 8px;
-        box-shadow: 0 2px 8px rgba(2,25,122,0.08);
-        background: #f8f9fa;
-        margin-bottom: 1rem;
-    }
-    .excel-table-responsive {
-        width: 100%;
-        overflow-x: auto;
-        margin-bottom: 1rem;
-    }
-    .excel-table-responsive table {
-        min-width: 600px;
-        max-width: 100%;
-        border-radius: 8px;
-        box-shadow: 0 2px 8px rgba(2,25,122,0.08);
-        background: #fff;
-        margin-bottom: 0;
-    }
-    .excel-table-responsive table thead th {
-        background-color: #003466;
-        color: #fff;
-        font-weight: bold;
-        border: 1px solid #003466;
-        text-align: center;
-        font-size: 1.05em;
-        padding: 0.6em 0.4em;
-    }
-    .excel-table-responsive table tbody td {
-        text-align: left;
-        padding: 0.5em 0.4em;
-    }
-    @media (max-width: 991px) {
-        .excel-table-responsive table {
-            min-width: 400px;
-            font-size: 0.95rem;
-        }
-    }
-    @media (max-width: 575px) {
-        .excel-table-responsive table {
-            min-width: 320px;
-            font-size: 0.92rem;
-        }
-    }
-</style>
     <div class="container">
         <div class="text-center">
             <h2 class="section-heading text-uppercase">Servicios</h2>
@@ -754,27 +1022,7 @@
                 </div>
             </div>
         </div>
-        <style>
-        @media (max-width: 991px) {
-            #about .row {
-                justify-content: center !important;
-            }
-            #about .col-lg-6.col-12 {
-                display: flex !important;
-                flex-direction: column !important;
-                align-items: center !important;
-                justify-content: center !important;
-            }
-                #about .about-description {
-                    text-align: justify !important;
-                    max-width: 98vw !important;
-                }
-            #about #aboutCarousel {
-                max-width: 98vw !important;
-            }
-        }
-        </style>
-                <!-- Modal para imagen ampliada del carrusel -->
+        <!-- Modal para imagen ampliada del carrusel -->
                 <div class="modal fade" id="aboutImageModal" tabindex="-1" aria-labelledby="aboutImageModalLabel" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered modal-lg">
                         <div class="modal-content">
@@ -871,7 +1119,6 @@
     </div>
 </section>
 
-{#
 <!-- Team-->
 <section class="page-section bg-light" id="team">
     <div class="container">
@@ -903,7 +1150,6 @@
         </div>
     </div>
 </section>
-#}
 
 <!-- Ubicación -->
 <section class="page-section bg-light" id="ubicacion">
@@ -922,7 +1168,10 @@
                         <p class="mb-2"><i class="fas fa-phone me-2"></i><strong>Teléfono:</strong> {{ ubicacion.telefono }}</p>
                         <p class="mb-2"><i class="fas fa-map-marker-alt me-2"></i><strong>Provincia:</strong> {{ ubicacion.provincia }}</p>
                         <p class="mb-2"><i class="fas fa-clock me-2"></i><strong>Horario:</strong> {{ ubicacion.horario }}</p>
-                            <a class="btn btn-sm mt-2 ms-2 waze-btn" href="https://waze.com/ul?ll={{ ubicacion.latitud|stringformat:'f' }},{{ ubicacion.longitud|stringformat:'f' }}&navigate=yes" target="_blank" style="background-color:#25d366;color:#fff;border:none;box-shadow:0 2px 8px rgba(2,25,122,0.08);transition:background-color 0.2s,box-shadow 0.2s;" onmouseover="this.style.boxShadow='0 8px 24px rgba(2,25,122,0.18)';this.style.backgroundColor='#1ebea5';" onmouseout="this.style.boxShadow='0 2px 8px rgba(2,25,122,0.08)';this.style.backgroundColor='#25d366';"><i class="fab fa-waze me-1"></i>Ir con Waze</a>
+                        <div class="mt-3">
+                            <a class="btn btn-sm mt-2 me-2 google-maps-btn" href="https://www.google.com/maps/dir/?api=1&destination={{ ubicacion.latitud|stringformat:'f' }},{{ ubicacion.longitud|stringformat:'f' }}" target="_blank" style="background-color:#4285F4;color:#fff;border:none;box-shadow:0 2px 8px rgba(2,25,122,0.08);transition:background-color 0.2s,box-shadow 0.2s;" onmouseover="this.style.boxShadow='0 8px 24px rgba(2,25,122,0.18)';this.style.backgroundColor='#1a73e8';" onmouseout="this.style.boxShadow='0 2px 8px rgba(2,25,122,0.08)';this.style.backgroundColor='#4285F4';"><i class="fab fa-google me-1"></i>Ir con Google Maps</a>
+                            <a class="btn btn-sm mt-2 waze-btn" href="https://waze.com/ul?ll={{ ubicacion.latitud|stringformat:'f' }},{{ ubicacion.longitud|stringformat:'f' }}&navigate=yes" target="_blank" style="background-color:#25d366;color:#fff;border:none;box-shadow:0 2px 8px rgba(2,25,122,0.08);transition:background-color 0.2s,box-shadow 0.2s;" onmouseover="this.style.boxShadow='0 8px 24px rgba(2,25,122,0.18)';this.style.backgroundColor='#1ebea5';" onmouseout="this.style.boxShadow='0 2px 8px rgba(2,25,122,0.08)';this.style.backgroundColor='#25d366';"><i class="fab fa-waze me-1"></i>Ir con Waze</a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -983,32 +1232,6 @@
     });
     </script>
     </div>
-    <style>
-        #ubicacion .card { border-radius: 1.2rem; }
-        #ubicacion .planta-card {
-            transition: box-shadow 0.25s cubic-bezier(.4,2,.3,1), transform 0.25s cubic-bezier(.4,2,.3,1);
-        }
-        #ubicacion .planta-card.elevada {
-            box-shadow: 0 12px 32px rgba(2,25,122,0.22), 0 2px 8px rgba(2,25,122,0.08);
-            transform: translateY(-8px) scale(1.03);
-            z-index: 2;
-        }
-        #ubicacion h2.section-heading { font-size: 2.1rem; font-weight: 700; }
-        #ubicacion h3.section-subheading { font-size: 1.15rem; }
-        #ubicacion .card-title { font-size: 1.15rem; font-weight: 600; }
-        #ubicacion ul { font-size: 1.05rem; }
-        @media (max-width: 991px) {
-            #ubicacion .card { margin-bottom: 1.2rem; }
-            #ubicacion iframe { height: 260px !important; }
-        }
-        @media (max-width: 575px) {
-            #ubicacion h2.section-heading { font-size: 1.25rem; }
-            #ubicacion h3.section-subheading { font-size: 1rem; }
-            #ubicacion .card-title { font-size: 1rem; }
-            #ubicacion ul { font-size: 0.98rem; }
-            #ubicacion iframe { height: 180px !important; }
-        }
-    </style>
 </section>
 
 <!-- Contact-->
@@ -1027,7 +1250,7 @@
         background-repeat: no-repeat;
         background-position: center;
     "
->
+    >
     {% if site_config.contact_section_bg_video %}
     <video autoplay loop muted playsinline style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; opacity: {{ site_config.contact_section_bg_opacity|stringformat:'f'|default:'1' }};" id="contact-bg-video">
         <source src="{{ site_config.contact_section_bg_video.url }}" type="video/mp4">
@@ -1041,45 +1264,6 @@
         </div>
 
         {% if messages or form.errors %}
-            <style>
-            /* SweetAlert2 custom styles for mobile */
-            @media (max-width: 575px) {
-                .swal2-popup.swal2-elevated {
-                    width: 95vw !important;
-                    min-width: 0 !important;
-                    max-width: 98vw !important;
-                    padding: 1.2em 0.7em !important;
-                    font-size: 1.05em !important;
-                    border-radius: 16px !important;
-                }
-                .swal2-title {
-                    font-size: 1.15em !important;
-                    padding: 0.5em 0.2em !important;
-                }
-                .swal2-html-container {
-                    font-size: 1em !important;
-                    padding: 0.3em 0.2em !important;
-                }
-                .swal2-timer-progress-bar {
-                    height: 5px !important;
-                    border-radius: 3px !important;
-                }
-            }
-            /* General SweetAlert2 popup style */
-            .swal2-popup.swal2-elevated {
-                box-shadow: 0 8px 32px rgba(2,25,122,0.22) !important;
-                border-radius: 18px !important;
-                font-family: 'Segoe UI', 'Roboto', Arial, sans-serif !important;
-            }
-            .swal2-btn-confirm {
-                background-color: #003466 !important;
-                color: #fff !important;
-                font-weight: 600 !important;
-                border-radius: 8px !important;
-                padding: 0.6em 1.5em !important;
-                font-size: 1em !important;
-            }
-            </style>
             <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
             <script>
             document.addEventListener('DOMContentLoaded', function() {
@@ -1204,73 +1388,6 @@
 </div>
 {% endfor %}
 
-<style>
-        .timeline-img-circle {
-            width: 140px;
-            height: 140px;
-            border-radius: 50%;
-            display: block;
-            margin: 0 auto;
-            box-shadow: 0 2px 8px rgba(2,25,122,0.08);
-            overflow: hidden;
-            position: relative;
-        }
-        .timeline-img-bg {
-            background-size: cover;
-            background-position: center;
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            display: block;
-            position: absolute;
-            top: 0;
-            left: 0;
-        }
-    .timeline-img-elevated, .team-img-elevated {
-        box-shadow: 0 2px 8px rgba(2,25,122,0.08);
-        transition: box-shadow 0.2s;
-        cursor: pointer;
-    }
-    .timeline-img-elevated:hover, .team-img-elevated:hover {
-        box-shadow: 0 8px 32px rgba(2,25,122,0.22);
-        transition: box-shadow 0.2s;
-  }
-  @media (max-width: 575px) {
-    .timeline-img-circle {
-      width: 90px;
-      height: 90px;
-    }
-    .timeline-image {
-      width: 90px !important;
-      height: 90px !important;
-      min-width: 90px !important;
-      min-height: 90px !important;
-    }
-  }
-  @media (max-width: 991px) {
-    .timeline-img-circle {
-      width: 100px;
-      height: 100px;
-    }
-    .timeline-image {
-      width: 100px !important;
-      height: 100px !important;
-      min-width: 100px !important;
-      min-height: 100px !important;
-      margin: 0 auto;
-    }
-    .timeline-panel {
-      width: 100%;
-      margin-left: 0;
-      margin-right: 0;
-      float: none;
-    }
-    .timeline li.timeline-inverted .timeline-panel {
-      float: none;
-    }
-  }
-</style>
-
 <!-- Botón flotante de WhatsApp -->
 {% if whatsapp_config and whatsapp_config.numero_internacional %}
 <a href="https://wa.me/{{ whatsapp_config.numero_internacional|cut:'+' }}" target="_blank" class="whatsapp-float" aria-label="WhatsApp">
@@ -1278,56 +1395,14 @@
     <span class="visually-hidden">{{ whatsapp_config.nombre }}: {{ whatsapp_config.descripcion }}</span>
 </a>
 {% endif %}
-<style>
-.whatsapp-float {
-    position: fixed;
-    right: 18px;
-    bottom: 18px;
-    z-index: 9999;
-    background: #25d366;
-    color: #fff;
-    border-radius: 50%;
-    width: 56px;
-    height: 56px;
-    display: none !important;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.18);
-    font-size: 2.2rem;
-    transition: background 0.2s, box-shadow 0.2s;
-    text-decoration: none;
-}
-.whatsapp-float:hover {
-    box-shadow: 0 8px 32px rgba(0,0,0,0.28);
-}
-.whatsapp-float i {
-    color: #fff;
-    transition: color 0.2s;
-}
-.whatsapp-float:hover i {
-    color: #fff;
-}
-@media (max-width: 575px) {
-    .whatsapp-float {
-        right: 4vw;
-        bottom: 4vw;
-        width: 44px;
-        height: 44px;
-        font-size: 1.5rem;
-        max-width: 44px;
-        max-height: 44px;
-    }
-    body {
-        overflow-x: hidden;
-    }
-}
-</style>
 
 <!-- Botón flotante para volver arriba -->
 <a href="#top" id="scrollToTopBtn" class="scroll-top-float" aria-label="Volver arriba" style="display:none;">
     <i class="fas fa-arrow-up"></i>
 </a>
+
 <script>
+
 window.addEventListener('scroll', function() {
     var scrollBtn = document.getElementById('scrollToTopBtn');
     var whatsappBtn = document.querySelector('.whatsapp-float');
@@ -1339,78 +1414,15 @@ window.addEventListener('scroll', function() {
         if (whatsappBtn) whatsappBtn.style.setProperty('display', 'none', 'important');
     }
 });
+
 if (document.getElementById('scrollToTopBtn')) {
     document.getElementById('scrollToTopBtn').addEventListener('click', function(e) {
         e.preventDefault();
         window.scrollTo({ top: 0, behavior: 'smooth' });
     });
 }
+
 </script>
-<style>
-/* WhatsApp arriba, Scroll abajo */
-/* Unificar tamaño de botones flotantes */
-.whatsapp-float, .scroll-top-float {
-    position: fixed;
-    right: 18px;
-    border-radius: 50%;
-    width: 56px;
-    height: 56px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.18);
-    font-size: 2.2rem;
-    transition: background 0.2s, box-shadow 0.2s;
-    text-decoration: none;
-}
-.whatsapp-float {
-    bottom: 140px;
-    z-index: 9999;
-    background: #25d366;
-    color: #fff;
-}
-.whatsapp-float:hover {
-    box-shadow: 0 8px 32px rgba(0,0,0,0.28);
-}
-.whatsapp-float i {
-    color: #fff;
-    transition: color 0.2s;
-}
-.scroll-top-float {
-    bottom: 18px;
-    z-index: 9998;
-    background: #003466;
-    color: #fff;
-    opacity: 0.92;
-}
-.scroll-top-float:hover {
-    box-shadow: 0 8px 32px rgba(0,0,0,0.28);
-    background: #0056b3;
-}
-.scroll-top-float i {
-    color: #fff;
-    transition: color 0.2s;
-}
-@media (max-width: 575px) {
-    .whatsapp-float, .scroll-top-float {
-        right: 4vw;
-        width: 44px;
-        height: 44px;
-        font-size: 1.5rem;
-        max-width: 44px;
-        max-height: 44px;
-    }
-    .whatsapp-float {
-        bottom: 22vw;
-    }
-    .scroll-top-float {
-        bottom: 4vw;
-    }
-    body {
-        overflow-x: hidden;
-    }
-}
-</style>
 
 {% endblock %}
 

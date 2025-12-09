@@ -1,22 +1,44 @@
+<style>
+.social-icon-hover {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.social-icon-hover:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 52, 102, 0.4);
+}
+.copyright-hover {
+    transition: transform 0.3s ease, text-shadow 0.3s ease;
+    cursor: default;
+    display: inline-block;
+}
+.copyright-hover:hover {
+    transform: translateY(-3px);
+    text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+</style>
 <footer class="footer py-4">
     <div class="container">
         <div class="row align-items-center">
-            <div class="col-lg-4 text-lg-start">{{ site_config.footer_copyright }}</div>
+            <div class="col-lg-4 text-lg-start copyright-hover">{{ site_config.footer_copyright }}</div>
             <div class="col-lg-4 my-3 my-lg-0">
                 {% if site_config.twitter_url %}
-                <a class="btn btn-dark btn-social mx-2" href="{{ site_config.twitter_url }}" aria-label="Twitter" target="_blank"><i class="fab fa-twitter"></i></a>
+                <a class="btn btn-social mx-2 social-icon-hover" href="{{ site_config.twitter_url }}" aria-label="X" target="_blank" style="background-color: #003466; color: #fff;"><i class="fab fa-x-twitter"></i></a>
                 {% endif %}
                 {% if site_config.facebook_url %}
-                <a class="btn btn-dark btn-social mx-2" href="{{ site_config.facebook_url }}" aria-label="Facebook" target="_blank"><i class="fab fa-facebook-f"></i></a>
+                <a class="btn btn-social mx-2 social-icon-hover" href="{{ site_config.facebook_url }}" aria-label="Facebook" target="_blank" style="background-color: #003466; color: #fff;"><i class="fab fa-facebook-f"></i></a>
+                {% endif %}
+                {% if site_config.instagram_url %}
+                <a class="btn btn-social mx-2 social-icon-hover" href="{{ site_config.instagram_url }}" aria-label="Instagram" target="_blank" style="background-color: #003466; color: #fff;"><i class="fab fa-instagram"></i></a>
                 {% endif %}
                 {% if site_config.linkedin_url %}
-                <a class="btn btn-dark btn-social mx-2" href="{{ site_config.linkedin_url }}" aria-label="LinkedIn" target="_blank"><i class="fab fa-linkedin-in"></i></a>
+                <a class="btn btn-social mx-2 social-icon-hover" href="{{ site_config.linkedin_url }}" aria-label="LinkedIn" target="_blank" style="background-color: #003466; color: #fff;"><i class="fab fa-linkedin-in"></i></a>
                 {% endif %}
             </div>
             <div class="col-lg-4 text-lg-end">
-                <a class="link-dark text-decoration-none me-3" href="#!">Política de Privacidad</a>
-                <a class="link-dark text-decoration-none" href="#!">Términos de Uso</a>
+                {% comment %} <a class="link-dark text-decoration-none me-3" href="#!">Política de Privacidad</a>
+                <a class="link-dark text-decoration-none" href="#!">Términos de Uso</a> {% endcomment %}
             </div>
         </div>
     </div>
 </footer>
+

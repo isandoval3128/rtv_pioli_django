@@ -95,10 +95,24 @@ def contact_submit(request):
             sent_successfully = False
             error_message = ""
             try:
-                
+                print("=" * 80)
+                print("[DEBUG] Iniciando proceso de envío de correo")
+
                 email_config = EmailConfig.objects.first()
+
                 if email_config:
+                    print(f"[DEBUG] Configuración de correo encontrada:")
+                    print(f"  - Host: {email_config.email_host}")
+                    print(f"  - Puerto: {email_config.email_port}")
+                    print(f"  - Usuario: {email_config.email_host_user}")
+                    print(f"  - Contraseña: {'*' * len(email_config.email_host_password) if email_config.email_host_password else 'NO CONFIGURADA'}")
+                    print(f"  - Use TLS: {email_config.email_use_tls}")
+                    print(f"  - From Email: {email_config.default_from_email}")
+                    print(f"  - Admin Email: {email_config.contact_admin_email}")
+
                     from django.core.mail import EmailMessage, get_connection
+
+                    print("[DEBUG] Creando conexión SMTP...")
                     connection = get_connection(
                         backend='django.core.mail.backends.smtp.EmailBackend',
                         host=email_config.email_host,
@@ -107,8 +121,11 @@ def contact_submit(request):
                         password=email_config.email_host_password,
                         use_tls=email_config.email_use_tls,
                     )
+
                     # 1. Enviar mensaje del usuario al administrador
                     admin_email = email_config.contact_admin_email or email_config.email_host_user
+                    print(f"[DEBUG] Preparando email al administrador: {admin_email}")
+
                     email_admin = EmailMessage(
                         subject,
                         body,
@@ -116,7 +133,10 @@ def contact_submit(request):
                         [admin_email],
                         connection=connection
                     )
+
+                    print("[DEBUG] Enviando email al administrador...")
                     email_admin.send(fail_silently=False)
+                    print("[DEBUG] Email al administrador enviado exitosamente!")
                     # 2. Enviar mensaje de confirmación al usuario
                     confirm_subject = "RTV Pioli - Confirmación de contacto"
                     confirm_body = (
@@ -124,6 +144,8 @@ def contact_submit(request):
                         f"RTV Pioli recibió su mensaje. Le estaremos respondiendo a la brevedad.\n\n"
                         f"Gracias por contactarnos."
                     )
+
+                    print(f"[DEBUG] Preparando email de confirmación al usuario: {data['email']}")
                     email_user = EmailMessage(
                         confirm_subject,
                         confirm_body,
@@ -131,13 +153,27 @@ def contact_submit(request):
                         [data['email']],
                         connection=connection
                     )
+
+                    print("[DEBUG] Enviando email de confirmación al usuario...")
                     email_user.send(fail_silently=False)
+                    print("[DEBUG] Email de confirmación enviado exitosamente!")
+
                     sent_successfully = True
+                    print("[DEBUG] ✓ Proceso completado exitosamente")
+                    print("=" * 80)
                     messages.success(request, '¡Gracias por contactarnos! Tu mensaje fue enviado correctamente.')
                 else:
                     error_message = 'No hay configuración de correo definida.'
+                    print(f"[ERROR] {error_message}")
+                    print("=" * 80)
             except Exception as e:
                 error_message = str(e)
+                print(f"[ERROR] Error al enviar correo: {error_message}")
+                print(f"[ERROR] Tipo de error: {type(e).__name__}")
+                import traceback
+                print(f"[ERROR] Traceback completo:")
+                traceback.print_exc()
+                print("=" * 80)
                 # Guardar el mensaje en el modelo si falla el envío
                 
                 ContactMessage.objects.create(

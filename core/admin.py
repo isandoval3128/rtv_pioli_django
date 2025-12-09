@@ -183,7 +183,7 @@ class SiteConfigurationAdmin(admin.ModelAdmin):
             'fields': ('footer_copyright',)
         }),
         ('Redes Sociales', {
-            'fields': ('twitter_url', 'facebook_url', 'linkedin_url'),
+            'fields': ('twitter_url', 'facebook_url', 'instagram_url', 'linkedin_url'),
             'classes': ('collapse',)
         }),
         ('Información de Contacto', {
