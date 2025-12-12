@@ -507,97 +507,84 @@
     }
 
     /* Bloque de estilo #9 */
-    .whatsapp-float {
+    /* Estilos base para todos los botones flotantes */
+    .whatsapp-float, .facebook-float, .instagram-float, .scroll-top-float {
         position: fixed;
         right: 18px;
-        bottom: 18px;
-        z-index: 9999;
-        background: #25d366;
-        color: #fff;
         border-radius: 50%;
         width: 56px;
         height: 56px;
-        display: none !important;
+        display: none;
         align-items: center;
         justify-content: center;
         box-shadow: 0 4px 16px rgba(0,0,0,0.18);
         font-size: 2.2rem;
         transition: background 0.2s, box-shadow 0.2s;
         text-decoration: none;
-    }
-    .whatsapp-float:hover {
-        box-shadow: 0 8px 32px rgba(0,0,0,0.28);
-    }
-    .whatsapp-float i {
         color: #fff;
-        transition: color 0.2s;
-    }
-    .whatsapp-float:hover i {
-        color: #fff;
-    }
-    @media (max-width: 575px) {
-        .whatsapp-float {
-            right: 4vw;
-            bottom: 4vw;
-            width: 44px;
-            height: 44px;
-            font-size: 1.5rem;
-            max-width: 44px;
-            max-height: 44px;
-        }
-        body {
-            overflow-x: hidden;
-        }
     }
 
-    /* Bloque de estilo #10 */
-    /* WhatsApp arriba, Scroll abajo */
-    /* Unificar tamaño de botones flotantes */
-    .whatsapp-float, .scroll-top-float {
-        position: fixed;
-        right: 18px;
-        border-radius: 50%;
-        width: 56px;
-        height: 56px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        box-shadow: 0 4px 16px rgba(0,0,0,0.18);
-        font-size: 2.2rem;
-        transition: background 0.2s, box-shadow 0.2s;
-        text-decoration: none;
-    }
+    /* WhatsApp - Tercero desde abajo */
     .whatsapp-float {
         bottom: 140px;
         z-index: 9999;
-        background: #25d366;
-        color: #fff;
+        background: rgba(37, 211, 102, 0.75);
+        opacity: 0.85;
     }
     .whatsapp-float:hover {
         box-shadow: 0 8px 32px rgba(0,0,0,0.28);
+        background: rgba(37, 211, 102, 0.95);
+        opacity: 1;
     }
-    .whatsapp-float i {
-        color: #fff;
-        transition: color 0.2s;
+
+    /* Facebook - Cuarto desde abajo */
+    .facebook-float {
+        bottom: 200px;
+        z-index: 9997;
+        background: rgba(24, 119, 242, 0.75);
+        opacity: 0.85;
     }
+    .facebook-float:hover {
+        box-shadow: 0 8px 32px rgba(0,0,0,0.28);
+        background: rgba(24, 119, 242, 0.95);
+        opacity: 1;
+    }
+
+    /* Instagram - Quinto desde abajo (más arriba) */
+    .instagram-float {
+        bottom: 260px;
+        z-index: 9996;
+        background: linear-gradient(45deg, rgba(240, 148, 51, 0.75) 0%, rgba(230, 104, 60, 0.75) 25%, rgba(220, 39, 67, 0.75) 50%, rgba(204, 35, 102, 0.75) 75%, rgba(188, 24, 136, 0.75) 100%);
+        opacity: 0.85;
+    }
+    .instagram-float:hover {
+        box-shadow: 0 8px 32px rgba(0,0,0,0.28);
+        background: linear-gradient(45deg, rgba(240, 148, 51, 0.95) 0%, rgba(230, 104, 60, 0.95) 25%, rgba(220, 39, 67, 0.95) 50%, rgba(204, 35, 102, 0.95) 75%, rgba(188, 24, 136, 0.95) 100%);
+        opacity: 1;
+    }
+
+    /* Scroll to top - Primero desde abajo */
     .scroll-top-float {
         bottom: 18px;
         z-index: 9998;
         background: #003466;
-        color: #fff;
         opacity: 0.92;
     }
     .scroll-top-float:hover {
         box-shadow: 0 8px 32px rgba(0,0,0,0.28);
         background: #0056b3;
     }
-    .scroll-top-float i {
+
+    /* Estilos para íconos */
+    .whatsapp-float i, .facebook-float i, .instagram-float i, .scroll-top-float i {
         color: #fff;
         transition: color 0.2s;
     }
+
+    /* Responsive - Móviles */
     @media (max-width: 575px) {
-        .whatsapp-float, .scroll-top-float {
-            right: 3.5vw;
+        .whatsapp-float, .facebook-float, .instagram-float, .scroll-top-float {
+            right: 4vw;
             width: 44px;
             height: 44px;
             font-size: 1.5rem;
@@ -605,10 +592,16 @@
             max-height: 44px;
         }
         .whatsapp-float {
-            bottom: 100px;  /* Espacio fijo de 90px desde abajo */
+            bottom: 100px;
+        }
+        .facebook-float {
+            bottom: 160px;
+        }
+        .instagram-float {
+            bottom: 220px;
         }
         .scroll-top-float {
-            bottom: 18px;  /* Espacio fijo de 18px desde abajo */
+            bottom: 18px;
         }
         body {
             overflow-x: hidden;
@@ -1160,21 +1153,21 @@
         </div>
         <div class="row justify-content-center mb-4">
             {% for ubicacion in ubicaciones %}
-            <div class="col-md-6 mb-4">
-                <div class="card planta-card shadow-sm h-100" onmouseover="this.classList.add('elevada')" onmouseout="this.classList.remove('elevada')">
-                    <div class="card-body">
-                        <h4 class="card-title mb-3" style="color:#003466;"><i class="fas fa-industry me-2"></i>{{ ubicacion.nombre }}</h4>
-                        <p class="mb-2"><i class="fas fa-location-dot me-2"></i><strong>Dirección:</strong> {{ ubicacion.direccion }}</p>
-                        <p class="mb-2"><i class="fas fa-phone me-2"></i><strong>Teléfono:</strong> {{ ubicacion.telefono }}</p>
-                        <p class="mb-2"><i class="fas fa-map-marker-alt me-2"></i><strong>Provincia:</strong> {{ ubicacion.provincia }}</p>
-                        <p class="mb-2"><i class="fas fa-clock me-2"></i><strong>Horario:</strong> {{ ubicacion.horario }}</p>
-                        <div class="mt-3">
-                            <a class="btn btn-sm mt-2 me-2 google-maps-btn" href="https://www.google.com/maps/dir/?api=1&destination={{ ubicacion.latitud|stringformat:'f' }},{{ ubicacion.longitud|stringformat:'f' }}" target="_blank" style="background-color:#4285F4;color:#fff;border:none;box-shadow:0 2px 8px rgba(2,25,122,0.08);transition:background-color 0.2s,box-shadow 0.2s;" onmouseover="this.style.boxShadow='0 8px 24px rgba(2,25,122,0.18)';this.style.backgroundColor='#1a73e8';" onmouseout="this.style.boxShadow='0 2px 8px rgba(2,25,122,0.08)';this.style.backgroundColor='#4285F4';"><i class="fab fa-google me-1"></i>Ir con Google Maps</a>
-                            <a class="btn btn-sm mt-2 waze-btn" href="https://waze.com/ul?ll={{ ubicacion.latitud|stringformat:'f' }},{{ ubicacion.longitud|stringformat:'f' }}&navigate=yes" target="_blank" style="background-color:#25d366;color:#fff;border:none;box-shadow:0 2px 8px rgba(2,25,122,0.08);transition:background-color 0.2s,box-shadow 0.2s;" onmouseover="this.style.boxShadow='0 8px 24px rgba(2,25,122,0.18)';this.style.backgroundColor='#1ebea5';" onmouseout="this.style.boxShadow='0 2px 8px rgba(2,25,122,0.08)';this.style.backgroundColor='#25d366';"><i class="fab fa-waze me-1"></i>Ir con Waze</a>
+                <div class="col-md-6 mb-4">
+                    <div class="card planta-card shadow-sm h-100" onmouseover="this.classList.add('elevada')" onmouseout="this.classList.remove('elevada')">
+                        <div class="card-body">
+                            <h4 class="card-title mb-3" style="color:#003466;"><i class="fas fa-industry me-2"></i>{{ ubicacion.nombre }}</h4>
+                            <p class="mb-2"><i class="fas fa-location-dot me-2"></i><strong>Dirección:</strong> {{ ubicacion.direccion }}</p>
+                            <p class="mb-2"><i class="fas fa-phone me-2"></i><strong>Teléfono:</strong> {{ ubicacion.telefono }}</p>
+                            <p class="mb-2"><i class="fas fa-map-marker-alt me-2"></i><strong>Provincia:</strong> {{ ubicacion.provincia }}</p>
+                            <p class="mb-2"><i class="fas fa-clock me-2"></i><strong>Horario:</strong> {{ ubicacion.horario }}</p>
+                            <div class="mt-3">
+                                <a class="btn btn-sm mt-2 me-2 google-maps-btn" href="https://www.google.com/maps/dir/?api=1&destination={{ ubicacion.latitud|stringformat:'f' }},{{ ubicacion.longitud|stringformat:'f' }}" target="_blank" style="background-color:#4285F4;color:#fff;border:none;box-shadow:0 2px 8px rgba(2,25,122,0.08);transition:background-color 0.2s,box-shadow 0.2s;" onmouseover="this.style.boxShadow='0 8px 24px rgba(2,25,122,0.18)';this.style.backgroundColor='#1a73e8';" onmouseout="this.style.boxShadow='0 2px 8px rgba(2,25,122,0.08)';this.style.backgroundColor='#4285F4';"><i class="fab fa-google me-1"></i>Ir con Google Maps</a>
+                                <a class="btn btn-sm mt-2 waze-btn" href="https://waze.com/ul?ll={{ ubicacion.latitud|stringformat:'f' }},{{ ubicacion.longitud|stringformat:'f' }}&navigate=yes" target="_blank" style="background-color:#25d366;color:#fff;border:none;box-shadow:0 2px 8px rgba(2,25,122,0.08);transition:background-color 0.2s,box-shadow 0.2s;" onmouseover="this.style.boxShadow='0 8px 24px rgba(2,25,122,0.18)';this.style.backgroundColor='#1ebea5';" onmouseout="this.style.boxShadow='0 2px 8px rgba(2,25,122,0.08)';this.style.backgroundColor='#25d366';"><i class="fab fa-waze me-1"></i>Ir con Waze</a>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
             {% endfor %}
         </div>
         <div class="row justify-content-center mb-5">
@@ -1395,33 +1388,53 @@
     <span class="visually-hidden">{{ whatsapp_config.nombre }}: {{ whatsapp_config.descripcion }}</span>
 </a>
 {% endif %}
-
+<!-- Botón flotante de Facebook -->
+{% if site_config.facebook_url %}
+<a href="{{ site_config.facebook_url }}" target="_blank" class="facebook-float" aria-label="Facebook">
+    <i class="fab fa-facebook-f"></i>
+</a>
+{% endif %}
+<!-- Botón flotante de Instagram -->
+{% if site_config.instagram_url %}
+<a href="{{ site_config.instagram_url }}" target="_blank" class="instagram-float" aria-label="Instagram">
+    <i class="fab fa-instagram"></i>
+</a>
+{% endif %}
 <!-- Botón flotante para volver arriba -->
 <a href="#top" id="scrollToTopBtn" class="scroll-top-float" aria-label="Volver arriba" style="display:none;">
     <i class="fas fa-arrow-up"></i>
 </a>
 
 <script>
-
+// Manejo de botones flotantes al hacer scroll
 window.addEventListener('scroll', function() {
     var scrollBtn = document.getElementById('scrollToTopBtn');
     var whatsappBtn = document.querySelector('.whatsapp-float');
+    var facebookBtn = document.querySelector('.facebook-float');
+    var instagramBtn = document.querySelector('.instagram-float');
+
     if (window.scrollY > 250) {
+        // Mostrar todos los botones flotantes
         if (scrollBtn) scrollBtn.style.display = 'flex';
-        if (whatsappBtn) whatsappBtn.style.setProperty('display', 'flex', 'important');
+        if (whatsappBtn) whatsappBtn.style.display = 'flex';
+        if (facebookBtn) facebookBtn.style.display = 'flex';
+        if (instagramBtn) instagramBtn.style.display = 'flex';
     } else {
+        // Ocultar todos los botones flotantes
         if (scrollBtn) scrollBtn.style.display = 'none';
-        if (whatsappBtn) whatsappBtn.style.setProperty('display', 'none', 'important');
+        if (whatsappBtn) whatsappBtn.style.display = 'none';
+        if (facebookBtn) facebookBtn.style.display = 'none';
+        if (instagramBtn) instagramBtn.style.display = 'none';
     }
 });
 
+// Funcionalidad del botón "Volver arriba"
 if (document.getElementById('scrollToTopBtn')) {
     document.getElementById('scrollToTopBtn').addEventListener('click', function(e) {
         e.preventDefault();
         window.scrollTo({ top: 0, behavior: 'smooth' });
     });
 }
-
 </script>
 
 {% endblock %}
