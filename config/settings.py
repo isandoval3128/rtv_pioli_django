@@ -27,7 +27,7 @@ SECRET_KEY = 'django-insecure-$dsi$xus+mu8cadlq5nyc52=!v@vglz&&u$ve(m_yque2^qa@z
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['167.71.93.198', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = ["rtvpioli.com.ar", "www.rtvpioli.com.ar", '167.71.93.198', 'localhost', '127.0.0.1']
 
 
 # Application definition

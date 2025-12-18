@@ -612,7 +612,6 @@
 <!-- Masthead-->
 {# HEADER: 4 SITUACIONES #}
 {% if site_config.header_background_video %}
-    
         <!-- 1. Video de fondo -->
         <header class="masthead" style="position: relative; overflow: hidden;">
             <video autoplay loop muted playsinline style="position: absolute; top: 0; left: 0; width: {{ site_config.header_video_width|default:'100%' }}; height: {{ site_config.header_video_height|default:'100%' }}; object-fit: cover; z-index: 0; filter: brightness({{ site_config.header_video_brightness|default:0.5 }}) contrast({{ site_config.header_video_contrast|default:1.0 }});">
@@ -689,9 +688,6 @@
                                             </script>
                     <!-- Texto tutorial sobre los botones -->
                     <div class="hero-btns-block d-flex flex-column align-items-center w-100">
-
-
-
                         <div class="d-flex flex-wrap justify-content-center gap-3 w-100">
                             <a class="btn btn-xl text-uppercase header-btn hero-btn-fixed" href="{{ site_config.header_btn1_url }}" target="_blank" style="background-color: {{ site_config.header_btn_bgcolor }}; color: #fff; transition: transform 0.2s cubic-bezier(.4,2,.3,1), box-shadow 0.2s; box-shadow: 0 2px 8px rgba(2,25,122,0.08); min-width:220px;" onmouseover="this.style.transform='translateY(-6px) scale(1.04)';this.style.boxShadow='0 8px 24px rgba(2,25,122,0.18)';" onmouseout="this.style.transform='none';this.style.boxShadow='0 2px 8px rgba(2,25,122,0.08)';">{{ site_config.header_btn1_text }}</a>
                             <a class="btn btn-xl text-uppercase header-btn hero-btn-fixed" href="{{ site_config.header_btn2_url }}" target="_blank" style="background-color: {{ site_config.header_btn_bgcolor }}; color: #fff; transition: transform 0.2s cubic-bezier(.4,2,.3,1), box-shadow 0.2s; box-shadow: 0 2px 8px rgba(2,25,122,0.08); min-width:220px;" onmouseover="this.style.transform='translateY(-6px) scale(1.04)';this.style.boxShadow='0 8px 24px rgba(2,25,122,0.18)';" onmouseout="this.style.transform='none';this.style.boxShadow='0 2px 8px rgba(2,25,122,0.08)';">{{ site_config.header_btn2_text }}</a>
