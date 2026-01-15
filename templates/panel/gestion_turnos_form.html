@@ -1,0 +1,1370 @@
+<div class="modal-header" style="background: linear-gradient(135deg, var(--theme-primary) 0%, var(--theme-primary-dark) 100%);">
+    <h5 class="modal-title text-white">
+        <i class="fa fa-calendar-plus me-2"></i>{{ titulo }}
+    </h5>
+    <button type="button" class="close text-white" onclick="$('#modal-fullscreen').modal('hide');" aria-label="Cerrar">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+
+<style>
+    .section-container {
+        margin-bottom: 1.5rem;
+    }
+
+    .section-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid var(--theme-primary);
+    }
+
+    .section-title {
+        margin: 0;
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #2c3e50;
+    }
+
+    .form-label {
+        font-weight: 500;
+        color: #495057;
+        margin-bottom: 0.5rem;
+    }
+
+    .form-label i {
+        font-size: 0.9rem;
+    }
+
+    .card.border-light {
+        border: 1px solid #e0e0e0 !important;
+        border-radius: 0.5rem;
+    }
+
+    .card-body {
+        background-color: #fafafa;
+    }
+
+    .btn-orange {
+        background-color: var(--theme-primary);
+        border-color: var(--theme-primary);
+        color: white;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+
+    .btn-orange:hover {
+        background-color: var(--theme-primary-dark);
+        border-color: var(--theme-primary-dark);
+        color: white;
+    }
+
+    .btn-outline-orange {
+        border-color: var(--theme-primary);
+        color: var(--theme-primary);
+        background: transparent;
+    }
+
+    .btn-outline-orange:hover {
+        background-color: var(--theme-primary);
+        border-color: var(--theme-primary);
+        color: white;
+    }
+
+    .form-group {
+        margin-bottom: 1rem;
+    }
+
+    .shadow-sm {
+        box-shadow: 0 0.125rem 0.5rem rgba(0, 0, 0, 0.075) !important;
+    }
+
+    /* Select2 personalizado */
+    .select2-container--default .select2-selection--single {
+        height: 38px;
+        border: 1px solid #ced4da;
+    }
+
+    .select2-container--default .select2-selection--single .select2-selection__rendered {
+        line-height: 36px;
+        color: #495057;
+    }
+
+    .select2-container--default .select2-selection--single .select2-selection__arrow {
+        height: 36px;
+    }
+
+    /* Flatpickr personalizado */
+    .flatpickr-input {
+        background-color: #fff !important;
+    }
+
+    .flatpickr-input:disabled {
+        background-color: #e9ecef !important;
+    }
+
+    .flatpickr-day.flatpickr-disabled,
+    .flatpickr-day.flatpickr-disabled:hover {
+        color: #ccc !important;
+        background: #f5f5f5 !important;
+        cursor: not-allowed !important;
+        text-decoration: line-through;
+    }
+
+    .flatpickr-day.selected {
+        background: var(--theme-primary) !important;
+        border-color: var(--theme-primary) !important;
+    }
+
+    .flatpickr-day.today {
+        border-color: var(--theme-primary) !important;
+    }
+
+    .flatpickr-day:hover {
+        background: rgba(87, 32, 67, 0.1) !important;
+    }
+
+    .flatpickr-months .flatpickr-month {
+        background: var(--theme-primary) !important;
+        color: white !important;
+    }
+
+    .flatpickr-current-month .flatpickr-monthDropdown-months,
+    .flatpickr-current-month input.cur-year {
+        color: white !important;
+    }
+
+    .flatpickr-months .flatpickr-prev-month,
+    .flatpickr-months .flatpickr-next-month {
+        fill: white !important;
+        color: white !important;
+    }
+
+    .flatpickr-months .flatpickr-prev-month:hover svg,
+    .flatpickr-months .flatpickr-next-month:hover svg {
+        fill: #ddd !important;
+    }
+
+    .flatpickr-weekdays {
+        background: #f8f9fa !important;
+    }
+
+    .flatpickr-weekday {
+        color: #572043 !important;
+        font-weight: 600 !important;
+    }
+</style>
+
+<!-- Flatpickr CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/material_blue.css">
+
+<form id="turno_form" method="POST" novalidate>
+    {% csrf_token %}
+    <input hidden id="pk" name="pk" value="{% if pk %}{{ pk }}{% endif %}">
+
+    <div class="modal-body">
+        <!-- Sección: Datos del Cliente -->
+        <div class="section-container mb-4">
+            <div class="section-header">
+                <i class="fa fa-user text-primary me-2"></i>
+                <h6 class="section-title">Datos del Cliente</h6>
+            </div>
+
+            <div class="card border-light shadow-sm">
+                <div class="card-body p-3">
+                    <div class="row">
+                        <div class="col-lg-6 col-md-12 form-group mb-3">
+                            <label for="cliente" class="form-label">
+                                <i class="fa fa-user text-muted me-1"></i>
+                                Cliente *
+                            </label>
+                            {% if turno %}
+                            <!-- Modo edición: campo solo lectura -->
+                            <input type="text" class="form-control" value="{{ turno.cliente.dni }} - {{ turno.cliente.nombre }} {{ turno.cliente.apellido }}" readonly style="background-color: #e9ecef;">
+                            <input type="hidden" id="cliente" name="cliente" value="{{ turno.cliente.id }}">
+                            {% else %}
+                            <!-- Modo nuevo turno: campo editable -->
+                            <div class="input-group">
+                                <select id="cliente" name="cliente" class="form-control select2" required style="width: calc(100% - 42px) !important;">
+                                    <option value="">Seleccione un cliente</option>
+                                    {% for c in clientes %}
+                                    <option value="{{ c.id }}">
+                                        {{ c.dni }} - {{ c.nombre }} {{ c.apellido }}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                                <div class="input-group-append">
+                                    <button type="button" class="btn btn-agregar-cliente" title="Agregar nuevo cliente" style="height: 38px; border-top-left-radius: 0; border-bottom-left-radius: 0; background-color: var(--theme-primary); border-color: var(--theme-primary); color: white;">
+                                        <i class="fa fa-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="invalid-feedback">Debe seleccionar un cliente</div>
+                            {% endif %}
+                        </div>
+                        <div class="col-lg-6 col-md-12 form-group mb-3">
+                            <label for="vehiculo" class="form-label">
+                                <i class="fa fa-car text-muted me-1"></i>
+                                Vehículo *
+                            </label>
+                            {% if turno %}
+                            <!-- Modo edición: campo solo lectura -->
+                            <input type="text" class="form-control" value="{{ turno.vehiculo.dominio }}{% if turno.vehiculo.tipo_vehiculo %} - {{ turno.vehiculo.tipo_vehiculo.nombre_normalizado }}{% endif %}{% if turno.vehiculo.tiene_gnc %} (GNC){% endif %}" readonly style="background-color: #e9ecef;">
+                            <input type="hidden" id="vehiculo" name="vehiculo" value="{{ turno.vehiculo.id }}">
+                            {% else %}
+                            <!-- Modo nuevo turno: campo editable -->
+                            <div class="input-group">
+                                <select id="vehiculo" name="vehiculo" class="form-control select2" required style="width: calc(100% - 42px) !important;">
+                                    <option value="">Seleccione un vehículo</option>
+                                </select>
+                                <div class="input-group-append">
+                                    <button type="button" class="btn btn-agregar-vehiculo" title="Agregar nuevo vehículo" style="height: 38px; border-top-left-radius: 0; border-bottom-left-radius: 0; background-color: var(--theme-primary); border-color: var(--theme-primary); color: white;">
+                                        <i class="fa fa-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="invalid-feedback">Debe seleccionar un vehículo</div>
+                            <small class="form-text text-muted">
+                                <i class="fa fa-info-circle me-1"></i>
+                                Primero seleccione un cliente para ver sus vehículos
+                            </small>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sección: Datos del Turno -->
+        <div class="section-container mb-4">
+            <div class="section-header">
+                <i class="fa fa-calendar text-primary me-2"></i>
+                <h6 class="section-title">Datos del Turno</h6>
+            </div>
+
+            <div class="card border-light shadow-sm">
+                <div class="card-body p-3">
+                    <div class="row">
+                        <div class="col-lg-4 col-md-6 form-group mb-3">
+                            <label for="taller" class="form-label">
+                                <i class="fa fa-building text-muted me-1"></i>
+                                Taller *
+                            </label>
+                            {% if turno %}
+                            <!-- Modo edición: campo solo lectura -->
+                            <input type="text" class="form-control" value="{{ turno.taller.get_nombre }}" readonly style="background-color: #e9ecef;">
+                            <input type="hidden" id="taller" name="taller" value="{{ turno.taller.id }}">
+                            {% else %}
+                            <!-- Modo nuevo turno: campo editable -->
+                            <select id="taller" name="taller" class="form-control select2" required>
+                                <option value="">Seleccione un taller</option>
+                                {% for t in talleres %}
+                                <option value="{{ t.id }}">
+                                    {{ t.get_nombre }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                            <div class="invalid-feedback">Debe seleccionar un taller</div>
+                            {% endif %}
+                        </div>
+                        <div class="col-lg-4 col-md-6 form-group mb-3">
+                            <label for="tipo_vehiculo" class="form-label">
+                                <i class="fa fa-tag text-muted me-1"></i>
+                                Tipo de Trámite *
+                            </label>
+                            {% if turno %}
+                            <!-- Modo edición: campo solo lectura -->
+                            <input type="text" class="form-control" value="{{ turno.tipo_vehiculo.nombre_normalizado }}" readonly style="background-color: #e9ecef;">
+                            <input type="hidden" id="tipo_vehiculo" name="tipo_vehiculo" value="{{ turno.tipo_vehiculo.id }}">
+                            {% else %}
+                            <!-- Modo nuevo turno: campo editable -->
+                            <select id="tipo_vehiculo" name="tipo_vehiculo" class="form-control select2" required disabled>
+                                <option value="">Primero seleccione un taller</option>
+                            </select>
+                            <div class="invalid-feedback">Debe seleccionar un tipo de trámite</div>
+                            <small class="form-text text-muted" id="help-tipo-tramite">
+                                <i class="fa fa-info-circle me-1"></i>
+                                Seleccione un taller para ver los trámites disponibles
+                            </small>
+                            {% endif %}
+                        </div>
+                        <div class="col-lg-4 col-md-6 form-group mb-3">
+                            <label for="fecha" class="form-label">
+                                <i class="fa fa-calendar text-muted me-1"></i>
+                                Fecha del Turno *
+                            </label>
+                            <input type="text" id="fecha" name="fecha" class="form-control" required
+                                   value="{% if turno %}{{ turno.fecha|date:'Y-m-d' }}{% endif %}"
+                                   placeholder="Seleccione una fecha"
+                                   readonly>
+                            <div class="invalid-feedback">Debe seleccionar una fecha</div>
+                            <small id="info-dias-atencion" class="form-text text-muted" style="display: none;">
+                                <i class="fa fa-info-circle me-1"></i>
+                                <span id="texto-dias-atencion"></span>
+                            </small>
+                            {% if not turno %}
+                            <small class="form-text text-muted" id="help-fecha">
+                                <i class="fa fa-info-circle me-1"></i>
+                                Seleccione un tipo de trámite primero
+                            </small>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-lg-8 col-md-12 form-group mb-3">
+                            <label for="horario_turno" class="form-label">
+                                <i class="fa fa-clock-o text-muted me-1"></i>
+                                Horario del Turno *
+                            </label>
+                            <select id="horario_turno" class="form-control select2">
+                                <option value="">{% if turno %}{{ turno.hora_inicio|time:'H:i' }} - {{ turno.hora_fin|time:'H:i' }}{% else %}Seleccione una fecha primero{% endif %}</option>
+                            </select>
+                            <input type="hidden" id="hora_inicio" name="hora_inicio" value="{% if turno %}{{ turno.hora_inicio|time:'H:i' }}{% endif %}">
+                            <input type="hidden" id="hora_fin" name="hora_fin" value="{% if turno %}{{ turno.hora_fin|time:'H:i' }}{% endif %}">
+                            <div class="invalid-feedback">Debe seleccionar un horario</div>
+                            <small id="info-horario" class="form-text text-muted" style="display: none;">
+                                <i class="fa fa-clock-o me-1"></i>
+                                Horario de atención: <span id="texto-horario"></span>
+                            </small>
+                        </div>
+                        <div class="col-lg-4 col-md-6 form-group mb-3">
+                            <label for="estado" class="form-label">
+                                <i class="fa fa-flag text-muted me-1"></i>
+                                Estado
+                            </label>
+                            {% if turno %}
+                            <select id="estado" name="estado" class="form-control">
+                                <option value="PENDIENTE" {% if turno.estado == 'PENDIENTE' %}selected{% endif %}>Pendiente</option>
+                                <option value="CONFIRMADO" {% if turno.estado == 'CONFIRMADO' %}selected{% endif %}>Confirmado</option>
+                                <option value="EN_CURSO" {% if turno.estado == 'EN_CURSO' %}selected{% endif %}>En Curso</option>
+                                <option value="COMPLETADO" {% if turno.estado == 'COMPLETADO' %}selected{% endif %}>Completado</option>
+                                <option value="CANCELADO" {% if turno.estado == 'CANCELADO' %}selected{% endif %}>Cancelado</option>
+                                <option value="NO_ASISTIO" {% if turno.estado == 'NO_ASISTIO' %}selected{% endif %}>No Asistió</option>
+                            </select>
+                            {% else %}
+                            <input type="text" class="form-control" value="Pendiente" readonly style="background-color: #e9ecef;">
+                            <input type="hidden" id="estado" name="estado" value="PENDIENTE">
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sección: Observaciones -->
+        <div class="section-container mb-4">
+            <div class="section-header">
+                <i class="fa fa-comment text-primary me-2"></i>
+                <h6 class="section-title">Observaciones</h6>
+            </div>
+
+            <div class="card border-light shadow-sm">
+                <div class="card-body p-3">
+                    <div class="form-group mb-0">
+                        <label for="observaciones" class="form-label">
+                            <i class="fa fa-pencil text-muted me-1"></i>
+                            Notas adicionales
+                        </label>
+                        <textarea id="observaciones" name="observaciones" class="form-control" rows="3"
+                                  placeholder="Ingrese observaciones o notas adicionales sobre el turno...">{% if turno %}{{ turno.observaciones }}{% endif %}</textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sección: Notificaciones (solo en edición) -->
+        {% if turno %}
+        <div class="section-container mb-4">
+            <div class="section-header">
+                <i class="fa fa-bell text-primary me-2"></i>
+                <h6 class="section-title">Estado de Notificaciones</h6>
+            </div>
+
+            <div class="card border-light shadow-sm">
+                <div class="card-body p-3">
+                    <div class="row">
+                        <div class="col-lg-4 col-md-6 form-group mb-3">
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="email_enviado" name="email_enviado"
+                                       {% if turno.email_enviado %}checked{% endif %}>
+                                <label class="form-check-label" for="email_enviado">
+                                    <i class="fa fa-envelope text-info me-1"></i> Email de confirmación enviado
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-lg-4 col-md-6 form-group mb-3">
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="whatsapp_enviado" name="whatsapp_enviado"
+                                       {% if turno.whatsapp_enviado %}checked{% endif %}>
+                                <label class="form-check-label" for="whatsapp_enviado">
+                                    <i class="fa fa-whatsapp text-success me-1"></i> WhatsApp enviado
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-lg-4 col-md-6 form-group mb-3">
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="recordatorio_enviado" name="recordatorio_enviado"
+                                       {% if turno.recordatorio_enviado %}checked{% endif %}>
+                                <label class="form-check-label" for="recordatorio_enviado">
+                                    <i class="fa fa-clock-o text-warning me-1"></i> Recordatorio enviado
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+    </div>
+
+    <div class="modal-footer">
+        <button type="submit" class="btn btn-outline-orange">
+            <i class="fa fa-save me-1"></i> Guardar
+        </button>
+        <button type="button" class="btn btn-outline-dark" onclick="$('#modal-fullscreen').modal('hide');">
+            <i class="fa fa-times me-1"></i> Cancelar
+        </button>
+    </div>
+</form>
+
+<!-- Flatpickr JS -->
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/es.js"></script>
+
+<script>
+// Cargar Select2
+cargarSelect2("#modal-fullscreen");
+
+// ============================================
+// Variables de configuración
+// ============================================
+var tallerConfig = null;
+var tipoTramiteConfig = null;
+var fechaPicker = null;
+
+// Mapeo de días en español
+var diasSemana = {
+    0: 'domingo',
+    1: 'lunes',
+    2: 'martes',
+    3: 'miercoles',
+    4: 'jueves',
+    5: 'viernes',
+    6: 'sabado'
+};
+
+// Mapeo inverso: nombre del día a número de día de la semana
+var diasNumero = {
+    'domingo': 0,
+    'lunes': 1,
+    'martes': 2,
+    'miercoles': 3,
+    'jueves': 4,
+    'viernes': 5,
+    'sabado': 6
+};
+
+var diasNombres = {
+    'lunes': 'Lun',
+    'martes': 'Mar',
+    'miercoles': 'Mié',
+    'jueves': 'Jue',
+    'viernes': 'Vie',
+    'sabado': 'Sáb',
+    'domingo': 'Dom'
+};
+
+// ============================================
+// Inicializar Flatpickr
+// ============================================
+function inicializarFlatpickr() {
+    if (fechaPicker) {
+        fechaPicker.destroy();
+    }
+
+    var fechaMinima = new Date();
+    fechaMinima.setDate(fechaMinima.getDate() + 1); // Mínimo mañana
+
+    var fechaMaxima = new Date();
+    fechaMaxima.setDate(fechaMaxima.getDate() + 60); // Máximo 60 días
+
+    fechaPicker = flatpickr("#fecha", {
+        locale: "es",
+        dateFormat: "Y-m-d",
+        minDate: fechaMinima,
+        maxDate: fechaMaxima,
+        disableMobile: true,
+        allowInput: false,
+        disable: [],
+        onChange: function(selectedDates, dateStr, instance) {
+            if (selectedDates.length > 0) {
+                // Disparar el evento change para que se carguen los horarios
+                $("#fecha").trigger("change");
+            }
+        }
+    });
+}
+
+// ============================================
+// Actualizar fechas deshabilitadas en Flatpickr
+// ============================================
+function actualizarFechasDeshabilitadas() {
+    if (!fechaPicker || !tallerConfig) return;
+
+    var disabledDates = [];
+
+    // 1. Deshabilitar días de la semana que no atiende el taller
+    if (tallerConfig.dias_atencion) {
+        var diasNoLaborables = [];
+        for (var dia in diasNumero) {
+            if (!tallerConfig.dias_atencion[dia]) {
+                diasNoLaborables.push(diasNumero[dia]);
+            }
+        }
+
+        if (diasNoLaborables.length > 0) {
+            // Flatpickr usa una función para deshabilitar días de la semana
+            disabledDates.push(function(date) {
+                return diasNoLaborables.indexOf(date.getDay()) !== -1;
+            });
+        }
+    }
+
+    // 2. Agregar fechas específicas no laborables (feriados)
+    if (tallerConfig.fechas_no_laborables && tallerConfig.fechas_no_laborables.length > 0) {
+        tallerConfig.fechas_no_laborables.forEach(function(fecha) {
+            // Asegurar formato YYYY-MM-DD
+            var fechaNormalizada = fecha;
+            if (typeof fecha === 'object' && fecha !== null) {
+                fechaNormalizada = new Date(fecha).toISOString().split('T')[0];
+            } else if (typeof fecha === 'string') {
+                fechaNormalizada = fecha.substring(0, 10);
+            }
+            disabledDates.push(fechaNormalizada);
+        });
+    }
+
+    // Actualizar Flatpickr con las fechas deshabilitadas
+    fechaPicker.set('disable', disabledDates);
+
+    console.log("Fechas deshabilitadas actualizadas:", disabledDates);
+}
+
+// ============================================
+// Función auxiliar para resetear campos en cascada
+// ============================================
+function resetearCamposCascada(desde) {
+    if (desde === 'taller' || desde === 'all') {
+        $("#tipo_vehiculo").val('').prop('disabled', true);
+        $("#tipo_vehiculo").html('<option value="">Primero seleccione un taller</option>');
+        $("#help-tipo-tramite").show();
+    }
+    if (desde === 'taller' || desde === 'tipo' || desde === 'all') {
+        // Limpiar y deshabilitar Flatpickr
+        if (fechaPicker) {
+            fechaPicker.clear();
+            fechaPicker.set('disable', []);
+        }
+        $("#fecha").val('').prop('disabled', true);
+        $("#help-fecha").show();
+        $("#info-dias-atencion").hide();
+    }
+    if (desde === 'taller' || desde === 'tipo' || desde === 'fecha' || desde === 'all') {
+        $("#horario_turno").val('').prop('disabled', true);
+        $("#horario_turno").html('<option value="">Seleccione una fecha primero</option>');
+        $("#hora_inicio").val('');
+        $("#hora_fin").val('');
+        $("#info-horario").hide();
+    }
+}
+
+// ============================================
+// 1. Cambio de Taller - Cargar tipos de trámite
+// ============================================
+$("#taller").on("change", function() {
+    var tallerId = $(this).val();
+    tallerConfig = null;
+    tipoTramiteConfig = null;
+
+    // Resetear todos los campos dependientes
+    resetearCamposCascada('taller');
+
+    if (!tallerId) {
+        return;
+    }
+
+    // Cargar configuración del taller
+    $.ajax({
+        url: "{% url 'obtener_configuracion_taller' %}",
+        type: "POST",
+        data: {
+            'taller_id': tallerId,
+            'csrfmiddlewaretoken': '{{ csrf_token }}'
+        },
+        success: function(data) {
+            if (data.success) {
+                tallerConfig = data.configuracion;
+                console.log("Configuración del taller cargada:", tallerConfig);
+            }
+        }
+    });
+
+    // Cargar tipos de trámite disponibles para este taller
+    $.ajax({
+        url: "{% url 'obtener_tipos_tramite_taller' %}",
+        type: "POST",
+        data: {
+            'taller_id': tallerId,
+            'csrfmiddlewaretoken': '{{ csrf_token }}'
+        },
+        beforeSend: function() {
+            $("#tipo_vehiculo").html('<option value="">Cargando...</option>');
+        },
+        success: function(data) {
+            // Destruir Select2 antes de modificar opciones
+            if ($("#tipo_vehiculo").hasClass("select2-hidden-accessible")) {
+                $("#tipo_vehiculo").select2('destroy');
+            }
+
+            if (data.success && data.tipos_tramite && data.tipos_tramite.length > 0) {
+                var html = '<option value="">Seleccione tipo de trámite</option>';
+                data.tipos_tramite.forEach(function(tipo) {
+                    // Formatear precio en pesos argentinos
+                    var precioTexto = '';
+                    if (tipo.precio && tipo.precio > 0) {
+                        precioTexto = ' - $' + tipo.precio.toLocaleString('es-AR', {minimumFractionDigits: 0, maximumFractionDigits: 0});
+                    }
+                    html += '<option value="' + tipo.id + '" data-duracion="' + tipo.duracion_minutos + '" data-intervalo="' + tipo.intervalo_minutos + '" data-precio="' + tipo.precio + '">' + tipo.nombre + precioTexto + '</option>';
+                });
+                $("#tipo_vehiculo").html(html).prop('disabled', false);
+                $("#help-tipo-tramite").hide();
+            } else {
+                $("#tipo_vehiculo").html('<option value="">No hay trámites configurados para este taller</option>');
+            }
+
+            // Reinicializar Select2
+            cargarSelect2("#modal-fullscreen");
+        },
+        error: function() {
+            $("#tipo_vehiculo").html('<option value="">Error al cargar trámites</option>');
+            cargarSelect2("#modal-fullscreen");
+        }
+    });
+});
+
+// ============================================
+// 2. Cambio de Tipo de Trámite - Habilitar fecha
+// ============================================
+$("#tipo_vehiculo").on("change", function() {
+    var tipoId = $(this).val();
+
+    // Resetear campos dependientes
+    resetearCamposCascada('tipo');
+
+    if (!tipoId) {
+        return;
+    }
+
+    // Guardar configuración del tipo de trámite seleccionado
+    var $selected = $(this).find('option:selected');
+    tipoTramiteConfig = {
+        id: tipoId,
+        duracion_minutos: parseInt($selected.data('duracion')) || 30,
+        intervalo_minutos: parseInt($selected.data('intervalo')) || 30
+    };
+
+    // Habilitar fecha
+    $("#fecha").prop('disabled', false);
+    $("#help-fecha").hide();
+
+    // Inicializar Flatpickr y configurar fechas deshabilitadas
+    inicializarFlatpickr();
+    actualizarFechasDeshabilitadas();
+
+    // Mostrar días de atención si están configurados
+    if (tallerConfig && tallerConfig.dias_atencion && Object.keys(tallerConfig.dias_atencion).length > 0) {
+        var diasActivos = [];
+        for (var dia in tallerConfig.dias_atencion) {
+            if (tallerConfig.dias_atencion[dia]) {
+                diasActivos.push(diasNombres[dia] || dia);
+            }
+        }
+        if (diasActivos.length > 0) {
+            $("#texto-dias-atencion").text("Días de atención: " + diasActivos.join(", "));
+            $("#info-dias-atencion").show();
+        }
+    }
+});
+
+// ============================================
+// 3. Cambio de Fecha - Validar y cargar horarios
+// ============================================
+$("#fecha").on("change", function() {
+    var fecha = $(this).val();
+
+    // Resetear horarios
+    resetearCamposCascada('fecha');
+
+    if (!fecha || !tallerConfig) {
+        return;
+    }
+
+    var fechaObj = new Date(fecha + 'T12:00:00');
+    var diaSemana = fechaObj.getDay();
+    var diaTexto = diasSemana[diaSemana];
+
+    // Validar día de atención
+    if (tallerConfig.dias_atencion && Object.keys(tallerConfig.dias_atencion).length > 0) {
+        if (!tallerConfig.dias_atencion[diaTexto]) {
+            Swal.fire({
+                title: "Día no disponible",
+                text: "El taller no atiende los días " + diaTexto.charAt(0).toUpperCase() + diaTexto.slice(1),
+                icon: "warning"
+            });
+            $(this).val('');
+            return;
+        }
+    }
+
+    // Validar fechas no laborables (feriados)
+    if (tallerConfig.fechas_no_laborables && tallerConfig.fechas_no_laborables.length > 0) {
+        console.log("Fecha seleccionada:", fecha);
+        console.log("Fechas no laborables:", tallerConfig.fechas_no_laborables);
+
+        // Normalizar la comparación - las fechas pueden venir en diferentes formatos
+        var esFechaNoLaborable = tallerConfig.fechas_no_laborables.some(function(fechaNoLab) {
+            // Comparar como strings en formato YYYY-MM-DD
+            var fechaNormalizada = fechaNoLab;
+            if (typeof fechaNoLab === 'object' && fechaNoLab !== null) {
+                // Si es un objeto Date o similar
+                fechaNormalizada = new Date(fechaNoLab).toISOString().split('T')[0];
+            }
+            return fechaNormalizada === fecha;
+        });
+
+        if (esFechaNoLaborable) {
+            Swal.fire({
+                title: "Fecha no disponible",
+                text: "Esta fecha está marcada como no laborable (feriado o día especial)",
+                icon: "warning"
+            });
+            $(this).val('');
+            return;
+        }
+    }
+
+    // Cargar horarios disponibles
+    var tallerId = $("#taller").val();
+    var tipoId = $("#tipo_vehiculo").val();
+    var turnoId = $("#pk").val();  // ID del turno en edición (vacío si es nuevo)
+
+    $.ajax({
+        url: "{% url 'obtener_horarios_disponibles' %}",
+        type: "POST",
+        data: {
+            'taller_id': tallerId,
+            'tipo_vehiculo_id': tipoId,
+            'fecha': fecha,
+            'turno_id': turnoId,  // Enviar ID para excluir el turno actual
+            'csrfmiddlewaretoken': '{{ csrf_token }}'
+        },
+        beforeSend: function() {
+            // Destruir Select2 antes de modificar opciones
+            if ($("#horario_turno").hasClass("select2-hidden-accessible")) {
+                $("#horario_turno").select2('destroy');
+            }
+            $("#horario_turno").html('<option value="">Cargando horarios...</option>');
+        },
+        success: function(data) {
+            if (data.success && data.horarios && data.horarios.length > 0) {
+                var html = '<option value="">Seleccione un horario</option>';
+                var hayDisponibles = false;
+
+                data.horarios.forEach(function(slot) {
+                    var disponibilidadText = '';
+                    if (slot.capacidad > 1) {
+                        disponibilidadText = ' (' + (slot.capacidad - slot.ocupados) + '/' + slot.capacidad + ' disponibles)';
+                    }
+
+                    if (slot.disponible) {
+                        hayDisponibles = true;
+                        html += '<option value="' + slot.hora_inicio + '|' + slot.hora_fin + '">' +
+                                slot.hora_inicio + ' - ' + slot.hora_fin + disponibilidadText +
+                                '</option>';
+                    } else {
+                        html += '<option value="" disabled style="color: #999;">' +
+                                slot.hora_inicio + ' - ' + slot.hora_fin + ' (No disponible)' +
+                                '</option>';
+                    }
+                });
+
+                if (!hayDisponibles) {
+                    html = '<option value="">No hay horarios disponibles para esta fecha</option>';
+                }
+
+                $("#horario_turno").html(html).prop('disabled', false);
+
+                // Mostrar horario de atención
+                if (tallerConfig.horario_apertura && tallerConfig.horario_cierre) {
+                    $("#texto-horario").text(tallerConfig.horario_apertura + " a " + tallerConfig.horario_cierre + " hs");
+                    $("#info-horario").show();
+                }
+            } else {
+                $("#horario_turno").html('<option value="">No hay horarios disponibles</option>');
+            }
+
+            // Reinicializar Select2
+            cargarSelect2("#modal-fullscreen");
+        },
+        error: function() {
+            $("#horario_turno").html('<option value="">Error al cargar horarios</option>');
+            cargarSelect2("#modal-fullscreen");
+        }
+    });
+});
+
+// ============================================
+// 4. Cambio de Horario - Establecer hora inicio/fin
+// ============================================
+$("#horario_turno").on("change", function() {
+    var valor = $(this).val();
+
+    if (!valor) {
+        $("#hora_inicio").val('');
+        $("#hora_fin").val('');
+        return;
+    }
+
+    var partes = valor.split('|');
+    $("#hora_inicio").val(partes[0]);
+    $("#hora_fin").val(partes[1]);
+});
+
+// Cargar vehículos del cliente seleccionado
+$("#cliente").on("change", function() {
+    var clienteId = $(this).val();
+    var $vehiculoSelect = $("#vehiculo");
+
+    // Destruir Select2 antes de modificar
+    if ($vehiculoSelect.hasClass("select2-hidden-accessible")) {
+        $vehiculoSelect.select2('destroy');
+    }
+
+    // Limpiar select de vehículos
+    $vehiculoSelect.empty().append('<option value="">Cargando...</option>');
+
+    if (!clienteId) {
+        $vehiculoSelect.empty().append('<option value="">Seleccione un vehículo</option>');
+        cargarSelect2("#modal-fullscreen");
+        return;
+    }
+
+    $.ajax({
+        url: "{% url 'obtener_vehiculos_cliente' %}",
+        type: "POST",
+        data: {
+            'cliente_id': clienteId,
+            'csrfmiddlewaretoken': '{{ csrf_token }}'
+        },
+        success: function(data) {
+            $vehiculoSelect.empty().append('<option value="">Seleccione un vehículo</option>');
+
+            if (data.vehiculos && data.vehiculos.length > 0) {
+                data.vehiculos.forEach(function(v) {
+                    var texto = v.dominio;
+                    if (v.tipo) texto += ' - ' + v.tipo;
+                    if (v.tiene_gnc) texto += ' (GNC)';
+                    $vehiculoSelect.append('<option value="' + v.id + '">' + texto + '</option>');
+                });
+            } else {
+                $vehiculoSelect.append('<option value="" disabled>No hay vehículos registrados</option>');
+            }
+
+            cargarSelect2("#modal-fullscreen");
+        },
+        error: function(xhr, status, error) {
+            console.error("Error al cargar vehículos:", status, error);
+            $vehiculoSelect.empty().append('<option value="">Error al cargar vehículos</option>');
+            cargarSelect2("#modal-fullscreen");
+        }
+    });
+});
+
+// Validación del formulario
+$(document).on("submit", "#turno_form", function(e) {
+    e.preventDefault();
+
+    var cliente = $("#cliente").val();
+    var vehiculo = $("#vehiculo").val();
+    var taller = $("#taller").val();
+    var tipoVehiculo = $("#tipo_vehiculo").val();
+    var fecha = $("#fecha").val();
+    var horaInicio = $("#hora_inicio").val();
+    var horaFin = $("#hora_fin").val();
+
+    if (!cliente || !vehiculo || !taller || !tipoVehiculo || !fecha || !horaInicio || !horaFin) {
+        Swal.fire({
+            title: "Campos obligatorios",
+            text: "Debe completar todos los campos requeridos",
+            icon: "warning"
+        });
+        return false;
+    }
+
+    // Validar que hora fin sea mayor a hora inicio
+    if (horaFin <= horaInicio) {
+        Swal.fire({
+            title: "Error en horarios",
+            text: "La hora de finalización debe ser mayor a la hora de inicio",
+            icon: "error"
+        });
+        return false;
+    }
+
+    var formData = new FormData(this);
+
+    $.ajax({
+        url: "{% url 'gestion_turnos_guardar' %}",
+        type: "POST",
+        data: formData,
+        processData: false,
+        contentType: false,
+        beforeSend: function() {
+            Swal.fire({
+                title: "Guardando...",
+                html: '<i class="fa fa-spinner fa-spin fa-2x"></i>',
+                showConfirmButton: false,
+                allowOutsideClick: false
+            });
+        },
+        success: function(data) {
+            Swal.close();
+            if (data.success) {
+                Swal.fire({
+                    title: 'Guardado!',
+                    text: data.message || 'El turno fue guardado correctamente',
+                    icon: 'success'
+                }).then(function() {
+                    $("#modal-fullscreen").modal('hide');
+                    cargarTabla();
+                });
+            } else {
+                Swal.fire({
+                    title: 'Error',
+                    text: data.error || 'No se pudo guardar el turno',
+                    icon: 'error'
+                });
+            }
+        },
+        error: function() {
+            Swal.fire({
+                title: 'Error',
+                text: 'Error al guardar el turno',
+                icon: 'error'
+            });
+        }
+    });
+});
+
+// ============================================
+// Modal Agregar Cliente
+// ============================================
+$(".btn-agregar-cliente").on("click", function() {
+    var modalHtml = `
+    <div class="modal fade" id="modal-nuevo-cliente" tabindex="-1" role="dialog" data-backdrop="static">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="background: linear-gradient(135deg, var(--theme-primary) 0%, var(--theme-primary-dark) 100%);">
+                    <h5 class="modal-title text-white">
+                        <i class="fa fa-user-plus me-2"></i>Nuevo Cliente
+                    </h5>
+                    <button type="button" class="close text-white" data-dismiss="modal" aria-label="Cerrar">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form id="form-nuevo-cliente">
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-4 form-group mb-3">
+                                <label class="form-label"><i class="fa fa-id-card text-muted me-1"></i> DNI *</label>
+                                <input type="text" class="form-control" id="nuevo_cliente_dni" name="dni" maxlength="8" required placeholder="12345678">
+                            </div>
+                            <div class="col-md-4 form-group mb-3">
+                                <label class="form-label"><i class="fa fa-user text-muted me-1"></i> Nombre *</label>
+                                <input type="text" class="form-control" id="nuevo_cliente_nombre" name="nombre" required placeholder="Juan">
+                            </div>
+                            <div class="col-md-4 form-group mb-3">
+                                <label class="form-label"><i class="fa fa-user text-muted me-1"></i> Apellido *</label>
+                                <input type="text" class="form-control" id="nuevo_cliente_apellido" name="apellido" required placeholder="Pérez">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 form-group mb-3">
+                                <label class="form-label"><i class="fa fa-envelope text-muted me-1"></i> Email</label>
+                                <input type="email" class="form-control" id="nuevo_cliente_email" name="email" placeholder="correo@ejemplo.com">
+                            </div>
+                            <div class="col-md-6 form-group mb-3">
+                                <label class="form-label"><i class="fa fa-phone text-muted me-1"></i> Celular</label>
+                                <input type="text" class="form-control" id="nuevo_cliente_celular" name="celular" placeholder="3764123456">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12 form-group mb-3">
+                                <label class="form-label"><i class="fa fa-map-marker text-muted me-1"></i> Domicilio</label>
+                                <input type="text" class="form-control" id="nuevo_cliente_domicilio" name="domicilio" placeholder="Calle 123, Ciudad">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-outline-orange">
+                            <i class="fa fa-save me-1"></i> Guardar Cliente
+                        </button>
+                        <button type="button" class="btn btn-outline-dark" data-dismiss="modal">
+                            <i class="fa fa-times me-1"></i> Cancelar
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>`;
+
+    // Remover modal anterior si existe
+    $("#modal-nuevo-cliente").remove();
+    $("body").append(modalHtml);
+    $("#modal-nuevo-cliente").modal("show");
+
+    // Submit del formulario
+    $("#form-nuevo-cliente").off("submit").on("submit", function(e) {
+        e.preventDefault();
+
+        var dni = $("#nuevo_cliente_dni").val().trim();
+        var nombre = $("#nuevo_cliente_nombre").val().trim();
+        var apellido = $("#nuevo_cliente_apellido").val().trim();
+
+        if (!dni || !nombre || !apellido) {
+            Swal.fire("Error", "DNI, Nombre y Apellido son obligatorios", "error");
+            return;
+        }
+
+        $.ajax({
+            url: "{% url 'guardar_cliente_rapido' %}",
+            type: "POST",
+            data: {
+                'dni': dni,
+                'nombre': nombre,
+                'apellido': apellido,
+                'email': $("#nuevo_cliente_email").val(),
+                'celular': $("#nuevo_cliente_celular").val(),
+                'domicilio': $("#nuevo_cliente_domicilio").val(),
+                'csrfmiddlewaretoken': '{{ csrf_token }}'
+            },
+            beforeSend: function() {
+                Swal.fire({
+                    title: "Guardando...",
+                    html: '<i class="fa fa-spinner fa-spin fa-2x"></i>',
+                    showConfirmButton: false,
+                    allowOutsideClick: false
+                });
+            },
+            success: function(data) {
+                Swal.close();
+                if (data.success) {
+                    // Agregar nuevo cliente al select y seleccionarlo
+                    var newOption = new Option(data.cliente.dni + ' - ' + data.cliente.nombre + ' ' + data.cliente.apellido, data.cliente.id, true, true);
+                    $("#cliente").append(newOption).trigger('change');
+
+                    $("#modal-nuevo-cliente").modal("hide");
+
+                    Swal.fire({
+                        title: "Cliente Creado",
+                        text: "El cliente fue agregado correctamente",
+                        icon: "success",
+                        timer: 1500,
+                        showConfirmButton: false
+                    });
+                } else {
+                    Swal.fire("Error", data.error || "No se pudo crear el cliente", "error");
+                }
+            },
+            error: function() {
+                Swal.fire("Error", "Error al guardar el cliente", "error");
+            }
+        });
+    });
+});
+
+// ============================================
+// Modal Agregar Vehículo
+// ============================================
+$(".btn-agregar-vehiculo").on("click", function() {
+    var clienteId = $("#cliente").val();
+
+    if (!clienteId) {
+        Swal.fire({
+            title: "Seleccione un cliente",
+            text: "Debe seleccionar un cliente antes de agregar un vehículo",
+            icon: "warning"
+        });
+        return;
+    }
+
+    var modalHtml = `
+    <div class="modal fade" id="modal-nuevo-vehiculo" tabindex="-1" role="dialog" data-backdrop="static">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="background: linear-gradient(135deg, var(--theme-primary) 0%, var(--theme-primary-dark) 100%);">
+                    <h5 class="modal-title text-white">
+                        <i class="fa fa-car me-2"></i>Nuevo Vehículo
+                    </h5>
+                    <button type="button" class="close text-white" data-dismiss="modal" aria-label="Cerrar">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form id="form-nuevo-vehiculo">
+                    <input type="hidden" id="nuevo_vehiculo_cliente_id" value="${clienteId}">
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-12 form-group mb-3">
+                                <label class="form-label"><i class="fa fa-hashtag text-muted me-1"></i> Dominio (Patente) *</label>
+                                <input type="text" class="form-control text-uppercase" id="nuevo_vehiculo_dominio" name="dominio" maxlength="10" required placeholder="ABC123 o AB123CD">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 form-group mb-3">
+                                <label class="form-label"><i class="fa fa-industry text-muted me-1"></i> Marca</label>
+                                <input type="text" class="form-control" id="nuevo_vehiculo_marca" name="marca" placeholder="Toyota">
+                            </div>
+                            <div class="col-md-6 form-group mb-3">
+                                <label class="form-label"><i class="fa fa-car text-muted me-1"></i> Modelo</label>
+                                <input type="text" class="form-control" id="nuevo_vehiculo_modelo" name="modelo" placeholder="Corolla">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 form-group mb-3">
+                                <div class="form-check mt-4">
+                                    <input type="checkbox" class="form-check-input" id="nuevo_vehiculo_gnc" name="tiene_gnc">
+                                    <label class="form-check-label" for="nuevo_vehiculo_gnc">
+                                        <i class="fa fa-fire text-warning me-1"></i> Tiene GNC
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-outline-orange">
+                            <i class="fa fa-save me-1"></i> Guardar Vehículo
+                        </button>
+                        <button type="button" class="btn btn-outline-dark" data-dismiss="modal">
+                            <i class="fa fa-times me-1"></i> Cancelar
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>`;
+
+    // Remover modal anterior si existe
+    $("#modal-nuevo-vehiculo").remove();
+    $("body").append(modalHtml);
+    $("#modal-nuevo-vehiculo").modal("show");
+
+    // Convertir dominio a mayúsculas
+    $("#nuevo_vehiculo_dominio").on("input", function() {
+        $(this).val($(this).val().toUpperCase());
+    });
+
+    // Submit del formulario
+    $("#form-nuevo-vehiculo").off("submit").on("submit", function(e) {
+        e.preventDefault();
+
+        var dominio = $("#nuevo_vehiculo_dominio").val().trim().toUpperCase();
+
+        if (!dominio) {
+            Swal.fire("Error", "El Dominio es obligatorio", "error");
+            return;
+        }
+
+        $.ajax({
+            url: "{% url 'guardar_vehiculo_rapido' %}",
+            type: "POST",
+            data: {
+                'cliente_id': $("#nuevo_vehiculo_cliente_id").val(),
+                'dominio': dominio,
+                'marca': $("#nuevo_vehiculo_marca").val(),
+                'modelo': $("#nuevo_vehiculo_modelo").val(),
+                'tiene_gnc': $("#nuevo_vehiculo_gnc").is(":checked") ? 'on' : '',
+                'csrfmiddlewaretoken': '{{ csrf_token }}'
+            },
+            beforeSend: function() {
+                Swal.fire({
+                    title: "Guardando...",
+                    html: '<i class="fa fa-spinner fa-spin fa-2x"></i>',
+                    showConfirmButton: false,
+                    allowOutsideClick: false
+                });
+            },
+            success: function(data) {
+                Swal.close();
+                if (data.success) {
+                    // Agregar nuevo vehículo al select y seleccionarlo
+                    var displayText = data.vehiculo.dominio;
+                    if (data.vehiculo.marca) displayText += ' - ' + data.vehiculo.marca;
+                    if (data.vehiculo.modelo) displayText += ' ' + data.vehiculo.modelo;
+
+                    var newOption = new Option(displayText, data.vehiculo.id, true, true);
+                    $("#vehiculo").append(newOption).trigger('change');
+
+                    $("#modal-nuevo-vehiculo").modal("hide");
+
+                    Swal.fire({
+                        title: "Vehículo Creado",
+                        text: "El vehículo fue agregado correctamente",
+                        icon: "success",
+                        timer: 1500,
+                        showConfirmButton: false
+                    });
+                } else {
+                    Swal.fire("Error", data.error || "No se pudo crear el vehículo", "error");
+                }
+            },
+            error: function() {
+                Swal.fire("Error", "Error al guardar el vehículo", "error");
+            }
+        });
+    });
+});
+
+// ============================================
+// Inicialización para edición de turnos existentes
+// ============================================
+{% if turno %}
+$(document).ready(function() {
+    var tallerId = $("#taller").val();
+    var tipoVehiculoId = $("#tipo_vehiculo").val();
+
+    if (tallerId) {
+        // Cargar configuración del taller para poder inicializar Flatpickr con las fechas correctas
+        $.ajax({
+            url: "{% url 'obtener_configuracion_taller' %}",
+            type: "POST",
+            data: {
+                'taller_id': tallerId,
+                'csrfmiddlewaretoken': '{{ csrf_token }}'
+            },
+            success: function(data) {
+                if (data.success) {
+                    tallerConfig = data.configuracion;
+                    console.log("Configuración del taller cargada (edición):", tallerConfig);
+
+                    // Inicializar Flatpickr con la fecha actual
+                    inicializarFlatpickr();
+                    actualizarFechasDeshabilitadas();
+
+                    // Establecer la fecha actual del turno
+                    var fechaActual = "{{ turno.fecha|date:'Y-m-d' }}";
+                    if (fechaActual && fechaPicker) {
+                        fechaPicker.setDate(fechaActual, false);
+                    }
+
+                    // Cargar horarios disponibles para la fecha actual
+                    if (fechaActual && tipoVehiculoId) {
+                        cargarHorariosDisponibles(tallerId, tipoVehiculoId, fechaActual);
+                    }
+                }
+            }
+        });
+    }
+});
+
+// Función para cargar horarios disponibles (modo edición)
+function cargarHorariosDisponibles(tallerId, tipoVehiculoId, fecha) {
+    var horaInicioActual = "{{ turno.hora_inicio|time:'H:i' }}";
+    var horaFinActual = "{{ turno.hora_fin|time:'H:i' }}";
+    var turnoId = "{{ turno.id }}";
+
+    $.ajax({
+        url: "{% url 'obtener_horarios_disponibles' %}",
+        type: "POST",
+        data: {
+            'taller_id': tallerId,
+            'tipo_vehiculo_id': tipoVehiculoId,
+            'fecha': fecha,
+            'turno_id': turnoId,  // Enviar ID del turno para excluirlo
+            'csrfmiddlewaretoken': '{{ csrf_token }}'
+        },
+        beforeSend: function() {
+            if ($("#horario_turno").hasClass("select2-hidden-accessible")) {
+                $("#horario_turno").select2('destroy');
+            }
+            $("#horario_turno").html('<option value="">Cargando horarios...</option>');
+        },
+        success: function(data) {
+            if (data.success && data.horarios && data.horarios.length > 0) {
+                var html = '<option value="">Seleccione un horario</option>';
+                var hayDisponibles = false;
+                var horarioActualEncontrado = false;
+
+                data.horarios.forEach(function(slot) {
+                    var disponibilidadText = '';
+                    if (slot.capacidad > 1) {
+                        disponibilidadText = ' (' + (slot.capacidad - slot.ocupados) + '/' + slot.capacidad + ' disponibles)';
+                    }
+
+                    var esHorarioActual = (slot.hora_inicio === horaInicioActual && slot.hora_fin === horaFinActual);
+
+                    if (slot.disponible || esHorarioActual) {
+                        hayDisponibles = true;
+                        var selectedAttr = esHorarioActual ? ' selected' : '';
+                        if (esHorarioActual) horarioActualEncontrado = true;
+
+                        html += '<option value="' + slot.hora_inicio + '|' + slot.hora_fin + '"' + selectedAttr + '>' +
+                                slot.hora_inicio + ' - ' + slot.hora_fin + disponibilidadText +
+                                '</option>';
+                    } else {
+                        html += '<option value="" disabled style="color: #999;">' +
+                                slot.hora_inicio + ' - ' + slot.hora_fin + ' (No disponible)' +
+                                '</option>';
+                    }
+                });
+
+                // Si el horario actual no está en la lista (por algún cambio de configuración), agregarlo
+                if (!horarioActualEncontrado && horaInicioActual && horaFinActual) {
+                    html = '<option value="' + horaInicioActual + '|' + horaFinActual + '" selected>' +
+                           horaInicioActual + ' - ' + horaFinActual + ' (Horario actual)' +
+                           '</option>' + html.replace('<option value="">Seleccione un horario</option>', '');
+                }
+
+                if (!hayDisponibles) {
+                    html = '<option value="">No hay horarios disponibles para esta fecha</option>';
+                }
+
+                $("#horario_turno").html(html).prop('disabled', false);
+
+                // Mostrar horario de atención
+                if (tallerConfig && tallerConfig.horario_apertura && tallerConfig.horario_cierre) {
+                    $("#texto-horario").text(tallerConfig.horario_apertura + " a " + tallerConfig.horario_cierre + " hs");
+                    $("#info-horario").show();
+                }
+            } else {
+                // Si no hay horarios, mostrar el horario actual
+                $("#horario_turno").html('<option value="' + horaInicioActual + '|' + horaFinActual + '" selected>' +
+                                         horaInicioActual + ' - ' + horaFinActual + '</option>').prop('disabled', false);
+            }
+
+            // Reinicializar Select2
+            cargarSelect2("#modal-fullscreen");
+        },
+        error: function() {
+            // En caso de error, mostrar el horario actual
+            $("#horario_turno").html('<option value="' + horaInicioActual + '|' + horaFinActual + '" selected>' +
+                                     horaInicioActual + ' - ' + horaFinActual + '</option>').prop('disabled', false);
+            cargarSelect2("#modal-fullscreen");
+        }
+    });
+}
+{% endif %}
+</script>

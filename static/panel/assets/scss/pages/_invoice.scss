@@ -1,0 +1,37 @@
+.invoice1{
+
+    .logo,
+    .clientlogo{
+        float: left;
+        height: 70px;
+        width: 70px;
+    }
+    .info {
+        @extend .displayblock;
+        float: left;
+    }
+
+    .invoice-top{
+        
+        .title {
+            float: right;
+        }
+    }
+    .invoice-mid{
+        .info{
+            width: calc(100% - 90px);
+        }
+    }
+}
+
+
+.invoice{
+   
+    .table{
+        tr{
+            td{
+                vertical-align: middle;
+            }
+        }
+    }
+}

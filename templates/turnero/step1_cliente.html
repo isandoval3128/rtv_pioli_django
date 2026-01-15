@@ -1,0 +1,363 @@
+{% extends 'turnero/base.html' %}
+
+{% block title %}Paso 1: Datos del Cliente - Turnos RTV{% endblock %}
+
+{% block extra_css %}
+<style>
+    .search-section {
+        background: white;
+        padding: 2rem;
+        border-radius: 15px;
+        box-shadow: var(--card-shadow);
+        margin-bottom: 2rem;
+    }
+
+    .search-section, .form-section {
+        margin-top: 1.5rem;
+    }
+
+    .search-title {
+        color: var(--primary-color);
+        font-weight: 700;
+        font-size: 1.3rem;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .divider {
+        text-align: center;
+        margin: 2rem 0;
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .divider::before {
+        content: '';
+        flex: 1;
+        height: 2px;
+        background: linear-gradient(to right, transparent, #e9ecef);
+        margin-right: 1rem;
+    }
+
+    .divider::after {
+        content: '';
+        flex: 1;
+        height: 2px;
+        background: linear-gradient(to left, transparent, #e9ecef);
+        margin-left: 1rem;
+    }
+
+    .divider-text {
+        color: #6c757d;
+        font-weight: 600;
+        white-space: nowrap;
+        padding: 0 0.5rem;
+    }
+
+    .form-section {
+        background: #f8f9fa;
+        padding: 2rem;
+        border-radius: 10px;
+        margin-top: 1.5rem;
+    }
+
+    .btn-search {
+        width: 100%;
+        min-height: calc(1.5em + 0.75rem + 2px);
+        padding: 0.75rem 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    @media (max-width: 767px) {
+        .btn-search {
+            margin-top: 0.5rem;
+        }
+    }
+
+    /* Asegurar que inputs y botones tengan la misma altura */
+    .search-section .form-control {
+        height: calc(1.5em + 0.75rem + 2px);
+        padding: 0.375rem 0.75rem;
+    }
+
+    .search-section .input-icon input {
+        padding-left: 3rem;
+    }
+
+    .result-info {
+        background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+        border-left: 4px solid var(--success-color);
+        padding: 1rem 1.5rem;
+        border-radius: 10px;
+        margin-top: 1rem;
+        display: none;
+    }
+
+    .result-info.show {
+        display: block;
+        animation: fadeInUp 0.5s ease;
+    }
+
+    .result-info h5 {
+        color: #155724;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+
+    .result-info p {
+        color: #155724;
+        margin: 0.25rem 0;
+    }
+
+    .input-icon {
+        position: relative;
+    }
+
+    .input-icon i {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--primary-color);
+    }
+
+    .input-icon input {
+        padding-left: 3rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-10">
+        <div class="card-custom" data-aos="fade-up">
+            <div class="card-header-custom">
+                <h3>
+                    <i class="fas fa-user"></i> Paso 1: Datos del Cliente
+                </h3>
+                <p class="mb-0 mt-2" style="font-size: 0.95rem; opacity: 0.9;">
+                    Buscá tus datos por DNI o cargá tu información si es la primera vez
+                </p>
+            </div>
+            <div class="card-body-custom">
+                {% if error %}
+                <div class="alert alert-error-custom" role="alert">
+                    <i class="fas fa-exclamation-triangle"></i> {{ error }}
+                </div>
+                {% endif %}
+
+                <!-- Búsqueda por DNI -->
+                <div class="search-section">
+                    <h4 class="search-title mb-3">
+                        <i class="fas fa-search me-2"></i>¿Ya estás registrado? Buscá tus datos
+                    </h4>
+                    <div class="row g-3 align-items-end">
+                        <div class="col-md-8">
+                            <div class="input-icon">
+                                <i class="fas fa-id-card"></i>
+                                <input type="text" class="form-control" id="dni_busqueda_input"
+                                       placeholder="Ingresá tu DNI (solo números)" maxlength="8">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <button type="button" class="btn btn-primary-custom btn-search w-100" id="btn_buscar">
+                                <i class="fas fa-search me-2"></i>Buscar
+                            </button>
+                        </div>
+                    </div>
+                    <div class="result-info" id="result_info">
+                        <h5 class="mb-3"><i class="fas fa-check-circle me-2"></i>Cliente encontrado</h5>
+                        <p class="mb-2" id="cliente_nombre"></p>
+                        <p class="mb-3" id="cliente_email"></p>
+                        <button type="button" class="btn btn-success mt-2" id="btn_usar_datos">
+                            <i class="fas fa-arrow-right me-2"></i>Continuar con estos datos
+                        </button>
+                    </div>
+                </div>
+
+                <div class="divider my-4">
+                    <span class="divider-text">O COMPLETÁ TUS DATOS</span>
+                </div>
+
+                <!-- Formulario de creación -->
+                <form method="post" id="form_cliente">
+                    {% csrf_token %}
+                    <input type="hidden" name="dni_busqueda" id="dni_busqueda_field">
+
+                    <div class="form-section" id="form_datos" style="display: none;">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="{{ form.dni.id_for_label }}" class="form-label">
+                                    <i class="fas fa-id-card me-2"></i>DNI *
+                                </label>
+                                <input type="text" class="form-control" id="{{ form.dni.id_for_label }}"
+                                       name="dni" maxlength="8" placeholder="12345678" required>
+                                <small class="text-muted d-block mt-1">Solo números, sin puntos ni espacios</small>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="{{ form.cel.id_for_label }}" class="form-label">
+                                    <i class="fas fa-phone me-2"></i>Celular
+                                </label>
+                                <input type="text" class="form-control" id="{{ form.cel.id_for_label }}"
+                                       name="cel" placeholder="3884123456">
+                            </div>
+                        </div>
+
+                        <div class="row g-3 mt-1">
+                            <div class="col-md-6">
+                                <label for="{{ form.nombre.id_for_label }}" class="form-label">
+                                    <i class="fas fa-user me-2"></i>Nombre *
+                                </label>
+                                <input type="text" class="form-control" id="{{ form.nombre.id_for_label }}"
+                                       name="nombre" placeholder="Juan" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="{{ form.apellido.id_for_label }}" class="form-label">
+                                    <i class="fas fa-user me-2"></i>Apellido *
+                                </label>
+                                <input type="text" class="form-control" id="{{ form.apellido.id_for_label }}"
+                                       name="apellido" placeholder="Pérez" required>
+                            </div>
+                        </div>
+
+                        <div class="row g-3 mt-1">
+                            <div class="col-md-6">
+                                <label for="{{ form.email.id_for_label }}" class="form-label">
+                                    <i class="fas fa-envelope me-2"></i>Email
+                                </label>
+                                <input type="email" class="form-control" id="{{ form.email.id_for_label }}"
+                                       name="email" placeholder="ejemplo@email.com">
+                                <small class="text-muted d-block mt-1">Para recibir notificaciones</small>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="{{ form.localidad.id_for_label }}" class="form-label">
+                                    <i class="fas fa-map-marker-alt me-2"></i>Localidad
+                                </label>
+                                <select class="form-select" id="{{ form.localidad.id_for_label }}" name="localidad">
+                                    <option value="">Seleccione una localidad</option>
+                                    {% for localidad in form.localidad.field.queryset %}
+                                    <option value="{{ localidad.id }}">
+                                        {{ localidad.departamento.nombre }} - {{ localidad.nombre }}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="mt-3">
+                            <label for="{{ form.domicilio.id_for_label }}" class="form-label">
+                                <i class="fas fa-home me-2"></i>Domicilio
+                            </label>
+                            <input type="text" class="form-control" id="{{ form.domicilio.id_for_label }}"
+                                   name="domicilio" placeholder="Calle y número">
+                        </div>
+
+                        <div class="text-center mt-4">
+                            <button type="submit" class="btn btn-primary-custom btn-lg">
+                                <i class="fas fa-arrow-right me-2"></i>Continuar al Paso 2
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="text-center mt-3" id="show_form_btn_container">
+                        <button type="button" class="btn btn-secondary-custom" id="btn_mostrar_formulario">
+                            <i class="fas fa-user-plus me-2"></i>Soy un cliente nuevo
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Cleave.js para formatear DNI
+    const dniCleave = new Cleave('#dni_busqueda_input', {
+        numericOnly: true,
+        blocks: [8]
+    });
+
+    const dniFormCleave = new Cleave('#{{ form.dni.id_for_label }}', {
+        numericOnly: true,
+        blocks: [8]
+    });
+
+    const celCleave = new Cleave('#{{ form.cel.id_for_label }}', {
+        numericOnly: true,
+        blocks: [10]
+    });
+
+    // Buscar cliente por DNI
+    document.getElementById('btn_buscar').addEventListener('click', function() {
+        const dni = document.getElementById('dni_busqueda_input').value;
+
+        if (!dni || dni.length < 7) {
+            showWarning('Por favor, ingrese un DNI válido (al menos 7 dígitos)', 'DNI Requerido');
+            return;
+        }
+
+        const btn = this;
+        btn.disabled = true;
+        btn.innerHTML = '<span class="loading-spinner"></span> Buscando...';
+
+        fetch(`{% url 'turnero:buscar_persona_ajax' %}?dni=${dni}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.found) {
+                    // Mostrar resultado
+                    document.getElementById('cliente_nombre').textContent =
+                        `Nombre: ${data.data.apellido}, ${data.data.nombre} - DNI: ${dni}`;
+                    document.getElementById('cliente_email').textContent =
+                        data.data.email ? `Email: ${data.data.email}` : 'Sin email registrado';
+                    document.getElementById('result_info').classList.add('show');
+
+                    // Guardar ID en sesión para usarlo después
+                    document.getElementById('dni_busqueda_field').value = dni;
+                } else {
+                    showInfo('No se encontró un cliente con ese DNI. Podés completar el formulario para registrarte.', 'Cliente No Encontrado');
+                    document.getElementById('result_info').classList.remove('show');
+                    mostrarFormulario();
+                    document.getElementById('{{ form.dni.id_for_label }}').value = dni;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showError('Ocurrió un error al buscar el cliente. Intente nuevamente.', 'Error de Conexión');
+            })
+            .finally(() => {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-search"></i> Buscar';
+            });
+    });
+
+    // Continuar con datos encontrados
+    document.getElementById('btn_usar_datos').addEventListener('click', function() {
+        document.getElementById('form_cliente').submit();
+    });
+
+    // Mostrar formulario de nuevo cliente
+    function mostrarFormulario() {
+        document.getElementById('form_datos').style.display = 'block';
+        document.getElementById('show_form_btn_container').style.display = 'none';
+        AOS.refresh();
+    }
+
+    document.getElementById('btn_mostrar_formulario').addEventListener('click', mostrarFormulario);
+
+    // Enter en campo de búsqueda
+    document.getElementById('dni_busqueda_input').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            document.getElementById('btn_buscar').click();
+        }
+    });
+</script>
+{% endblock %}

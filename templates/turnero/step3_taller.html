@@ -1,0 +1,469 @@
+{% extends 'turnero/base.html' %}
+
+{% block title %}Paso 3: Selección de Taller - Turnos RTV{% endblock %}
+
+{% block extra_css %}
+<style>
+    .cliente-info {
+        background: #f8f9fa;
+        border-left: 4px solid var(--primary-color);
+        padding: 1rem 1.5rem;
+        border-radius: 10px;
+        margin-bottom: 2rem;
+    }
+
+    .cliente-info strong {
+        color: var(--primary-color);
+    }
+
+    .search-title {
+        color: var(--primary-color);
+        font-weight: 700;
+        font-size: 1.3rem;
+        display: flex;
+        align-items: center;
+    }
+
+    #map {
+        height: 400px;
+        width: 100%;
+        border-radius: 15px;
+        box-shadow: var(--card-shadow);
+        margin-bottom: 2rem;
+        z-index: 1;
+        background-color: #fff;
+    }
+
+    /* Asegurar que las tiles de Leaflet se rendericen correctamente */
+    #map .leaflet-tile-container {
+        z-index: 1 !important;
+    }
+
+    #map .leaflet-tile {
+        opacity: 1 !important;
+    }
+
+    #map .leaflet-layer,
+    #map .leaflet-tile-pane {
+        z-index: 1 !important;
+    }
+
+    #map .leaflet-marker-pane {
+        z-index: 600 !important;
+    }
+
+    #map .leaflet-popup-pane {
+        z-index: 700 !important;
+    }
+
+    .taller-card {
+        background: white;
+        border: 2px solid #e9ecef;
+        border-radius: 15px;
+        padding: 1.5rem;
+        margin-bottom: 1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        position: relative;
+    }
+
+    .taller-card:hover {
+        border-color: var(--primary-color);
+        transform: translateY(-5px);
+        box-shadow: var(--card-shadow-hover);
+    }
+
+    .taller-card.selected {
+        border-color: var(--primary-color);
+        background: #f0f4f8;
+        box-shadow: 0 0 0 3px rgba(19, 48, 77, 0.15);
+    }
+
+    .taller-card.selected::before {
+        content: '\f00c';
+        font-family: 'Font Awesome 6 Free';
+        font-weight: 900;
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        width: 40px;
+        height: 40px;
+        background: var(--success-color);
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+    }
+
+    .taller-nombre {
+        color: var(--primary-color);
+        font-weight: 700;
+        font-size: 1.3rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .taller-info {
+        color: #6c757d;
+        margin-bottom: 0.5rem;
+    }
+
+    .taller-info i {
+        color: var(--primary-color);
+        width: 20px;
+    }
+
+    .taller-horario {
+        background: #f8f9fa;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        display: inline-block;
+        margin-top: 0.5rem;
+    }
+
+    .btn-ver-mapa {
+        background: var(--info-color);
+        color: white;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .btn-ver-mapa:hover {
+        background: #138496;
+        transform: translateY(-2px);
+    }
+
+    .leaflet-popup-content {
+        font-family: 'Poppins', sans-serif;
+    }
+
+    .leaflet-popup-content h6 {
+        color: var(--primary-color);
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-10">
+        <!-- Info del progreso -->
+        <div class="cliente-info" data-aos="fade-down">
+            <i class="fas fa-car"></i>
+            <strong>Vehículo:</strong> {{ vehiculo.dominio }} -
+            <strong>Trámite:</strong> {{ tipo_vehiculo.nombre }}
+        </div>
+
+        <div class="card-custom" data-aos="fade-up">
+            <div class="card-header-custom">
+                <h3>
+                    <i class="fas fa-map-marked-alt"></i> Paso 3: Selección de Taller
+                </h3>
+                <p class="mb-0 mt-2" style="font-size: 0.95rem; opacity: 0.9;">
+                    Elegí el taller más cercano a tu domicilio
+                </p>
+            </div>
+            <div class="card-body-custom">
+                <!-- Mapa -->
+                <div data-aos="fade-up">
+                    <h4 class="search-title mb-3">
+                        <i class="fas fa-map me-2"></i>Ubicación de los Talleres
+                    </h4>
+                    <div id="map"></div>
+                </div>
+
+                <!-- Formulario -->
+                <form method="post" id="form_taller">
+                    {% csrf_token %}
+                    <input type="hidden" name="taller" id="taller_selected" required>
+
+                    <h4 class="search-title mb-3 mt-4" data-aos="fade-up">
+                        <i class="fas fa-list me-2"></i>Talleres Disponibles
+                    </h4>
+
+                    <!-- Mensaje informativo para seleccionar taller -->
+                    <div class="alert alert-info" role="alert" data-aos="fade-up" style="background: #f8f9fa; border-left: 4px solid var(--primary-color); border-radius: 10px;">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <strong>Importante:</strong> Hacé click en el taller que prefieras para seleccionarlo. El taller seleccionado se marcará con un fondo celeste y un tilde verde.
+                    </div>
+
+                    {% if talleres %}
+                    <div id="talleres_container">
+                        {% for taller in talleres %}
+                        <div class="taller-card" data-taller-id="{{ taller.id }}"
+                             data-lat="{{ taller.get_latitud|stringformat:'f' }}" data-lng="{{ taller.get_longitud|stringformat:'f' }}"
+                             data-aos="fade-up" data-aos-delay="{% widthratio forloop.counter0 1 100 %}">
+                            <div class="row align-items-center">
+                                <div class="col-md-9">
+                                    <h5 class="taller-nombre mb-3">
+                                        <i class="fas fa-tools me-2"></i>{{ taller.get_nombre }}
+                                    </h5>
+                                    <p class="taller-info mb-2">
+                                        <i class="fas fa-map-marker-alt me-2"></i>
+                                        {{ taller.get_direccion }}, {{ taller.get_localidad.nombre }}
+                                    </p>
+                                    <p class="taller-info mb-3">
+                                        <i class="fas fa-phone me-2"></i>{{ taller.get_telefono }}
+                                        {% if taller.get_email %}
+                                        <span class="ms-2">|</span>
+                                        <i class="fas fa-envelope ms-2 me-2"></i>{{ taller.get_email }}
+                                        {% endif %}
+                                    </p>
+                                    <div class="taller-horario">
+                                        <i class="fas fa-clock me-2"></i>
+                                        {{ taller.horario_apertura|time:"H:i" }} -
+                                        {{ taller.horario_cierre|time:"H:i" }} hs
+                                    </div>
+                                </div>
+                                <div class="col-md-3 text-end">
+                                    <button type="button" class="btn btn-ver-mapa"
+                                            data-lat="{{ taller.get_latitud|stringformat:'f' }}" data-lng="{{ taller.get_longitud|stringformat:'f' }}"
+                                            onclick="centrarMapa(parseFloat(this.getAttribute('data-lat')), parseFloat(this.getAttribute('data-lng')))">
+                                        <i class="fas fa-map-pin me-2"></i>Ver en mapa
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="alert alert-warning" role="alert">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        No hay talleres disponibles para este tipo de trámite.
+                        Por favor, contacte con atención al cliente.
+                    </div>
+                    {% endif %}
+
+                    {% if talleres %}
+                    <div class="text-center mt-4" data-aos="fade-up">
+                        <a href="{% url 'turnero:step2_vehiculo' %}" class="btn btn-secondary-custom me-2">
+                            <i class="fas fa-arrow-left me-2"></i>Volver
+                        </a>
+                        <button type="submit" class="btn btn-primary-custom btn-lg">
+                            <i class="fas fa-arrow-right me-2"></i>Continuar al Paso 4
+                        </button>
+                    </div>
+                    {% endif %}
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Variables globales para el mapa
+    let map;
+    let markers = [];
+    let talleres = [];
+
+    // Función para centrar mapa en taller (definida globalmente)
+    function centrarMapa(lat, lng) {
+        if (!map || !markers) {
+            console.error('Mapa no inicializado');
+            return;
+        }
+
+        // Zoom 15 para ver mejor el taller y calles cercanas
+        map.setView([lat, lng], 15, {
+            animate: true,
+            duration: 1
+        });
+
+        // Abrir popup del marcador (usando tolerancia para comparación de floats)
+        markers.forEach(marker => {
+            const markerLat = marker.getLatLng().lat;
+            const markerLng = marker.getLatLng().lng;
+            // Comparar con tolerancia de 0.000001 (suficiente para coordenadas GPS)
+            if (Math.abs(markerLat - lat) < 0.000001 && Math.abs(markerLng - lng) < 0.000001) {
+                marker.openPopup();
+            }
+        });
+
+        // Scroll al mapa con mejor posicionamiento
+        setTimeout(() => {
+            document.getElementById('map').scrollIntoView({
+                behavior: 'smooth',
+                block: 'center'
+            });
+        }, 100);
+    }
+
+    // Selección de taller (definida globalmente)
+    function seleccionarTaller(tallerId) {
+        // Remover selección anterior
+        document.querySelectorAll('.taller-card').forEach(card =>
+            card.classList.remove('selected'));
+
+        // Seleccionar este
+        const card = document.querySelector(`[data-taller-id="${tallerId}"]`);
+        if (card) {
+            card.classList.add('selected');
+            document.getElementById('taller_selected').value = tallerId;
+        }
+    }
+
+    // Esperar a que el DOM y Leaflet estén listos
+    document.addEventListener('DOMContentLoaded', function() {
+        // Inicializar mapa
+        talleres = [
+            {% for taller in talleres %}
+            {
+                id: {{ taller.id }},
+                nombre: "{{ taller.get_nombre }}",
+                direccion: "{{ taller.get_direccion }}",
+                localidad: "{{ taller.get_localidad.nombre }}",
+                telefono: "{{ taller.get_telefono }}",
+                lat: {{ taller.get_latitud|stringformat:'f' }},
+                lng: {{ taller.get_longitud|stringformat:'f' }},
+                horario: "{{ taller.horario_apertura|time:'H:i' }} - {{ taller.horario_cierre|time:'H:i' }} hs"
+            }{% if not forloop.last %},{% endif %}
+            {% endfor %}
+        ];
+
+        console.log('Talleres cargados:', talleres);
+
+        // Crear mapa centrado en Jujuy
+        map = L.map('map').setView([-24.1858, -65.2995], 12);
+
+        // Agregar capa de tiles con manejo de errores mejorado
+        const tileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+            subdomains: ['a', 'b', 'c'],
+            maxZoom: 19,
+            crossOrigin: true
+        });
+
+        // Eventos de carga de tiles para debug
+        tileLayer.on('loading', function() {
+            console.log('Empezando a cargar tiles...');
+        });
+
+        tileLayer.on('load', function() {
+            console.log('Tiles cargados exitosamente!');
+        });
+
+        tileLayer.on('tileerror', function(error, tile) {
+            console.error('Error cargando tile:', error);
+            console.error('URL del tile:', tile.src);
+        });
+
+        tileLayer.addTo(map);
+
+        // Forzar que el mapa se redibuje correctamente
+        setTimeout(function() {
+            map.invalidateSize();
+
+            // Debug: verificar que las tiles se están agregando al DOM
+            const mapContainer = document.getElementById('map');
+            const tiles = mapContainer.querySelectorAll('.leaflet-tile');
+            console.log(`Total de tiles en el DOM: ${tiles.length}`);
+
+            if (tiles.length > 0) {
+                console.log('Primera tile encontrada:', tiles[0]);
+                console.log('URL de la primera tile:', tiles[0].src);
+                console.log('Estilo de la primera tile:', window.getComputedStyle(tiles[0]));
+            } else {
+                console.warn('No se encontraron tiles en el DOM!');
+            }
+        }, 500);
+
+    // Icono personalizado
+    const tallerIcon = L.icon({
+        iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-violet.png',
+        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
+        iconSize: [25, 41],
+        iconAnchor: [12, 41],
+        popupAnchor: [1, -34],
+        shadowSize: [41, 41]
+    });
+
+    // Agregar marcadores
+    markers = [];
+    talleres.forEach(taller => {
+        // Validar que las coordenadas sean números válidos
+        if (isNaN(taller.lat) || isNaN(taller.lng)) {
+            console.error(`Coordenadas inválidas para taller ${taller.nombre}: lat=${taller.lat}, lng=${taller.lng}`);
+            return; // Saltar este taller
+        }
+
+        const marker = L.marker([taller.lat, taller.lng], {icon: tallerIcon})
+            .addTo(map)
+            .bindPopup(`
+                <h6>${taller.nombre}</h6>
+                <p style="margin: 0.25rem 0;"><i class="fas fa-map-marker-alt"></i> ${taller.direccion}</p>
+                <p style="margin: 0.25rem 0;"><i class="fas fa-phone"></i> ${taller.telefono}</p>
+                <p style="margin: 0.25rem 0;"><i class="fas fa-clock"></i> ${taller.horario}</p>
+            `);
+
+        marker.tallerId = taller.id;
+        markers.push(marker);
+
+        // Click en marcador selecciona el taller
+        marker.on('click', function() {
+            seleccionarTaller(taller.id);
+        });
+    });
+
+    // Ajustar el mapa para mostrar todos los marcadores
+    if (markers.length > 0) {
+        const group = L.featureGroup(markers);
+        // Si hay un solo marcador, centrar en él con zoom 15 (nivel barrio)
+        if (markers.length === 1) {
+            map.setView([talleres[0].lat, talleres[0].lng], 15);
+        } else {
+            // Si hay varios, ajustar bounds pero con zoom máximo 15
+            map.fitBounds(group.getBounds().pad(0.1), {maxZoom: 15});
+        }
+    }
+
+    // Click en card de taller
+    document.querySelectorAll('.taller-card').forEach(card => {
+        card.addEventListener('click', function(e) {
+            // No seleccionar si se hizo click en el botón de mapa
+            if (e.target.closest('.btn-ver-mapa')) {
+                return;
+            }
+
+            const tallerId = this.getAttribute('data-taller-id');
+            seleccionarTaller(tallerId);
+        });
+    });
+
+    // Validación del formulario
+    document.getElementById('form_taller').addEventListener('submit', function(e) {
+        const tallerSeleccionado = document.getElementById('taller_selected').value;
+
+        if (!tallerSeleccionado) {
+            e.preventDefault();
+            showWarning('Por favor, seleccione un taller antes de continuar', 'Taller Requerido');
+        }
+    });
+
+    // En modo embebido, forzar múltiples invalidaciones del mapa y asegurar scroll
+    if (document.body.classList.contains('embedded-mode')) {
+        // Invalidar mapa varias veces para asegurar renderizado correcto
+        [100, 300, 600, 1000].forEach(function(delay) {
+            setTimeout(function() {
+                if (map) {
+                    map.invalidateSize();
+                }
+            }, delay);
+        });
+
+        // Scroll al inicio de la página
+        setTimeout(function() {
+            window.scrollTo(0, 0);
+        }, 100);
+    }
+
+    }); // Fin DOMContentLoaded
+</script>
+{% endblock %}

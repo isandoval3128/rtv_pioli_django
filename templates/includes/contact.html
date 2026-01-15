@@ -1,0 +1,159 @@
+{% if site_config.contact_section_bg_video %}
+    <video
+        autoplay
+        loop
+        muted
+        playsinline
+        class="contact-bg-video"
+    >
+        <source src="{{ site_config.contact_section_bg_video.url }}" type="video/mp4">
+        Tu navegador no soporta el video de fondo.
+    </video>
+{% endif %}
+
+<div class="container position-relative">
+
+        <div class="text-center">
+            <h2 class="section-heading text-uppercase">Contáctanos</h2>
+            <h3 class="section-subheading text-muted">Envíanos un mensaje</h3>
+        </div>
+
+        <form id="contactForm" method="post" action="{% url 'contact_submit' %}">
+            {% csrf_token %}
+
+            <div class="row align-items-stretch mb-5">
+                <div class="col-md-6">
+                    {% for field in form.visible_fields|slice:":3" %}
+                    <div class="form-group mb-3">
+                        {{ field }}
+                        {% if field.errors %}
+                        <div class="invalid-feedback d-block">{{ field.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group form-group-textarea">
+                        {{ form.message }}
+                        {% if form.message.errors %}
+                        <div class="invalid-feedback d-block">{{ form.message.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center">
+                <button
+                    type="submit"
+                    class="btn btn-xl text-uppercase contact-submit-btn"
+                    data-bg="{{ site_config.contact_btn_bgcolor }}"
+                    data-hover="{{ site_config.contact_btn_hover_bgcolor }}"
+                    style="color: {{ site_config.contact_btn_fgcolor }};"
+                >
+                    {{ site_config.contact_btn_text }}
+                </button>
+            </div>
+        </form>
+</div>
+
+<style>
+    .contact-section {
+        position: relative;
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: cover;
+    }
+
+    .contact-bg-video {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        z-index: 0;
+    }
+
+    .contact-section .container {
+        z-index: 2;
+    }
+
+    .contact-submit-btn {
+        transition: background-color 0.2s ease-in-out;
+    }
+
+    .swal2-elevated {
+        border-radius: 10px;
+    }
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+
+        /* ===== Background dinámico ===== */
+        const section = document.querySelector('.contact-section');
+        if (section) {
+            const bgColor = section.dataset.bgColor;
+            const bgImage = section.dataset.bgImage;
+            const opacity = section.dataset.bgOpacity || 1;
+
+            section.style.backgroundColor = bgColor;
+            section.style.opacity = opacity;
+
+            if (bgImage) {
+                section.style.backgroundImage = `url('${bgImage}')`;
+            }
+        }
+
+        /* ===== Botón hover ===== */
+        const btn = document.querySelector('.contact-submit-btn');
+        if (btn) {
+            const bg = btn.dataset.bg;
+            const hover = btn.dataset.hover;
+            btn.style.backgroundColor = bg;
+
+            btn.addEventListener('mouseenter', () => btn.style.backgroundColor = hover);
+            btn.addEventListener('mouseleave', () => btn.style.backgroundColor = bg);
+        }
+
+        /* ===== Mensajes Django ===== */
+        {% if messages %}
+            {% for message in messages %}
+            Swal.fire({
+                icon: '{{ message.tags|default:"info" }}',
+                title: '{{ message|escapejs }}',
+                showConfirmButton: false,
+                timer: 5000,
+                timerProgressBar: true,
+                customClass: { popup: 'swal2-elevated' }
+            });
+            {% endfor %}
+        {% endif %}
+
+        {% if form.errors %}
+            let errorHtml = '';
+            {% for field in form %}
+                {% for error in field.errors %}
+                    errorHtml += '<div><b>{{ field.label }}:</b> {{ error|escapejs }}</div>';
+                {% endfor %}
+            {% endfor %}
+            {% for error in form.non_field_errors %}
+                errorHtml += '<div>{{ error|escapejs }}</div>';
+            {% endfor %}
+
+            Swal.fire({
+                icon: 'error',
+                title: 'Errores en el formulario',
+                html: errorHtml,
+                confirmButtonColor: '#003466',
+                confirmButtonText: 'Corregir',
+                customClass: {
+                    popup: 'swal2-elevated',
+                    confirmButton: 'swal2-btn-confirm'
+                }
+            });
+        {% endif %}
+    });
+</script>

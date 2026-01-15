@@ -1,0 +1,58 @@
+// bootstrap
+@import "node_modules/bootstrap/scss/bootstrap.scss";
+
+// import google fonts
+@import 'font/fonts';
+@import 'font/simple-line-icons';
+@import 'font/weather-icons';
+
+@import 'global/themes';
+@import 'global/variables';
+@import 'global/mixins';
+@import 'global/high-contrast';
+@import 'global/rtl-mode';
+
+@import "mixins/responsive";
+@import "mixins/clearfix";
+@import "mixins/css3";
+@import "mixins/elements-color-custom";
+
+@import "base/variables";
+@import "base/general";
+
+@import "metisMenu/metisMenu";
+
+@import "partials/badges";
+@import "partials/layout";
+@import "partials/card";
+@import "partials/navigation";
+@import "partials/leftbar";
+@import "partials/forms";
+@import "partials/authentication";
+@import "partials/buttons";
+@import "partials/elements";
+@import "partials/accordion";
+@import "partials/elements-bootstrap";
+@import "partials/charts";
+@import "partials/social-brands";
+@import "partials/typography";
+@import "partials/helpers";
+@import "partials/mediaobject";
+@import "partials/formwizard";
+@import "partials/tables";
+
+
+@import "pages/widgets";
+
+@import "pages/page-profile";
+@import "pages/timeline";
+@import "pages/calendar";
+@import "pages/file_manager";
+@import "pages/pricing";
+@import "pages/invoice";
+@import "pages/iot";
+@import "pages/chatapp";
+@import "pages/blog";
+@import "pages/ecommerce";
+@import "pages/inbox";
+@import "pages/rtl.scss";

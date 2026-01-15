@@ -1,0 +1,94 @@
+<div class="container">
+        <div class="text-center mb-5">
+            <h2 class="section-heading text-uppercase" style="color:#003466;"><i class="fas fa-map-location-dot me-2"></i>¿Dónde Encontrarnos?</h2>
+            <h3 class="section-subheading text-muted">Nuestras ubicaciones y direcciones</h3>
+        </div>
+        <div class="row justify-content-center mb-4">
+            {% for ubicacion in ubicaciones %}
+                <div class="col-md-6 mb-4">
+                    <div class="card planta-card shadow-sm h-100" onmouseover="this.classList.add('elevada')" onmouseout="this.classList.remove('elevada')">
+                        <div class="card-body">
+                            <h4 class="card-title mb-3" style="color:#003466;"><i class="fas fa-industry me-2"></i>{{ ubicacion.nombre }}</h4>
+                            <p class="mb-2"><i class="fas fa-location-dot me-2"></i><strong>Dirección:</strong> {{ ubicacion.direccion }}</p>
+                            {% if ubicacion.localidad %}
+                            <p class="mb-2"><i class="fas fa-map-pin me-2"></i><strong>Localidad:</strong> {{ ubicacion.localidad.nombre_completo }}</p>
+                            {% else %}
+                            <p class="mb-2"><i class="fas fa-map-marker-alt me-2"></i><strong>Provincia:</strong> {{ ubicacion.provincia }}</p>
+                            {% endif %}
+                            {% if ubicacion.telefono %}
+                            <p class="mb-2"><i class="fas fa-phone me-2"></i><strong>Teléfono:</strong> {{ ubicacion.telefono }}</p>
+                            {% endif %}
+                            {% if ubicacion.email %}
+                            <p class="mb-2"><i class="fas fa-envelope me-2"></i><strong>Email:</strong> <a href="mailto:{{ ubicacion.email }}" style="color:#003466;">{{ ubicacion.email }}</a></p>
+                            {% endif %}
+                            {% if ubicacion.horario %}
+                            <p class="mb-2"><i class="fas fa-clock me-2"></i><strong>Horario:</strong> {{ ubicacion.horario }}</p>
+                            {% endif %}
+                            <div class="mt-3">
+                                <a class="btn btn-sm mt-2 me-2 google-maps-btn" href="https://www.google.com/maps/dir/?api=1&destination={{ ubicacion.latitud|stringformat:'f' }},{{ ubicacion.longitud|stringformat:'f' }}" target="_blank" style="background-color:#4285F4;color:#fff;border:none;box-shadow:0 2px 8px rgba(2,25,122,0.08);transition:background-color 0.2s,box-shadow 0.2s;" onmouseover="this.style.boxShadow='0 8px 24px rgba(2,25,122,0.18)';this.style.backgroundColor='#1a73e8';" onmouseout="this.style.boxShadow='0 2px 8px rgba(2,25,122,0.08)';this.style.backgroundColor='#4285F4';"><i class="fab fa-google me-1"></i>Ir con Google Maps</a>
+                                <a class="btn btn-sm mt-2 waze-btn" href="https://waze.com/ul?ll={{ ubicacion.latitud|stringformat:'f' }},{{ ubicacion.longitud|stringformat:'f' }}&navigate=yes" target="_blank" style="background-color:#25d366;color:#fff;border:none;box-shadow:0 2px 8px rgba(2,25,122,0.08);transition:background-color 0.2s,box-shadow 0.2s;" onmouseover="this.style.boxShadow='0 8px 24px rgba(2,25,122,0.18)';this.style.backgroundColor='#1ebea5';" onmouseout="this.style.boxShadow='0 2px 8px rgba(2,25,122,0.08)';this.style.backgroundColor='#25d366';"><i class="fab fa-waze me-1"></i>Ir con Waze</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        <div class="row justify-content-center mb-5">
+            <div class="col-12">
+                <div id="mapa-plantas" hidden style="width: 100%; height: 350px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);"></div>
+            </div>
+        </div>
+        
+</div>
+
+<!-- Leaflet.js para OpenStreetMap -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script>
+            let mapa;
+            let marcador;
+            function initMap() {
+                // Si hay ubicaciones, centra en la primera
+            {% if ubicaciones %}
+            const centroInicial = [ {{ ubicaciones.0.latitud|stringformat:'f' }}, {{ ubicaciones.0.longitud|stringformat:'f' }} ];
+            {% else %}
+            const centroInicial = [ -24.274351044079264, -65.20502921349308 ];
+            console.log('Sin ubicaciones, centro por defecto:', centroInicial);
+            {% endif %}
+                mapa = L.map('mapa-plantas').setView(centroInicial, 12);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    maxZoom: 19,
+                    attribution: '© OpenStreetMap'
+                }).addTo(mapa);
+                marcador = L.marker(centroInicial).addTo(mapa);
+            }
+            function ubicarEnMapa(lat, lng) {
+                if (lat == null || lng == null || isNaN(lat) || isNaN(lng)) {
+                    alert("Ubicación inválida. Verifica los datos de latitud y longitud.");
+                    return;
+                }
+                if (!mapa || !marcador) {
+                    alert("El mapa no está listo. Espera a que cargue la página.");
+                    return;
+                }
+                const ubicacion = [lat, lng];
+                mapa.setView(ubicacion, 14);
+                marcador.setLatLng(ubicacion);
+                // Scroll automático al mapa
+                const mapaDiv = document.getElementById('mapa-plantas');
+                if (mapaDiv) {
+                    mapaDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }
+            window.addEventListener('DOMContentLoaded', function() {
+                if (document.getElementById('mapa-plantas')) {
+                    initMap();
+                    // Habilitar los botones una vez que el mapa esté listo
+                    document.querySelectorAll('.ubicar-btn').forEach(function(btn) {
+                        btn.disabled = false;
+                    });
+                }
+            });
+</script>

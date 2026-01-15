@@ -1,0 +1,533 @@
+{% extends 'turnero/base.html' %}
+
+{% block title %}Paso 2: Datos del Vehículo - Turnos RTV{% endblock %}
+
+{% block extra_css %}
+<style>
+    .cliente-info {
+        background: #f8f9fa;
+        border-left: 4px solid var(--primary-color);
+        padding: 1rem 1.5rem;
+        border-radius: 10px;
+        margin-bottom: 2rem;
+    }
+
+    .cliente-info strong {
+        color: var(--primary-color);
+    }
+
+    .search-section {
+        background: white;
+        padding: 2rem;
+        border-radius: 15px;
+        box-shadow: var(--card-shadow);
+        margin-bottom: 2rem;
+    }
+
+    .search-title {
+        color: var(--primary-color);
+        font-weight: 700;
+        font-size: 1.3rem;
+        display: flex;
+        align-items: center;
+    }
+
+    .divider {
+        text-align: center;
+        margin: 2rem 0;
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .divider::before {
+        content: '';
+        flex: 1;
+        height: 2px;
+        background: linear-gradient(to right, transparent, #e9ecef);
+        margin-right: 1rem;
+    }
+
+    .divider::after {
+        content: '';
+        flex: 1;
+        height: 2px;
+        background: linear-gradient(to left, transparent, #e9ecef);
+        margin-left: 1rem;
+    }
+
+    .divider-text {
+        color: #6c757d;
+        font-weight: 600;
+        white-space: nowrap;
+        padding: 0 0.5rem;
+    }
+
+    .form-section {
+        background: #f8f9fa;
+        padding: 2rem;
+        border-radius: 10px;
+        margin-top: 1.5rem;
+    }
+
+    .result-info {
+        background: #f0f4f8;
+        border-left: 4px solid var(--primary-color);
+        padding: 1rem 1.5rem;
+        border-radius: 10px;
+        margin-top: 1rem;
+        display: none;
+    }
+
+    .result-info.show {
+        display: block;
+        animation: fadeInUp 0.5s ease;
+    }
+
+    .result-info h5 {
+        color: var(--primary-color);
+        font-weight: 700;
+    }
+
+    .result-info p {
+        color: #333;
+        margin: 0.25rem 0;
+    }
+
+    .input-icon {
+        position: relative;
+    }
+
+    .input-icon i {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--primary-color);
+    }
+
+    .input-icon input {
+        padding-left: 3rem;
+    }
+
+    .patente-preview {
+        background: white;
+        border: 3px solid #333;
+        border-radius: 5px;
+        padding: 1rem 2rem;
+        font-family: 'Courier New', monospace;
+        font-size: 2rem;
+        font-weight: bold;
+        text-align: center;
+        letter-spacing: 0.3rem;
+        margin: 1rem 0;
+        text-transform: uppercase;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+
+    .tipo-vehiculo-card {
+        background: white;
+        border: 2px solid #e9ecef;
+        border-radius: 10px;
+        padding: 1.2rem;
+        margin-bottom: 1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        position: relative;
+        user-select: none;
+    }
+
+    .tipo-vehiculo-card::before {
+        content: '\f14a';
+        font-family: 'Font Awesome 6 Free';
+        font-weight: 400;
+        position: absolute;
+        right: 1rem;
+        top: 1rem;
+        font-size: 1.5rem;
+        color: #e9ecef;
+        transition: all 0.3s ease;
+    }
+
+    .tipo-vehiculo-card:hover {
+        border-color: var(--primary-color);
+        transform: translateX(5px);
+        box-shadow: var(--card-shadow);
+    }
+
+    .tipo-vehiculo-card:hover::before {
+        color: var(--primary-color);
+    }
+
+    .tipo-vehiculo-card.selected {
+        border-color: var(--primary-color);
+        border-width: 3px;
+        background: #f0f4f8;
+        box-shadow: 0 4px 12px rgba(19, 48, 77, 0.15);
+    }
+
+    .tipo-vehiculo-card.selected::before {
+        content: '\f058';
+        font-weight: 900;
+        color: var(--primary-color);
+        animation: checkBounce 0.5s ease;
+    }
+
+    @keyframes checkBounce {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.2); }
+    }
+
+    .precio-badge {
+        background: #28a745;
+        color: white;
+        padding: 0.4rem 0.8rem;
+        border-radius: 8px;
+        font-weight: 700;
+        font-size: 1rem;
+        min-width: 120px;
+        text-align: center;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .duracion-badge {
+        background: var(--primary-color);
+        color: white;
+        padding: 0.3rem 0.8rem;
+        border-radius: 15px;
+        font-size: 0.85rem;
+        font-weight: 600;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-10">
+        <!-- Info del cliente -->
+        <div class="cliente-info" data-aos="fade-down">
+            <i class="fas fa-user-check"></i>
+            <strong>Cliente:</strong> {{ cliente.apellido }}, {{ cliente.nombre }} -
+            <strong>DNI:</strong> {{ cliente.dni }}
+        </div>
+
+        <div class="card-custom" data-aos="fade-up">
+            <div class="card-header-custom">
+                <h3>
+                    <i class="fas fa-car"></i> Paso 2: Datos del Vehículo
+                </h3>
+                <p class="mb-0 mt-2" style="font-size: 0.95rem; opacity: 0.9;">
+                    Buscá tu vehículo por dominio o registrá uno nuevo
+                </p>
+            </div>
+            <div class="card-body-custom">
+                {% if error %}
+                <div class="alert alert-error-custom" role="alert">
+                    <i class="fas fa-exclamation-triangle"></i> {{ error }}
+                </div>
+                {% endif %}
+
+                <!-- Búsqueda por dominio -->
+                <div class="search-section">
+                    <h4 class="search-title mb-3">
+                        <i class="fas fa-search me-2"></i>Buscá tu vehículo
+                    </h4>
+                    <div class="row g-3">
+                        <div class="col-md-8">
+                            <div class="input-icon">
+                                <i class="fas fa-car"></i>
+                                <input type="text" class="form-control text-uppercase" id="dominio_busqueda_input"
+                                       placeholder="ABC123 o AB123CD" maxlength="7">
+                            </div>
+                            <div class="patente-preview" id="patente_preview"></div>
+                        </div>
+                        <div class="col-md-4">
+                            <button type="button" class="btn btn-primary-custom btn-search w-100" id="btn_buscar_vehiculo">
+                                <i class="fas fa-search me-2"></i>Buscar
+                            </button>
+                        </div>
+                    </div>
+                    <div class="result-info" id="result_vehiculo">
+                        <h5 class="mb-3"><i class="fas fa-check-circle me-2"></i>Vehículo encontrado</h5>
+                        <p class="mb-2" id="vehiculo_dominio"></p>
+                        <p class="mb-3" id="vehiculo_tipo"></p>
+                        <button type="button" class="btn btn-success mt-2" id="btn_usar_vehiculo">
+                            <i class="fas fa-arrow-right me-2"></i>Continuar con este vehículo
+                        </button>
+                    </div>
+                </div>
+
+                <div class="divider my-4">
+                    <span class="divider-text">O REGISTRÁ UN VEHÍCULO NUEVO</span>
+                </div>
+
+                <!-- Formulario de creación -->
+                <form method="post" id="form_vehiculo">
+                    {% csrf_token %}
+                    <input type="hidden" name="dominio_busqueda" id="dominio_busqueda_field">
+
+                    <div class="form-section" id="form_datos_vehiculo" style="display: none;">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="{{ form.dominio.id_for_label }}" class="form-label">
+                                    <i class="fas fa-car me-2"></i>Dominio / Patente *
+                                </label>
+                                <input type="text" class="form-control text-uppercase"
+                                       id="{{ form.dominio.id_for_label }}"
+                                       name="dominio" maxlength="7"
+                                       placeholder="ABC123 o AB123CD" required>
+                                <small class="text-muted d-block mt-1">Formatos: ABC123 (vieja) o AB123CD (nueva)</small>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">
+                                    <i class="fas fa-gas-pump me-2"></i>¿Tiene GNC?
+                                </label>
+                                <div class="form-check form-switch mt-3">
+                                    <input class="form-check-input" type="checkbox"
+                                           id="{{ form.tiene_gnc.id_for_label }}"
+                                           name="tiene_gnc">
+                                    <label class="form-check-label ms-2" for="{{ form.tiene_gnc.id_for_label }}">
+                                        Sí, el vehículo tiene instalación de GNC
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-4 mt-4">
+                            <label class="form-label">
+                                <i class="fas fa-clipboard-list me-2"></i>Tipo de Trámite RTO *
+                            </label>
+                            <small class="text-muted d-block mb-3">
+                                <i class="fas fa-hand-pointer me-1"></i>Hacé clic en una opción para seleccionarla
+                            </small>
+
+                            <!-- Cuadro informativo de tarifas -->
+                            <div class="alert alert-info mb-4" style="background: #f8f9fa; border-left: 4px solid var(--primary-color); border-radius: 10px;">
+                                <h6 class="mb-3" style="color: var(--primary-color); font-weight: 700;">
+                                    <i class="fas fa-info-circle me-2"></i>Tipos de Tarifas
+                                </h6>
+                                <div class="row g-2">
+                                    <div class="col-md-4">
+                                        <div class="d-flex align-items-start">
+                                            <span class="badge me-2" style="background: var(--primary-color); padding: 0.4rem 0.6rem; font-size: 0.75rem;">PROVINCIAL</span>
+                                            <small style="color: #333; line-height: 1.5;">
+                                                Para residentes de la provincia de Jujuy
+                                            </small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="d-flex align-items-start">
+                                            <span class="badge me-2" style="background: #28a745; padding: 0.4rem 0.6rem; font-size: 0.75rem;">NACIONAL</span>
+                                            <small style="color: #333; line-height: 1.5;">
+                                                Para residentes de otras provincias
+                                            </small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="d-flex align-items-start">
+                                            <span class="badge me-2" style="background: #6c757d; color: #fff; padding: 0.4rem 0.6rem; font-size: 0.75rem;">CAJUTAC</span>
+                                            <small style="color: #333; line-height: 1.5;">
+                                                Cámara Jujeña del Transporte Automotor de Cargas
+                                            </small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id="tipos_vehiculo_container">
+                                {% for tipo in form.tipo_vehiculo.field.queryset %}
+                                <div class="tipo-vehiculo-card" data-tipo-id="{{ tipo.id }}">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <div class="flex-grow-1">
+                                            <h5 class="mb-2" style="color: var(--primary-color); font-weight: 600;">
+                                                {{ tipo.codigo_tramite }} - {{ tipo.nombre }}
+                                            </h5>
+                                            <p class="mb-2 text-muted">{{ tipo.descripcion }}</p>
+                                            <span class="duracion-badge">
+                                                <i class="fas fa-clock me-1"></i>{{ tipo.duracion_minutos }} min
+                                            </span>
+                                        </div>
+                                        <div class="text-end ms-3">
+                                            {% if tipo.precio_provincial %}
+                                            <div class="precio-badge mb-2" style="background: #007bff;">
+                                                <small style="font-size: 0.75rem; opacity: 0.9;">Provincial</small><br>
+                                                $ {{ tipo.precio_provincial|floatformat:0 }}
+                                            </div>
+                                            {% endif %}
+                                            {% if tipo.precio_nacional %}
+                                            <div class="precio-badge mb-2" style="background: #28a745;">
+                                                <small style="font-size: 0.75rem; opacity: 0.9;">Nacional</small><br>
+                                                $ {{ tipo.precio_nacional|floatformat:0 }}
+                                            </div>
+                                            {% endif %}
+                                            {% if tipo.precio_cajutad %}
+                                            <div class="precio-badge" style="background: #ffc107; color: #000;">
+                                                <small style="font-size: 0.75rem; opacity: 0.9;">CAJUTAC</small><br>
+                                                $ {{ tipo.precio_cajutad|floatformat:0 }}
+                                            </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            <input type="hidden" name="tipo_vehiculo" id="tipo_vehiculo_selected">
+                        </div>
+
+                        <div class="text-center mt-4">
+                            <a href="{% url 'turnero:step1_cliente' %}" class="btn btn-secondary-custom me-2">
+                                <i class="fas fa-arrow-left me-2"></i>Volver
+                            </a>
+                            <button type="submit" class="btn btn-primary-custom btn-lg">
+                                <i class="fas fa-arrow-right me-2"></i>Continuar al Paso 3
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="text-center mt-3" id="show_form_vehiculo_btn">
+                        <button type="button" class="btn btn-secondary-custom" id="btn_mostrar_form_vehiculo">
+                            <i class="fas fa-plus me-2"></i>Registrar nuevo vehículo
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Cleave.js para formatear patente
+    const dominioSearchCleave = new Cleave('#dominio_busqueda_input', {
+        uppercase: true,
+        blocks: [7]
+    });
+
+    const dominioFormCleave = new Cleave('#{{ form.dominio.id_for_label }}', {
+        uppercase: true,
+        blocks: [7]
+    });
+
+    // Preview de patente mientras se escribe
+    document.getElementById('dominio_busqueda_input').addEventListener('input', function(e) {
+        const valor = e.target.value.toUpperCase();
+        document.getElementById('patente_preview').textContent = valor || '---';
+    });
+
+    // Buscar vehículo por dominio
+    document.getElementById('btn_buscar_vehiculo').addEventListener('click', function() {
+        const dominio = document.getElementById('dominio_busqueda_input').value;
+
+        if (!dominio || dominio.length < 6) {
+            showWarning('Por favor, ingrese un dominio válido (6-7 caracteres)', 'Dominio Requerido');
+            return;
+        }
+
+        const btn = this;
+        btn.disabled = true;
+        btn.innerHTML = '<span class="loading-spinner"></span> Buscando...';
+
+        fetch(`{% url 'turnero:buscar_vehiculo_ajax' %}?dominio=${dominio}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.found) {
+                    document.getElementById('vehiculo_dominio').textContent =
+                        `Dominio: ${data.data.dominio}`;
+                    document.getElementById('vehiculo_tipo').textContent =
+                        `Tipo: ${data.data.tipo_vehiculo_nombre}`;
+                    document.getElementById('result_vehiculo').classList.add('show');
+                    document.getElementById('dominio_busqueda_field').value = dominio;
+                } else {
+                    showInfo('No se encontró un vehículo con ese dominio. Podés registrarlo completando el formulario.', 'Vehículo No Encontrado');
+                    document.getElementById('result_vehiculo').classList.remove('show');
+                    mostrarFormularioVehiculo();
+                    document.getElementById('{{ form.dominio.id_for_label }}').value = dominio;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showError('Ocurrió un error al buscar el vehículo. Intente nuevamente.', 'Error de Conexión');
+            })
+            .finally(() => {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-search"></i> Buscar';
+            });
+    });
+
+    // Continuar con vehículo encontrado
+    document.getElementById('btn_usar_vehiculo').addEventListener('click', function() {
+        document.getElementById('form_vehiculo').submit();
+    });
+
+    // Mostrar formulario
+    function mostrarFormularioVehiculo() {
+        document.getElementById('form_datos_vehiculo').style.display = 'block';
+        document.getElementById('show_form_vehiculo_btn').style.display = 'none';
+        AOS.refresh();
+    }
+
+    document.getElementById('btn_mostrar_form_vehiculo').addEventListener('click', mostrarFormularioVehiculo);
+
+    // Selección de tipo de vehículo
+    document.querySelectorAll('.tipo-vehiculo-card').forEach(card => {
+        card.addEventListener('click', function() {
+            // Remover selección anterior
+            document.querySelectorAll('.tipo-vehiculo-card').forEach(c =>
+                c.classList.remove('selected'));
+
+            // Seleccionar este
+            this.classList.add('selected');
+            document.getElementById('tipo_vehiculo_selected').value =
+                this.getAttribute('data-tipo-id');
+        });
+    });
+
+    // Función para validar formato de dominio (patente)
+    function validarFormatoDominio(dominio) {
+        if (!dominio) return false;
+        dominio = dominio.toUpperCase().trim();
+        // Formato viejo: 3 letras + 3 números (ABC123)
+        const formatoViejo = /^[A-Z]{3}[0-9]{3}$/;
+        // Formato nuevo: 2 letras + 3 números + 2 letras (AB123CD)
+        const formatoNuevo = /^[A-Z]{2}[0-9]{3}[A-Z]{2}$/;
+        return formatoViejo.test(dominio) || formatoNuevo.test(dominio);
+    }
+
+    // Validación del formulario
+    document.getElementById('form_vehiculo').addEventListener('submit', function(e) {
+        // Solo validar si el formulario de datos está visible (nuevo vehículo)
+        if (document.getElementById('form_datos_vehiculo').style.display !== 'none') {
+            const dominio = document.getElementById('{{ form.dominio.id_for_label }}').value;
+            const tipoSeleccionado = document.getElementById('tipo_vehiculo_selected').value;
+
+            // Validar formato de dominio
+            if (!validarFormatoDominio(dominio)) {
+                e.preventDefault();
+                showError(
+                    'El formato del dominio es inválido. Use el formato ABC123 (patente vieja) o AB123CD (patente nueva del Mercosur).',
+                    'Formato de Dominio Inválido'
+                );
+                document.getElementById('{{ form.dominio.id_for_label }}').focus();
+                return;
+            }
+
+            // Validar tipo de trámite seleccionado
+            if (!tipoSeleccionado) {
+                e.preventDefault();
+                showWarning('Por favor, seleccione un tipo de trámite RTO', 'Tipo de Trámite Requerido');
+                return;
+            }
+        }
+    });
+
+    // Enter en búsqueda
+    document.getElementById('dominio_busqueda_input').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            document.getElementById('btn_buscar_vehiculo').click();
+        }
+    });
+</script>
+{% endblock %}

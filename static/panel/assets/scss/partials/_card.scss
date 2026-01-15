@@ -1,0 +1,97 @@
+﻿.card {
+    background: var(--card-color);    
+    transition: .5s;    
+    border: 0;
+    @extend .inlineblock;
+    border-radius: $border-radius-large;
+    position: relative;
+    width: 100%;
+    box-shadow: 0 1px 2px 0 rgba(0,0,0,0.1);    
+
+    .header {
+        color: var(--color-800);
+        padding:20px;
+        position: relative;       
+        box-shadow: none;
+        @extend .m-b-0;
+
+        .header-dropdown {
+            position: absolute;
+            top: 14px;
+            right:10px;
+            list-style: none;
+            @extend .margin-0;
+            @extend .padding-0;            
+
+            li{
+                @extend .inlineblock;
+                a{
+                    padding: 5px 10px;
+                    @extend .displayblock;
+                }
+
+                .dropdown-menu {
+
+                    background: var(--card-color);
+                    border-radius: $border-radius-large;
+                    overflow: hidden;
+                    transform:none !important; 
+                    left: auto !important;
+                    right: 0;
+                    padding: 10px;
+                    box-shadow: 0px 2px 20px 0px rgba(0,0,0,0.5);
+                    border: 0;
+
+                    li {
+                        display: block !important;
+    
+                        a {
+                            padding:10px;
+                            color: var(--color-500);                            
+                            white-space: nowrap;
+                            font-size: 14px;
+                            &:hover{
+                                color:var(--color-600);
+                            }
+                        }
+                    }
+                }
+    
+            }            
+            i {
+                font-size: 20px;
+                color: var(--color-500);
+                @include transition(all .5s);
+            }
+        }
+        h2 {
+            @extend .margin-0;
+            font-size: 16px;            
+            color: var(--color-800);
+            position: relative;
+
+            small {
+                @extend .displayblock;
+                font-size: 13px;
+                @extend .mt-1;
+                color: var(--color-500);
+                line-height: 15px;
+
+                a {
+                    font-weight: $font-weight-700;
+                    color: var(--color-600);
+                }
+            }
+        }
+    }
+
+    .p-15 {
+        padding: 15px !important;
+    }
+
+    .body {
+        color: var(--color-800);
+        padding: 20px;
+        font-weight: $font-weight-400; 
+    }
+}

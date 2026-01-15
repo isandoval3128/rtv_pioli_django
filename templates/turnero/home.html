@@ -1,0 +1,377 @@
+{% extends 'turnero/base.html' %}
+
+{% block title %}Inicio - Sistema de Turnos RTV{% endblock %}
+
+{% block extra_css %}
+<style>
+    .hero-section {
+        background: var(--primary-color);
+        color: white;
+        padding: 4rem 2rem;
+        border-radius: 15px;
+        margin-bottom: 4rem;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .hero-content {
+        position: relative;
+        z-index: 1;
+    }
+
+    .hero-title {
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    @media (min-width: 768px) {
+        .hero-title {
+            font-size: 2.5rem;
+        }
+    }
+
+    @media (min-width: 992px) {
+        .hero-title {
+            font-size: 3rem;
+        }
+    }
+
+    .hero-subtitle {
+        font-size: 1.3rem;
+        font-weight: 300;
+        margin-bottom: 2rem;
+        opacity: 0.95;
+    }
+
+    .feature-card {
+        text-align: center;
+        padding: 2rem;
+        background: white;
+        border-radius: 15px;
+        box-shadow: var(--card-shadow);
+        transition: all 0.3s ease;
+        height: 100%;
+    }
+
+    .feature-card:hover {
+        transform: translateY(-10px);
+        box-shadow: var(--card-shadow-hover);
+    }
+
+    .feature-icon {
+        width: 80px;
+        height: 80px;
+        background: var(--primary-color);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1.5rem;
+        font-size: 2rem;
+        color: white;
+    }
+
+    .feature-title {
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: var(--primary-color);
+        margin-bottom: 1rem;
+    }
+
+    .feature-description {
+        color: #6c757d;
+        line-height: 1.6;
+    }
+
+    .stats-card {
+        background: white;
+        border-radius: 15px;
+        padding: 2rem;
+        text-align: center;
+        box-shadow: var(--card-shadow);
+    }
+
+    .stats-number {
+        font-size: 3rem;
+        font-weight: 700;
+        color: var(--primary-color);
+        margin-bottom: 0.5rem;
+    }
+
+    .stats-label {
+        color: #6c757d;
+        font-weight: 500;
+    }
+
+    .cta-section {
+        background: var(--primary-color);
+        color: white;
+        padding: 3rem;
+        border-radius: 15px;
+        text-align: center;
+        margin-top: 3rem;
+    }
+
+    .cta-title {
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+    }
+
+    .cta-description {
+        font-size: 1.1rem;
+        margin-bottom: 2rem;
+        font-weight: 500;
+    }
+
+    .info-section {
+        background: white;
+        border-radius: 15px;
+        padding: 2rem;
+        box-shadow: var(--card-shadow);
+        margin-top: 2rem;
+    }
+
+    .info-title {
+        color: var(--primary-color);
+        font-weight: 700;
+        font-size: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .info-item {
+        display: flex;
+        align-items: flex-start;
+        margin-bottom: 1rem;
+        padding: 1rem;
+        background: #f8f9fa;
+        border-radius: 10px;
+        transition: all 0.3s ease;
+    }
+
+    .info-item:hover {
+        background: #e9ecef;
+        transform: translateX(5px);
+    }
+
+    .info-icon {
+        color: var(--primary-color);
+        font-size: 1.5rem;
+        margin-right: 1rem;
+        min-width: 30px;
+        flex-shrink: 0;
+    }
+
+    .info-text {
+        flex: 1;
+    }
+
+    .info-text strong {
+        color: var(--primary-color);
+        display: block;
+        margin-bottom: 0.5rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="hero-section" data-aos="fade-up">
+    <div class="hero-content text-center">
+        <h1 class="hero-title">
+            <i class="fas fa-car-side me-2"></i> Turnos para Revisión Técnica Vehicular
+        </h1>
+        <p class="hero-subtitle">
+            Reservá tu turno de forma rápida y sencilla. Sin filas, sin esperas.
+        </p>
+        <a href="{% url 'turnero:step1_cliente' %}" class="btn btn-accent btn-lg">
+            <i class="fas fa-calendar-plus me-2"></i> Solicitar Turno Ahora
+        </a>
+    </div>
+</div>
+
+<!-- Stats Section -->
+<div class="row mb-5" data-aos="fade-up" data-aos-delay="100" style="margin-top: 1.5rem;">
+    <div class="col-md-6 mb-4">
+        <div class="stats-card">
+            <div class="stats-number">
+                <i class="fas fa-tools me-2"></i>{{ talleres_count }}
+            </div>
+            <div class="stats-label">
+                Talleres Disponibles
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 mb-4">
+        <div class="stats-card">
+            <div class="stats-number">
+                <i class="fas fa-clipboard-list me-2"></i>{{ tipos_tramite }}
+            </div>
+            <div class="stats-label">
+                Tipos de Trámites
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Features Section -->
+<div class="row mb-5">
+    <div class="col-md-4 mb-4" data-aos="fade-up" data-aos-delay="200">
+        <div class="feature-card">
+            <div class="feature-icon">
+                <i class="fas fa-clock"></i>
+            </div>
+            <h3 class="feature-title">Rápido y Fácil</h3>
+            <p class="feature-description">
+                Completá el proceso en 5 simples pasos. En menos de 3 minutos tenés tu turno confirmado.
+            </p>
+        </div>
+    </div>
+    <div class="col-md-4 mb-4" data-aos="fade-up" data-aos-delay="300">
+        <div class="feature-card">
+            <div class="feature-icon">
+                <i class="fas fa-qrcode"></i>
+            </div>
+            <h3 class="feature-title">Código QR</h3>
+            <p class="feature-description">
+                Recibí tu comprobante con código QR. Mostralo el día del turno y listo.
+            </p>
+        </div>
+    </div>
+    <div class="col-md-4 mb-4" data-aos="fade-up" data-aos-delay="400">
+        <div class="feature-card">
+            <div class="feature-icon">
+                <i class="fas fa-envelope"></i>
+            </div>
+            <h3 class="feature-title">Notificaciones</h3>
+            <p class="feature-description">
+                Te enviamos recordatorios por email. No te olvidés de tu turno.
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- Info Section -->
+<div class="row">
+    <div class="col-lg-6 mb-4" data-aos="fade-right">
+        <div class="info-section">
+            <h2 class="info-title">
+                <i class="fas fa-info-circle"></i> ¿Cómo funciona?
+            </h2>
+            <div class="info-item">
+                <div class="info-icon">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="info-text">
+                    <strong>Paso 1: Datos del Cliente</strong>
+                    Ingresá tu DNI para buscar tus datos o cargá tu información si es la primera vez.
+                </div>
+            </div>
+            <div class="info-item">
+                <div class="info-icon">
+                    <i class="fas fa-car"></i>
+                </div>
+                <div class="info-text">
+                    <strong>Paso 2: Datos del Vehículo</strong>
+                    Ingresá el dominio de tu vehículo y el tipo de trámite RTO.
+                </div>
+            </div>
+            <div class="info-item">
+                <div class="info-icon">
+                    <i class="fas fa-map-marker-alt"></i>
+                </div>
+                <div class="info-text">
+                    <strong>Paso 3: Selección de Taller</strong>
+                    Elegí el taller más cercano a tu domicilio. 
+                </div>
+            </div>
+            <div class="info-item">
+                <div class="info-icon">
+                    <i class="fas fa-calendar"></i>
+                </div>
+                <div class="info-text">
+                    <strong>Paso 4: Fecha y Horario</strong>
+                    Seleccioná la fecha y el horario disponibles.
+                </div>
+            </div>
+            <div class="info-item">
+                <div class="info-icon">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="info-text">
+                    <strong>Paso 5: Confirmación</strong>
+                    Revisá los datos y confirmá tu turno. ¡Listo! Recibirás tu comprobante.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-6 mb-4" data-aos="fade-left">
+        <div class="info-section">
+            <h2 class="info-title">
+                <i class="fas fa-clipboard-check"></i> Requisitos
+            </h2>
+            <div class="info-item">
+                <div class="info-icon">
+                    <i class="fas fa-id-card"></i>
+                </div>
+                <div class="info-text">
+                    <strong>Documento de Identidad</strong>
+                    DNI del titular del vehículo vigente.
+                </div>
+            </div>
+            <div class="info-item">
+                <div class="info-icon">
+                    <i class="fas fa-file-alt"></i>
+                </div>
+                <div class="info-text">
+                    <strong>Cédula Verde o Azul</strong>
+                    Título de propiedad del vehículo.
+                </div>
+            </div>
+            <div class="info-item">
+                <div class="info-icon">
+                    <i class="fas fa-receipt"></i>
+                </div>
+                <div class="info-text">
+                    <strong>Comprobante de Pago</strong>
+                    Tasa de RTO abonada (consultá el monto según el tipo de vehículo).
+                </div>
+            </div>
+            <div class="info-item">
+                <div class="info-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <div class="info-text">
+                    <strong>Seguro Vigente</strong>
+                    Póliza de seguro del vehículo al día.
+                </div>
+            </div>
+            <div class="info-item">
+                <div class="info-icon">
+                    <i class="fas fa-wrench"></i>
+                </div>
+                <div class="info-text">
+                    <strong>Vehículo en Condiciones</strong>
+                    El vehículo debe estar en condiciones técnicas y de seguridad adecuadas.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- CTA Section -->
+<div class="cta-section" data-aos="zoom-in">
+    <h2 class="cta-title">
+        <i class="fas fa-rocket me-2"></i> ¿Listo para sacar tu turno?
+    </h2>
+    <p class="cta-description">
+        El proceso es rápido y simple. Comenzá ahora y asegurá tu lugar.
+    </p>
+    <a href="{% url 'turnero:step1_cliente' %}" class="btn btn-primary-custom btn-lg">
+        <i class="fas fa-arrow-right me-2"></i> Comenzar Ahora
+    </a>
+</div>
+{% endblock %}

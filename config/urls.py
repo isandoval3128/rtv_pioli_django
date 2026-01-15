@@ -23,6 +23,12 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('core.urls')),
     path('', include('tarifas.urls')),
+    # Sistema de turnos RTV
+    path('turnero/', include('turnero.urls')),
+    # API de ubicaciones (para admin de talleres)
+    path('ubicacion/', include('ubicacion.urls')),
+    # Panel de administración
+    path('panel/', include('panel_administracion.urls')),
 ]
 
 # Servir archivos media en desarrollo

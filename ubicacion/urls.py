@@ -1,6 +1,9 @@
 from django.urls import path
-from .views import home
+from . import views
+
+app_name = 'ubicacion'
 
 urlpatterns = [
-    path('', home, name='home'),
+    path('', views.home, name='home'),
+    path('api/<int:ubicacion_id>/', views.get_ubicacion_data, name='get_ubicacion_data'),
 ]

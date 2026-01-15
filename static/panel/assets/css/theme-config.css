@@ -1,0 +1,1253 @@
+/**
+ * SISTEMA GROOMING - Configuracion de Tema Principal
+ * ===================================================
+ *
+ * Este archivo centraliza todos los colores del tema del sistema.
+ * Para cambiar el tema, solo necesitas modificar las variables en :root
+ *
+ * TEMA ACTUAL: Navy (Azul Oscuro) - #13304D
+ * TEMA ANTERIOR: Orange (Naranja) - #EF7E56 / #e6603a
+ *
+ * Para volver al tema naranja, cambiar:
+ *   --theme-primary: #13304D  ->  --theme-primary: #e6603a
+ *   --theme-primary-dark: #0d2339  ->  --theme-primary-dark: #d55532
+ *   --theme-primary-light: #1a4166  ->  --theme-primary-light: #f08a6a
+ */
+
+:root {
+    /* =====================================================
+       COLORES PRINCIPALES DEL TEMA
+       ===================================================== */
+
+    /* Color principal del tema */
+    --theme-primary: #13304D;
+
+    /* Color principal oscuro (para hover, gradientes) */
+    --theme-primary-dark: #0d2339;
+
+    /* Color principal claro (para fondos suaves) */
+    --theme-primary-light: #1a4166;
+
+    /* Color principal muy claro (para fondos de secciones) */
+    --theme-primary-lighter: #e8eef4;
+
+    /* Color principal RGB (para transparencias) */
+    --theme-primary-rgb: 19, 48, 77;
+
+    /* =====================================================
+       COLORES SECUNDARIOS Y DE ACENTO
+       ===================================================== */
+
+    /* Color secundario */
+    --theme-secondary: #6c757d;
+    --theme-secondary-dark: #5a6268;
+
+    /* Color de exito */
+    --theme-success: #28a745;
+    --theme-success-light: #d4edda;
+
+    /* Color de peligro/error */
+    --theme-danger: #dc3545;
+    --theme-danger-dark: #c82333;
+
+    /* Color de advertencia */
+    --theme-warning: #ffc107;
+    --theme-warning-light: #fff3cd;
+
+    /* Color de informacion */
+    --theme-info: #17a2b8;
+    --theme-info-light: #d1ecf1;
+
+    /* =====================================================
+       GRADIENTES
+       ===================================================== */
+
+    --theme-gradient: linear-gradient(135deg, var(--theme-primary) 0%, var(--theme-primary-dark) 100%);
+    --theme-gradient-reverse: linear-gradient(135deg, var(--theme-primary-dark) 0%, var(--theme-primary) 100%);
+    --theme-gradient-light: linear-gradient(135deg, var(--theme-primary-light) 0%, var(--theme-primary) 100%);
+}
+
+/* =====================================================
+   ESTILOS DE COMPONENTES CON EL TEMA
+   ===================================================== */
+
+/* ----- Headers de Modales ----- */
+.modal-header-orange,
+.modal-header-themed {
+    background: var(--theme-gradient) !important;
+    color: white !important;
+    border-radius: 0;
+    padding: 1rem 1.5rem;
+}
+
+.modal-header-orange h5,
+.modal-header-orange h6,
+.modal-header-themed h5,
+.modal-header-themed h6 {
+    margin: 0;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    color: white !important;
+}
+
+.modal-header-orange .close,
+.modal-header-themed .close {
+    color: white !important;
+    opacity: 0.8;
+    text-shadow: none;
+}
+
+.modal-header-orange .close:hover,
+.modal-header-themed .close:hover {
+    opacity: 1;
+    color: white !important;
+}
+
+/* ----- Botones Principales ----- */
+.btn-orange,
+.btn-themed,
+.btn-primary-themed,
+.btn-custom-primary,
+button.btn-orange,
+a.btn-orange {
+    background-color: var(--theme-primary) !important;
+    border-color: var(--theme-primary) !important;
+    color: white !important;
+    background: var(--theme-primary) !important;
+}
+
+.btn-orange:hover,
+.btn-orange:active,
+.btn-orange:focus,
+.btn-orange:focus:not(.disabled),
+.btn-custom-primary:hover,
+.btn-custom-primary:active,
+.btn-custom-primary:focus,
+button.btn-orange:hover,
+button.btn-orange:active,
+button.btn-orange:focus,
+.button.btn-orange:active,
+.btn-themed:hover,
+.btn-themed:focus,
+.btn-primary-themed:hover,
+.btn-primary-themed:focus {
+    background-color: var(--theme-primary-dark) !important;
+    border-color: var(--theme-primary-dark) !important;
+    background: var(--theme-primary-dark) !important;
+    color: white !important;
+}
+
+.btn-outline-orange,
+.btn-outline-themed {
+    color: var(--theme-primary) !important;
+    border-color: var(--theme-primary) !important;
+    background-color: transparent !important;
+}
+
+.btn-outline-orange:hover,
+.btn-outline-orange:focus,
+.btn-outline-themed:hover,
+.btn-outline-themed:focus {
+    background-color: var(--theme-primary) !important;
+    border-color: var(--theme-primary) !important;
+    color: white !important;
+}
+
+/* ----- Titulos de Secciones ----- */
+.section-title,
+.section-title-ver {
+    color: var(--theme-primary) !important;
+}
+
+.section-title i,
+.section-title-ver i {
+    color: var(--theme-primary) !important;
+}
+
+/* ----- Labels de Formularios ----- */
+.form-group-styled label i {
+    color: var(--theme-primary) !important;
+}
+
+/* ----- Info Box ----- */
+.info-box {
+    background-color: var(--theme-primary-lighter) !important;
+    border-color: rgba(var(--theme-primary-rgb), 0.2) !important;
+}
+
+.info-box p,
+.info-box i {
+    color: var(--theme-primary) !important;
+}
+
+/* ----- Focus de Inputs ----- */
+.form-group-styled .form-control:focus {
+    border-color: var(--theme-primary) !important;
+    box-shadow: 0 0 0 0.15rem rgba(var(--theme-primary-rgb), 0.15) !important;
+}
+
+/* ----- Tablas con Header Themed ----- */
+.adjuntos-table thead,
+table thead.bg-themed {
+    background: var(--theme-gradient) !important;
+    color: white !important;
+}
+
+/* ----- Botones de Accion ----- */
+.btn-preview,
+.btn-adjunto-ver {
+    background-color: var(--theme-primary) !important;
+    border-color: var(--theme-primary) !important;
+    color: white !important;
+}
+
+.btn-preview:hover,
+.btn-adjunto-ver:hover {
+    background-color: var(--theme-primary-dark) !important;
+    border-color: var(--theme-primary-dark) !important;
+    color: white !important;
+}
+
+/* ----- Iconos de Archivos ----- */
+.file-icon,
+.adjunto-item-info i {
+    color: var(--theme-primary) !important;
+}
+
+/* ----- Info Labels ----- */
+.info-label i {
+    color: var(--theme-primary) !important;
+}
+
+/* ----- SweetAlert2 Customization ----- */
+.swal2-confirm.swal2-styled {
+    background-color: var(--theme-primary) !important;
+}
+
+/* ----- DataTables Buttons ----- */
+.dt-btn-orange,
+.dt-button.dt-btn-orange,
+.dataTables_wrapper .btn-verMas {
+    background-color: var(--theme-primary) !important;
+    border-color: var(--theme-primary) !important;
+    color: white !important;
+}
+
+.dt-btn-orange:hover,
+.dt-btn-orange:active,
+.dt-btn-orange:focus,
+.dt-button.dt-btn-orange:hover,
+.dt-button.dt-btn-orange:active,
+.dt-button.dt-btn-orange:focus,
+.dt-button.dt-btn-orange:focus:not(.disabled),
+.dataTables_wrapper .btn-verMas:hover {
+    background-color: var(--theme-primary-dark) !important;
+    border-color: var(--theme-primary-dark) !important;
+    color: white !important;
+}
+
+/* ----- Cards y Paneles ----- */
+.card-header.bg-themed,
+.panel-header.bg-themed,
+.accordion-header-themed {
+    background: var(--theme-gradient) !important;
+    color: white !important;
+}
+
+/* ----- Badges ----- */
+.badge-themed,
+.badge.bg-themed {
+    background-color: var(--theme-primary) !important;
+    color: white !important;
+}
+
+/* ----- Links ----- */
+a.text-themed {
+    color: var(--theme-primary) !important;
+}
+
+a.text-themed:hover {
+    color: var(--theme-primary-dark) !important;
+}
+
+/* ----- Borders ----- */
+.border-themed {
+    border-color: var(--theme-primary) !important;
+}
+
+/* ----- File Upload Styled ----- */
+.file-upload-styled input[type="file"]:hover {
+    border-color: var(--theme-primary) !important;
+    background-color: var(--theme-primary-lighter) !important;
+}
+
+/* ----- Select2 Custom ----- */
+.select2-container--default .select2-selection--single:focus,
+.select2-container--default.select2-container--focus .select2-selection--single {
+    border-color: var(--theme-primary) !important;
+}
+
+/* ----- Progress Bars ----- */
+.progress-bar.bg-themed {
+    background-color: var(--theme-primary) !important;
+}
+
+/* ----- Hover en filas de tabla ----- */
+.adjuntos-table tbody tr:hover {
+    background-color: var(--theme-primary-lighter) !important;
+}
+
+/* =====================================================
+   OVERRIDE PARA COLORES HARDCODEADOS EN TEMPLATES
+   Estos estilos sobrescriben los colores inline
+   ===================================================== */
+
+/* Headers de modales con background inline */
+[style*="background-color: #e6603a"],
+[style*="background-color:#e6603a"],
+[style*="background: #e6603a"],
+div.modal-header[style*="#e6603a"] {
+    background-color: var(--theme-primary) !important;
+    background: var(--theme-gradient) !important;
+}
+
+/* Accordion headers y card headers con gradiente naranja inline */
+[style*="linear-gradient(135deg, #e6603a"],
+[style*="linear-gradient(135deg,#e6603a"],
+.card-header[style*="#e6603a"],
+.accordion-header[style*="#e6603a"],
+[style*="#d55532"] {
+    background: var(--theme-gradient) !important;
+}
+
+/* Elementos con color de texto inline */
+[style*="color: #e6603a"],
+[style*="color:#e6603a"] {
+    color: var(--theme-primary) !important;
+}
+
+/* Elementos con border-color inline */
+[style*="border-color: #e6603a"],
+[style*="border-color:#e6603a"],
+[style*="border-bottom: 2px solid #e6603a"] {
+    border-color: var(--theme-primary) !important;
+}
+
+/* =====================================================
+   UTILIDADES
+   ===================================================== */
+
+.bg-theme-primary {
+    background-color: var(--theme-primary) !important;
+}
+
+.bg-theme-gradient {
+    background: var(--theme-gradient) !important;
+}
+
+.text-theme-primary {
+    color: var(--theme-primary) !important;
+}
+
+.border-theme-primary {
+    border-color: var(--theme-primary) !important;
+}
+
+/* =====================================================
+   NAVBAR - Tema Navy
+   ===================================================== */
+
+/* Navbar principal */
+[data-theme="theme-navy"] .navbar {
+    background: var(--theme-gradient) !important;
+}
+
+/* =====================================================
+   PAGINATOR Y DATATABLES
+   ===================================================== */
+
+.page-item.active .page-link {
+    background-color: var(--theme-primary) !important;
+    border-color: var(--theme-primary) !important;
+}
+
+.page-link {
+    color: var(--theme-primary) !important;
+}
+
+.page-link:hover {
+    color: var(--theme-primary-dark) !important;
+}
+
+/* DataTables selected row */
+table.dataTable tbody tr.selected {
+    background-color: var(--theme-primary-lighter) !important;
+}
+
+/* =====================================================
+   CARDS CON BORDES DE ACENTO
+   ===================================================== */
+
+.card.border-primary {
+    border-color: var(--theme-primary) !important;
+}
+
+.card .card-header.bg-primary {
+    background-color: var(--theme-primary) !important;
+    border-color: var(--theme-primary) !important;
+}
+
+/* =====================================================
+   BOTONES ADICIONALES
+   ===================================================== */
+
+/* Boton primary de Bootstrap */
+.btn-primary {
+    background-color: var(--theme-primary) !important;
+    border-color: var(--theme-primary) !important;
+}
+
+.btn-primary:hover,
+.btn-primary:focus {
+    background-color: var(--theme-primary-dark) !important;
+    border-color: var(--theme-primary-dark) !important;
+}
+
+.btn-outline-primary {
+    color: var(--theme-primary) !important;
+    border-color: var(--theme-primary) !important;
+}
+
+.btn-outline-primary:hover,
+.btn-outline-primary:focus {
+    background-color: var(--theme-primary) !important;
+    border-color: var(--theme-primary) !important;
+    color: white !important;
+}
+
+/* =====================================================
+   FORMULARIOS
+   ===================================================== */
+
+.form-control:focus {
+    border-color: var(--theme-primary) !important;
+    box-shadow: 0 0 0 0.2rem rgba(var(--theme-primary-rgb), 0.25) !important;
+}
+
+.form-check-input:checked {
+    background-color: var(--theme-primary) !important;
+    border-color: var(--theme-primary) !important;
+}
+
+/* =====================================================
+   LINKS Y TEXTOS
+   ===================================================== */
+
+/* Enlaces dentro de botones deben mantener color blanco */
+.btn a,
+a.btn,
+.btn-orange a,
+.btn-primary a,
+.btn-themed a,
+.btn-custom-primary a,
+.btn-volver a {
+    color: white !important;
+}
+
+/* Enlaces generales usan color del tema */
+a:not(.btn):not(.nav-link):not(.dropdown-item):not(.btn-volver) {
+    color: var(--theme-primary);
+}
+
+a:not(.btn):not(.nav-link):not(.dropdown-item):not(.btn-volver):hover {
+    color: var(--theme-primary-dark);
+}
+
+.text-primary {
+    color: var(--theme-primary) !important;
+}
+
+/* =====================================================
+   LOADING / SPINNER
+   ===================================================== */
+
+.spinner-border.text-primary {
+    color: var(--theme-primary) !important;
+}
+
+/* =====================================================
+   DROPDOWN MENUS
+   ===================================================== */
+
+.dropdown-item.active,
+.dropdown-item:active {
+    background-color: var(--theme-primary) !important;
+}
+
+/* =====================================================
+   TABS Y NAV
+   ===================================================== */
+
+.nav-pills .nav-link.active {
+    background-color: var(--theme-primary) !important;
+}
+
+.nav-tabs .nav-link.active {
+    border-color: var(--theme-primary) var(--theme-primary) #fff !important;
+    color: var(--theme-primary) !important;
+}
+
+/* =====================================================
+   TOOLTIPS Y POPOVERS
+   ===================================================== */
+
+.tooltip-primary .tooltip-inner,
+.bs-tooltip-primary .tooltip-inner {
+    background-color: var(--theme-primary) !important;
+}
+
+.popover-primary .popover-header {
+    background-color: var(--theme-primary) !important;
+    color: white !important;
+}
+
+/* =====================================================
+   LOGIN PAGE - Pagina de autenticacion
+   ===================================================== */
+
+/* Fondo del login */
+.auth-main {
+    background: var(--theme-gradient) !important;
+}
+
+.auth-main::before {
+    background: linear-gradient(135deg, var(--theme-primary) 0%, var(--theme-primary-dark) 100%) !important;
+}
+
+.auth-main:after {
+    background: var(--theme-gradient) !important;
+}
+
+/* Contenedor principal de login con gradiente - SOLO para pagina de login */
+[data-theme="theme-navy"] .vertical-align-middle.auth-main {
+    background: linear-gradient(135deg, var(--theme-primary) 0%, var(--theme-primary-dark) 100%) !important;
+}
+
+[data-theme="theme-navy"] .auth-main::before {
+    background: transparent !important;
+}
+
+[data-theme="theme-navy"] .auth-main:after {
+    background: transparent !important;
+}
+
+/* Fondo para la pagina de login solamente */
+[data-theme="theme-navy"] .vertical-align-wrap {
+    background: linear-gradient(135deg, var(--theme-primary) 0%, var(--theme-primary-dark) 100%) !important;
+    min-height: 100vh;
+}
+
+/* Excluir el wrapper principal del sistema (solo aplica en login) */
+[data-theme="theme-navy"] .vertical-align-wrap .auth-main {
+    background: transparent !important;
+}
+
+/* =====================================================
+   FIX PARA SELECT2 DENTRO DE MODALES
+   Evita que Select2 bloquee el scroll del modal
+   ===================================================== */
+
+/* Posicionar correctamente el dropdown de Select2 dentro de modales */
+.modal .select2-container--open .select2-dropdown {
+    z-index: 1060 !important;
+}
+
+/* Evitar que Select2 capture eventos fuera del dropdown */
+.select2-container--open .select2-dropdown--below,
+.select2-container--open .select2-dropdown--above {
+    pointer-events: auto;
+}
+
+/* Fix para el contenedor de Select2 dentro de modales */
+.modal .select2-container {
+    z-index: 1050;
+}
+
+/* =====================================================
+   FIX PARA MODALES CON SCROLL Y FOOTER VISIBLE
+   ===================================================== */
+
+/* Modal scrollable con footer fijo */
+.modal-dialog-scrollable {
+    max-height: calc(100vh - 1rem) !important;
+}
+
+.modal-dialog-scrollable .modal-content {
+    max-height: calc(100vh - 1rem) !important;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Cuando el form envuelve todo el contenido del modal */
+.modal-dialog-scrollable .modal-content > form {
+    display: flex;
+    flex-direction: column;
+    max-height: 100%;
+    overflow: hidden;
+}
+
+.modal-dialog-scrollable .modal-content > form > .modal-body,
+.modal-dialog-scrollable .modal-content > .modal-body {
+    flex: 1 1 auto;
+    overflow-y: auto !important;
+    min-height: 0;
+}
+
+.modal-dialog-scrollable .modal-content > form > .modal-footer,
+.modal-dialog-scrollable .modal-content > .modal-footer {
+    flex-shrink: 0;
+}
+
+.modal-dialog-scrollable .modal-content > form > .modal-header,
+.modal-dialog-scrollable .modal-content > .modal-header {
+    flex-shrink: 0;
+}
+
+/* =====================================================
+   CLASES DE TEXTO CON COLOR DEL TEMA
+   ===================================================== */
+
+/* Convertir text-orange al color del tema */
+.text-orange {
+    color: var(--theme-primary) !important;
+}
+
+/* =====================================================
+   FIX PARA DROPDOWN DE NOTIFICACIONES EN NAVBAR
+   ===================================================== */
+
+/* Asegurar que el navbar y sus contenedores permitan overflow */
+.navbar-fixed-top {
+    overflow: visible !important;
+}
+
+.navbar-fixed-top .container-fluid {
+    overflow: visible !important;
+}
+
+.navbar-fixed-top .navbar-right {
+    overflow: visible !important;
+    position: relative;
+}
+
+.navbar-fixed-top #navbar-menu {
+    overflow: visible !important;
+}
+
+/* Dropdown de notificaciones - posicionamiento correcto */
+.navbar-nav .dropdown {
+    position: relative;
+}
+
+.navbar-nav .dropdown-menu.notifications,
+.navbar-nav ul.notifications {
+    position: absolute !important;
+    top: 100% !important;
+    right: 0 !important;
+    left: auto !important;
+    z-index: 1000 !important;
+    display: none;
+    max-height: 80vh;
+    overflow-y: auto;
+    min-width: 350px;
+    width: 400px;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* RESPONSIVE: Centrar dropdown en pantallas pequeñas */
+@media (max-width: 576px) {
+    .navbar-nav .dropdown-menu.notifications,
+    .navbar-nav ul.notifications {
+        position: fixed !important;
+        top: 60px !important;
+        left: 50% !important;
+        right: auto !important;
+        transform: translateX(-50%);
+        width: calc(100vw - 20px) !important;
+        max-width: 400px;
+        min-width: unset;
+        margin: 0 auto;
+        border-radius: 12px;
+    }
+}
+
+@media (min-width: 577px) and (max-width: 768px) {
+    .navbar-nav .dropdown-menu.notifications,
+    .navbar-nav ul.notifications {
+        position: fixed !important;
+        top: 60px !important;
+        left: 50% !important;
+        right: auto !important;
+        transform: translateX(-50%);
+        width: 380px;
+        min-width: unset;
+        border-radius: 12px;
+    }
+}
+
+@media (min-width: 769px) and (max-width: 992px) {
+    .navbar-nav .dropdown-menu.notifications,
+    .navbar-nav ul.notifications {
+        right: -50px !important;
+        left: auto !important;
+        transform: none;
+    }
+}
+
+/* Mostrar dropdown cuando tiene clase show o cuando el padre tiene open */
+.navbar-nav .dropdown.show > .dropdown-menu.notifications,
+.navbar-nav .dropdown.open > .dropdown-menu.notifications,
+.navbar-nav .dropdown.show > ul.notifications,
+.navbar-nav .dropdown.open > ul.notifications,
+.navbar-nav .dropdown-menu.notifications.show,
+.navbar-nav ul.notifications.show {
+    display: block !important;
+}
+
+/* Estilos para items de notificacion */
+.navbar-nav ul.notifications li {
+    border-bottom: 1px solid var(--border-color, #e9ecef);
+}
+
+.navbar-nav ul.notifications li:last-child {
+    border-bottom: none;
+}
+
+/* Estilo cuando no hay notificaciones */
+.navbar-nav ul.notifications:empty::after {
+    content: "No hay notificaciones";
+    display: block;
+    padding: 20px;
+    text-align: center;
+    color: var(--color-500, #6c757d);
+}
+
+/* Fix adicional: asegurar que el dropdown se superponga al contenido */
+.navbar-fixed-top .navbar-nav > li.dropdown {
+    position: static;
+}
+
+@media (min-width: 993px) {
+    .navbar-fixed-top .navbar-nav > li.dropdown {
+        position: relative;
+    }
+}
+
+/* Asegurar z-index alto para el dropdown */
+.navbar-nav .dropdown-menu.notifications.show,
+.navbar-nav ul.notifications.show,
+.navbar-nav .dropdown.open .dropdown-menu.notifications,
+.navbar-nav .dropdown.show .dropdown-menu.notifications {
+    z-index: 9999 !important;
+}
+
+/* =====================================================
+   BUSCADOR DE NOTIFICACIONES
+   ===================================================== */
+
+/* Header de notificaciones con buscador */
+.navbar-nav ul.notifications .notification-header {
+    position: sticky !important;
+    top: 0;
+    background: var(--card-color, #fff) !important;
+    z-index: 10;
+    padding: 12px 15px !important;
+    border-bottom: 1px solid var(--border-color, #e9ecef);
+}
+
+.navbar-nav ul.notifications .notification-header strong {
+    font-size: 14px;
+    color: var(--theme-primary, #13304D);
+}
+
+.navbar-nav ul.notifications .notification-header .cant-badge {
+    background-color: var(--theme-primary, #13304D);
+    color: white;
+    font-size: 11px;
+    padding: 3px 8px;
+    border-radius: 10px;
+}
+
+/* Campo de búsqueda */
+.navbar-nav ul.notifications .notification-search {
+    margin-top: 8px;
+}
+
+.navbar-nav ul.notifications .notification-search input {
+    border-radius: 20px;
+    padding: 6px 12px;
+    font-size: 12px;
+    border: 1px solid var(--border-color, #dee2e6);
+    background-color: var(--body-color, #f8f9fa);
+}
+
+.navbar-nav ul.notifications .notification-search input:focus {
+    border-color: var(--theme-primary, #13304D);
+    box-shadow: 0 0 0 0.15rem rgba(var(--theme-primary-rgb, 19, 48, 77), 0.15);
+    outline: none;
+}
+
+.navbar-nav ul.notifications .notification-search input::placeholder {
+    color: #999;
+    font-size: 12px;
+}
+
+/* Contenedor de lista de notificaciones */
+.navbar-nav ul.notifications .notification-list-container {
+    padding: 0 !important;
+    border-bottom: none !important;
+}
+
+.navbar-nav ul.notifications .notification-items {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    max-height: calc(80vh - 100px);
+    overflow-y: auto;
+}
+
+/* Items de notificación */
+.navbar-nav ul.notifications .notification-item {
+    transition: background-color 0.2s ease;
+}
+
+.navbar-nav ul.notifications .notification-item.hidden {
+    display: none !important;
+}
+
+.navbar-nav ul.notifications .notification-item:hover {
+    background-color: rgba(var(--theme-primary-rgb, 19, 48, 77), 0.05);
+}
+
+/* Mensaje de sin resultados */
+.navbar-nav ul.notifications .notification-no-results {
+    padding: 15px;
+    background-color: var(--body-color, #f8f9fa);
+}
+
+.navbar-nav ul.notifications .notification-no-results p {
+    margin: 0;
+    font-size: 13px;
+}
+
+/* Highlight de texto encontrado */
+.navbar-nav ul.notifications .notification-item .highlight {
+    background-color: rgba(255, 193, 7, 0.4);
+    padding: 0 2px;
+    border-radius: 2px;
+}
+
+/* =====================================================
+   RESPONSIVE ADICIONAL PARA NOTIFICACIONES
+   ===================================================== */
+
+/* Ajustes responsive para el header */
+@media (max-width: 576px) {
+    .navbar-nav ul.notifications .notification-header {
+        padding: 15px !important;
+        border-radius: 12px 12px 0 0;
+    }
+
+    .navbar-nav ul.notifications .notification-header strong {
+        font-size: 16px;
+    }
+
+    .navbar-nav ul.notifications .notification-search input {
+        padding: 10px 15px;
+        font-size: 14px;
+    }
+
+    .navbar-nav ul.notifications .notification-items {
+        max-height: calc(70vh - 120px);
+    }
+
+    /* Mejorar legibilidad de items en móvil */
+    .navbar-nav ul.notifications .notification-item .notification-media {
+        padding: 12px 15px;
+    }
+
+    .navbar-nav ul.notifications .notification-item .title {
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    .navbar-nav ul.notifications .notification-item .text {
+        font-size: 13px;
+        line-height: 1.4;
+    }
+
+    .navbar-nav ul.notifications .notification-item .timestamp {
+        font-size: 11px;
+    }
+}
+
+/* Flecha/indicador que apunta al icono de notificaciones */
+@media (min-width: 993px) {
+    .navbar-nav ul.notifications::before {
+        content: '';
+        position: absolute;
+        top: -8px;
+        right: 15px;
+        width: 0;
+        height: 0;
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        border-bottom: 8px solid var(--card-color, #fff);
+        z-index: 1;
+    }
+
+    .navbar-nav ul.notifications::after {
+        content: '';
+        position: absolute;
+        top: -10px;
+        right: 14px;
+        width: 0;
+        height: 0;
+        border-left: 9px solid transparent;
+        border-right: 9px solid transparent;
+        border-bottom: 9px solid rgba(0, 0, 0, 0.1);
+        z-index: 0;
+    }
+}
+
+/* Animación de apertura del dropdown */
+.navbar-nav ul.notifications {
+    opacity: 0;
+    transform-origin: top center;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.navbar-nav ul.notifications.show,
+.navbar-nav .dropdown.open ul.notifications {
+    opacity: 1;
+}
+
+@media (max-width: 768px) {
+    .navbar-nav ul.notifications {
+        transform: translateX(-50%) scale(0.95);
+    }
+
+    .navbar-nav ul.notifications.show,
+    .navbar-nav .dropdown.open ul.notifications {
+        transform: translateX(-50%) scale(1);
+    }
+}
+
+@media (min-width: 769px) {
+    .navbar-nav ul.notifications {
+        transform: translateY(-5px);
+    }
+
+    .navbar-nav ul.notifications.show,
+    .navbar-nav .dropdown.open ul.notifications {
+        transform: translateY(0);
+    }
+}
+
+/* ========================================
+   ESTILOS DE URGENCIA PARA NOTIFICACIONES
+   ======================================== */
+
+/* Notificación con urgencia ALTA (rojo) */
+.notification-item.notification-urgente {
+    background: linear-gradient(135deg, rgba(220, 53, 69, 0.12) 0%, rgba(220, 53, 69, 0.05) 100%) !important;
+    border-left: 4px solid #dc3545 !important;
+    position: relative;
+}
+
+.notification-item.notification-urgente::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 0 20px 20px 0;
+    border-color: transparent #dc3545 transparent transparent;
+    opacity: 0.7;
+}
+
+.notification-item.notification-urgente:hover {
+    background: linear-gradient(135deg, rgba(220, 53, 69, 0.18) 0%, rgba(220, 53, 69, 0.08) 100%) !important;
+}
+
+/* Notificación con urgencia MEDIA (amarillo/naranja) */
+.notification-item.notification-media {
+    background: linear-gradient(135deg, rgba(255, 193, 7, 0.15) 0%, rgba(255, 193, 7, 0.05) 100%) !important;
+    border-left: 4px solid #ffc107 !important;
+    position: relative;
+}
+
+.notification-item.notification-media::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 0 16px 16px 0;
+    border-color: transparent #ffc107 transparent transparent;
+    opacity: 0.7;
+}
+
+.notification-item.notification-media:hover {
+    background: linear-gradient(135deg, rgba(255, 193, 7, 0.22) 0%, rgba(255, 193, 7, 0.10) 100%) !important;
+}
+
+/* Tags/Badges de urgencia */
+.urgencia-tag {
+    display: inline-flex;
+    align-items: center;
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 6px;
+    border-radius: 3px;
+    margin-left: 6px;
+    vertical-align: middle;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    line-height: 1.2;
+}
+
+.urgencia-tag i {
+    margin-right: 3px;
+    font-size: 9px;
+}
+
+/* Tag urgencia ALTA */
+.urgencia-tag-alta {
+    background-color: #dc3545;
+    color: #fff;
+    animation: pulse-urgente 2s infinite;
+}
+
+/* Tag urgencia MEDIA */
+.urgencia-tag-media {
+    background-color: #ffc107;
+    color: #212529;
+}
+
+/* Tag urgencia NORMAL (si se necesita) */
+.urgencia-tag-normal {
+    background-color: #28a745;
+    color: #fff;
+}
+
+/* Animación de pulso para urgencias altas */
+@keyframes pulse-urgente {
+    0%, 100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.85;
+        transform: scale(1.02);
+    }
+}
+
+/* Ajustes para el icono de la notificación urgente */
+.notification-item.notification-urgente .notification-left i {
+    animation: shake-icon 0.5s ease-in-out infinite;
+    animation-delay: 3s;
+}
+
+@keyframes shake-icon {
+    0%, 100% { transform: rotate(0deg); }
+    25% { transform: rotate(-5deg); }
+    75% { transform: rotate(5deg); }
+}
+
+/* Mejorar visibilidad del título en notificaciones con urgencia */
+.notification-item.notification-urgente .title,
+.notification-item.notification-media .title {
+    font-weight: 600;
+}
+
+/* Responsive: ajustes para móviles */
+@media (max-width: 576px) {
+    .urgencia-tag {
+        font-size: 9px;
+        padding: 1px 4px;
+    }
+
+    .notification-item.notification-urgente::before,
+    .notification-item.notification-media::before {
+        border-width: 0 14px 14px 0;
+    }
+}
+
+/* ========================================
+   NOTIFICACIONES CLICKEABLES
+   ======================================== */
+
+/* Notificación clickeable - cursor y hover */
+.notification-item.notification-clickeable {
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.notification-item.notification-clickeable:hover {
+    transform: translateX(3px);
+    box-shadow: -3px 0 0 var(--theme-primary, #13304D);
+}
+
+.notification-item.notification-clickeable:hover .title {
+    color: var(--theme-primary, #13304D);
+}
+
+/* Acciones de notificación (timestamp + botones) */
+.notification-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.notification-actions .timestamp {
+    font-size: 11px;
+    color: #888;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.notification-actions .timestamp i {
+    font-size: 10px;
+}
+
+/* Contenedor de botones */
+.notification-btns {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+/* Botón Ver recurso */
+.btn-ver-recurso {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+    font-size: 11px;
+    font-weight: 600;
+    color: #fff !important;
+    background: linear-gradient(135deg, var(--theme-primary, #13304D) 0%, var(--theme-primary-dark, #0d2339) 100%);
+    border-radius: 15px;
+    text-decoration: none !important;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.btn-ver-recurso:hover,
+.btn-ver-recurso:focus,
+.btn-ver-recurso:active {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    color: #fff !important;
+    text-decoration: none !important;
+}
+
+.btn-ver-recurso i {
+    font-size: 10px;
+    color: #fff !important;
+}
+
+/* Botón Marcar como leída */
+.btn-marcar-leida {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+    font-size: 11px;
+    font-weight: 600;
+    color: #fff !important;
+    background-color: #28a745;
+    border-radius: 15px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.btn-marcar-leida:hover {
+    background-color: #218838;
+    color: #fff !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.btn-marcar-leida i {
+    font-size: 10px;
+    color: #fff !important;
+}
+
+/* Indicador visual de enlace en notificaciones clickeables */
+.notification-item.notification-clickeable .notification-left::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 4px;
+    height: 4px;
+    background-color: var(--theme-primary, #13304D);
+    border-radius: 50%;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.notification-item.notification-clickeable:hover .notification-left::after {
+    opacity: 1;
+}
+
+.notification-item .notification-left {
+    position: relative;
+}
+
+/* Ajustar texto de notificación */
+.notification-item .text {
+    margin-bottom: 0 !important;
+    font-size: 12px;
+    line-height: 1.4;
+    color: #555;
+}
+
+/* Responsive para botones de notificación */
+@media (max-width: 576px) {
+    .notification-actions {
+        flex-direction: column;
+        gap: 8px;
+        align-items: flex-start;
+    }
+
+    .notification-btns {
+        width: 100%;
+        justify-content: flex-end;
+    }
+
+    .btn-ver-recurso,
+    .btn-marcar-leida {
+        padding: 6px 12px;
+        font-size: 12px;
+    }
+
+    .notification-item.notification-clickeable:hover {
+        transform: none;
+        box-shadow: inset 3px 0 0 var(--theme-primary, #13304D);
+    }
+}

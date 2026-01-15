@@ -1,0 +1,340 @@
+{% extends 'turnero/base.html' %}
+
+{% block title %}Paso 5: Confirmación - Turnos RTV{% endblock %}
+
+{% block extra_css %}
+<style>
+    .resumen-card {
+        background: white;
+        border-left: 5px solid var(--primary-color);
+        padding: 1.5rem;
+        margin-bottom: 1rem;
+        border-radius: 10px;
+        box-shadow: var(--card-shadow);
+    }
+
+    .resumen-title {
+        color: var(--primary-color);
+        font-weight: 700;
+        font-size: 1.1rem;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .resumen-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.75rem 0;
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+    .resumen-item:last-child {
+        border-bottom: none;
+    }
+
+    .resumen-label {
+        color: #6c757d;
+        font-weight: 500;
+    }
+
+    .resumen-value {
+        color: #333;
+        font-weight: 600;
+        text-align: right;
+    }
+
+    .confirmacion-importante {
+        background: #f8f9fa;
+        border-left: 5px solid var(--primary-color);
+        padding: 1.5rem;
+        border-radius: 10px;
+        margin: 2rem 0;
+    }
+
+    .confirmacion-importante h5 {
+        color: var(--primary-color);
+        font-weight: 700;
+        margin-bottom: 1rem;
+    }
+
+    .confirmacion-importante ul {
+        margin-bottom: 0;
+    }
+
+    .confirmacion-importante li {
+        color: #333;
+        margin-bottom: 0.5rem;
+    }
+
+    .terminos-container {
+        background: #f8f9fa;
+        padding: 1.5rem;
+        border-radius: 10px;
+        margin: 2rem 0;
+    }
+
+    .form-check-label {
+        font-weight: 500;
+        color: #333;
+    }
+
+    .fecha-destacada {
+        background: var(--primary-color);
+        color: white;
+        padding: 2rem;
+        border-radius: 15px;
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .fecha-destacada .dia {
+        font-size: 3rem;
+        font-weight: 700;
+        line-height: 1;
+    }
+
+    .fecha-destacada .mes-ano {
+        font-size: 1.2rem;
+        opacity: 0.9;
+        margin-bottom: 1rem;
+    }
+
+    .fecha-destacada .hora {
+        font-size: 2rem;
+        font-weight: 600;
+        margin-top: 1rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-10">
+        <div class="card-custom" data-aos="fade-up">
+            <div class="card-header-custom">
+                <h3>
+                    <i class="fas fa-check-circle"></i> Paso 5: Confirmación
+                </h3>
+                <p class="mb-0 mt-2" style="font-size: 0.95rem; opacity: 0.9;">
+                    Revisá los datos de tu turno antes de confirmar
+                </p>
+            </div>
+            <div class="card-body-custom">
+                <!-- Fecha destacada -->
+                <div class="fecha-destacada" data-aos="zoom-in">
+                    <div class="mes-ano">{{ fecha|date:"F Y" }}</div>
+                    <div class="dia">{{ fecha|date:"d" }}</div>
+                    <div class="mb-2">{{ fecha|date:"l" }}</div>
+                    <div class="hora">
+                        <i class="fas fa-clock me-2"></i>{{ hora_inicio|time:"H:i" }} hs
+                    </div>
+                </div>
+
+                <form method="post" id="form_confirmacion">
+                    {% csrf_token %}
+
+                    <!-- Resumen del Cliente -->
+                    <div class="resumen-card" data-aos="fade-up">
+                        <div class="resumen-title">
+                            <i class="fas fa-user me-2"></i>Datos del Cliente
+                        </div>
+                        <div class="resumen-item">
+                            <span class="resumen-label">Nombre completo:</span>
+                            <span class="resumen-value">{{ cliente.apellido }}, {{ cliente.nombre }}</span>
+                        </div>
+                        <div class="resumen-item">
+                            <span class="resumen-label">DNI:</span>
+                            <span class="resumen-value">{{ cliente.dni }}</span>
+                        </div>
+                        {% if cliente.email %}
+                        <div class="resumen-item">
+                            <span class="resumen-label">Email:</span>
+                            <span class="resumen-value">{{ cliente.email }}</span>
+                        </div>
+                        {% endif %}
+                        {% if cliente.celular %}
+                        <div class="resumen-item">
+                            <span class="resumen-label">Celular:</span>
+                            <span class="resumen-value">{{ cliente.celular }}</span>
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Resumen del Vehículo -->
+                    <div class="resumen-card" data-aos="fade-up">
+                        <div class="resumen-title">
+                            <i class="fas fa-car me-2"></i>Datos del Vehículo
+                        </div>
+                        <div class="resumen-item">
+                            <span class="resumen-label">Dominio:</span>
+                            <span class="resumen-value">{{ vehiculo.dominio }}</span>
+                        </div>
+                        <div class="resumen-item">
+                            <span class="resumen-label">Tipo de Trámite:</span>
+                            <span class="resumen-value">{{ tipo_vehiculo.nombre }}</span>
+                        </div>
+                        <div class="resumen-item">
+                            <span class="resumen-label">Duración estimada:</span>
+                            <span class="resumen-value">{{ tipo_vehiculo.duracion_minutos }} minutos</span>
+                        </div>
+                        <div class="resumen-item">
+                            <span class="resumen-label">GNC:</span>
+                            <span class="resumen-value">
+                                {% if vehiculo.tiene_gnc %}
+                                    <i class="fas fa-check-circle text-success"></i> Sí
+                                {% else %}
+                                    <i class="fas fa-times-circle text-danger"></i> No
+                                {% endif %}
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Resumen del Taller -->
+                    <div class="resumen-card" data-aos="fade-up">
+                        <div class="resumen-title">
+                            <i class="fas fa-map-marker-alt me-2"></i>Taller
+                        </div>
+                        <div class="resumen-item">
+                            <span class="resumen-label">Nombre:</span>
+                            <span class="resumen-value">{{ taller.get_nombre }}</span>
+                        </div>
+                        <div class="resumen-item">
+                            <span class="resumen-label">Dirección:</span>
+                            <span class="resumen-value">{{ taller.get_direccion }}, {{ taller.get_localidad.nombre }}</span>
+                        </div>
+                        <div class="resumen-item">
+                            <span class="resumen-label">Teléfono:</span>
+                            <span class="resumen-value">{{ taller.get_telefono }}</span>
+                        </div>
+                    </div>
+
+                    <!-- Información importante -->
+                    <div class="confirmacion-importante" data-aos="fade-up">
+                        <h5 class="mb-3"><i class="fas fa-exclamation-circle me-2"></i>Información Importante</h5>
+                        <ul class="ps-4">
+                            <li class="mb-2">Presentate <strong>10 minutos antes</strong> del horario asignado</li>
+                            <li class="mb-2">Traé tu <strong>DNI</strong>, <strong>cédula del vehículo</strong> y <strong>comprobante de pago</strong></li>
+                            <li class="mb-2">El vehículo debe estar en <strong>condiciones técnicas adecuadas</strong></li>
+                            <li class="mb-2">Podés <strong>cancelar el turno</strong> hasta 24 horas antes</li>
+                            <li>Recibirás un <strong>email de confirmación</strong> con el código QR</li>
+                        </ul>
+                    </div>
+
+                    <!-- Observaciones -->
+                    <div class="mb-4" data-aos="fade-up">
+                        <label for="{{ form.observaciones.id_for_label }}" class="form-label">
+                            <i class="fas fa-comment me-2"></i>Observaciones (opcional)
+                        </label>
+                        <textarea class="form-control" id="{{ form.observaciones.id_for_label }}"
+                                  name="observaciones" rows="3"
+                                  placeholder="Escribí aquí cualquier comentario o aclaración sobre tu turno..."></textarea>
+                    </div>
+
+                    <!-- Términos y condiciones -->
+                    <div class="terminos-container" data-aos="fade-up">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox"
+                                   id="{{ form.acepta_terminos.id_for_label }}"
+                                   name="acepta_terminos" required>
+                            <label class="form-check-label ms-2" for="{{ form.acepta_terminos.id_for_label }}">
+                                <i class="fas fa-file-contract me-2"></i>
+                                Acepto los <a href="#" data-bs-toggle="modal" data-bs-target="#terminosModal">términos y condiciones</a> del servicio de turnos RTV
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- reCAPTCHA -->
+                    <input type="hidden" name="recaptcha_token" id="recaptcha_token">
+
+                    <!-- Botones -->
+                    <div class="text-center mt-4" data-aos="fade-up">
+                        <a href="{% url 'turnero:step4_fecha_hora' %}" class="btn btn-secondary-custom me-2">
+                            <i class="fas fa-arrow-left me-2"></i>Volver
+                        </a>
+                        <button type="submit" class="btn btn-accent btn-lg" id="btn_confirmar">
+                            <i class="fas fa-check-circle me-2"></i>Confirmar Turno
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Términos y Condiciones -->
+<div class="modal fade" id="terminosModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header" style="background: var(--primary-color); color: white;">
+                <h5 class="modal-title">Términos y Condiciones</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <h6>1. Aceptación de Términos</h6>
+                <p>Al utilizar el sistema de turnos RTV, aceptás los siguientes términos y condiciones.</p>
+
+                <h6>2. Uso del Servicio</h6>
+                <p>El sistema de turnos es un servicio gratuito para facilitar la reserva de inspecciones técnicas vehiculares.</p>
+
+                <h6>3. Cancelaciones</h6>
+                <p>Podés cancelar tu turno hasta 24 horas antes del horario asignado. Las inasistencias sin aviso pueden resultar en la suspensión temporal del servicio.</p>
+
+                <h6>4. Requisitos</h6>
+                <p>Es responsabilidad del usuario presentarse con toda la documentación requerida y el vehículo en condiciones técnicas adecuadas.</p>
+
+                <h6>5. Protección de Datos</h6>
+                <p>Tus datos personales serán tratados de acuerdo a la Ley de Protección de Datos Personales y solo se utilizarán para la gestión de turnos.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Confirmación antes de enviar
+    document.getElementById('form_confirmacion').addEventListener('submit', function(e) {
+        const aceptaTerminos = document.getElementById('{{ form.acepta_terminos.id_for_label }}').checked;
+
+        if (!aceptaTerminos) {
+            e.preventDefault();
+            showWarning('Debes aceptar los términos y condiciones para continuar', 'Términos y Condiciones');
+            return;
+        }
+
+        // Mostrar confirmación
+        e.preventDefault();
+        showConfirm(
+            '¿Estás seguro de que querés confirmar este turno?',
+            'Se enviará un email de confirmación a tu correo electrónico.',
+            'Sí, confirmar turno',
+            'Cancelar'
+        ).then((result) => {
+            if (result.isConfirmed) {
+                // Deshabilitar botón para evitar doble submit
+                const btn = document.getElementById('btn_confirmar');
+                btn.disabled = true;
+                btn.innerHTML = '<span class="loading-spinner"></span> Confirmando...';
+
+                // Enviar formulario
+                document.getElementById('form_confirmacion').submit();
+            }
+        });
+    });
+
+    // reCAPTCHA v3 (cuando tengas la clave)
+    // grecaptcha.ready(function() {
+    //     grecaptcha.execute('YOUR_SITE_KEY', {action: 'confirmar_turno'}).then(function(token) {
+    //         document.getElementById('recaptcha_token').value = token;
+    //     });
+    // });
+
+    // Por ahora, simplemente ponemos un token dummy
+    document.getElementById('recaptcha_token').value = 'dummy_token';
+</script>
+{% endblock %}

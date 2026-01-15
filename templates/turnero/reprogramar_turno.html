@@ -1,0 +1,642 @@
+{% extends 'turnero/base.html' %}
+
+{% block title %}Reprogramar Turno - Turnos RTV{% endblock %}
+
+{% block extra_css %}
+<style>
+    .turno-actual-info {
+        background: linear-gradient(135deg, #fff3cd 0%, #ffeeba 100%);
+        border-left: 5px solid var(--warning-color);
+        padding: 1.5rem;
+        border-radius: 10px;
+        margin-bottom: 2rem;
+    }
+
+    .turno-actual-info h5 {
+        color: #856404;
+        font-weight: 700;
+        margin-bottom: 1rem;
+    }
+
+    .turno-actual-info .info-item {
+        margin-bottom: 0.5rem;
+        color: #856404;
+    }
+
+    .nuevo-turno-section {
+        background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+        border-left: 5px solid var(--primary-color);
+        padding: 1.5rem;
+        border-radius: 10px;
+        margin-bottom: 2rem;
+    }
+
+    .nuevo-turno-section h5 {
+        color: var(--primary-color);
+        font-weight: 700;
+        margin-bottom: 1rem;
+    }
+
+    .taller-option {
+        background: white;
+        border: 2px solid #e9ecef;
+        border-radius: 10px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .taller-option:hover {
+        border-color: var(--primary-color);
+        transform: translateY(-2px);
+        box-shadow: var(--card-shadow);
+    }
+
+    .taller-option.selected {
+        border-color: var(--primary-color);
+        background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+    }
+
+    .taller-option.selected::before {
+        content: '\f00c';
+        font-family: 'Font Awesome 6 Free';
+        font-weight: 900;
+        float: right;
+        color: var(--success-color);
+        font-size: 1.5rem;
+    }
+
+    .horario-btn {
+        background: white;
+        border: 2px solid #e9ecef;
+        border-radius: 10px;
+        padding: 1rem;
+        margin: 0.5rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-align: center;
+        min-width: 120px;
+    }
+
+    .horario-btn:hover {
+        border-color: var(--primary-color);
+        transform: translateY(-3px);
+        box-shadow: var(--card-shadow);
+    }
+
+    .horario-btn.selected {
+        border-color: var(--primary-color);
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+        color: white;
+    }
+
+    .fecha-seleccionada {
+        background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+        border-left: 4px solid var(--primary-color);
+        padding: 1rem 1.5rem;
+        border-radius: 10px;
+        margin-bottom: 1.5rem;
+        display: none;
+    }
+
+    .fecha-seleccionada.show {
+        display: block;
+    }
+
+    .fecha-seleccionada strong {
+        color: var(--primary-color);
+        font-size: 1.2rem;
+    }
+
+    /* Calendario responsive */
+    #calendar_container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 1.5rem auto;
+        width: 100%;
+        max-width: 100%;
+    }
+
+    /* Estilos para Flatpickr responsive */
+    .flatpickr-calendar.inline {
+        display: block !important;
+        position: relative !important;
+        width: auto !important;
+        max-width: 350px !important;
+        margin: 0 auto !important;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1) !important;
+        border: 2px solid #e9ecef !important;
+        border-radius: 15px !important;
+        background: white !important;
+    }
+
+    .flatpickr-calendar.inline .flatpickr-months {
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%) !important;
+        border-radius: 13px 13px 0 0 !important;
+        color: white !important;
+        padding: 15px 10px;
+    }
+
+    .flatpickr-calendar.inline .flatpickr-current-month {
+        color: white !important;
+    }
+
+    .flatpickr-calendar.inline .flatpickr-current-month .flatpickr-monthDropdown-months,
+    .flatpickr-calendar.inline .flatpickr-current-month .numInputWrapper input {
+        color: white !important;
+        font-weight: 600 !important;
+    }
+
+    .flatpickr-calendar.inline .flatpickr-prev-month svg,
+    .flatpickr-calendar.inline .flatpickr-next-month svg {
+        fill: white !important;
+    }
+
+    .flatpickr-calendar.inline .flatpickr-weekdays {
+        background: #f8f9fa;
+    }
+
+    .flatpickr-day {
+        color: #333 !important;
+        border-radius: 8px !important;
+        margin: 2px !important;
+    }
+
+    .flatpickr-day.selected {
+        background: var(--primary-color) !important;
+        border-color: var(--primary-color) !important;
+        color: white !important;
+    }
+
+    .flatpickr-day.today {
+        border-color: var(--accent-color) !important;
+        color: var(--accent-color) !important;
+        font-weight: 700 !important;
+    }
+
+    .flatpickr-day:hover:not(.selected):not(.disabled) {
+        background: rgba(0, 123, 255, 0.1) !important;
+        border-color: var(--primary-color) !important;
+    }
+
+    /* Para pantallas pequeñas */
+    @media (max-width: 576px) {
+        #calendar_container {
+            margin: 1rem auto;
+            padding: 0;
+        }
+
+        .flatpickr-calendar.inline {
+            max-width: 100% !important;
+            width: calc(100vw - 40px) !important;
+            font-size: 14px !important;
+        }
+
+        .flatpickr-calendar.inline .flatpickr-months {
+            padding: 10px 5px !important;
+        }
+
+        .flatpickr-day {
+            height: 38px !important;
+            line-height: 38px !important;
+            max-width: 38px !important;
+        }
+
+        .flatpickr-current-month {
+            font-size: 95% !important;
+            padding: 5px 0 !important;
+        }
+
+        .flatpickr-weekday {
+            font-size: 90% !important;
+        }
+
+        .dayContainer {
+            min-width: 100% !important;
+            max-width: 100% !important;
+        }
+
+        /* Ajustar padding de la sección del calendario */
+        .nuevo-turno-section {
+            padding: 1rem 0.75rem !important;
+        }
+
+        /* Reducir tamaño de botones de horario en móvil */
+        .horario-btn {
+            min-width: 90px !important;
+            padding: 0.7rem !important;
+            margin: 0.25rem !important;
+            font-size: 0.85rem !important;
+        }
+
+        /* Ajustar info de turno actual en móvil */
+        .turno-actual-info {
+            padding: 1rem !important;
+        }
+
+        .turno-actual-info .row > div {
+            margin-bottom: 0.75rem;
+        }
+
+        /* Mejorar taller options en móvil */
+        .taller-option {
+            padding: 0.85rem !important;
+            font-size: 0.9rem !important;
+        }
+    }
+
+    /* Para tablets en vertical */
+    @media (max-width: 768px) and (min-width: 577px) {
+        .flatpickr-calendar.inline {
+            max-width: 380px !important;
+        }
+    }
+
+    /* Para pantallas muy pequeñas */
+    @media (max-width: 360px) {
+        .flatpickr-calendar.inline {
+            width: calc(100vw - 30px) !important;
+            font-size: 12px !important;
+        }
+
+        .flatpickr-day {
+            height: 34px !important;
+            line-height: 34px !important;
+            max-width: 34px !important;
+        }
+
+        .horario-btn {
+            min-width: 80px !important;
+            font-size: 0.8rem !important;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-10">
+        <div class="card-custom" data-aos="fade-up">
+            <div class="card-header-custom">
+                <h3>
+                    <i class="fas fa-calendar-alt"></i> Reprogramar Turno
+                </h3>
+                <p class="mb-0 mt-2" style="font-size: 0.95rem; opacity: 0.9;">
+                    Elegí una nueva fecha y horario para tu turno
+                </p>
+            </div>
+            <div class="card-body-custom">
+                <!-- Información del turno actual -->
+                <div class="turno-actual-info" data-aos="fade-up">
+                    <h5><i class="fas fa-info-circle me-2"></i>Turno Actual</h5>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="info-item">
+                                <i class="fas fa-barcode me-2"></i><strong>Código:</strong> {{ turno.codigo }}
+                            </div>
+                            <div class="info-item">
+                                <i class="fas fa-car me-2"></i><strong>Vehículo:</strong> {{ turno.vehiculo.dominio }}
+                            </div>
+                            <div class="info-item">
+                                <i class="fas fa-clipboard-check me-2"></i><strong>Trámite:</strong> {{ turno.tipo_vehiculo.nombre }}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="info-item">
+                                <i class="fas fa-calendar me-2"></i><strong>Fecha:</strong> {{ turno.fecha|date:"d/m/Y" }}
+                            </div>
+                            <div class="info-item">
+                                <i class="fas fa-clock me-2"></i><strong>Horario:</strong> {{ turno.hora_inicio|time:"H:i" }} hs
+                            </div>
+                            <div class="info-item">
+                                <i class="fas fa-map-marker-alt me-2"></i><strong>Taller:</strong> {{ turno.taller.get_nombre }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Formulario de reprogramación -->
+                <form method="post" id="form_reprogramar">
+                    {% csrf_token %}
+
+                    <!-- Selección de Taller -->
+                    <div class="nuevo-turno-section" data-aos="fade-up">
+                        <h5><i class="fas fa-tools me-2"></i>Paso 1: Seleccioná el Taller</h5>
+                        <input type="hidden" name="taller" id="taller_selected" required>
+
+                        {% for taller in talleres %}
+                        <div class="taller-option" data-taller-id="{{ taller.id }}">
+                            <h6 class="mb-2" style="color: var(--primary-color);">
+                                <i class="fas fa-tools me-2"></i>{{ taller.get_nombre }}
+                            </h6>
+                            <p class="mb-1">
+                                <i class="fas fa-map-marker-alt me-2"></i>{{ taller.get_direccion }}, {{ taller.get_localidad.nombre }}
+                            </p>
+                            <p class="mb-0">
+                                <i class="fas fa-phone me-2"></i>{{ taller.get_telefono }}
+                            </p>
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    <!-- Selección de Fecha -->
+                    <div class="nuevo-turno-section" data-aos="fade-up">
+                        <h5><i class="fas fa-calendar me-2"></i>Paso 2: Seleccioná la Fecha</h5>
+                        <input type="hidden" name="fecha" id="fecha_selected" required>
+                        <div id="calendar_container"></div>
+                    </div>
+
+                    <!-- Fecha seleccionada -->
+                    <div class="fecha-seleccionada" id="fecha_info">
+                        <i class="fas fa-calendar-check me-2"></i>
+                        <strong>Fecha seleccionada:</strong>
+                        <span id="fecha_display" class="ms-2"></span>
+                    </div>
+
+                    <!-- Selección de Horario -->
+                    <div class="nuevo-turno-section" data-aos="fade-up">
+                        <h5><i class="fas fa-clock me-2"></i>Paso 3: Seleccioná el Horario</h5>
+                        <input type="hidden" name="hora_inicio" id="hora_selected" required>
+
+                        <div id="loading_horarios" class="text-center py-4" style="display: none;">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Cargando...</span>
+                            </div>
+                            <p class="mt-3">Cargando horarios disponibles...</p>
+                        </div>
+
+                        <div id="no_horarios" class="text-center py-4" style="display: none;">
+                            <i class="fas fa-info-circle fa-3x mb-3" style="color: #6c757d;"></i>
+                            <p class="mb-0">Seleccioná un taller y una fecha para ver los horarios disponibles</p>
+                        </div>
+
+                        <div id="horarios_container" class="d-flex flex-wrap justify-content-center gap-2">
+                            <!-- Se cargan dinámicamente -->
+                        </div>
+                    </div>
+
+                    <!-- Botones -->
+                    <div class="text-center mt-4" data-aos="fade-up">
+                        <a href="{% url 'turnero:consultar_turno' %}" class="btn btn-secondary-custom me-2">
+                            <i class="fas fa-times me-2"></i>Cancelar
+                        </a>
+                        <button type="submit" class="btn btn-accent btn-lg" id="btn_confirmar">
+                            <i class="fas fa-check-circle me-2"></i>Confirmar Reprogramación
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://npmcdn.com/flatpickr/dist/l10n/es.js"></script>
+
+<script>
+    let tallerSeleccionado = null;
+    let fechaSeleccionada = null;
+    let horaSeleccionada = null;
+    let picker = null;
+
+    // Selección de taller
+    document.querySelectorAll('.taller-option').forEach(option => {
+        option.addEventListener('click', function() {
+            // Remover selección anterior
+            document.querySelectorAll('.taller-option').forEach(opt => opt.classList.remove('selected'));
+
+            // Seleccionar este
+            this.classList.add('selected');
+            tallerSeleccionado = this.getAttribute('data-taller-id');
+            document.getElementById('taller_selected').value = tallerSeleccionado;
+
+            // Reiniciar calendario y horarios
+            inicializarCalendario();
+            limpiarHorarios();
+        });
+    });
+
+    function inicializarCalendario() {
+        if (!tallerSeleccionado) return;
+
+        // Destruir calendario anterior si existe
+        if (picker) {
+            picker.destroy();
+        }
+
+        // Crear calendario
+        picker = flatpickr("#calendar_container", {
+            locale: "es",
+            inline: true,
+            dateFormat: "Y-m-d",
+            minDate: "today",
+            maxDate: new Date().fp_incr(60),
+            onChange: function(selectedDates, dateStr, instance) {
+                if (selectedDates.length > 0) {
+                    fechaSeleccionada = dateStr;
+                    mostrarFechaSeleccionada(selectedDates[0]);
+                    cargarHorariosDisponibles(dateStr);
+                }
+            }
+        });
+
+        // Cargar fechas deshabilitadas
+        fetch(`{% url 'turnero:fechas_disponibles_ajax' %}?taller_id=${tallerSeleccionado}&tipo_vehiculo_id={{ tipo_vehiculo.id }}`)
+            .then(response => response.json())
+            .then(data => {
+                picker.set('disable', data.fechas_deshabilitadas);
+            })
+            .catch(error => {
+                console.error('Error al cargar fechas:', error);
+            });
+    }
+
+    function mostrarFechaSeleccionada(fecha) {
+        const opciones = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        const fechaFormateada = fecha.toLocaleDateString('es-AR', opciones);
+
+        document.getElementById('fecha_display').textContent = fechaFormateada;
+        document.getElementById('fecha_info').classList.add('show');
+        document.getElementById('fecha_selected').value = fechaSeleccionada;
+
+        // Limpiar selección de hora
+        limpiarHorarios();
+    }
+
+    function limpiarHorarios() {
+        horaSeleccionada = null;
+        document.getElementById('hora_selected').value = '';
+        document.getElementById('horarios_container').innerHTML = '';
+        document.getElementById('no_horarios').style.display = 'block';
+    }
+
+    function cargarHorariosDisponibles(fecha) {
+        const container = document.getElementById('horarios_container');
+        const loading = document.getElementById('loading_horarios');
+        const noHorarios = document.getElementById('no_horarios');
+
+        // Mostrar loading
+        container.innerHTML = '';
+        loading.style.display = 'block';
+        noHorarios.style.display = 'none';
+
+        fetch(`{% url 'turnero:horarios_disponibles_ajax' %}?taller_id=${tallerSeleccionado}&tipo_vehiculo_id={{ tipo_vehiculo.id }}&fecha=${fecha}`)
+            .then(response => response.json())
+            .then(data => {
+                loading.style.display = 'none';
+
+                if (data.horarios && data.horarios.length > 0) {
+                    data.horarios.forEach(horario => {
+                        const btn = document.createElement('div');
+                        btn.className = 'horario-btn';
+                        btn.innerHTML = `
+                            <div style="font-size: 1.3rem; font-weight: 700;">${horario.hora}</div>
+                            <div style="font-size: 0.85rem; opacity: 0.8;">
+                                <i class="fas fa-users me-1"></i>${horario.cupos} cupos
+                            </div>
+                        `;
+
+                        btn.addEventListener('click', function() {
+                            seleccionarHorario(horario.hora, this);
+                        });
+
+                        container.appendChild(btn);
+                    });
+                } else {
+                    noHorarios.innerHTML = `
+                        <i class="fas fa-calendar-times fa-3x mb-3" style="color: #dc3545;"></i>
+                        <p>No hay horarios disponibles para esta fecha. Por favor, seleccione otra fecha.</p>
+                    `;
+                    noHorarios.style.display = 'block';
+                }
+            })
+            .catch(error => {
+                console.error('Error al cargar horarios:', error);
+                loading.style.display = 'none';
+                noHorarios.innerHTML = `
+                    <i class="fas fa-exclamation-triangle fa-3x mb-3" style="color: #ffc107;"></i>
+                    <p>Ocurrió un error al cargar los horarios. Por favor, intente nuevamente.</p>
+                `;
+                noHorarios.style.display = 'block';
+            });
+    }
+
+    function seleccionarHorario(hora, elemento) {
+        // Remover selección anterior
+        document.querySelectorAll('.horario-btn').forEach(btn => btn.classList.remove('selected'));
+
+        // Seleccionar este
+        elemento.classList.add('selected');
+        horaSeleccionada = hora;
+        document.getElementById('hora_selected').value = hora;
+    }
+
+    // Validación del formulario
+    document.getElementById('form_reprogramar').addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        if (!tallerSeleccionado) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Taller Requerido',
+                text: 'Por favor, seleccioná un taller',
+                confirmButtonColor: '#ffc107',
+                confirmButtonText: 'Entendido'
+            });
+            return;
+        }
+
+        if (!fechaSeleccionada) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Fecha Requerida',
+                text: 'Por favor, seleccioná una fecha',
+                confirmButtonColor: '#ffc107',
+                confirmButtonText: 'Entendido'
+            });
+            return;
+        }
+
+        if (!horaSeleccionada) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Horario Requerido',
+                text: 'Por favor, seleccioná un horario',
+                confirmButtonColor: '#ffc107',
+                confirmButtonText: 'Entendido'
+            });
+            return;
+        }
+
+        // Confirmar reprogramación
+        Swal.fire({
+            title: '¿Estás seguro de que querés reprogramar tu turno?',
+            text: 'Se actualizará la fecha y horario de tu turno.',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#003466',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Sí, reprogramar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Deshabilitar botón
+                const btn = document.getElementById('btn_confirmar');
+                btn.disabled = true;
+                btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Reprogramando...';
+
+                // Enviar formulario via AJAX
+                const formData = new FormData(this);
+
+                fetch(window.location.href, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: '¡Éxito!',
+                            text: data.message,
+                            confirmButtonColor: '#003466',
+                            confirmButtonText: 'Aceptar'
+                        }).then(() => {
+                            window.location.href = data.redirect_url;
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: data.message,
+                            confirmButtonColor: '#dc3545',
+                            confirmButtonText: 'Aceptar'
+                        });
+                        btn.disabled = false;
+                        btn.innerHTML = '<i class="fas fa-check-circle me-2"></i>Confirmar Reprogramación';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Ocurrió un error al reprogramar el turno',
+                        confirmButtonColor: '#dc3545',
+                        confirmButtonText: 'Aceptar'
+                    });
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fas fa-check-circle me-2"></i>Confirmar Reprogramación';
+                });
+            }
+        });
+    });
+</script>
+{% endblock %}

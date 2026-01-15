@@ -1,0 +1,23 @@
+/* Estilos para el campo de fechas no laborables */
+
+#id_fechas_no_laborables_text {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 14px;
+    line-height: 1.6;
+    border: 2px solid #ddd;
+    border-radius: 4px;
+    padding: 10px;
+    transition: border-color 0.3s;
+}
+
+#id_fechas_no_laborables_text:focus {
+    border-color: #2196F3;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.1);
+}
+
+.field-fechas_no_laborables_text .help {
+    color: #666;
+    font-style: italic;
+    margin-top: 5px;
+}

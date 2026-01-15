@@ -1,0 +1,1175 @@
+/* =====================================================
+   SISTEMA DE MENSAJES - ESTILOS CSS
+   Estilos para el modal emergente y el flotante lateral
+   ===================================================== */
+
+/* =====================================================
+   MODAL DE MENSAJE EMERGENTE
+   ===================================================== */
+
+.mensaje-sistema-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.mensaje-sistema-modal.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+.mensaje-sistema-modal-content {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    max-width: 500px;
+    width: 90%;
+    max-height: 80vh;
+    overflow: hidden;
+    transform: scale(0.9) translateY(-20px);
+    transition: transform 0.3s ease;
+}
+
+.mensaje-sistema-modal.show .mensaje-sistema-modal-content {
+    transform: scale(1) translateY(0);
+}
+
+.mensaje-sistema-modal-header {
+    background: linear-gradient(135deg, var(--theme-primary, #13304D) 0%, var(--theme-primary-dark, #0d2235) 100%);
+    color: white;
+    padding: 1.25rem 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.mensaje-sistema-modal-header .icon-container {
+    width: 45px;
+    height: 45px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+}
+
+.mensaje-sistema-modal-header .header-text h4 {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.mensaje-sistema-modal-header .header-text span {
+    font-size: 0.8rem;
+    opacity: 0.85;
+}
+
+.mensaje-sistema-modal-body {
+    padding: 1.5rem;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.mensaje-sistema-info-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #eee;
+}
+
+.mensaje-sistema-info-row:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.mensaje-sistema-info-row .info-icon {
+    width: 32px;
+    height: 32px;
+    background: var(--theme-primary, #13304D);
+    color: white;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.mensaje-sistema-info-row .info-content {
+    flex: 1;
+}
+
+.mensaje-sistema-info-row .info-label {
+    font-size: 0.75rem;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.15rem;
+}
+
+.mensaje-sistema-info-row .info-value {
+    font-size: 0.95rem;
+    color: #333;
+    font-weight: 500;
+}
+
+.mensaje-sistema-contenido {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 1rem;
+    font-size: 0.9rem;
+    color: #555;
+    line-height: 1.5;
+}
+
+.mensaje-sistema-modal-footer {
+    padding: 1rem 1.5rem;
+    background: #f8f9fa;
+    border-top: 1px solid #eee;
+    display: flex;
+    gap: 0.75rem;
+    justify-content: flex-end;
+}
+
+.mensaje-sistema-modal-footer .btn {
+    padding: 0.6rem 1.25rem;
+    border-radius: 8px;
+    font-weight: 500;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.2s ease;
+}
+
+.mensaje-sistema-modal-footer .btn-responder {
+    background: var(--theme-primary, #13304D);
+    border: none;
+    color: white;
+}
+
+.mensaje-sistema-modal-footer .btn-responder:hover {
+    background: var(--theme-primary-dark, #0d2235);
+    transform: translateY(-1px);
+}
+
+.mensaje-sistema-modal-footer .btn-cerrar {
+    background: #6c757d;
+    border: none;
+    color: white;
+}
+
+.mensaje-sistema-modal-footer .btn-cerrar:hover {
+    background: #5a6268;
+}
+
+/* Estado bloqueado */
+.mensaje-sistema-bloqueado {
+    background: #fff3cd;
+    border: 1px solid #ffc107;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.mensaje-sistema-bloqueado i {
+    color: #856404;
+    font-size: 1.25rem;
+}
+
+.mensaje-sistema-bloqueado span {
+    color: #856404;
+    font-size: 0.9rem;
+}
+
+/* =====================================================
+   FLOTANTE LATERAL (RECORDATORIO DE TAREAS)
+   ===================================================== */
+
+.tareas-flotante {
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    z-index: 1040;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 10px;
+    max-width: 350px;
+    pointer-events: none;
+}
+
+.tareas-flotante.oculto {
+    display: none;
+}
+
+/* Botón toggle del flotante */
+.tareas-flotante-toggle {
+    pointer-events: auto;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--theme-primary, #13304D) 0%, var(--theme-primary-dark, #0d2235) 100%);
+    color: white;
+    border: none;
+    box-shadow: 0 4px 15px rgba(19, 48, 77, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.tareas-flotante-toggle:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 20px rgba(19, 48, 77, 0.5);
+}
+
+.tareas-flotante-toggle i {
+    color: white !important;
+}
+
+.tareas-flotante-toggle .badge-contador {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: #dc3545;
+    color: white;
+    font-size: 0.7rem;
+    font-weight: 700;
+    min-width: 22px;
+    height: 22px;
+    border-radius: 11px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid white;
+    animation: pulse-badge 2s infinite;
+}
+
+@keyframes pulse-badge {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+/* Panel expandido del flotante */
+.tareas-flotante-panel {
+    pointer-events: auto;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    width: 340px;
+    max-height: 400px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transform: translateY(20px);
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.tareas-flotante-panel.show {
+    transform: translateY(0);
+    opacity: 1;
+    visibility: visible;
+}
+
+.tareas-flotante-header {
+    background: linear-gradient(135deg, var(--theme-primary, #13304D) 0%, var(--theme-primary-dark, #0d2235) 100%);
+    color: white;
+    padding: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.tareas-flotante-header h5 {
+    margin: 0;
+    font-size: 0.95rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.tareas-flotante-header .btn-cerrar-panel {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.tareas-flotante-header .btn-cerrar-panel:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.tareas-flotante-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0;
+}
+
+.tareas-flotante-empty {
+    padding: 2rem;
+    text-align: center;
+    color: #888;
+}
+
+.tareas-flotante-empty i {
+    font-size: 2.5rem;
+    color: #ddd;
+    margin-bottom: 0.75rem;
+}
+
+/* Items de tarea en el flotante */
+.tarea-flotante-item {
+    padding: 1rem;
+    border-bottom: 1px solid #eee;
+    cursor: pointer;
+    transition: background 0.2s ease;
+    display: flex;
+    gap: 0.75rem;
+    align-items: flex-start;
+}
+
+.tarea-flotante-item:hover {
+    background: #f8f9fa;
+}
+
+.tarea-flotante-item:last-child {
+    border-bottom: none;
+}
+
+.tarea-flotante-item .tarea-icon {
+    width: 38px;
+    height: 38px;
+    background: var(--theme-primary-light, #e8f4f8);
+    color: var(--theme-primary, #13304D);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.tarea-flotante-item .tarea-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.tarea-flotante-item .tarea-titulo {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 0.25rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.tarea-flotante-item .tarea-detalle {
+    font-size: 0.75rem;
+    color: #888;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.tarea-flotante-item .tarea-estado {
+    font-size: 0.7rem;
+    padding: 0.15rem 0.5rem;
+    border-radius: 4px;
+    font-weight: 600;
+}
+
+.tarea-flotante-item .tarea-estado.pendiente {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.tarea-flotante-item .tarea-estado.en-proceso {
+    background: #cce5ff;
+    color: #004085;
+}
+
+.tarea-flotante-item .tarea-estado.bloqueado {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.tarea-flotante-item .tarea-estado.completada {
+    background: #d4edda;
+    color: #155724;
+}
+
+/* Estilos para tarea completada en flotante */
+.tarea-flotante-item.tarea-completada-flotante {
+    background: linear-gradient(135deg, #f0fff4 0%, #e8f5e9 100%);
+    border-left: 3px solid #28a745;
+}
+
+.tarea-flotante-item.tarea-completada-flotante:hover {
+    background: linear-gradient(135deg, #e8f5e9 0%, #d4edda 100%);
+}
+
+.tarea-flotante-item .tarea-icon.icon-completada {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    color: white;
+}
+
+.tarea-flotante-item .tarea-icon.icon-completada i {
+    color: white !important;
+}
+
+/* Animación de entrada para nuevos mensajes */
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+.tarea-flotante-item.nueva {
+    animation: slideInRight 0.3s ease;
+}
+
+/* =====================================================
+   RESPONSIVE
+   ===================================================== */
+
+@media (max-width: 576px) {
+    .mensaje-sistema-modal-content {
+        width: 95%;
+        margin: 1rem;
+    }
+
+    .tareas-flotante {
+        right: 10px;
+        bottom: 10px;
+        max-width: calc(100% - 20px);
+    }
+
+    .tareas-flotante-panel {
+        width: calc(100vw - 40px);
+        max-width: 340px;
+    }
+
+    .tareas-flotante-toggle {
+        width: 50px;
+        height: 50px;
+    }
+}
+
+/* =====================================================
+   PRIORIDADES
+   ===================================================== */
+
+.mensaje-prioridad-urgente .mensaje-sistema-modal-header {
+    background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+}
+
+.mensaje-prioridad-alta .mensaje-sistema-modal-header {
+    background: linear-gradient(135deg, #fd7e14 0%, #e76a00 100%);
+}
+
+.tarea-prioridad-urgente {
+    border-left: 3px solid #dc3545;
+}
+
+.tarea-prioridad-alta {
+    border-left: 3px solid #fd7e14;
+}
+
+.tarea-prioridad-normal {
+    border-left: 3px solid var(--theme-primary, #13304D);
+}
+
+.tarea-prioridad-baja {
+    border-left: 3px solid #6c757d;
+}
+
+/* =====================================================
+   MODAL CON LISTA DE TAREAS
+   ===================================================== */
+
+.mensaje-sistema-modal-lista {
+    max-width: 650px;
+}
+
+.mensaje-sistema-modal-lista .mensaje-sistema-modal-body {
+    padding: 0;
+    max-height: 450px;
+}
+
+.mensaje-lista-tareas {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Item de tarea en el modal */
+.mensaje-tarea-item {
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid #eee;
+    transition: background 0.2s ease;
+}
+
+.mensaje-tarea-item:last-child {
+    border-bottom: none;
+}
+
+.mensaje-tarea-item:hover {
+    background: #f8f9fa;
+}
+
+.mensaje-tarea-item.tarea-bloqueada {
+    background: #fff8e6;
+    opacity: 0.85;
+}
+
+.mensaje-tarea-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+}
+
+.mensaje-tarea-icon {
+    width: 40px;
+    height: 40px;
+    background: var(--theme-primary, #13304D);
+    color: white;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 1rem;
+}
+
+.mensaje-tarea-icon i {
+    color: white !important;
+}
+
+.mensaje-tarea-item.tarea-bloqueada .mensaje-tarea-icon {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.mensaje-tarea-item.tarea-bloqueada .mensaje-tarea-icon i {
+    color: #856404 !important;
+}
+
+.mensaje-tarea-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.mensaje-tarea-titulo {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 0.35rem;
+}
+
+.mensaje-tarea-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    font-size: 0.8rem;
+    color: #666;
+}
+
+.mensaje-tarea-meta span {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.mensaje-tarea-meta i {
+    color: #999;
+}
+
+.mensaje-tarea-estado {
+    flex-shrink: 0;
+}
+
+.mensaje-tarea-contenido {
+    background: #f8f9fa;
+    border-radius: 6px;
+    padding: 0.75rem;
+    font-size: 0.85rem;
+    color: #555;
+    line-height: 1.4;
+    margin-bottom: 0.75rem;
+    max-height: 60px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.mensaje-tarea-acciones {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+}
+
+.mensaje-tarea-acciones .btn {
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    transition: all 0.2s ease;
+}
+
+.btn-tarea-responder {
+    background: var(--theme-primary, #13304D);
+    border: none;
+    color: white;
+}
+
+.btn-tarea-responder:hover {
+    background: var(--theme-primary-dark, #0d2235);
+    transform: translateY(-1px);
+    color: white;
+}
+
+.btn-tarea-declinar {
+    background: #dc3545;
+    border: none;
+    color: white;
+}
+
+.btn-tarea-declinar:hover {
+    background: #c82333;
+    transform: translateY(-1px);
+    color: white;
+}
+
+.btn-tarea-bloqueada {
+    background: #e9ecef;
+    border: none;
+    color: #6c757d;
+    cursor: not-allowed;
+}
+
+/* Estados de tarea en el modal */
+.mensaje-tarea-item .tarea-estado {
+    font-size: 0.7rem;
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.mensaje-tarea-item .tarea-estado.pendiente {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.mensaje-tarea-item .tarea-estado.en-proceso {
+    background: #cce5ff;
+    color: #004085;
+}
+
+.mensaje-tarea-item .tarea-estado.bloqueado {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.mensaje-tarea-item .tarea-estado.completada,
+.mensaje-tarea-item .tarea-estado.respondido {
+    background: #d4edda;
+    color: #155724;
+}
+
+.mensaje-tarea-item .tarea-estado.cancelado {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.mensaje-tarea-item .tarea-estado.expirado {
+    background: #fff3cd;
+    color: #856404;
+}
+
+/* =====================================================
+   ESTILOS PARA TAREA COMPLETADA
+   ===================================================== */
+
+.mensaje-tarea-item.tarea-completada-notif {
+    background: linear-gradient(135deg, #f0fff4 0%, #e8f5e9 100%);
+    border-left: 4px solid #28a745;
+}
+
+.mensaje-tarea-item.tarea-completada-notif:hover {
+    background: linear-gradient(135deg, #e8f5e9 0%, #d4edda 100%);
+}
+
+.mensaje-tarea-icon.icon-completada {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+}
+
+.mensaje-tarea-icon.icon-completada i {
+    color: white !important;
+}
+
+/* Botones para tarea completada */
+.btn-tarea-ver-caso {
+    background: var(--theme-primary, #13304D);
+    border: none;
+    color: white;
+}
+
+.btn-tarea-ver-caso:hover {
+    background: var(--theme-primary-dark, #0d2235);
+    transform: translateY(-1px);
+    color: white;
+}
+
+.btn-tarea-marcar-leido {
+    background: #28a745;
+    border: none;
+    color: white;
+}
+
+.btn-tarea-marcar-leido:hover {
+    background: #218838;
+    transform: translateY(-1px);
+    color: white;
+}
+
+/* =====================================================
+   ESTILOS PARA ESTADOS RESPONDIDO, CANCELADO, EXPIRADO
+   ===================================================== */
+
+/* Estado RESPONDIDO - Verde (similar a completada) */
+.mensaje-tarea-item.tarea-respondido-notif {
+    background: linear-gradient(135deg, #f0fff4 0%, #e8f5e9 100%);
+    border-left: 4px solid #28a745;
+}
+
+.mensaje-tarea-item.tarea-respondido-notif:hover {
+    background: linear-gradient(135deg, #e8f5e9 0%, #d4edda 100%);
+}
+
+.mensaje-tarea-icon.icon-respondido {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+}
+
+.mensaje-tarea-icon.icon-respondido i {
+    color: white !important;
+}
+
+/* Estado CANCELADO - Rojo */
+.mensaje-tarea-item.tarea-cancelado-notif {
+    background: linear-gradient(135deg, #fff5f5 0%, #ffe3e3 100%);
+    border-left: 4px solid #dc3545;
+}
+
+.mensaje-tarea-item.tarea-cancelado-notif:hover {
+    background: linear-gradient(135deg, #ffe3e3 0%, #f8d7da 100%);
+}
+
+.mensaje-tarea-icon.icon-cancelado {
+    background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+}
+
+.mensaje-tarea-icon.icon-cancelado i {
+    color: white !important;
+}
+
+/* Estado EXPIRADO - Amarillo/Naranja */
+.mensaje-tarea-item.tarea-expirado-notif {
+    background: linear-gradient(135deg, #fffcf0 0%, #fff3cd 100%);
+    border-left: 4px solid #ffc107;
+}
+
+.mensaje-tarea-item.tarea-expirado-notif:hover {
+    background: linear-gradient(135deg, #fff3cd 0%, #ffe69c 100%);
+}
+
+.mensaje-tarea-icon.icon-expirado {
+    background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%);
+}
+
+.mensaje-tarea-icon.icon-expirado i {
+    color: white !important;
+}
+
+/* Estilos para flotante - estados adicionales */
+.tarea-flotante-item.tarea-respondido-flotante {
+    background: linear-gradient(135deg, #f0fff4 0%, #e8f5e9 100%);
+    border-left: 3px solid #28a745;
+}
+
+.tarea-flotante-item.tarea-respondido-flotante:hover {
+    background: linear-gradient(135deg, #e8f5e9 0%, #d4edda 100%);
+}
+
+.tarea-flotante-item .tarea-icon.icon-respondido {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    color: white;
+}
+
+.tarea-flotante-item .tarea-icon.icon-respondido i {
+    color: white !important;
+}
+
+.tarea-flotante-item.tarea-cancelado-flotante {
+    background: linear-gradient(135deg, #fff5f5 0%, #ffe3e3 100%);
+    border-left: 3px solid #dc3545;
+}
+
+.tarea-flotante-item.tarea-cancelado-flotante:hover {
+    background: linear-gradient(135deg, #ffe3e3 0%, #f8d7da 100%);
+}
+
+.tarea-flotante-item .tarea-icon.icon-cancelado {
+    background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+    color: white;
+}
+
+.tarea-flotante-item .tarea-icon.icon-cancelado i {
+    color: white !important;
+}
+
+.tarea-flotante-item.tarea-expirado-flotante {
+    background: linear-gradient(135deg, #fffcf0 0%, #fff3cd 100%);
+    border-left: 3px solid #ffc107;
+}
+
+.tarea-flotante-item.tarea-expirado-flotante:hover {
+    background: linear-gradient(135deg, #fff3cd 0%, #ffe69c 100%);
+}
+
+.tarea-flotante-item .tarea-icon.icon-expirado {
+    background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%);
+    color: white;
+}
+
+.tarea-flotante-item .tarea-icon.icon-expirado i {
+    color: white !important;
+}
+
+/* Estados adicionales en flotante */
+.tarea-flotante-item .tarea-estado.respondido {
+    background: #d4edda;
+    color: #155724;
+}
+
+.tarea-flotante-item .tarea-estado.cancelado {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.tarea-flotante-item .tarea-estado.expirado {
+    background: #fff3cd;
+    color: #856404;
+}
+
+/* =====================================================
+   ESTILOS PARA MOVIMIENTOS DE CASOS
+   ===================================================== */
+
+/* Movimiento Pendiente - Azul */
+.tarea-flotante-item.movimiento-pendiente-flotante {
+    background: linear-gradient(135deg, #e8f4fd 0%, #d1ecf1 100%);
+    border-left: 3px solid #17a2b8;
+}
+
+.tarea-flotante-item.movimiento-pendiente-flotante:hover {
+    background: linear-gradient(135deg, #d1ecf1 0%, #bee5eb 100%);
+}
+
+.tarea-flotante-item .tarea-icon.icon-movimiento {
+    background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+    color: white;
+}
+
+.tarea-flotante-item .tarea-icon.icon-movimiento i {
+    color: white !important;
+}
+
+.tarea-flotante-item .tarea-estado.movimiento-pendiente {
+    background: #d1ecf1;
+    color: #0c5460;
+}
+
+/* Movimiento Aceptado - Verde (usa estilos de completada) */
+.tarea-flotante-item.movimiento-aceptado-flotante {
+    background: linear-gradient(135deg, #f0fff4 0%, #e8f5e9 100%);
+    border-left: 3px solid #28a745;
+}
+
+.tarea-flotante-item.movimiento-aceptado-flotante:hover {
+    background: linear-gradient(135deg, #e8f5e9 0%, #d4edda 100%);
+}
+
+/* Movimiento Rechazado - Rojo (usa estilos de cancelado) */
+.tarea-flotante-item.movimiento-rechazado-flotante {
+    background: linear-gradient(135deg, #fff5f5 0%, #ffe3e3 100%);
+    border-left: 3px solid #dc3545;
+}
+
+.tarea-flotante-item.movimiento-rechazado-flotante:hover {
+    background: linear-gradient(135deg, #ffe3e3 0%, #f8d7da 100%);
+}
+
+/* Estilos para modal lista - Movimientos */
+.mensaje-tarea-item.movimiento-pendiente-notif {
+    background: linear-gradient(135deg, #e8f4fd 0%, #d1ecf1 100%);
+    border-left: 4px solid #17a2b8;
+}
+
+.mensaje-tarea-item.movimiento-pendiente-notif:hover {
+    background: linear-gradient(135deg, #d1ecf1 0%, #bee5eb 100%);
+}
+
+.mensaje-tarea-icon.icon-movimiento {
+    background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+}
+
+.mensaje-tarea-icon.icon-movimiento i {
+    color: white !important;
+}
+
+.mensaje-tarea-item.movimiento-aceptado-notif {
+    background: linear-gradient(135deg, #f0fff4 0%, #e8f5e9 100%);
+    border-left: 4px solid #28a745;
+}
+
+.mensaje-tarea-item.movimiento-aceptado-notif:hover {
+    background: linear-gradient(135deg, #e8f5e9 0%, #d4edda 100%);
+}
+
+.mensaje-tarea-item.movimiento-rechazado-notif {
+    background: linear-gradient(135deg, #fff5f5 0%, #ffe3e3 100%);
+    border-left: 4px solid #dc3545;
+}
+
+.mensaje-tarea-item.movimiento-rechazado-notif:hover {
+    background: linear-gradient(135deg, #ffe3e3 0%, #f8d7da 100%);
+}
+
+/* Botones para movimientos */
+.btn-movimiento-aceptar {
+    background: #28a745;
+    border: none;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.btn-movimiento-aceptar:hover {
+    background: #218838;
+    transform: translateY(-1px);
+    color: white;
+}
+
+.btn-movimiento-rechazar {
+    background: #dc3545;
+    border: none;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.btn-movimiento-rechazar:hover {
+    background: #c82333;
+    transform: translateY(-1px);
+    color: white;
+}
+
+/* Estado movimiento-pendiente en modal */
+.mensaje-tarea-item .tarea-estado.movimiento-pendiente {
+    background: #d1ecf1;
+    color: #0c5460;
+}
+
+/* Responsive para modal lista */
+@media (max-width: 576px) {
+    .mensaje-sistema-modal-lista {
+        max-width: 95%;
+    }
+
+    .mensaje-tarea-header {
+        flex-wrap: wrap;
+    }
+
+    .mensaje-tarea-estado {
+        width: 100%;
+        margin-top: 0.5rem;
+    }
+
+    .mensaje-tarea-meta {
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+}
+
+/* =====================================================
+   ESTILOS PARA CASO_CREADO (Nuevo Caso)
+   ===================================================== */
+
+/* Estado caso-creado en badge */
+.tarea-estado.caso-creado {
+    background: linear-gradient(135deg, #9c27b0 0%, #7b1fa2 100%);
+    color: white;
+}
+
+/* Flotante - Item de caso creado */
+.tarea-flotante-item.caso-creado-flotante {
+    background: linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%);
+    border-left: 4px solid #9c27b0;
+}
+
+.tarea-flotante-item.caso-creado-flotante:hover {
+    background: linear-gradient(135deg, #e1bee7 0%, #ce93d8 100%);
+}
+
+.tarea-flotante-item .tarea-icon.icon-caso-creado {
+    background: linear-gradient(135deg, #9c27b0 0%, #7b1fa2 100%);
+    color: white;
+}
+
+.tarea-flotante-item .tarea-icon.icon-caso-creado i {
+    color: white !important;
+}
+
+/* Modal - Item de caso creado */
+.mensaje-tarea-item.caso-creado-notif {
+    background: linear-gradient(135deg, #faf3fc 0%, #f3e5f5 100%);
+    border-left: 4px solid #9c27b0;
+}
+
+.mensaje-tarea-item.caso-creado-notif:hover {
+    background: linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%);
+}
+
+.mensaje-tarea-icon.icon-caso-creado {
+    background: linear-gradient(135deg, #9c27b0 0%, #7b1fa2 100%);
+}
+
+.mensaje-tarea-icon.icon-caso-creado i {
+    color: white !important;
+}
+
+/* =====================================================
+   ESTILOS POR URGENCIA PARA CASO_CREADO
+   urgencia = 3 (alta), urgencia = 2 (media), urgencia = 1 (baja)
+   ===================================================== */
+
+/* --- URGENCIA ALTA (3) - Rojo/Rosa --- */
+.tarea-flotante-item.caso-urgencia-alta {
+    background-color: #f8d7da !important;
+    border-left: 4px solid #dc3545;
+}
+
+.tarea-flotante-item.caso-urgencia-alta:hover {
+    background-color: #f1c1c6 !important;
+}
+
+.mensaje-tarea-item.caso-urgencia-alta {
+    background-color: #f8d7da !important;
+    border-left: 4px solid #dc3545;
+}
+
+.mensaje-tarea-item.caso-urgencia-alta:hover {
+    background-color: #f1c1c6 !important;
+}
+
+.tarea-estado.caso-urgencia-alta {
+    background: linear-gradient(135deg, #dc3545 0%, #c82333 100%) !important;
+    color: white !important;
+}
+
+/* --- URGENCIA MEDIA (2) - Amarillo --- */
+.tarea-flotante-item.caso-urgencia-media {
+    background-color: #fff3cd !important;
+    border-left: 4px solid #ffc107;
+}
+
+.tarea-flotante-item.caso-urgencia-media:hover {
+    background-color: #ffe9a0 !important;
+}
+
+.mensaje-tarea-item.caso-urgencia-media {
+    background-color: #fff3cd !important;
+    border-left: 4px solid #ffc107;
+}
+
+.mensaje-tarea-item.caso-urgencia-media:hover {
+    background-color: #ffe9a0 !important;
+}
+
+.tarea-estado.caso-urgencia-media {
+    background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%) !important;
+    color: #212529 !important;
+}
+
+/* --- URGENCIA BAJA (1) - Blanco con borde --- */
+.tarea-flotante-item.caso-urgencia-baja {
+    background-color: #ffffff !important;
+    border: 1px solid #dee2e6;
+    border-left: 4px solid #6c757d;
+}
+
+.tarea-flotante-item.caso-urgencia-baja:hover {
+    background-color: #f8f9fa !important;
+}
+
+.mensaje-tarea-item.caso-urgencia-baja {
+    background-color: #ffffff !important;
+    border: 1px solid #dee2e6;
+    border-left: 4px solid #6c757d;
+}
+
+.mensaje-tarea-item.caso-urgencia-baja:hover {
+    background-color: #f8f9fa !important;
+}
+
+.tarea-estado.caso-urgencia-baja {
+    background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%) !important;
+    color: white !important;
+}

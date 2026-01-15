@@ -1,0 +1,84 @@
+// Admin Layout (alpino)
+// @author: WrapTheme ( https://themeforest.net/user/wrraptheme )
+// @design by: ThemeMakker Infotech LLP.
+// @event-namespace: alpino
+// Copyright 2021 WrapTheme
+
+//Fonts Family
+$font-family: 		'Open Sans', sans-serif;
+$font-opensans: 	'Open Sans', sans-serif;
+$font-quicksand: 	'Quicksand', sans-serif;
+$font-nunito: 	    'Nunito', sans-serif;
+$font-raleway: 	    'Raleway', sans-serif;
+$navbar-font-family: 'Montserrat', sans-serif;
+$sidebar-font-family: 'Montserrat', sans-serif;
+
+// Fonts
+$font-size: 		14px;
+
+// Bootstrap colors
+$color-success:     #4DCA88;
+$color-danger: 	    #FC5A69;
+$color-warning:     #FFBA33;
+$color-info: 	    #4FB8C9;
+$color-secondary: 	#6c757d;
+
+// more color 
+$indigo: 		    #484c7f !default;
+$purple: 		    #6572b8 !default;
+$orange:            #f8b500 !default;
+$yellow:            #FFBA33 !default;
+$green:             #7EB93F !default;
+$blue:	            #0d6efd !default;
+$blush:             #ED5782 !default;
+$cyan:	            #00bdaa !default;
+$red:	 			#FF1843 !default;
+$info:		        #4FB8C9 !default;
+$white:		        #ffffff !default;
+$dark:		        #191818 !default;
+
+$dark:          #212121;
+$facebook:      #3B5998;
+$dribbble:      #EA4C89;
+$twitter:       #1DA1F2;
+$instagram:     #C32AA3;
+$google:        #DB4437;
+$youtube:       #FF0000;
+$behance:       #053eff;
+$linkedin:      #0077B5;
+
+// scss-docs-start colors-map
+$c-colors: (
+    "purple":       $purple,
+    "blue":         $blue,
+    "cyan":         $cyan,
+    "blush":        $blush,
+    "red":          $red,
+    "green":        $green,
+    "orange":       $orange,
+) !default;
+
+$sidebar-width: 	250px;
+$rightbar-width: 	280px;
+$sidebar-icon:	 	50px;
+
+$font-weight-300:   300 !default;
+$font-weight-400:   400 !default;
+$font-weight-500:   500 !default;
+$font-weight-600:   600 !default;
+$font-weight-700:   700 !default;
+
+$border-radius-extra-small:     0.125rem    !default;
+$border-radius-small:           0.2875rem   !default;
+$border-radius-large:           0.35rem     !default;
+$border-radius-extreme:         0.975rem    !default;
+
+// Breakpoints
+$break-xsmall: 		640px;
+$break-small: 		768px;
+$break-medium: 		992px;
+$break-1024: 		1024px;
+$break-large: 		1200px;
+$break-1280: 		1280px;
+$break-xlarge: 		1440px;
+

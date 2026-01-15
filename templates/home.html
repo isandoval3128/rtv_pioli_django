@@ -2,6 +2,7 @@
 {% load static %}
 
 {% block content %}
+
 <style>
 
     /* ========================================
@@ -318,7 +319,7 @@
         }
         .excel-table-responsive {
             width: 100%;
-            overflow-x: auto;
+            /* overflow-x: auto; */           
             margin-bottom: 1rem;
         }
         .excel-table-responsive table {
@@ -710,7 +711,6 @@
                 </div>
             </div>
         </header>
-   
 {% elif site_config.header_background %}
     <!-- 2. Imagen de fondo -->
     <header class="masthead" style="background-image: url('{{ site_config.header_background.url }}'); position: relative; overflow: hidden;">
@@ -881,234 +881,20 @@
 
 <!-- Services-->
 <section class="page-section" id="services">
-    <div class="container">
-        <div class="text-center">
-            <h2 class="section-heading text-uppercase">Servicios</h2>
-            <h3 class="section-subheading text-muted">Nuestros servicios profesionales</h3>
-        </div>
-        <div class="row text-center">
-            {% for service in services %}
-            <div class="col-md-4">
-                <span class="fa-stack fa-4x" onmouseover="this.style.transform='translateY(-8px) scale(1.08)';this.style.transition='transform 0.2s cubic-bezier(.4,2,.3,1)';" onmouseout="this.style.transform='none';">
-                    <i class="fas fa-circle fa-stack-2x" style="color: {{ site_config.service_icon_bgcolor }};"></i>
-                    <i class="fas {{ service.icon }} fa-stack-1x" style="color: {{ site_config.service_icon_fgcolor }};"></i>
-                </span>
-                <h4 class="my-3">{{ service.title }}</h4>
-                <div class="service-desc-card shadow-sm border-0 mb-4 animate__animated animate__fadeIn" style="background: #f8f9fa; border-radius: 1rem; transition: box-shadow 0.2s;">
-                    <div class="card-body p-3">
-                        <p class="service-desc-text" style="font-size:1.08rem; color:#003466; text-align:justify; margin-bottom:0;">
-                            {{ service.description|linebreaksbr }}
-                        </p>
-                    </div>
-                </div>
-                {% if service.attachment_html %}
-                    <button type="button" class="btn btn-sm mt-2 mb-2" data-bs-toggle="modal" data-bs-target="#attachmentModal{{ service.id }}" style="background-color: #003466; color: #fff; border: none; box-shadow: 0 2px 8px rgba(2,25,122,0.08); transition: background-color 0.2s, box-shadow 0.2s;"
-                        onmouseover="this.style.boxShadow='0 8px 24px rgba(2,25,122,0.18)';" onmouseout="this.style.boxShadow='0 2px 8px rgba(2,25,122,0.08)';">
-                        Ver adjunto de {{ service.title }}
-                    </button>
-                    <!-- Modal para archivo adjunto -->
-                    <div class="modal fade" id="attachmentModal{{ service.id }}" tabindex="-1" aria-labelledby="attachmentModalLabel{{ service.id }}" aria-hidden="true">
-                        <div class="modal-dialog modal-lg modal-dialog-centered">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="attachmentModalLabel{{ service.id }}">Archivo adjunto - {{ service.title }}</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-                                </div>
-                                <div class="modal-body">
-                                    <div class="attachment-preview">
-                                        {{ service.attachment_html|safe }}
-                                    </div>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                {% endif %}
-            </div>
-            {% empty %}
-            <p class="text-center text-muted">No hay servicios disponibles.</p>
-            {% endfor %}
-        </div>
-    </div>
+   {% include 'includes/services.html' %}
 </section>
 
 <!-- Portfolio Grid-->
 <section class="page-section bg-light" id="tarifas">
-    {% include 'tarifas.html' %}
+    {% include 'includes/tarifas.html' %}
 </section>
 
 <!-- About-->
 <section class="page-section" id="about">
-    <div class="container" style="display:none;">
-        <!-- Contenido original oculto -->
-         <div class="text-center">
-            <h2 class="section-heading text-uppercase">Nosotros</h2>
-            <h3 class="section-subheading text-muted">Nuestra historia</h3>
-        </div>
-        <ul class="timeline">
-            {% for event in timeline_events %}
-            <li {% if event.inverted %}class="timeline-inverted"{% endif %}>
-                {% if event.is_final %}
-                <div class="timeline-image">
-                    <h4>
-                        Se Parte
-                        <br />
-                        De Nuestra
-                        <br />
-                        Historia!
-                    </h4>
-                </div>
-                {% else %}
-                <div class="timeline-image">
-                    {% if event.image %}
-                    <div class="timeline-img-circle timeline-img-elevated timeline-img-bg" style="background-image: url('{{ event.image.url }}');"></div>
-                    {% endif %}
-                </div>
-                <div class="timeline-panel">
-                    <div class="timeline-heading">
-                        <h4>{{ event.date }}</h4>
-                        <h4 class="subheading">{{ event.title }}</h4>
-                    </div>
-                    <div class="timeline-body"><p class="text-muted">{{ event.description }}</p></div>
-                </div>
-                {% endif %}
-            </li>
-            {% empty %}
-            <p class="text-center text-muted">No hay eventos disponibles.</p>
-            {% endfor %}
-        </ul>
-    </div>
-    <div class="container">
-        <div class="text-center">
-            <h2 class="section-heading text-uppercase">Nosotros</h2>
-            <h3 class="section-subheading text-muted">Nuestra historia</h3>
-        </div>
-        <div class="row d-flex align-items-stretch justify-content-center">
-            <div class="col-lg-6 col-12 mb-4 mb-lg-0 d-flex flex-column justify-content-center align-items-center h-100">
-                <div class="about-description w-100" style="font-size:1.15rem; color:#003466; text-align:justify; white-space:pre-line; margin-top:0; padding-top:0;">
-                    {{ about_section.description|linebreaksbr }}
-                </div>
-            </div>
-            <div class="col-lg-6 col-12 d-flex flex-column justify-content-center align-items-center h-100">
-                <div id="aboutCarousel" class="carousel slide shadow-sm rounded h-100 d-flex flex-column justify-content-center w-100" data-bs-ride="carousel">
-                    <div class="carousel-inner h-100" style="margin-top: 2em;">
-                                    {% for image in about_section.images.all %}
-                                    <div class="carousel-item {% if forloop.first %}active{% endif %} h-100">
-                                        <img src="{{ image.image.url }}" class="d-block w-100 rounded h-100 about-carousel-img" alt="Imagen Nosotros" style="object-fit:cover; cursor:pointer;" data-bs-toggle="modal" data-bs-target="#aboutImageModal" data-img-url="{{ image.image.url }}">
-                                    </div>
-                                    {% endfor %}
-                    </div>
-                    <button class="carousel-control-prev" type="button" data-bs-target="#aboutCarousel" data-bs-slide="prev">
-                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                        <span class="visually-hidden">Anterior</span>
-                    </button>
-                    <button class="carousel-control-next" type="button" data-bs-target="#aboutCarousel" data-bs-slide="next">
-                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                        <span class="visually-hidden">Siguiente</span>
-                    </button>
-                </div>
-            </div>
-        </div>
-        <!-- Modal para imagen ampliada del carrusel -->
-                <div class="modal fade" id="aboutImageModal" tabindex="-1" aria-labelledby="aboutImageModalLabel" aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered modal-lg">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="aboutImageModalLabel">Imagen ampliada</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-                            </div>
-                            <div class="modal-body d-flex justify-content-center align-items-center" style="min-height:350px;">
-                                <img id="aboutModalImg" src="" alt="Imagen ampliada" class="img-fluid rounded shadow" style="max-height:70vh; max-width:100%; object-fit:contain;">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <script>
-                document.addEventListener('DOMContentLoaded', function() {
-                    var aboutImgs = document.querySelectorAll('.about-carousel-img');
-                    var modalImg = document.getElementById('aboutModalImg');
-                    var modalImgContainer = modalImg.parentElement;
-                    let scale = 1, originX = 0, originY = 0, isDragging = false, startX = 0, startY = 0, lastX = 0, lastY = 0;
-
-                    function resetZoom() {
-                        scale = 1;
-                        originX = 0;
-                        originY = 0;
-                        lastX = 0;
-                        lastY = 0;
-                        modalImg.style.transform = 'scale(1) translate(0px, 0px)';
-                        modalImg.style.cursor = 'zoom-in';
-                    }
-
-                    aboutImgs.forEach(function(img) {
-                        img.addEventListener('click', function() {
-                            var url = img.getAttribute('data-img-url');
-                            if (modalImg) {
-                                modalImg.src = url;
-                                resetZoom();
-                            }
-                        });
-                    });
-
-                    // Zoom con rueda del mouse
-                    modalImg.addEventListener('wheel', function(e) {
-                        e.preventDefault();
-                        let delta = e.deltaY > 0 ? -0.15 : 0.15;
-                        let newScale = Math.min(Math.max(scale + delta, 1), 3);
-                        if (newScale !== scale) {
-                            scale = newScale;
-                            modalImg.style.transform = `scale(${scale}) translate(${originX}px, ${originY}px)`;
-                            modalImg.style.cursor = scale > 1 ? 'grab' : 'zoom-in';
-                        }
-                    });
-
-                    // Arrastrar imagen cuando está ampliada
-                    modalImg.addEventListener('mousedown', function(e) {
-                        if (scale === 1) return;
-                        isDragging = true;
-                        startX = e.clientX;
-                        startY = e.clientY;
-                        modalImg.style.cursor = 'grabbing';
-                    });
-                    document.addEventListener('mousemove', function(e) {
-                        if (!isDragging) return;
-                        let dx = e.clientX - startX;
-                        let dy = e.clientY - startY;
-                        originX = lastX + dx;
-                        originY = lastY + dy;
-                        modalImg.style.transform = `scale(${scale}) translate(${originX}px, ${originY}px)`;
-                    });
-                    document.addEventListener('mouseup', function(e) {
-                        if (!isDragging) return;
-                        lastX = originX;
-                        lastY = originY;
-                        isDragging = false;
-                        modalImg.style.cursor = scale > 1 ? 'grab' : 'zoom-in';
-                    });
-
-                    // Doble click para resetear zoom
-                    modalImg.addEventListener('dblclick', function(e) {
-                        resetZoom();
-                    });
-
-                    // Limpiar imagen y zoom al cerrar el modal
-                    var aboutImageModal = document.getElementById('aboutImageModal');
-                    if (aboutImageModal) {
-                        aboutImageModal.addEventListener('hidden.bs.modal', function () {
-                            if (modalImg) {
-                                modalImg.src = '';
-                                resetZoom();
-                            }
-                        });
-                    }
-                });
-                </script>
-    </div>
+   {% include 'includes/about.html' %}
 </section>
 
-<!-- Team-->
+<!-- Team -->
 {% comment %} <section class="page-section bg-light" id="team">
     <div class="container">
         <div class="text-center">
@@ -1142,202 +928,20 @@
 
 <!-- Ubicación -->
 <section class="page-section bg-light" id="ubicacion">
-    <div class="container">
-        <div class="text-center mb-5">
-            <h2 class="section-heading text-uppercase" style="color:#003466;"><i class="fas fa-map-location-dot me-2"></i>¿Dónde Encontrarnos?</h2>
-            <h3 class="section-subheading text-muted">Nuestras ubicaciones y direcciones</h3>
-        </div>
-        <div class="row justify-content-center mb-4">
-            {% for ubicacion in ubicaciones %}
-                <div class="col-md-6 mb-4">
-                    <div class="card planta-card shadow-sm h-100" onmouseover="this.classList.add('elevada')" onmouseout="this.classList.remove('elevada')">
-                        <div class="card-body">
-                            <h4 class="card-title mb-3" style="color:#003466;"><i class="fas fa-industry me-2"></i>{{ ubicacion.nombre }}</h4>
-                            <p class="mb-2"><i class="fas fa-location-dot me-2"></i><strong>Dirección:</strong> {{ ubicacion.direccion }}</p>
-                            <p class="mb-2"><i class="fas fa-phone me-2"></i><strong>Teléfono:</strong> {{ ubicacion.telefono }}</p>
-                            <p class="mb-2"><i class="fas fa-map-marker-alt me-2"></i><strong>Provincia:</strong> {{ ubicacion.provincia }}</p>
-                            <p class="mb-2"><i class="fas fa-clock me-2"></i><strong>Horario:</strong> {{ ubicacion.horario }}</p>
-                            <div class="mt-3">
-                                <a class="btn btn-sm mt-2 me-2 google-maps-btn" href="https://www.google.com/maps/dir/?api=1&destination={{ ubicacion.latitud|stringformat:'f' }},{{ ubicacion.longitud|stringformat:'f' }}" target="_blank" style="background-color:#4285F4;color:#fff;border:none;box-shadow:0 2px 8px rgba(2,25,122,0.08);transition:background-color 0.2s,box-shadow 0.2s;" onmouseover="this.style.boxShadow='0 8px 24px rgba(2,25,122,0.18)';this.style.backgroundColor='#1a73e8';" onmouseout="this.style.boxShadow='0 2px 8px rgba(2,25,122,0.08)';this.style.backgroundColor='#4285F4';"><i class="fab fa-google me-1"></i>Ir con Google Maps</a>
-                                <a class="btn btn-sm mt-2 waze-btn" href="https://waze.com/ul?ll={{ ubicacion.latitud|stringformat:'f' }},{{ ubicacion.longitud|stringformat:'f' }}&navigate=yes" target="_blank" style="background-color:#25d366;color:#fff;border:none;box-shadow:0 2px 8px rgba(2,25,122,0.08);transition:background-color 0.2s,box-shadow 0.2s;" onmouseover="this.style.boxShadow='0 8px 24px rgba(2,25,122,0.18)';this.style.backgroundColor='#1ebea5';" onmouseout="this.style.boxShadow='0 2px 8px rgba(2,25,122,0.08)';this.style.backgroundColor='#25d366';"><i class="fab fa-waze me-1"></i>Ir con Waze</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            {% endfor %}
-        </div>
-        <div class="row justify-content-center mb-5">
-            <div class="col-12">
-                <div id="mapa-plantas" hidden style="width: 100%; height: 350px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);"></div>
-            </div>
-        </div>
-    <!-- Leaflet.js para OpenStreetMap -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script>
-    let mapa;
-    let marcador;
-    function initMap() {
-        // Si hay ubicaciones, centra en la primera
-    {% if ubicaciones %}
-    const centroInicial = [ {{ ubicaciones.0.latitud|stringformat:'f' }}, {{ ubicaciones.0.longitud|stringformat:'f' }} ];
-    {% else %}
-    const centroInicial = [ -24.274351044079264, -65.20502921349308 ];
-    console.log('Sin ubicaciones, centro por defecto:', centroInicial);
-    {% endif %}
-        mapa = L.map('mapa-plantas').setView(centroInicial, 12);
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            maxZoom: 19,
-            attribution: '© OpenStreetMap'
-        }).addTo(mapa);
-        marcador = L.marker(centroInicial).addTo(mapa);
-    }
-    function ubicarEnMapa(lat, lng) {
-        if (lat == null || lng == null || isNaN(lat) || isNaN(lng)) {
-            alert("Ubicación inválida. Verifica los datos de latitud y longitud.");
-            return;
-        }
-        if (!mapa || !marcador) {
-            alert("El mapa no está listo. Espera a que cargue la página.");
-            return;
-        }
-        const ubicacion = [lat, lng];
-        mapa.setView(ubicacion, 14);
-        marcador.setLatLng(ubicacion);
-        // Scroll automático al mapa
-        const mapaDiv = document.getElementById('mapa-plantas');
-        if (mapaDiv) {
-            mapaDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }
-    }
-    window.addEventListener('DOMContentLoaded', function() {
-        if (document.getElementById('mapa-plantas')) {
-            initMap();
-            // Habilitar los botones una vez que el mapa esté listo
-            document.querySelectorAll('.ubicar-btn').forEach(function(btn) {
-                btn.disabled = false;
-            });
-        }
-    });
-    </script>
-    </div>
+    {% include 'includes/ubicacion.html' %}
 </section>
 
 <!-- Contact-->
-<section class="page-section" id="contact"
-    style="
-        position: relative;
-        background-color: {{ site_config.contact_section_bg_color }};
-        {% if site_config.contact_section_bg_image %}
-            background-image: url('{{ site_config.contact_section_bg_image.url }}');
-            background-size: cover;
-            background-position: center;
-        {% endif %}
-        {% if site_config.contact_section_bg_opacity %}
-            opacity: {{ site_config.contact_section_bg_opacity|stringformat:'f' }};
-        {% endif %}
-        background-repeat: no-repeat;
-        background-position: center;
-    "
-    >
-    {% if site_config.contact_section_bg_video %}
-    <video autoplay loop muted playsinline style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; opacity: {{ site_config.contact_section_bg_opacity|stringformat:'f'|default:'1' }};" id="contact-bg-video">
-        <source src="{{ site_config.contact_section_bg_video.url }}" type="video/mp4">
-        Tu navegador no soporta el video de fondo.
-    </video>
+<section
+    class="page-section contact-section"
+    id="contact"
+    data-bg-color="{{ site_config.contact_section_bg_color }}"
+    data-bg-opacity="{{ site_config.contact_section_bg_opacity|stringformat:'f' }}"
+    {% if site_config.contact_section_bg_image %}
+        data-bg-image="{{ site_config.contact_section_bg_image.url }}"
     {% endif %}
-    <div class="container">
-        <div class="text-center">
-            <h2 class="section-heading text-uppercase">Contáctanos</h2>
-            <h3 class="section-subheading text-muted">Envíanos un mensaje</h3>
-        </div>
-
-        {% if messages or form.errors %}
-            <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-            <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                {% for message in messages %}
-                    Swal.fire({
-                        icon: '{{ message.tags|default:"info" }}',
-                        title: '{{ message|escapejs }}',
-                        showConfirmButton: false,
-                        timer: 5000,
-                        timerProgressBar: true,
-                        customClass: {
-                            popup: 'swal2-elevated'
-                        }
-                    });
-                {% endfor %}
-                {% if form.errors %}
-                let errorHtml = '';
-                {% for field in form %}
-                    {% for error in field.errors %}
-                        errorHtml += '<div><b>{{ field.label }}:</b> {{ error|escapejs }}</div>';
-                    {% endfor %}
-                {% endfor %}
-                {% for error in form.non_field_errors %}
-                    errorHtml += '<div>{{ error|escapejs }}</div>';
-                {% endfor %}
-                if (errorHtml) {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Errores en el formulario',
-                        html: errorHtml,
-                        showConfirmButton: true,
-                        confirmButtonColor: '#003466',
-                        confirmButtonText: 'Corregir',
-                        customClass: {
-                            popup: 'swal2-elevated',
-                            confirmButton: 'swal2-btn-confirm'
-                        }
-                    });
-                }
-                {% endif %}
-            });
-            </script>
-        {% endif %}
-
-        <form id="contactForm" method="post" action="{% url 'contact_submit' %}">
-            {% csrf_token %}
-            <div class="row align-items-stretch mb-5">
-                <div class="col-md-6">
-                    <div class="form-group mb-3">
-                        {{ form.name }}
-                        {% if form.name.errors %}
-                        <div class="invalid-feedback d-block">{{ form.name.errors.0 }}</div>
-                        {% endif %}
-                    </div>
-                    <div class="form-group mb-3">
-                        {{ form.email }}
-                        {% if form.email.errors %}
-                        <div class="invalid-feedback d-block">{{ form.email.errors.0 }}</div>
-                        {% endif %}
-                    </div>
-                    <div class="form-group mb-3">
-                        {{ form.phone }}
-                        {% if form.phone.errors %}
-                        <div class="invalid-feedback d-block">{{ form.phone.errors.0 }}</div>
-                        {% endif %}
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="form-group form-group-textarea mb-md-0">
-                        {{ form.message }}
-                        {% if form.message.errors %}
-                        <div class="invalid-feedback d-block">{{ form.message.errors.0 }}</div>
-                        {% endif %}
-                    </div>
-                </div>
-            </div>
-            <div class="text-center">
-                <button class="btn btn-xl text-uppercase" type="submit"
-                    style="background-color: {{ site_config.contact_btn_bgcolor }}; color: {{ site_config.contact_btn_fgcolor }}; transition: background-color 0.2s;"
-                    onmouseover="this.style.backgroundColor='{{ site_config.contact_btn_hover_bgcolor }}'"
-                    onmouseout="this.style.backgroundColor='{{ site_config.contact_btn_bgcolor }}'"
-                >{{ site_config.contact_btn_text }}</button>
-            </div>
-        </form>
-    </div>
+    >
+    {% include 'includes/contact.html' %}
 </section>
 
 <!-- Portfolio Modals-->
@@ -1379,58 +983,61 @@
 
 <!-- Botón flotante de WhatsApp -->
 {% if whatsapp_config and whatsapp_config.numero_internacional %}
-<a href="https://wa.me/{{ whatsapp_config.numero_internacional|cut:'+' }}" target="_blank" class="whatsapp-float" aria-label="WhatsApp">
-    <i class="fab fa-whatsapp"></i>
-    <span class="visually-hidden">{{ whatsapp_config.nombre }}: {{ whatsapp_config.descripcion }}</span>
-</a>
+    <a href="https://wa.me/{{ whatsapp_config.numero_internacional|cut:'+' }}" target="_blank" class="whatsapp-float" aria-label="WhatsApp">
+        <i class="fab fa-whatsapp"></i>
+        <span class="visually-hidden">{{ whatsapp_config.nombre }}: {{ whatsapp_config.descripcion }}</span>
+    </a>
 {% endif %}
+
 <!-- Botón flotante de Facebook -->
 {% if site_config.facebook_url %}
-<a href="{{ site_config.facebook_url }}" target="_blank" class="facebook-float" aria-label="Facebook">
-    <i class="fab fa-facebook-f"></i>
-</a>
+    <a href="{{ site_config.facebook_url }}" target="_blank" class="facebook-float" aria-label="Facebook">
+        <i class="fab fa-facebook-f"></i>
+    </a>
 {% endif %}
+
 <!-- Botón flotante de Instagram -->
 {% if site_config.instagram_url %}
-<a href="{{ site_config.instagram_url }}" target="_blank" class="instagram-float" aria-label="Instagram">
-    <i class="fab fa-instagram"></i>
-</a>
+    <a href="{{ site_config.instagram_url }}" target="_blank" class="instagram-float" aria-label="Instagram">
+        <i class="fab fa-instagram"></i>
+    </a>
 {% endif %}
+
 <!-- Botón flotante para volver arriba -->
 <a href="#top" id="scrollToTopBtn" class="scroll-top-float" aria-label="Volver arriba" style="display:none;">
     <i class="fas fa-arrow-up"></i>
 </a>
 
 <script>
-// Manejo de botones flotantes al hacer scroll
-window.addEventListener('scroll', function() {
-    var scrollBtn = document.getElementById('scrollToTopBtn');
-    var whatsappBtn = document.querySelector('.whatsapp-float');
-    var facebookBtn = document.querySelector('.facebook-float');
-    var instagramBtn = document.querySelector('.instagram-float');
+    // Manejo de botones flotantes al hacer scroll
+    window.addEventListener('scroll', function() {
+        var scrollBtn = document.getElementById('scrollToTopBtn');
+        var whatsappBtn = document.querySelector('.whatsapp-float');
+        var facebookBtn = document.querySelector('.facebook-float');
+        var instagramBtn = document.querySelector('.instagram-float');
 
-    if (window.scrollY > 250) {
-        // Mostrar todos los botones flotantes
-        if (scrollBtn) scrollBtn.style.display = 'flex';
-        if (whatsappBtn) whatsappBtn.style.display = 'flex';
-        if (facebookBtn) facebookBtn.style.display = 'flex';
-        if (instagramBtn) instagramBtn.style.display = 'flex';
-    } else {
-        // Ocultar todos los botones flotantes
-        if (scrollBtn) scrollBtn.style.display = 'none';
-        if (whatsappBtn) whatsappBtn.style.display = 'none';
-        if (facebookBtn) facebookBtn.style.display = 'none';
-        if (instagramBtn) instagramBtn.style.display = 'none';
-    }
-});
-
-// Funcionalidad del botón "Volver arriba"
-if (document.getElementById('scrollToTopBtn')) {
-    document.getElementById('scrollToTopBtn').addEventListener('click', function(e) {
-        e.preventDefault();
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        if (window.scrollY > 250) {
+            // Mostrar todos los botones flotantes
+            if (scrollBtn) scrollBtn.style.display = 'flex';
+            if (whatsappBtn) whatsappBtn.style.display = 'flex';
+            if (facebookBtn) facebookBtn.style.display = 'flex';
+            if (instagramBtn) instagramBtn.style.display = 'flex';
+        } else {
+            // Ocultar todos los botones flotantes
+            if (scrollBtn) scrollBtn.style.display = 'none';
+            if (whatsappBtn) whatsappBtn.style.display = 'none';
+            if (facebookBtn) facebookBtn.style.display = 'none';
+            if (instagramBtn) instagramBtn.style.display = 'none';
+        }
     });
-}
+
+    // Funcionalidad del botón "Volver arriba"
+    if (document.getElementById('scrollToTopBtn')) {
+        document.getElementById('scrollToTopBtn').addEventListener('click', function(e) {
+            e.preventDefault();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    }
 </script>
 
 {% endblock %}

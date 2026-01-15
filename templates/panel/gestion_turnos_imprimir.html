@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comprobante de Turno - {{ turno.codigo }}</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 12pt;
+            line-height: 1.5;
+            color: #333;
+            background: #fff;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            border: 2px solid #13304D;
+            padding: 30px;
+        }
+
+        .header {
+            text-align: center;
+            border-bottom: 2px solid #13304D;
+            padding-bottom: 20px;
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            color: #13304D;
+            font-size: 24pt;
+            margin-bottom: 5px;
+        }
+
+        .header .subtitle {
+            color: #666;
+            font-size: 14pt;
+        }
+
+        .codigo-turno {
+            background: #13304D;
+            color: white;
+            padding: 10px 20px;
+            font-size: 18pt;
+            font-weight: bold;
+            display: inline-block;
+            border-radius: 5px;
+            margin: 15px 0;
+        }
+
+        .section {
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            background: #f5f5f5;
+            padding: 8px 15px;
+            font-weight: bold;
+            color: #13304D;
+            border-left: 4px solid #13304D;
+            margin-bottom: 10px;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px 30px;
+        }
+
+        .info-item {
+            display: flex;
+            border-bottom: 1px dotted #ccc;
+            padding: 5px 0;
+        }
+
+        .info-label {
+            font-weight: bold;
+            color: #555;
+            min-width: 120px;
+        }
+
+        .info-value {
+            color: #333;
+        }
+
+        .datetime-box {
+            background: #f9f9f9;
+            border: 2px solid #13304D;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .datetime-box .fecha {
+            font-size: 20pt;
+            font-weight: bold;
+            color: #13304D;
+        }
+
+        .datetime-box .hora {
+            font-size: 16pt;
+            color: #333;
+            margin-top: 5px;
+        }
+
+        .qr-section {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .qr-section img {
+            max-width: 150px;
+            border: 2px solid #13304D;
+            padding: 5px;
+            background: white;
+        }
+
+        .qr-section p {
+            font-size: 10pt;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .instrucciones {
+            background: #fff8f5;
+            border: 1px solid #13304D;
+            border-radius: 5px;
+            padding: 15px;
+            margin-top: 20px;
+        }
+
+        .instrucciones h4 {
+            color: #13304D;
+            margin-bottom: 10px;
+        }
+
+        .instrucciones ul {
+            margin-left: 20px;
+        }
+
+        .instrucciones li {
+            margin-bottom: 5px;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #ccc;
+            color: #666;
+            font-size: 10pt;
+        }
+
+        @media print {
+            @page {
+                size: A4;
+                margin: 10mm;
+            }
+
+            body {
+                padding: 0;
+                font-size: 10pt;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+
+            .container {
+                border: 1px solid #13304D;
+                padding: 15px;
+                max-width: 100%;
+                /* Ajustar todo el contenido a una página */
+                page-break-inside: avoid;
+                transform-origin: top left;
+            }
+
+            .header h1 {
+                font-size: 18pt;
+            }
+
+            .header .subtitle {
+                font-size: 11pt;
+            }
+
+            .codigo-turno {
+                font-size: 14pt;
+                padding: 8px 15px;
+                margin: 10px 0;
+            }
+
+            .section-title {
+                font-size: 10pt;
+                padding: 5px 10px;
+            }
+
+            .info-grid {
+                gap: 5px 20px;
+            }
+
+            .info-item {
+                padding: 3px 0;
+                font-size: 9pt;
+            }
+
+            .info-label {
+                min-width: 90px;
+            }
+
+            .datetime-box {
+                padding: 12px;
+                margin: 12px 0;
+            }
+
+            .datetime-box .fecha {
+                font-size: 14pt;
+            }
+
+            .datetime-box .hora {
+                font-size: 12pt;
+            }
+
+            .qr-section {
+                margin: 12px 0;
+            }
+
+            .qr-section img {
+                max-width: 100px;
+            }
+
+            .qr-section p {
+                font-size: 8pt;
+            }
+
+            .instrucciones {
+                padding: 10px;
+                margin-top: 12px;
+            }
+
+            .instrucciones h4 {
+                font-size: 10pt;
+                margin-bottom: 5px;
+            }
+
+            .instrucciones li {
+                font-size: 9pt;
+                margin-bottom: 3px;
+            }
+
+            .footer {
+                margin-top: 15px;
+                padding-top: 10px;
+                font-size: 8pt;
+            }
+
+            .no-print {
+                display: none !important;
+            }
+        }
+
+        /* Barra de acciones */
+        .action-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: #13304D;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            z-index: 1000;
+            flex-wrap: wrap;
+        }
+
+        .action-bar .btn {
+            background: white;
+            color: #13304D;
+            border: none;
+            padding: 10px 20px;
+            font-size: 12pt;
+            cursor: pointer;
+            border-radius: 5px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .action-bar .btn:hover {
+            background: #f0f0f0;
+            transform: translateY(-2px);
+        }
+
+        .action-bar .btn svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .action-bar .btn-print-action {
+            background: #28a745;
+            color: white;
+        }
+
+        .action-bar .btn-print-action:hover {
+            background: #218838;
+        }
+
+        .action-bar .btn-share {
+            background: #17a2b8;
+            color: white;
+        }
+
+        .action-bar .btn-share:hover {
+            background: #138496;
+        }
+
+        .action-bar .btn-pdf {
+            background: #dc3545;
+            color: white;
+        }
+
+        .action-bar .btn-pdf:hover {
+            background: #c82333;
+        }
+
+        /* Espacio para la barra de acciones */
+        body {
+            padding-top: 70px;
+        }
+
+        /* Responsive para móviles */
+        @media (max-width: 600px) {
+            .action-bar {
+                padding: 8px 10px;
+                gap: 6px;
+            }
+
+            .action-bar .btn {
+                padding: 8px 12px;
+                font-size: 11pt;
+                flex: 1;
+                justify-content: center;
+                min-width: 0;
+            }
+
+            .action-bar .btn span.btn-text {
+                display: none;
+            }
+
+            body {
+                padding-top: 60px;
+            }
+
+            .container {
+                padding: 15px;
+                margin: 10px;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Barra de acciones -->
+    <div class="action-bar no-print">
+        <button class="btn btn-print-action" onclick="window.print()">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+            </svg>
+            <span class="btn-text">Imprimir</span>
+        </button>
+        <button class="btn btn-pdf" onclick="guardarPDF()">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+            <span class="btn-text">Guardar PDF</span>
+        </button>
+        <button class="btn btn-share" onclick="compartirTurno()" id="btnCompartir" style="display: none;">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+            </svg>
+            <span class="btn-text">Compartir</span>
+        </button>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <h1>COMPROBANTE DE TURNO</h1>
+            <p class="subtitle">Revisión Técnica Vehicular</p>
+            <div class="codigo-turno">{{ turno.codigo }}</div>
+        </div>
+
+        <div class="datetime-box">
+            <div class="fecha">{{ turno.fecha|date:"l, d" }} de {{ turno.fecha|date:"F" }} de {{ turno.fecha|date:"Y" }}</div>
+            <div class="hora">{{ turno.hora_inicio|time:"H:i" }} - {{ turno.hora_fin|time:"H:i" }} hs</div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">Datos del Cliente</div>
+            <div class="info-grid">
+                <div class="info-item">
+                    <span class="info-label">Nombre:</span>
+                    <span class="info-value">{{ turno.cliente.nombre }} {{ turno.cliente.apellido }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">DNI:</span>
+                    <span class="info-value">{{ turno.cliente.dni }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Teléfono:</span>
+                    <span class="info-value">{{ turno.cliente.celular|default:"-" }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Email:</span>
+                    <span class="info-value">{{ turno.cliente.email|default:"-" }}</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">Datos del Vehículo</div>
+            <div class="info-grid">
+                <div class="info-item">
+                    <span class="info-label">Dominio:</span>
+                    <span class="info-value"><strong>{{ turno.vehiculo.dominio }}</strong></span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Marca:</span>
+                    <span class="info-value">{{ turno.vehiculo.marca|default:"-" }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Modelo:</span>
+                    <span class="info-value">{{ turno.vehiculo.modelo|default:"-" }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Tipo:</span>
+                    <span class="info-value">{{ turno.tipo_vehiculo.nombre_normalizado }}</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">Lugar de Atención</div>
+            <div class="info-grid">
+                <div class="info-item">
+                    <span class="info-label">Taller:</span>
+                    <span class="info-value"><strong>{{ turno.taller.get_nombre }}</strong></span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Dirección:</span>
+                    <span class="info-value">{{ turno.taller.get_direccion|default:"-" }}</span>
+                </div>
+            </div>
+        </div>
+
+        {% if turno.qr_code %}
+        <div class="qr-section">
+            <img src="{{ turno.qr_code.url }}" alt="Código QR">
+            <p>Presente este código QR al llegar al taller</p>
+        </div>
+        {% endif %}
+
+        <div class="instrucciones">
+            <h4>Instrucciones Importantes:</h4>
+            <ul>
+                <li>Presente este comprobante impreso o en su celular al llegar al taller.</li>
+                <li>Llegue al menos <strong>10 minutos antes</strong> de la hora de su turno.</li>
+                <li>Traiga el <strong>DNI</strong>.</li>
+                <li>Asegúrese de que el vehículo tenga las luces y limpiaparabrisas funcionando.</li>
+                <li>El tanque de combustible debe tener al menos 1/4 de carga.</li>
+            </ul>
+        </div>
+
+        {% if turno.observaciones %}
+        <div class="section" style="margin-top: 20px;">
+            <div class="section-title">Observaciones</div>
+            <p style="padding: 10px;">{{ turno.observaciones }}</p>
+        </div>
+        {% endif %}
+
+        <div class="footer">
+            {% now "d/m/Y H:i" as fecha_actual %}
+            <p>Comprobante generado el {{ fecha_actual }}</p>
+            <p>Estado del turno: <strong>{{ turno.get_estado_display }}</strong></p>
+        </div>
+    </div>
+
+    <script>
+        // Datos del turno para compartir
+        const turnoData = {
+            codigo: '{{ turno.codigo }}',
+            fecha: '{{ turno.fecha|date:"d/m/Y" }}',
+            hora: '{{ turno.hora_inicio|time:"H:i" }}',
+            taller: '{{ turno.taller.get_nombre }}',
+            vehiculo: '{{ turno.vehiculo.dominio }}'
+        };
+
+        // Mostrar botón compartir si está disponible la API
+        if (navigator.share) {
+            document.getElementById('btnCompartir').style.display = 'inline-flex';
+        }
+
+        // Guardar como PDF (usa el diálogo de impresión con opción de guardar)
+        function guardarPDF() {
+            // En navegadores modernos, el diálogo de impresión permite guardar como PDF
+            // Mostramos instrucciones para el usuario
+            const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+            if (isMobile) {
+                alert('Para guardar como PDF:\n\n1. Toca "Imprimir" o el icono de compartir\n2. Selecciona "Guardar como PDF" o "Crear PDF"\n\nEn iOS: Toca el icono de compartir y luego "Crear PDF"');
+            }
+
+            // Abrir diálogo de impresión
+            window.print();
+        }
+
+        // Compartir turno (Web Share API)
+        async function compartirTurno() {
+            const textoCompartir = `Turno RTV - ${turnoData.codigo}\n\nFecha: ${turnoData.fecha}\nHora: ${turnoData.hora}\nTaller: ${turnoData.taller}\nVehículo: ${turnoData.vehiculo}\n\nVer comprobante: ${window.location.href}`;
+
+            try {
+                await navigator.share({
+                    title: `Turno RTV - ${turnoData.codigo}`,
+                    text: textoCompartir,
+                    url: window.location.href
+                });
+            } catch (err) {
+                // Si falla share, copiar al portapapeles
+                if (err.name !== 'AbortError') {
+                    copiarAlPortapapeles(textoCompartir);
+                }
+            }
+        }
+
+        // Copiar texto al portapapeles como fallback
+        function copiarAlPortapapeles(texto) {
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(texto).then(() => {
+                    alert('Información del turno copiada al portapapeles');
+                }).catch(() => {
+                    fallbackCopiar(texto);
+                });
+            } else {
+                fallbackCopiar(texto);
+            }
+        }
+
+        function fallbackCopiar(texto) {
+            const textarea = document.createElement('textarea');
+            textarea.value = texto;
+            textarea.style.position = 'fixed';
+            textarea.style.opacity = '0';
+            document.body.appendChild(textarea);
+            textarea.select();
+            try {
+                document.execCommand('copy');
+                alert('Información del turno copiada al portapapeles');
+            } catch (e) {
+                alert('No se pudo copiar. Información del turno:\n\n' + texto);
+            }
+            document.body.removeChild(textarea);
+        }
+    </script>
+</body>
+</html>

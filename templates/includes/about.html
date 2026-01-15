@@ -1,0 +1,168 @@
+<!-- Contenido original oculto -->
+<div class="container" style="display:none;">
+         <div class="text-center">
+            <h2 class="section-heading text-uppercase">Nosotros</h2>
+            <h3 class="section-subheading text-muted">Nuestra historia</h3>
+        </div>
+        <ul class="timeline">
+            {% for event in timeline_events %}
+            <li {% if event.inverted %}class="timeline-inverted"{% endif %}>
+                {% if event.is_final %}
+                <div class="timeline-image">
+                    <h4>
+                        Se Parte
+                        <br />
+                        De Nuestra
+                        <br />
+                        Historia!
+                    </h4>
+                </div>
+                {% else %}
+                <div class="timeline-image">
+                    {% if event.image %}
+                    <div class="timeline-img-circle timeline-img-elevated timeline-img-bg" style="background-image: url('{{ event.image.url }}');"></div>
+                    {% endif %}
+                </div>
+                <div class="timeline-panel">
+                    <div class="timeline-heading">
+                        <h4>{{ event.date }}</h4>
+                        <h4 class="subheading">{{ event.title }}</h4>
+                    </div>
+                    <div class="timeline-body"><p class="text-muted">{{ event.description }}</p></div>
+                </div>
+                {% endif %}
+            </li>
+            {% empty %}
+            <p class="text-center text-muted">No hay eventos disponibles.</p>
+            {% endfor %}
+        </ul>
+</div>
+
+<!-- Contenido actual -->
+<div class="container">
+        <div class="text-center">
+            <h2 class="section-heading text-uppercase">Nosotros</h2>
+            <h3 class="section-subheading text-muted">Nuestra historia</h3>
+        </div>
+        <div class="row d-flex align-items-stretch justify-content-center">
+            <div class="col-lg-6 col-12 mb-4 mb-lg-0 d-flex flex-column justify-content-center align-items-center h-100">
+                <div class="about-description w-100" style="font-size:1.15rem; color:#003466; text-align:justify; white-space:pre-line; margin-top:0; padding-top:0;">
+                    {{ about_section.description|linebreaksbr }}
+                </div>
+            </div>
+            <div class="col-lg-6 col-12 d-flex flex-column justify-content-center align-items-center h-100">
+                <div id="aboutCarousel" class="carousel slide shadow-sm rounded h-100 d-flex flex-column justify-content-center w-100" data-bs-ride="carousel">
+                    <div class="carousel-inner h-100" style="margin-top: 2em;">
+                                    {% for image in about_section.images.all %}
+                                    <div class="carousel-item {% if forloop.first %}active{% endif %} h-100">
+                                        <img src="{{ image.image.url }}" class="d-block w-100 rounded h-100 about-carousel-img" alt="Imagen Nosotros" style="object-fit:cover; cursor:pointer;" data-bs-toggle="modal" data-bs-target="#aboutImageModal" data-img-url="{{ image.image.url }}">
+                                    </div>
+                                    {% endfor %}
+                    </div>
+                    <button class="carousel-control-prev" type="button" data-bs-target="#aboutCarousel" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Anterior</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#aboutCarousel" data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Siguiente</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- Modal para imagen ampliada del carrusel -->
+        <div class="modal fade" id="aboutImageModal" tabindex="-1" aria-labelledby="aboutImageModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="aboutImageModalLabel">Imagen ampliada</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                            </div>
+                            <div class="modal-body d-flex justify-content-center align-items-center" style="min-height:350px;">
+                                <img id="aboutModalImg" src="" alt="Imagen ampliada" class="img-fluid rounded shadow" style="max-height:70vh; max-width:100%; object-fit:contain;">
+                            </div>
+                        </div>
+                    </div>
+        </div>
+</div>
+
+<script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    var aboutImgs = document.querySelectorAll('.about-carousel-img');
+                    var modalImg = document.getElementById('aboutModalImg');
+                    var modalImgContainer = modalImg.parentElement;
+                    let scale = 1, originX = 0, originY = 0, isDragging = false, startX = 0, startY = 0, lastX = 0, lastY = 0;
+
+                    function resetZoom() {
+                        scale = 1;
+                        originX = 0;
+                        originY = 0;
+                        lastX = 0;
+                        lastY = 0;
+                        modalImg.style.transform = 'scale(1) translate(0px, 0px)';
+                        modalImg.style.cursor = 'zoom-in';
+                    }
+
+                    aboutImgs.forEach(function(img) {
+                        img.addEventListener('click', function() {
+                            var url = img.getAttribute('data-img-url');
+                            if (modalImg) {
+                                modalImg.src = url;
+                                resetZoom();
+                            }
+                        });
+                    });
+
+                    // Zoom con rueda del mouse
+                    modalImg.addEventListener('wheel', function(e) {
+                        e.preventDefault();
+                        let delta = e.deltaY > 0 ? -0.15 : 0.15;
+                        let newScale = Math.min(Math.max(scale + delta, 1), 3);
+                        if (newScale !== scale) {
+                            scale = newScale;
+                            modalImg.style.transform = `scale(${scale}) translate(${originX}px, ${originY}px)`;
+                            modalImg.style.cursor = scale > 1 ? 'grab' : 'zoom-in';
+                        }
+                    });
+
+                    // Arrastrar imagen cuando está ampliada
+                    modalImg.addEventListener('mousedown', function(e) {
+                        if (scale === 1) return;
+                        isDragging = true;
+                        startX = e.clientX;
+                        startY = e.clientY;
+                        modalImg.style.cursor = 'grabbing';
+                    });
+                    document.addEventListener('mousemove', function(e) {
+                        if (!isDragging) return;
+                        let dx = e.clientX - startX;
+                        let dy = e.clientY - startY;
+                        originX = lastX + dx;
+                        originY = lastY + dy;
+                        modalImg.style.transform = `scale(${scale}) translate(${originX}px, ${originY}px)`;
+                    });
+                    document.addEventListener('mouseup', function(e) {
+                        if (!isDragging) return;
+                        lastX = originX;
+                        lastY = originY;
+                        isDragging = false;
+                        modalImg.style.cursor = scale > 1 ? 'grab' : 'zoom-in';
+                    });
+
+                    // Doble click para resetear zoom
+                    modalImg.addEventListener('dblclick', function(e) {
+                        resetZoom();
+                    });
+
+                    // Limpiar imagen y zoom al cerrar el modal
+                    var aboutImageModal = document.getElementById('aboutImageModal');
+                    if (aboutImageModal) {
+                        aboutImageModal.addEventListener('hidden.bs.modal', function () {
+                            if (modalImg) {
+                                modalImg.src = '';
+                                resetZoom();
+                            }
+                        });
+                    }
+                });
+</script>

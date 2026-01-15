@@ -1,0 +1,65 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block extrahead %}
+{{ block.super }}
+{{ media }}
+{% endblock %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+    <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+    &rsaquo; <a href="{% url 'admin:talleres_tipovehiculo_changelist' %}">Tipos de Vehículo</a>
+    &rsaquo; Importar desde Excel
+</div>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <div>
+            <h1>Importar Trámites desde Excel</h1>
+
+            <div class="form-row">
+                <div>
+                    <p class="help">
+                        Suba un archivo Excel (.xlsx) con la siguiente estructura:
+                    </p>
+                    <ul>
+                        <li><strong>Columna 1:</strong> CODIGO TARIFA (número)</li>
+                        <li><strong>Columna 2:</strong> TARIFA (nombre del trámite)</li>
+                        <li><strong>Columna 3:</strong> PROVINCIAL (precio provincial)</li>
+                        <li><strong>Columna 4:</strong> NACIONAL (precio nacional)</li>
+                        <li><strong>Columna 5:</strong> CAJUTAC (precio CAJUTAC)</li>
+                    </ul>
+                    <p class="help" style="color: #ba2121; font-weight: bold;">
+                        ⚠️ ADVERTENCIA: Esta acción ELIMINARÁ todos los trámites existentes y los reemplazará con los del archivo Excel.
+                    </p>
+                </div>
+            </div>
+
+            <fieldset class="module aligned">
+                {% for field in form %}
+                    <div class="form-row">
+                        {{ field.errors }}
+                        <div>
+                            <label for="{{ field.id_for_label }}">{{ field.label }}:</label>
+                            {{ field }}
+                            {% if field.help_text %}
+                                <p class="help">{{ field.help_text|safe }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+            </fieldset>
+
+            <div class="submit-row">
+                <input type="submit" value="Importar Trámites" class="default" name="apply">
+                <a href="{% url 'admin:talleres_tipovehiculo_changelist' %}" class="button cancel-link">Cancelar</a>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}

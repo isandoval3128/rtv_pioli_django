@@ -43,6 +43,13 @@ INSTALLED_APPS = [
     'core',
     'ubicacion',
     'tarifas',
+    # Sistema de turnos RTV
+    'territorios',
+    'clientes',
+    'talleres',
+    'turnero',
+    # Panel de administración
+    'panel_administracion',
 ]
 
 MIDDLEWARE = [
@@ -133,9 +140,17 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
+# Email Backend - Descomentar para ver emails en consola durante desarrollo
+# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 ## La configuración de correo ahora se gestiona desde el modelo EmailConfig en el panel de administración
+
+# Configuración de autenticación para el panel
+LOGIN_URL = '/panel/login/'
+LOGIN_REDIRECT_URL = '/panel/'
+LOGOUT_REDIRECT_URL = '/panel/login/'
