@@ -70,18 +70,23 @@ log_info "Paso 5: Recopilando archivos estáticos..."
 python manage.py collectstatic --noinput
 echo ""
 
-# Paso 6: Limpiar reservas temporales expiradas
-log_info "Paso 6: Limpiando reservas temporales expiradas..."
+# Paso 6: Inicializar menú del panel (grupos, perfiles y menús)
+log_info "Paso 6: Inicializando menú del panel..."
+python manage.py inicializar_menu_produccion
+echo ""
+
+# Paso 7: Limpiar reservas temporales expiradas
+log_info "Paso 7: Limpiando reservas temporales expiradas..."
 python manage.py shell -c "from turnero.models import ReservaTemporal; ReservaTemporal.limpiar_expiradas()" 2>/dev/null || log_warn "No se pudo limpiar reservas temporales (puede que el modelo no exista aún)"
 echo ""
 
-# Paso 7: Verificar configuración
-log_info "Paso 7: Verificando configuración de Django..."
+# Paso 8: Verificar configuración
+log_info "Paso 8: Verificando configuración de Django..."
 python manage.py check
 echo ""
 
-# Paso 8: Reiniciar servicio (detectar cuál está disponible)
-log_info "Paso 8: Reiniciando servicio web..."
+# Paso 9: Reiniciar servicio (detectar cuál está disponible)
+log_info "Paso 9: Reiniciando servicio web..."
 if command -v systemctl &> /dev/null; then
     if systemctl is-active --quiet gunicorn; then
         sudo systemctl restart gunicorn
