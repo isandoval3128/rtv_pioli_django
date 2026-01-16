@@ -202,8 +202,82 @@ class ConfiguracionTallerAdmin(admin.ModelAdmin):
     search_fields = ('taller__nombre', 'tipo_vehiculo__nombre')
     ordering = ('taller__nombre', 'tipo_vehiculo__nombre')
     list_editable = ('status', 'turnos_simultaneos', 'intervalo_minutos')
+    change_list_template = 'admin/talleres/configuraciontaller_change_list.html'
 
     autocomplete_fields = ['taller', 'tipo_vehiculo']
+
+    def get_urls(self):
+        urls = super().get_urls()
+        custom_urls = [
+            path(
+                'sincronizar/',
+                self.admin_site.admin_view(self.sincronizar_talleres_tramites),
+                name='talleres_configuraciontaller_sincronizar'
+            ),
+        ]
+        return custom_urls + urls
+
+    def sincronizar_talleres_tramites(self, request):
+        """
+        Sincroniza todos los talleres con todos los tipos de trámite.
+        Crea las configuraciones faltantes con valores por defecto.
+        """
+        if request.method == 'POST':
+            talleres = Taller.objects.filter(status=True)
+            tipos_tramite = TipoVehiculo.objects.filter(status=True)
+
+            creados = 0
+            existentes = 0
+
+            for taller in talleres:
+                for tipo in tipos_tramite:
+                    config, created = ConfiguracionTaller.objects.get_or_create(
+                        taller=taller,
+                        tipo_vehiculo=tipo,
+                        defaults={
+                            'turnos_simultaneos': 2,
+                            'intervalo_minutos': tipo.duracion_minutos or 30,
+                            'status': True,
+                        }
+                    )
+                    if created:
+                        creados += 1
+                    else:
+                        existentes += 1
+
+            if creados > 0:
+                self.message_user(
+                    request,
+                    f"Sincronización completada: {creados} configuraciones creadas.",
+                    messages.SUCCESS
+                )
+            else:
+                self.message_user(
+                    request,
+                    f"No se crearon nuevas configuraciones. {existentes} ya existían.",
+                    messages.INFO
+                )
+
+            return redirect('admin:talleres_configuraciontaller_changelist')
+
+        # Mostrar página de confirmación
+        talleres_count = Taller.objects.filter(status=True).count()
+        tipos_count = TipoVehiculo.objects.filter(status=True).count()
+        existentes_count = ConfiguracionTaller.objects.count()
+        total_posibles = talleres_count * tipos_count
+        faltantes = total_posibles - existentes_count
+
+        context = {
+            **self.admin_site.each_context(request),
+            'title': 'Sincronizar Talleres con Trámites',
+            'opts': self.model._meta,
+            'talleres_count': talleres_count,
+            'tipos_count': tipos_count,
+            'existentes_count': existentes_count,
+            'total_posibles': total_posibles,
+            'faltantes': max(0, faltantes),
+        }
+        return render(request, 'admin/talleres/sincronizar_configuracion.html', context)
 
 
 @admin.register(Vehiculo)

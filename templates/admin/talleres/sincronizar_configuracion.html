@@ -1,0 +1,95 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+    <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+    &rsaquo; <a href="{% url 'admin:talleres_configuraciontaller_changelist' %}">Talleres - Tipos Trámite</a>
+    &rsaquo; Sincronizar
+</div>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <h1>Sincronizar Talleres con Tipos de Trámite</h1>
+
+    <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+        <h2 style="margin-top: 0; color: #417690;">Estado Actual</h2>
+        <table style="width: 100%; border-collapse: collapse;">
+            <tr>
+                <td style="padding: 10px; border-bottom: 1px solid #ddd;">
+                    <strong>Talleres activos:</strong>
+                </td>
+                <td style="padding: 10px; border-bottom: 1px solid #ddd; text-align: right;">
+                    <span style="font-size: 1.2em; font-weight: bold; color: #417690;">{{ talleres_count }}</span>
+                </td>
+            </tr>
+            <tr>
+                <td style="padding: 10px; border-bottom: 1px solid #ddd;">
+                    <strong>Tipos de trámite activos:</strong>
+                </td>
+                <td style="padding: 10px; border-bottom: 1px solid #ddd; text-align: right;">
+                    <span style="font-size: 1.2em; font-weight: bold; color: #417690;">{{ tipos_count }}</span>
+                </td>
+            </tr>
+            <tr>
+                <td style="padding: 10px; border-bottom: 1px solid #ddd;">
+                    <strong>Configuraciones existentes:</strong>
+                </td>
+                <td style="padding: 10px; border-bottom: 1px solid #ddd; text-align: right;">
+                    <span style="font-size: 1.2em; font-weight: bold; color: #28a745;">{{ existentes_count }}</span>
+                </td>
+            </tr>
+            <tr>
+                <td style="padding: 10px; border-bottom: 1px solid #ddd;">
+                    <strong>Total posible (Talleres × Trámites):</strong>
+                </td>
+                <td style="padding: 10px; border-bottom: 1px solid #ddd; text-align: right;">
+                    <span style="font-size: 1.2em; font-weight: bold;">{{ total_posibles }}</span>
+                </td>
+            </tr>
+            <tr style="background: {% if faltantes > 0 %}#fff3cd{% else %}#d4edda{% endif %};">
+                <td style="padding: 10px;">
+                    <strong>Configuraciones faltantes:</strong>
+                </td>
+                <td style="padding: 10px; text-align: right;">
+                    <span style="font-size: 1.4em; font-weight: bold; color: {% if faltantes > 0 %}#856404{% else %}#155724{% endif %};">
+                        {{ faltantes }}
+                    </span>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    {% if faltantes > 0 %}
+    <div style="background: #e7f3ff; padding: 15px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #417690;">
+        <p style="margin: 0;">
+            <strong>¿Qué hará esta acción?</strong><br>
+            Se crearán <strong>{{ faltantes }}</strong> nuevas configuraciones para vincular cada taller activo con cada tipo de trámite activo.
+        </p>
+        <p style="margin: 10px 0 0 0; font-size: 0.9em; color: #666;">
+            <em>Valores por defecto: 2 turnos simultáneos, intervalo según duración del trámite, estado activo.</em>
+        </p>
+    </div>
+
+    <form method="post">
+        {% csrf_token %}
+        <div class="submit-row">
+            <input type="submit" value="Sincronizar Ahora" class="default" style="background: #28a745;">
+            <a href="{% url 'admin:talleres_configuraciontaller_changelist' %}" class="button cancel-link">Cancelar</a>
+        </div>
+    </form>
+    {% else %}
+    <div style="background: #d4edda; padding: 15px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #28a745;">
+        <p style="margin: 0;">
+            <strong>Todo sincronizado</strong><br>
+            Todos los talleres ya están configurados con todos los tipos de trámite disponibles.
+        </p>
+    </div>
+
+    <div class="submit-row">
+        <a href="{% url 'admin:talleres_configuraciontaller_changelist' %}" class="button" style="background: #417690; color: white;">Volver al listado</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
