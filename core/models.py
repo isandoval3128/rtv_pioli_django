@@ -4,6 +4,17 @@ from django.core.exceptions import ValidationError
 
 # Modelo para configuración de correo SMTP
 class EmailConfig(models.Model):
+    nombre = models.CharField(
+        max_length=100,
+        verbose_name='Nombre de la configuración',
+        help_text='Identificador para esta configuración (ej: "Correo Principal", "Correo Turnos")',
+        default='Configuración Principal'
+    )
+    es_principal = models.BooleanField(
+        default=False,
+        verbose_name='¿Es la configuración principal?',
+        help_text='Solo una configuración puede ser la principal. Se usará para enviar correos del sistema.'
+    )
     email_host = models.CharField(max_length=255, default='smtp-mail.outlook.com', verbose_name='Servidor SMTP')
     email_port = models.PositiveIntegerField(default=587, verbose_name='Puerto SMTP')
     email_use_tls = models.BooleanField(default=True, verbose_name='Usar TLS')
@@ -11,13 +22,36 @@ class EmailConfig(models.Model):
     email_host_password = models.CharField(max_length=255, verbose_name='Contraseña', blank=True)
     default_from_email = models.EmailField(max_length=255, verbose_name='Correo remitente', blank=True)
     contact_admin_email = models.EmailField(max_length=255, verbose_name='Correo destinatario', blank=True)
+    status = models.BooleanField(default=True, verbose_name='Activo')
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='Fecha de creación')
+    updated_at = models.DateTimeField(auto_now=True, verbose_name='Última actualización')
 
     class Meta:
         verbose_name = 'Configuración de Correo'
-        verbose_name_plural = 'Configuración de Correo'
+        verbose_name_plural = 'Configuraciones de Correo'
+        ordering = ['-es_principal', 'nombre']
 
     def __str__(self):
-        return f"Config correo: {self.email_host_user}"
+        principal = " (Principal)" if self.es_principal else ""
+        return f"{self.nombre}{principal}"
+
+    def save(self, *args, **kwargs):
+        # Si esta configuración se marca como principal, desmarcar las demás
+        if self.es_principal:
+            EmailConfig.objects.filter(es_principal=True).exclude(pk=self.pk).update(es_principal=False)
+        # Si es la primera configuración, hacerla principal automáticamente
+        if not self.pk and not EmailConfig.objects.exists():
+            self.es_principal = True
+        super().save(*args, **kwargs)
+
+    @classmethod
+    def get_principal(cls):
+        """Obtiene la configuración principal de correo"""
+        config = cls.objects.filter(es_principal=True, status=True).first()
+        if not config:
+            # Si no hay principal, intentar obtener cualquier configuración activa
+            config = cls.objects.filter(status=True).first()
+        return config
 
 class AboutSection(models.Model):
     title = models.CharField(max_length=200, verbose_name="Título")

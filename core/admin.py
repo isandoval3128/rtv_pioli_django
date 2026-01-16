@@ -30,9 +30,25 @@ class EmailConfigForm(forms.ModelForm):
 @admin.register(EmailConfig)
 class EmailConfigAdmin(admin.ModelAdmin):
     form = EmailConfigForm
-    list_display = ['email_host_user', 'contact_admin_email', 'email_host', 'email_port', 'email_use_tls']
-    search_fields = ['email_host_user', 'contact_admin_email']
+    list_display = [
+        'nombre',
+        'es_principal_display',
+        'email_host_user',
+        'contact_admin_email',
+        'email_host',
+        'email_port',
+        'status'
+    ]
+    list_filter = ['es_principal', 'status', 'email_host']
+    search_fields = ['nombre', 'email_host_user', 'contact_admin_email']
+    list_editable = ['status']
+    readonly_fields = ['created_at', 'updated_at']
+    ordering = ['-es_principal', 'nombre']
+
     fieldsets = (
+        ('Identificación', {
+            'fields': ('nombre', 'es_principal', 'status')
+        }),
         ('Datos de acceso', {
             'fields': ('email_host_user', 'email_host_password')
         }),
@@ -42,7 +58,46 @@ class EmailConfigAdmin(admin.ModelAdmin):
         ('Remitente y destinatario', {
             'fields': ('default_from_email', 'contact_admin_email')
         }),
+        ('Auditoría', {
+            'fields': ('created_at', 'updated_at'),
+            'classes': ('collapse',)
+        }),
     )
+
+    actions = ['marcar_como_principal']
+
+    def es_principal_display(self, obj):
+        """Muestra un indicador visual si es la configuración principal"""
+        if obj.es_principal:
+            return format_html(
+                '<span style="color: #28a745; font-weight: bold;">✓ Principal</span>'
+            )
+        return format_html('<span style="color: #999;">-</span>')
+    es_principal_display.short_description = 'Principal'
+    es_principal_display.admin_order_field = 'es_principal'
+
+    def marcar_como_principal(self, request, queryset):
+        """Acción para marcar una configuración como principal"""
+        if queryset.count() != 1:
+            self.message_user(
+                request,
+                'Seleccione exactamente una configuración para marcar como principal.',
+                level='error'
+            )
+            return
+
+        config = queryset.first()
+        # Desmarcar todas las demás
+        EmailConfig.objects.exclude(pk=config.pk).update(es_principal=False)
+        # Marcar la seleccionada
+        config.es_principal = True
+        config.save()
+
+        self.message_user(
+            request,
+            f'"{config.nombre}" ahora es la configuración principal de correo.'
+        )
+    marcar_como_principal.short_description = 'Marcar como configuración principal'
 
 class AboutImageInline(admin.TabularInline):
     model = AboutImage
