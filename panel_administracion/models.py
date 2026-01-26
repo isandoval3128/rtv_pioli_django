@@ -32,6 +32,8 @@ class Sector(models.Model):
     codigo = models.CharField(
         max_length=20,
         unique=True,
+        blank=True,
+        null=True,
         verbose_name="Codigo",
         help_text="Identificador unico del sector (ADMINISTRACION, TALLER)"
     )
