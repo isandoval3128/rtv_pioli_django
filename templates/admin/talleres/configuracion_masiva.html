@@ -1,0 +1,110 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+    <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+    &rsaquo; <a href="{% url 'admin:talleres_configuraciontaller_changelist' %}">Talleres - Tipos Tramite</a>
+    &rsaquo; Configuracion Masiva
+</div>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <h1>Configuracion Masiva de Turnos</h1>
+
+    <div style="background: #e7f3ff; padding: 20px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #417690;">
+        <h2 style="margin-top: 0; color: #417690;">
+            <span style="margin-right: 8px;">&#128295;</span>
+            Configuraciones seleccionadas: {{ count }}
+        </h2>
+        <p style="margin: 10px 0 0 0; color: #333;">
+            Los valores que ingreses se aplicaran a todas las configuraciones seleccionadas.
+            Deja un campo vacio para no modificar ese valor.
+        </p>
+    </div>
+
+    <!-- Lista de elementos seleccionados -->
+    <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 20px; max-height: 200px; overflow-y: auto;">
+        <strong>Elementos a modificar:</strong>
+        <ul style="margin: 10px 0 0 0; padding-left: 20px;">
+            {% for config in queryset %}
+            <li style="padding: 3px 0; color: #333;">
+                {{ config.taller.get_nombre }} - {{ config.tipo_vehiculo.nombre }}
+                <span style="color: #888; font-size: 0.9em;">
+                    (Actual: {{ config.intervalo_minutos }} min, {{ config.turnos_simultaneos }} turnos)
+                </span>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <form method="post">
+        {% csrf_token %}
+
+        <div style="background: white; padding: 25px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-bottom: 20px;">
+            <h3 style="margin-top: 0; color: #417690; border-bottom: 2px solid #417690; padding-bottom: 10px;">
+                Nuevos valores
+            </h3>
+
+            <div style="display: flex; gap: 30px; flex-wrap: wrap;">
+                <div style="flex: 1; min-width: 200px;">
+                    <label for="id_intervalo_minutos" style="display: block; font-weight: bold; margin-bottom: 8px; color: #333;">
+                        <span style="margin-right: 5px;">&#9202;</span>
+                        Intervalo entre turnos (minutos)
+                    </label>
+                    {{ form.intervalo_minutos }}
+                    <p style="font-size: 0.85em; color: #666; margin-top: 5px;">
+                        Tiempo entre cada turno disponible (5-120 min)
+                    </p>
+                </div>
+
+                <div style="flex: 1; min-width: 200px;">
+                    <label for="id_turnos_simultaneos" style="display: block; font-weight: bold; margin-bottom: 8px; color: #333;">
+                        <span style="margin-right: 5px;">&#128663;</span>
+                        Turnos Simultaneos
+                    </label>
+                    {{ form.turnos_simultaneos }}
+                    <p style="font-size: 0.85em; color: #666; margin-top: 5px;">
+                        Cantidad de vehiculos que pueden atenderse al mismo tiempo (1-20)
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="submit-row" style="display: flex; gap: 10px; justify-content: flex-end;">
+            <a href="{% url 'admin:talleres_configuraciontaller_changelist' %}" class="button cancel-link" style="background: #999; color: white; padding: 10px 20px; text-decoration: none; border-radius: 4px;">
+                Cancelar
+            </a>
+            <input type="submit" value="Aplicar Cambios" class="default" style="background: #417690; padding: 10px 25px; font-size: 1em; cursor: pointer;">
+        </div>
+    </form>
+</div>
+
+<style>
+    #id_intervalo_minutos,
+    #id_turnos_simultaneos {
+        width: 100%;
+        padding: 12px;
+        font-size: 1.1em;
+        border: 2px solid #ddd;
+        border-radius: 6px;
+        transition: border-color 0.3s;
+    }
+
+    #id_intervalo_minutos:focus,
+    #id_turnos_simultaneos:focus {
+        border-color: #417690;
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(65, 118, 144, 0.2);
+    }
+
+    .submit-row input[type="submit"]:hover {
+        background: #2a5a72 !important;
+    }
+
+    .cancel-link:hover {
+        background: #666 !important;
+    }
+</style>
+{% endblock %}

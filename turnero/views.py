@@ -151,7 +151,7 @@ class Step2VehiculoView(View):
                 try:
                     vehiculo = Vehiculo.objects.get(dominio=dominio_busqueda.upper(), status=True)
                     request.session['vehiculo_id'] = vehiculo.id
-                    request.session['tipo_vehiculo_id'] = vehiculo.tipo_vehiculo.id
+                    # tipo_vehiculo_id se selecciona en Step3
                     return redirect_with_embedded(request, 'turnero:step3_taller')
                 except Vehiculo.DoesNotExist:
                     return render(request, self.template_name, {
@@ -174,14 +174,21 @@ class Step2VehiculoView(View):
                     })
 
                 tipo_vehiculo = form.cleaned_data.get('tipo_vehiculo')
+                # Si no se seleccionó tipo_vehiculo, usar el DEFAULT (seccion oculta en frontend)
                 if not tipo_vehiculo:
-                    return render(request, self.template_name, {
-                        'form': form,
-                        'step': 2,
-                        'progress': 40,
-                        'cliente': cliente,
-                        'error': 'Debe seleccionar un tipo de trámite.'
-                    })
+                    # Buscar el tipo DEFAULT creado por la migracion
+                    tipo_vehiculo = TipoVehiculo.objects.filter(codigo_tramite='DEFAULT', status=True).first()
+                    # Si no existe el DEFAULT, usar cualquier tipo activo como fallback
+                    if not tipo_vehiculo:
+                        tipo_vehiculo = TipoVehiculo.objects.filter(status=True).first()
+                    if not tipo_vehiculo:
+                        return render(request, self.template_name, {
+                            'form': form,
+                            'step': 2,
+                            'progress': 40,
+                            'cliente': cliente,
+                            'error': 'No hay tipos de trámite configurados. Contacte al administrador.'
+                        })
 
                 # Verificar si ya existe
                 if Vehiculo.objects.filter(dominio=dominio.upper()).exists():
@@ -196,7 +203,7 @@ class Step2VehiculoView(View):
                     )
 
                 request.session['vehiculo_id'] = vehiculo.id
-                request.session['tipo_vehiculo_id'] = vehiculo.tipo_vehiculo.id
+                # tipo_vehiculo_id se selecciona en Step3
                 return redirect_with_embedded(request, 'turnero:step3_taller')
 
         return render(request, self.template_name, {
@@ -208,20 +215,21 @@ class Step2VehiculoView(View):
 
 
 class Step3TallerView(View):
-    """Paso 3: Selección de taller"""
+    """Paso 3: Selección de taller y tipo de trámite"""
     template_name = 'turnero/step3_taller.html'
 
     def get(self, request):
-        if 'vehiculo_id' not in request.session or 'tipo_vehiculo_id' not in request.session:
+        if 'cliente_id' not in request.session or 'vehiculo_id' not in request.session:
             return redirect_with_embedded(request, 'turnero:step1_cliente')
 
+        cliente = Cliente.objects.get(id=request.session['cliente_id'])
         vehiculo = Vehiculo.objects.get(id=request.session['vehiculo_id'])
-        tipo_vehiculo = TipoVehiculo.objects.get(id=request.session['tipo_vehiculo_id'])
 
-        # Obtener talleres que atienden este tipo de vehículo
+        # Obtener todos los talleres activos que tienen configuración de trámites
         talleres = Taller.objects.filter(
             status=True,
-            configuraciones__tipo_vehiculo=tipo_vehiculo
+            configuraciones__status=True,
+            configuraciones__tipo_vehiculo__status=True
         ).distinct()
 
         form = Step3TallerForm()
@@ -231,34 +239,74 @@ class Step3TallerView(View):
             'form': form,
             'step': 3,
             'progress': 60,
+            'cliente': cliente,
             'vehiculo': vehiculo,
-            'tipo_vehiculo': tipo_vehiculo,
             'talleres': talleres
         })
 
     def post(self, request):
-        if 'vehiculo_id' not in request.session or 'tipo_vehiculo_id' not in request.session:
+        if 'cliente_id' not in request.session or 'vehiculo_id' not in request.session:
             return redirect_with_embedded(request, 'turnero:step1_cliente')
 
-        form = Step3TallerForm(request.POST)
+        taller_id = request.POST.get('taller')
+        tipo_vehiculo_id = request.POST.get('tipo_vehiculo')
 
-        if form.is_valid():
-            taller = form.cleaned_data['taller']
+        # Validar que se hayan seleccionado ambos
+        if not taller_id or not tipo_vehiculo_id:
+            cliente = Cliente.objects.get(id=request.session['cliente_id'])
+            vehiculo = Vehiculo.objects.get(id=request.session['vehiculo_id'])
+            talleres = Taller.objects.filter(
+                status=True,
+                configuraciones__status=True,
+                configuraciones__tipo_vehiculo__status=True
+            ).distinct()
+
+            return render(request, self.template_name, {
+                'form': Step3TallerForm(),
+                'step': 3,
+                'progress': 60,
+                'cliente': cliente,
+                'vehiculo': vehiculo,
+                'talleres': talleres,
+                'error': 'Debes seleccionar un taller y un tipo de trámite'
+            })
+
+        try:
+            taller = Taller.objects.get(id=taller_id, status=True)
+            tipo_vehiculo = TipoVehiculo.objects.get(id=tipo_vehiculo_id, status=True)
+
+            # Verificar que el taller tenga configuración para este tipo de trámite
+            if not ConfiguracionTaller.objects.filter(
+                taller=taller,
+                tipo_vehiculo=tipo_vehiculo,
+                status=True
+            ).exists():
+                raise ValueError("El taller no tiene habilitado este tipo de trámite")
+
+            # Guardar en sesión
             request.session['taller_id'] = taller.id
+            request.session['tipo_vehiculo_id'] = tipo_vehiculo.id
+
             return redirect_with_embedded(request, 'turnero:step4_fecha_hora')
 
-        vehiculo = Vehiculo.objects.get(id=request.session['vehiculo_id'])
-        tipo_vehiculo = TipoVehiculo.objects.get(id=request.session['tipo_vehiculo_id'])
-        talleres = Taller.objects.filter(status=True, configuraciones__tipo_vehiculo=tipo_vehiculo).distinct()
+        except (Taller.DoesNotExist, TipoVehiculo.DoesNotExist, ValueError) as e:
+            cliente = Cliente.objects.get(id=request.session['cliente_id'])
+            vehiculo = Vehiculo.objects.get(id=request.session['vehiculo_id'])
+            talleres = Taller.objects.filter(
+                status=True,
+                configuraciones__status=True,
+                configuraciones__tipo_vehiculo__status=True
+            ).distinct()
 
-        return render(request, self.template_name, {
-            'form': form,
-            'step': 3,
-            'progress': 60,
-            'vehiculo': vehiculo,
-            'tipo_vehiculo': tipo_vehiculo,
-            'talleres': talleres
-        })
+            return render(request, self.template_name, {
+                'form': Step3TallerForm(),
+                'step': 3,
+                'progress': 60,
+                'cliente': cliente,
+                'vehiculo': vehiculo,
+                'talleres': talleres,
+                'error': str(e)
+            })
 
 
 class Step4FechaHoraView(View):
@@ -309,6 +357,34 @@ class Step5ConfirmacionView(View):
     """Paso 5: Confirmación y creación del turno"""
     template_name = 'turnero/step5_confirmacion.html'
 
+    def generar_captcha(self):
+        """Genera una pregunta matemática simple para el CAPTCHA"""
+        import random
+        operaciones = [
+            ('+', lambda a, b: a + b),
+            ('-', lambda a, b: a - b),
+            ('×', lambda a, b: a * b),
+        ]
+        operacion, func = random.choice(operaciones)
+
+        if operacion == '×':
+            # Para multiplicación usamos números más pequeños
+            num1 = random.randint(2, 9)
+            num2 = random.randint(2, 9)
+        elif operacion == '-':
+            # Para resta, aseguramos resultado positivo
+            num1 = random.randint(10, 20)
+            num2 = random.randint(1, num1 - 1)
+        else:
+            # Para suma
+            num1 = random.randint(5, 15)
+            num2 = random.randint(5, 15)
+
+        respuesta = func(num1, num2)
+        pregunta = f"¿Cuánto es {num1} {operacion} {num2}?"
+
+        return pregunta, respuesta
+
     def get(self, request):
         if not all(k in request.session for k in ['cliente_id', 'vehiculo_id', 'taller_id', 'fecha', 'hora_inicio']):
             return redirect_with_embedded(request, 'turnero:step1_cliente')
@@ -323,6 +399,10 @@ class Step5ConfirmacionView(View):
 
         form = Step5ConfirmacionForm()
 
+        # Generar CAPTCHA
+        captcha_pregunta, captcha_respuesta = self.generar_captcha()
+        request.session['captcha_respuesta'] = captcha_respuesta
+
         return render(request, self.template_name, {
             'form': form,
             'step': 5,
@@ -332,7 +412,8 @@ class Step5ConfirmacionView(View):
             'taller': taller,
             'tipo_vehiculo': tipo_vehiculo,
             'fecha': fecha,
-            'hora_inicio': hora_inicio
+            'hora_inicio': hora_inicio,
+            'captcha_pregunta': captcha_pregunta
         })
 
     def post(self, request):
@@ -340,6 +421,47 @@ class Step5ConfirmacionView(View):
             return redirect_with_embedded(request, 'turnero:step1_cliente')
 
         form = Step5ConfirmacionForm(request.POST)
+
+        # Validar CAPTCHA
+        captcha_respuesta_usuario = request.POST.get('captcha_respuesta', '').strip()
+        captcha_respuesta_correcta = request.session.get('captcha_respuesta')
+        captcha_error = None
+
+        try:
+            if not captcha_respuesta_usuario:
+                captcha_error = 'Por favor, resolvé la operación matemática.'
+            elif captcha_respuesta_correcta is None:
+                captcha_error = 'La sesión expiró. Por favor, recargá la página.'
+            elif int(captcha_respuesta_usuario) != int(captcha_respuesta_correcta):
+                captcha_error = 'La respuesta es incorrecta. Intentá de nuevo.'
+        except (ValueError, TypeError):
+            captcha_error = 'Ingresá solo números como respuesta.'
+
+        if captcha_error:
+            # Regenerar CAPTCHA para el siguiente intento
+            captcha_pregunta, nueva_respuesta = self.generar_captcha()
+            request.session['captcha_respuesta'] = nueva_respuesta
+
+            cliente = Cliente.objects.get(id=request.session['cliente_id'])
+            vehiculo = Vehiculo.objects.get(id=request.session['vehiculo_id'])
+            taller = Taller.objects.get(id=request.session['taller_id'])
+            tipo_vehiculo = TipoVehiculo.objects.get(id=request.session['tipo_vehiculo_id'])
+            fecha = datetime.fromisoformat(request.session['fecha']).date()
+            hora_inicio = datetime.strptime(request.session['hora_inicio'], '%H:%M').time()
+
+            return render(request, self.template_name, {
+                'form': form,
+                'step': 5,
+                'progress': 100,
+                'cliente': cliente,
+                'vehiculo': vehiculo,
+                'taller': taller,
+                'tipo_vehiculo': tipo_vehiculo,
+                'fecha': fecha,
+                'hora_inicio': hora_inicio,
+                'captcha_pregunta': captcha_pregunta,
+                'captcha_error': captcha_error
+            })
 
         if form.is_valid():
             # Crear el turno
@@ -377,10 +499,14 @@ class Step5ConfirmacionView(View):
                     return redirect_with_embedded(request, 'turnero:step4_fecha_hora')
 
             except ConfiguracionTaller.DoesNotExist:
-                pass  # Continuar si no hay configuración específica
+                config = None  # Continuar si no hay configuración específica
 
-            # Calcular hora de fin
-            duracion = tipo_vehiculo.duracion_minutos
+            # Calcular hora de fin usando el intervalo de la configuración del taller
+            # Si no hay configuración, usar el duracion_minutos del tipo de vehículo como fallback
+            if config:
+                duracion = config.intervalo_minutos
+            else:
+                duracion = tipo_vehiculo.duracion_minutos
             hora_fin_dt = datetime.combine(fecha, hora_inicio) + timedelta(minutes=duracion)
             hora_fin = hora_fin_dt.time()
 
@@ -441,6 +567,10 @@ class Step5ConfirmacionView(View):
         fecha = datetime.fromisoformat(request.session['fecha']).date()
         hora_inicio = datetime.strptime(request.session['hora_inicio'], '%H:%M').time()
 
+        # Regenerar CAPTCHA
+        captcha_pregunta, captcha_respuesta = self.generar_captcha()
+        request.session['captcha_respuesta'] = captcha_respuesta
+
         return render(request, self.template_name, {
             'form': form,
             'step': 5,
@@ -450,7 +580,8 @@ class Step5ConfirmacionView(View):
             'taller': taller,
             'tipo_vehiculo': tipo_vehiculo,
             'fecha': fecha,
-            'hora_inicio': hora_inicio
+            'hora_inicio': hora_inicio,
+            'captcha_pregunta': captcha_pregunta
         })
 
     def get_client_ip(self, request):
@@ -471,6 +602,69 @@ class TurnoSuccessView(TemplateView):
         context = super().get_context_data(**kwargs)
         codigo = kwargs.get('codigo')
         context['turno'] = get_object_or_404(Turno, codigo=codigo)
+        return context
+
+
+class VerificarTurnoView(TemplateView):
+    """Vista para verificación del turno al escanear QR - Orientada al personal RTV"""
+    template_name = 'turnero/verificar_turno.html'
+
+    def get(self, request, *args, **kwargs):
+        codigo = kwargs.get('codigo')
+        token = request.GET.get('t', '')
+
+        # Verificar que el token sea válido (seguridad del QR)
+        if not Turno.verificar_token(codigo, token):
+            # Token inválido - mostrar página de error
+            return render(request, 'turnero/verificar_turno_invalido.html', {
+                'codigo': codigo,
+                'mensaje': 'QR no válido o manipulado'
+            })
+
+        return super().get(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        codigo = kwargs.get('codigo')
+        turno = get_object_or_404(Turno, codigo=codigo)
+        context['turno'] = turno
+        context['token_valido'] = True  # Si llegamos aquí, el token es válido
+
+        # Determinar el estado visual del turno
+        from datetime import date, datetime
+        hoy = date.today()
+        ahora = datetime.now().time()
+
+        if turno.estado == 'cancelado':
+            context['estado_clase'] = 'cancelado'
+            context['estado_icono'] = 'fa-times-circle'
+            context['estado_texto'] = 'CANCELADO'
+        elif turno.estado == 'realizado':
+            context['estado_clase'] = 'realizado'
+            context['estado_icono'] = 'fa-check-double'
+            context['estado_texto'] = 'REALIZADO'
+        elif turno.fecha < hoy:
+            context['estado_clase'] = 'vencido'
+            context['estado_icono'] = 'fa-calendar-times'
+            context['estado_texto'] = 'VENCIDO'
+        elif turno.fecha == hoy:
+            if turno.hora_inicio <= ahora <= turno.hora_fin:
+                context['estado_clase'] = 'activo'
+                context['estado_icono'] = 'fa-check-circle'
+                context['estado_texto'] = 'TURNO ACTIVO'
+            elif ahora < turno.hora_inicio:
+                context['estado_clase'] = 'pendiente-hoy'
+                context['estado_icono'] = 'fa-clock'
+                context['estado_texto'] = 'HOY - PENDIENTE'
+            else:
+                context['estado_clase'] = 'vencido'
+                context['estado_icono'] = 'fa-calendar-times'
+                context['estado_texto'] = 'HORARIO PASADO'
+        else:
+            context['estado_clase'] = 'pendiente'
+            context['estado_icono'] = 'fa-calendar-check'
+            context['estado_texto'] = 'PENDIENTE'
+
         return context
 
 
@@ -522,6 +716,46 @@ def buscar_vehiculo_ajax(request):
         })
     except Vehiculo.DoesNotExist:
         return JsonResponse({'found': False})
+
+
+def obtener_tipos_tramite_taller_ajax(request):
+    """Obtener tipos de trámite disponibles para un taller (AJAX)"""
+    taller_id = request.GET.get('taller_id')
+
+    if not taller_id:
+        return JsonResponse({'error': 'Falta el ID del taller'}, status=400)
+
+    try:
+        taller = Taller.objects.get(id=taller_id, status=True)
+
+        # Obtener configuraciones activas del taller
+        configuraciones = ConfiguracionTaller.objects.filter(
+            taller=taller,
+            status=True,
+            tipo_vehiculo__status=True
+        ).select_related('tipo_vehiculo')
+
+        tipos_tramite = []
+        for config in configuraciones:
+            tipo = config.tipo_vehiculo
+            tipos_tramite.append({
+                'id': tipo.id,
+                'codigo': tipo.codigo_tramite or '',
+                'nombre': tipo.nombre,
+                'descripcion': tipo.descripcion or '',
+                'duracion': tipo.duracion_minutos,
+                'precio_provincial': str(tipo.precio_provincial) if tipo.precio_provincial else None,
+                'precio_nacional': str(tipo.precio_nacional) if tipo.precio_nacional else None,
+            })
+
+        return JsonResponse({
+            'success': True,
+            'taller_nombre': taller.get_nombre(),
+            'tipos_tramite': tipos_tramite
+        })
+
+    except Taller.DoesNotExist:
+        return JsonResponse({'error': 'Taller no encontrado'}, status=404)
 
 
 def obtener_horarios_disponibles_ajax(request):

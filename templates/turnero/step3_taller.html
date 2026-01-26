@@ -10,10 +10,24 @@
         padding: 1rem 1.5rem;
         border-radius: 10px;
         margin-bottom: 2rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+    }
+
+    .cliente-info i {
+        color: var(--primary-color);
+        flex-shrink: 0;
     }
 
     .cliente-info strong {
         color: var(--primary-color);
+    }
+
+    .cliente-info span {
+        flex: 1;
+        min-width: 0;
     }
 
     .search-title {
@@ -24,14 +38,53 @@
         align-items: center;
     }
 
+    /* Modal del mapa */
+    #mapaModal .modal-dialog {
+        max-width: 90%;
+        margin: 1.75rem auto;
+    }
+
+    #mapaModal .modal-content {
+        border: none;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    }
+
+    #mapaModal .modal-header {
+        background: linear-gradient(135deg, var(--primary-color) 0%, #1a4a6e 100%);
+        color: white;
+        border: none;
+        padding: 1.25rem 1.5rem;
+    }
+
+    #mapaModal .modal-title {
+        font-weight: 700;
+        font-size: 1.25rem;
+    }
+
+    #mapaModal .modal-title i {
+        margin-right: 0.75rem;
+    }
+
+    #mapaModal .btn-close-white {
+        filter: brightness(0) invert(1);
+        opacity: 0.8;
+    }
+
+    #mapaModal .btn-close-white:hover {
+        opacity: 1;
+    }
+
+    #mapaModal .modal-body {
+        padding: 0;
+    }
+
     #map {
-        height: 400px;
+        height: 500px;
         width: 100%;
-        border-radius: 15px;
-        box-shadow: var(--card-shadow);
-        margin-bottom: 2rem;
         z-index: 1;
-        background-color: #fff;
+        background-color: #e8e8e8;
     }
 
     /* Asegurar que las tiles de Leaflet se rendericen correctamente */
@@ -65,21 +118,43 @@
         cursor: pointer;
         transition: all 0.3s ease;
         position: relative;
+        overflow: hidden;
+    }
+
+    .taller-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 5px;
+        height: 100%;
+        background: var(--primary-color);
+        opacity: 0;
+        transition: opacity 0.3s ease;
     }
 
     .taller-card:hover {
         border-color: var(--primary-color);
-        transform: translateY(-5px);
-        box-shadow: var(--card-shadow-hover);
+        transform: translateY(-3px);
+        box-shadow: 0 10px 30px rgba(19, 48, 77, 0.15);
+    }
+
+    .taller-card:hover::before {
+        opacity: 1;
     }
 
     .taller-card.selected {
         border-color: var(--primary-color);
-        background: #f0f4f8;
+        background: linear-gradient(135deg, #f0f4f8 0%, #e8eef3 100%);
         box-shadow: 0 0 0 3px rgba(19, 48, 77, 0.15);
     }
 
     .taller-card.selected::before {
+        opacity: 1;
+        background: var(--success-color);
+    }
+
+    .taller-card.selected::after {
         content: '\f00c';
         font-family: 'Font Awesome 6 Free';
         font-weight: 900;
@@ -95,162 +170,649 @@
         align-items: center;
         justify-content: center;
         font-size: 1.2rem;
+        animation: checkIn 0.3s ease;
+    }
+
+    /* Indicador de "Seleccionar" en hover */
+    .taller-card:not(.selected) .seleccionar-badge {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        background: var(--primary-color);
+        color: white;
+        padding: 0.35rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        opacity: 0;
+        transform: translateY(-5px);
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.35rem;
+    }
+
+    .taller-card:not(.selected):hover .seleccionar-badge {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    .taller-card.selected .seleccionar-badge {
+        display: none;
+    }
+
+    @keyframes checkIn {
+        from {
+            transform: scale(0);
+            opacity: 0;
+        }
+        to {
+            transform: scale(1);
+            opacity: 1;
+        }
     }
 
     .taller-nombre {
         color: var(--primary-color);
         font-weight: 700;
-        font-size: 1.3rem;
-        margin-bottom: 0.5rem;
+        font-size: 1.2rem;
+        margin-bottom: 0.75rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .taller-nombre i {
+        color: var(--accent-color);
     }
 
     .taller-info {
         color: #6c757d;
         margin-bottom: 0.5rem;
+        display: flex;
+        align-items: flex-start;
+        gap: 0.5rem;
     }
 
     .taller-info i {
         color: var(--primary-color);
         width: 20px;
+        flex-shrink: 0;
+        margin-top: 3px;
     }
 
     .taller-horario {
-        background: #f8f9fa;
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
         padding: 0.5rem 1rem;
-        border-radius: 8px;
-        display: inline-block;
-        margin-top: 0.5rem;
+        border-radius: 25px;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-top: 0.75rem;
+        font-size: 0.9rem;
+        font-weight: 500;
+        color: #495057;
+    }
+
+    .taller-horario i {
+        color: var(--primary-color);
     }
 
     .btn-ver-mapa {
-        background: var(--info-color);
-        color: white;
+        background: transparent;
+        color: #6c757d;
         border: none;
-        padding: 0.5rem 1rem;
-        border-radius: 20px;
-        font-size: 0.85rem;
-        font-weight: 600;
-        transition: all 0.3s ease;
+        padding: 0.4rem 0.6rem;
+        border-radius: 8px;
+        font-size: 0.75rem;
+        font-weight: 500;
+        transition: all 0.2s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        text-decoration: none;
     }
 
     .btn-ver-mapa:hover {
-        background: #138496;
-        transform: translateY(-2px);
+        background: #f1f5f9;
+        color: var(--primary-color);
+    }
+
+    .btn-ver-mapa i {
+        font-size: 0.8rem;
     }
 
     .leaflet-popup-content {
         font-family: 'Poppins', sans-serif;
+        min-width: 200px;
     }
 
     .leaflet-popup-content h6 {
         color: var(--primary-color);
         font-weight: 700;
+        margin-bottom: 0.75rem;
+        font-size: 1rem;
+    }
+
+    .leaflet-popup-content p {
+        margin: 0.4rem 0;
+        font-size: 0.9rem;
+        color: #495057;
+    }
+
+    .leaflet-popup-content i {
+        color: var(--primary-color);
+        width: 20px;
+        margin-right: 0.5rem;
+    }
+
+    /* Alert informativo mejorado */
+    .alert-seleccionar {
+        background: linear-gradient(135deg, #e7f1ff 0%, #cfe2ff 100%);
+        border: none;
+        border-left: 4px solid var(--primary-color);
+        border-radius: 12px;
+        padding: 1rem 1.25rem;
+        display: flex;
+        align-items: flex-start;
+        gap: 0.75rem;
+    }
+
+    .alert-seleccionar i {
+        color: var(--primary-color);
+        font-size: 1.25rem;
+        flex-shrink: 0;
+    }
+
+    .alert-seleccionar-text {
+        flex: 1;
+    }
+
+    .alert-seleccionar-text strong {
+        color: var(--primary-color);
+    }
+
+    /* Responsive - Tablets */
+    @media (max-width: 991px) {
+        #mapaModal .modal-dialog {
+            max-width: 95%;
+        }
+
+        #map {
+            height: 400px;
+        }
+
+        .taller-card {
+            padding: 1.25rem;
+        }
+
+        .taller-nombre {
+            font-size: 1.1rem;
+        }
+    }
+
+    /* Responsive - Móviles */
+    @media (max-width: 767px) {
+        #mapaModal .modal-dialog {
+            max-width: 100%;
+            margin: 0.5rem;
+        }
+
+        #map {
+            height: 350px;
+        }
+
+        .taller-card {
+            padding: 1rem;
+        }
+
+        .taller-nombre {
+            font-size: 1rem;
+        }
+
+        .taller-info {
+            font-size: 0.9rem;
+        }
+
+        .taller-horario {
+            font-size: 0.85rem;
+            padding: 0.4rem 0.8rem;
+        }
+
+        .taller-card .row {
+            flex-direction: column;
+        }
+
+        /* Badge siempre visible en móvil (sin hover) */
+        .taller-card:not(.selected) .seleccionar-badge {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .search-title {
+            font-size: 1.1rem;
+        }
+
+        .cliente-info {
+            padding: 0.85rem 1rem;
+            font-size: 0.9rem;
+        }
+    }
+
+    /* Responsive - Móviles pequeños */
+    @media (max-width: 576px) {
+        #map {
+            height: 300px;
+        }
+
+        .taller-card {
+            padding: 0.9rem;
+            border-radius: 10px;
+        }
+
+        .taller-nombre {
+            font-size: 0.95rem;
+        }
+
+        .taller-nombre i {
+            font-size: 0.85rem;
+        }
+
+        .taller-info {
+            font-size: 0.85rem;
+            margin-bottom: 0.4rem !important;
+        }
+
+        .taller-horario {
+            font-size: 0.8rem;
+        }
+
+        .seleccionar-badge {
+            font-size: 0.7rem;
+            padding: 0.25rem 0.6rem;
+        }
+
+        .search-title {
+            font-size: 1rem;
+        }
+
+        .cliente-info {
+            padding: 0.75rem 1rem;
+            font-size: 0.85rem;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.25rem;
+        }
+
+        .cliente-info i {
+            display: none;
+        }
+
+        .cliente-info span {
+            width: 100%;
+            line-height: 1.5;
+        }
+
+        .alert-seleccionar {
+            padding: 0.85rem 1rem;
+            font-size: 0.9rem;
+        }
+
+        .alert-seleccionar i {
+            font-size: 1.1rem;
+        }
+    }
+
+    /* ========== Modal Tipos de Trámite ========== */
+    .taller-seleccionado-info {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        padding: 1rem 1.25rem;
+        border-radius: 12px;
+        border-left: 4px solid var(--primary-color);
+    }
+
+    .taller-icon-circle {
+        width: 45px;
+        height: 45px;
+        background: linear-gradient(135deg, var(--primary-color) 0%, #1a4a6e 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.1rem;
+    }
+
+    .tipos-tramite-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+        max-height: 400px;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .tipo-tramite-card {
+        background: white;
+        border: 2px solid #e9ecef;
+        border-radius: 12px;
+        padding: 1rem 1.25rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        position: relative;
+    }
+
+    .tipo-tramite-card:hover {
+        border-color: var(--primary-color);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(19, 48, 77, 0.1);
+    }
+
+    .tipo-tramite-card.selected {
+        border-color: var(--success-color);
+        background: linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, rgba(16, 185, 129, 0.02) 100%);
+    }
+
+    .tipo-tramite-card.selected::after {
+        content: '\f00c';
+        font-family: 'Font Awesome 6 Free';
+        font-weight: 900;
+        position: absolute;
+        top: 50%;
+        right: 1rem;
+        transform: translateY(-50%);
+        width: 30px;
+        height: 30px;
+        background: var(--success-color);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 0.8rem;
+    }
+
+    .tipo-tramite-header {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
         margin-bottom: 0.5rem;
+    }
+
+    .tipo-tramite-icon {
+        width: 40px;
+        height: 40px;
+        background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1rem;
+        flex-shrink: 0;
+    }
+
+    .tipo-tramite-nombre {
+        font-weight: 700;
+        color: var(--primary-color);
+        font-size: 0.95rem;
+        line-height: 1.3;
+    }
+
+    .tipo-tramite-codigo {
+        font-size: 0.75rem;
+        color: #6c757d;
+        background: #f1f5f9;
+        padding: 0.15rem 0.5rem;
+        border-radius: 4px;
+        margin-left: 0.5rem;
+    }
+
+    .tipo-tramite-info {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+        margin-top: 0.5rem;
+        padding-left: 3.25rem;
+    }
+
+    .tipo-tramite-info span {
+        font-size: 0.8rem;
+        color: #6c757d;
+        display: flex;
+        align-items: center;
+        gap: 0.35rem;
+    }
+
+    .tipo-tramite-info i {
+        color: var(--primary-color);
+        font-size: 0.75rem;
+    }
+
+    /* Selección confirmada badge */
+    .seleccion-confirmada {
+        display: none;
+        background: linear-gradient(135deg, var(--success-color) 0%, #34d399 100%);
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        margin-top: 1rem;
+        font-weight: 600;
+        font-size: 0.9rem;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .seleccion-confirmada.show {
+        display: inline-flex;
+    }
+
+    @media (max-width: 576px) {
+        .tipos-tramite-grid {
+            max-height: 300px;
+        }
+
+        .tipo-tramite-card {
+            padding: 0.85rem 1rem;
+        }
+
+        .tipo-tramite-icon {
+            width: 35px;
+            height: 35px;
+            font-size: 0.9rem;
+        }
+
+        .tipo-tramite-nombre {
+            font-size: 0.85rem;
+        }
+
+        .tipo-tramite-info {
+            padding-left: 0;
+        }
+
+        .tipo-tramite-info span {
+            font-size: 0.75rem;
+        }
     }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="row justify-content-center">
-    <div class="col-lg-10">
-        <!-- Info del progreso -->
-        <div class="cliente-info" data-aos="fade-down">
-            <i class="fas fa-car"></i>
-            <strong>Vehículo:</strong> {{ vehiculo.dominio }} -
-            <strong>Trámite:</strong> {{ tipo_vehiculo.nombre }}
-        </div>
+<!-- Navegacion volver -->
+<a href="{% url 'turnero:step2_vehiculo' %}" class="nav-volver" data-aos="fade-right">
+    <i class="fas fa-arrow-left"></i>
+    <span>Volver al paso anterior</span>
+</a>
 
-        <div class="card-custom" data-aos="fade-up">
-            <div class="card-header-custom">
-                <h3>
-                    <i class="fas fa-map-marked-alt"></i> Paso 3: Selección de Taller
-                </h3>
-                <p class="mb-0 mt-2" style="font-size: 0.95rem; opacity: 0.9;">
-                    Elegí el taller más cercano a tu domicilio
-                </p>
-            </div>
-            <div class="card-body-custom">
-                <!-- Mapa -->
-                <div data-aos="fade-up">
-                    <h4 class="search-title mb-3">
-                        <i class="fas fa-map me-2"></i>Ubicación de los Talleres
-                    </h4>
-                    <div id="map"></div>
+<!-- Info del progreso -->
+<div class="cliente-info" data-aos="fade-down">
+    <i class="fas fa-user"></i>
+    <span><strong>Cliente:</strong> {{ cliente.nombre }} {{ cliente.apellido }} - <strong>Vehiculo:</strong> {{ vehiculo.dominio }}</span>
+</div>
+
+<div class="card-custom" data-aos="fade-up">
+    <div class="card-header-custom">
+        <h3>
+            <i class="fas fa-map-marked-alt"></i> Seleccion de Taller
+        </h3>
+
+    </div>
+    <div class="card-body-custom">
+        <!-- Formulario -->
+        <form method="post" id="form_taller">
+            {% csrf_token %}
+            <input type="hidden" name="taller" id="taller_selected" required>
+            <input type="hidden" name="tipo_vehiculo" id="tipo_vehiculo_selected" required>
+
+            <h4 class="search-title mb-3" data-aos="fade-up">
+                <i class="fas fa-list me-2"></i>Talleres Disponibles
+            </h4>
+
+            <!-- Mensaje informativo para seleccionar taller -->
+            <div class="alert-seleccionar" role="alert" data-aos="fade-up">
+                <i class="fas fa-hand-pointer"></i>
+                <div class="alert-seleccionar-text">
+                    <strong>Hacé clic en el taller</strong> que prefieras para seleccionarlo. Se marcará con un <i class="fas fa-check text-success"></i> verde.
                 </div>
+            </div>
 
-                <!-- Formulario -->
-                <form method="post" id="form_taller">
-                    {% csrf_token %}
-                    <input type="hidden" name="taller" id="taller_selected" required>
-
-                    <h4 class="search-title mb-3 mt-4" data-aos="fade-up">
-                        <i class="fas fa-list me-2"></i>Talleres Disponibles
-                    </h4>
-
-                    <!-- Mensaje informativo para seleccionar taller -->
-                    <div class="alert alert-info" role="alert" data-aos="fade-up" style="background: #f8f9fa; border-left: 4px solid var(--primary-color); border-radius: 10px;">
-                        <i class="fas fa-info-circle me-2"></i>
-                        <strong>Importante:</strong> Hacé click en el taller que prefieras para seleccionarlo. El taller seleccionado se marcará con un fondo celeste y un tilde verde.
+            {% if talleres %}
+            <div id="talleres_container" class="mt-4">
+                {% for taller in talleres %}
+                <div class="taller-card" data-taller-id="{{ taller.id }}"
+                     data-lat="{{ taller.get_latitud|stringformat:'f' }}" data-lng="{{ taller.get_longitud|stringformat:'f' }}"
+                     data-aos="fade-up" data-aos-delay="{% widthratio forloop.counter0 1 100 %}">
+                    <!-- Badge de seleccionar (aparece en hover) -->
+                    <div class="seleccionar-badge">
+                        <i class="fas fa-hand-pointer"></i> Seleccionar
                     </div>
-
-                    {% if talleres %}
-                    <div id="talleres_container">
-                        {% for taller in talleres %}
-                        <div class="taller-card" data-taller-id="{{ taller.id }}"
-                             data-lat="{{ taller.get_latitud|stringformat:'f' }}" data-lng="{{ taller.get_longitud|stringformat:'f' }}"
-                             data-aos="fade-up" data-aos-delay="{% widthratio forloop.counter0 1 100 %}">
-                            <div class="row align-items-center">
-                                <div class="col-md-9">
-                                    <h5 class="taller-nombre mb-3">
-                                        <i class="fas fa-tools me-2"></i>{{ taller.get_nombre }}
-                                    </h5>
-                                    <p class="taller-info mb-2">
-                                        <i class="fas fa-map-marker-alt me-2"></i>
-                                        {{ taller.get_direccion }}, {{ taller.get_localidad.nombre }}
-                                    </p>
-                                    <p class="taller-info mb-3">
-                                        <i class="fas fa-phone me-2"></i>{{ taller.get_telefono }}
-                                        {% if taller.get_email %}
-                                        <span class="ms-2">|</span>
-                                        <i class="fas fa-envelope ms-2 me-2"></i>{{ taller.get_email }}
-                                        {% endif %}
-                                    </p>
-                                    <div class="taller-horario">
-                                        <i class="fas fa-clock me-2"></i>
-                                        {{ taller.horario_apertura|time:"H:i" }} -
-                                        {{ taller.horario_cierre|time:"H:i" }} hs
-                                    </div>
+                    <div class="row align-items-center">
+                        <div class="col-md-9">
+                            <h5 class="taller-nombre">
+                                <i class="fas fa-tools"></i>{{ taller.get_nombre }}
+                            </h5>
+                            <p class="taller-info">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span>{{ taller.get_direccion }}, {{ taller.get_localidad.nombre }}</span>
+                            </p>
+                            <p class="taller-info">
+                                <i class="fas fa-phone"></i>
+                                <span>{{ taller.get_telefono }}
+                                {% if taller.get_email %}
+                                    <span class="ms-2">|</span>
+                                    <i class="fas fa-envelope ms-2"></i>{{ taller.get_email }}
+                                {% endif %}
+                                </span>
+                            </p>
+                            <div class="d-flex align-items-center gap-3 flex-wrap mt-2">
+                                <div class="taller-horario">
+                                    <i class="fas fa-clock"></i>
+                                    {{ taller.horario_apertura|time:"H:i" }} -
+                                    {{ taller.horario_cierre|time:"H:i" }} hs
                                 </div>
-                                <div class="col-md-3 text-end">
-                                    <button type="button" class="btn btn-ver-mapa"
-                                            data-lat="{{ taller.get_latitud|stringformat:'f' }}" data-lng="{{ taller.get_longitud|stringformat:'f' }}"
-                                            onclick="centrarMapa(parseFloat(this.getAttribute('data-lat')), parseFloat(this.getAttribute('data-lng')))">
-                                        <i class="fas fa-map-pin me-2"></i>Ver en mapa
-                                    </button>
-                                </div>
+                                <button type="button" class="btn btn-ver-mapa"
+                                        data-lat="{{ taller.get_latitud|stringformat:'f' }}" data-lng="{{ taller.get_longitud|stringformat:'f' }}"
+                                        onclick="event.stopPropagation(); abrirMapaEnTaller(parseFloat(this.getAttribute('data-lat')), parseFloat(this.getAttribute('data-lng')))">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    <span>Ver mapa</span>
+                                </button>
                             </div>
                         </div>
-                        {% endfor %}
                     </div>
-                    {% else %}
-                    <div class="alert alert-warning" role="alert">
-                        <i class="fas fa-exclamation-triangle"></i>
-                        No hay talleres disponibles para este tipo de trámite.
-                        Por favor, contacte con atención al cliente.
-                    </div>
-                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="alert alert-warning mt-4" role="alert">
+                <i class="fas fa-exclamation-triangle"></i>
+                No hay talleres disponibles para este tipo de tramite.
+                Por favor, contacte con atencion al cliente.
+            </div>
+            {% endif %}
 
-                    {% if talleres %}
-                    <div class="text-center mt-4" data-aos="fade-up">
-                        <a href="{% url 'turnero:step2_vehiculo' %}" class="btn btn-secondary-custom me-2">
-                            <i class="fas fa-arrow-left me-2"></i>Volver
-                        </a>
-                        <button type="submit" class="btn btn-primary-custom btn-lg">
-                            <i class="fas fa-arrow-right me-2"></i>Continuar al Paso 4
-                        </button>
+            {% if talleres %}
+            <div class="text-center mt-4" data-aos="fade-up">
+                <button type="submit" class="btn btn-primary-custom btn-lg">
+                    <i class="fas fa-arrow-right me-2"></i>Continuar al Paso 4
+                </button>
+            </div>
+            {% endif %}
+        </form>
+    </div>
+</div>
+
+<!-- Modal del Mapa -->
+<div class="modal fade" id="mapaModal" tabindex="-1" aria-labelledby="mapaModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="mapaModalLabel">
+                    <i class="fas fa-map-marked-alt"></i>Ubicacion de los Talleres
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+                <div id="map"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Tipos de Trámite -->
+<div class="modal fade" id="tiposTramiteModal" tabindex="-1" aria-labelledby="tiposTramiteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header" style="background: linear-gradient(135deg, var(--primary-color) 0%, #1a4a6e 100%); color: white; border: none;">
+                <h5 class="modal-title" id="tiposTramiteModalLabel">
+                    <i class="fas fa-clipboard-list me-2"></i>Seleccioná el Tipo de Trámite
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body" style="padding: 1.5rem;">
+                <!-- Info del taller seleccionado -->
+                <div class="taller-seleccionado-info mb-4">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="taller-icon-circle">
+                            <i class="fas fa-building"></i>
+                        </div>
+                        <div>
+                            <small class="text-muted">Taller seleccionado</small>
+                            <h6 class="mb-0 fw-bold" id="modalTallerNombre">-</h6>
+                        </div>
                     </div>
-                    {% endif %}
-                </form>
+                </div>
+
+                <!-- Loading -->
+                <div id="tiposTramiteLoading" class="text-center py-4">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Cargando...</span>
+                    </div>
+                    <p class="mt-2 text-muted">Cargando tipos de trámite...</p>
+                </div>
+
+                <!-- Contenedor de tipos de trámite -->
+                <div id="tiposTramiteContainer" style="display: none;">
+                    <p class="text-muted mb-3">
+                        <i class="fas fa-hand-pointer me-2"></i>Seleccioná el tipo de trámite que necesitás realizar:
+                    </p>
+                    <div id="tiposTramiteList" class="tipos-tramite-grid">
+                        <!-- Los tipos de trámite se cargan dinámicamente -->
+                    </div>
+                </div>
+
+                <!-- Sin tipos de trámite -->
+                <div id="tiposTramiteVacio" class="text-center py-4" style="display: none;">
+                    <i class="fas fa-exclamation-circle text-warning" style="font-size: 2.5rem;"></i>
+                    <p class="mt-3 text-muted">No hay tipos de trámite disponibles para este taller.</p>
+                </div>
+            </div>
+            <div class="modal-footer" style="border-top: 1px solid #e9ecef;">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-arrow-left me-2"></i>Volver
+                </button>
+                <button type="button" class="btn btn-primary-custom" id="btnConfirmarTramite" disabled>
+                    <i class="fas fa-check me-2"></i>Confirmar Selección
+                </button>
             </div>
         </div>
     </div>
@@ -260,11 +822,157 @@
 {% block extra_js %}
 <script>
     // Variables globales para el mapa
-    let map;
+    let map = null;
     let markers = [];
     let talleres = [];
+    let mapaInicializado = false;
+    let coordenadasPendientes = null;
 
-    // Función para centrar mapa en taller (definida globalmente)
+    // Variables para el modal de tipos de trámite
+    let tallerSeleccionadoId = null;
+    let tipoTramiteSeleccionadoId = null;
+    let tipoTramiteSeleccionadoNombre = null;
+    let tiposTramiteModal = null;
+
+    // Abrir modal de tipos de trámite al seleccionar taller
+    function abrirModalTiposTramite(tallerId, tallerNombre) {
+        tallerSeleccionadoId = tallerId;
+
+        // Actualizar nombre del taller en el modal
+        document.getElementById('modalTallerNombre').textContent = tallerNombre;
+
+        // Resetear selección de tipo de trámite
+        tipoTramiteSeleccionadoId = null;
+        tipoTramiteSeleccionadoNombre = null;
+        document.getElementById('btnConfirmarTramite').disabled = true;
+
+        // Mostrar loading, ocultar otros
+        document.getElementById('tiposTramiteLoading').style.display = 'block';
+        document.getElementById('tiposTramiteContainer').style.display = 'none';
+        document.getElementById('tiposTramiteVacio').style.display = 'none';
+
+        // Abrir modal
+        if (!tiposTramiteModal) {
+            tiposTramiteModal = new bootstrap.Modal(document.getElementById('tiposTramiteModal'));
+        }
+        tiposTramiteModal.show();
+
+        // Cargar tipos de trámite
+        cargarTiposTramite(tallerId);
+    }
+
+    // Cargar tipos de trámite desde el servidor
+    function cargarTiposTramite(tallerId) {
+        fetch(`{% url 'turnero:tipos_tramite_taller_ajax' %}?taller_id=${tallerId}`)
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('tiposTramiteLoading').style.display = 'none';
+
+                if (data.success && data.tipos_tramite && data.tipos_tramite.length > 0) {
+                    renderizarTiposTramite(data.tipos_tramite);
+                    document.getElementById('tiposTramiteContainer').style.display = 'block';
+                } else {
+                    document.getElementById('tiposTramiteVacio').style.display = 'block';
+                }
+            })
+            .catch(error => {
+                console.error('Error al cargar tipos de trámite:', error);
+                document.getElementById('tiposTramiteLoading').style.display = 'none';
+                document.getElementById('tiposTramiteVacio').style.display = 'block';
+            });
+    }
+
+    // Renderizar la lista de tipos de trámite
+    function renderizarTiposTramite(tipos) {
+        const container = document.getElementById('tiposTramiteList');
+        container.innerHTML = '';
+
+        tipos.forEach(tipo => {
+            const card = document.createElement('div');
+            card.className = 'tipo-tramite-card';
+            card.dataset.tipoId = tipo.id;
+            card.dataset.tipoNombre = tipo.nombre;
+
+            card.innerHTML = `
+                <div class="tipo-tramite-header">
+                    <div class="tipo-tramite-icon">
+                        <i class="fas fa-clipboard-check"></i>
+                    </div>
+                    <div>
+                        <div class="tipo-tramite-nombre">${tipo.nombre}</div>
+                    </div>
+                </div>
+            `;
+
+            card.addEventListener('click', function() {
+                seleccionarTipoTramite(tipo.id, tipo.nombre, this);
+            });
+
+            container.appendChild(card);
+        });
+    }
+
+    // Seleccionar tipo de trámite
+    function seleccionarTipoTramite(tipoId, tipoNombre, elemento) {
+        // Remover selección anterior
+        document.querySelectorAll('.tipo-tramite-card').forEach(card =>
+            card.classList.remove('selected'));
+
+        // Seleccionar este
+        elemento.classList.add('selected');
+        tipoTramiteSeleccionadoId = tipoId;
+        tipoTramiteSeleccionadoNombre = tipoNombre;
+
+        // Habilitar botón de confirmar
+        document.getElementById('btnConfirmarTramite').disabled = false;
+    }
+
+    // Confirmar selección de taller y tipo de trámite
+    function confirmarSeleccion() {
+        if (!tallerSeleccionadoId || !tipoTramiteSeleccionadoId) {
+            return;
+        }
+
+        // Marcar taller como seleccionado
+        document.querySelectorAll('.taller-card').forEach(card =>
+            card.classList.remove('selected'));
+        const tallerCard = document.querySelector(`[data-taller-id="${tallerSeleccionadoId}"]`);
+        if (tallerCard) {
+            tallerCard.classList.add('selected');
+        }
+
+        // Guardar valores en los campos ocultos
+        document.getElementById('taller_selected').value = tallerSeleccionadoId;
+        document.getElementById('tipo_vehiculo_selected').value = tipoTramiteSeleccionadoId;
+
+        // Cerrar modal
+        tiposTramiteModal.hide();
+
+        // Mostrar notificación de éxito
+        if (typeof showSuccess === 'function') {
+            showSuccess(`Taller y trámite seleccionados correctamente`, 'Selección Confirmada');
+        }
+    }
+
+    // Selección de taller desde el mapa (definida globalmente)
+    function seleccionarTallerDesdeMapa(tallerId) {
+        const taller = talleres.find(t => t.id == tallerId);
+        if (taller) {
+            abrirModalTiposTramite(tallerId, taller.nombre);
+        }
+    }
+
+    // Función para abrir el modal y centrar en un taller específico
+    function abrirMapaEnTaller(lat, lng) {
+        // Guardar coordenadas para centrar después de que se abra el modal
+        coordenadasPendientes = { lat: lat, lng: lng };
+
+        // Abrir el modal
+        const modal = new bootstrap.Modal(document.getElementById('mapaModal'));
+        modal.show();
+    }
+
+    // Función para centrar mapa en taller
     function centrarMapa(lat, lng) {
         if (!map || !markers) {
             console.error('Mapa no inicializado');
@@ -272,47 +980,110 @@
         }
 
         // Zoom 15 para ver mejor el taller y calles cercanas
-        map.setView([lat, lng], 15, {
+        map.setView([lat, lng], 16, {
             animate: true,
-            duration: 1
+            duration: 0.5
         });
 
-        // Abrir popup del marcador (usando tolerancia para comparación de floats)
+        // Abrir popup del marcador
         markers.forEach(marker => {
             const markerLat = marker.getLatLng().lat;
             const markerLng = marker.getLatLng().lng;
-            // Comparar con tolerancia de 0.000001 (suficiente para coordenadas GPS)
             if (Math.abs(markerLat - lat) < 0.000001 && Math.abs(markerLng - lng) < 0.000001) {
                 marker.openPopup();
             }
         });
-
-        // Scroll al mapa con mejor posicionamiento
-        setTimeout(() => {
-            document.getElementById('map').scrollIntoView({
-                behavior: 'smooth',
-                block: 'center'
-            });
-        }, 100);
     }
 
-    // Selección de taller (definida globalmente)
-    function seleccionarTaller(tallerId) {
-        // Remover selección anterior
-        document.querySelectorAll('.taller-card').forEach(card =>
-            card.classList.remove('selected'));
-
-        // Seleccionar este
-        const card = document.querySelector(`[data-taller-id="${tallerId}"]`);
-        if (card) {
-            card.classList.add('selected');
-            document.getElementById('taller_selected').value = tallerId;
+    // Inicializar el mapa
+    function inicializarMapa() {
+        if (mapaInicializado) {
+            // Si ya está inicializado, solo invalidar tamaño
+            setTimeout(() => {
+                if (map) {
+                    map.invalidateSize();
+                    // Centrar en coordenadas pendientes si existen
+                    if (coordenadasPendientes) {
+                        centrarMapa(coordenadasPendientes.lat, coordenadasPendientes.lng);
+                        coordenadasPendientes = null;
+                    }
+                }
+            }, 200);
+            return;
         }
+
+        // Crear mapa centrado en Jujuy
+        map = L.map('map').setView([-24.1858, -65.2995], 12);
+
+        // Agregar capa de tiles
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+            subdomains: ['a', 'b', 'c'],
+            maxZoom: 19
+        }).addTo(map);
+
+        // Icono personalizado
+        const tallerIcon = L.icon({
+            iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-violet.png',
+            shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
+            iconSize: [25, 41],
+            iconAnchor: [12, 41],
+            popupAnchor: [1, -34],
+            shadowSize: [41, 41]
+        });
+
+        // Agregar marcadores
+        markers = [];
+        talleres.forEach(taller => {
+            if (isNaN(taller.lat) || isNaN(taller.lng)) {
+                console.error(`Coordenadas invalidas para taller ${taller.nombre}`);
+                return;
+            }
+
+            const marker = L.marker([taller.lat, taller.lng], {icon: tallerIcon})
+                .addTo(map)
+                .bindPopup(`
+                    <h6>${taller.nombre}</h6>
+                    <p style="margin: 0.4rem 0;"><i class="fas fa-map-marker-alt"></i> ${taller.direccion}</p>
+                    <p style="margin: 0.4rem 0;"><i class="fas fa-phone"></i> ${taller.telefono}</p>
+                    <p style="margin: 0.4rem 0;"><i class="fas fa-clock"></i> ${taller.horario}</p>
+                `);
+
+            marker.tallerId = taller.id;
+            markers.push(marker);
+
+            // Click en marcador abre modal de tipos de trámite
+            marker.on('click', function() {
+                seleccionarTallerDesdeMapa(taller.id);
+            });
+        });
+
+        // Ajustar el mapa para mostrar todos los marcadores
+        if (markers.length > 0) {
+            const group = L.featureGroup(markers);
+            if (markers.length === 1) {
+                map.setView([talleres[0].lat, talleres[0].lng], 15);
+            } else {
+                map.fitBounds(group.getBounds().pad(0.1), {maxZoom: 14});
+            }
+        }
+
+        mapaInicializado = true;
+
+        // Invalidar tamaño después de la inicialización
+        setTimeout(() => {
+            map.invalidateSize();
+            // Centrar en coordenadas pendientes si existen
+            if (coordenadasPendientes) {
+                centrarMapa(coordenadasPendientes.lat, coordenadasPendientes.lng);
+                coordenadasPendientes = null;
+            }
+        }, 300);
     }
 
-    // Esperar a que el DOM y Leaflet estén listos
+    // Esperar a que el DOM esté listo
     document.addEventListener('DOMContentLoaded', function() {
-        // Inicializar mapa
+        // Cargar datos de talleres
         talleres = [
             {% for taller in talleres %}
             {
@@ -328,141 +1099,46 @@
             {% endfor %}
         ];
 
-        console.log('Talleres cargados:', talleres);
-
-        // Crear mapa centrado en Jujuy
-        map = L.map('map').setView([-24.1858, -65.2995], 12);
-
-        // Agregar capa de tiles con manejo de errores mejorado
-        const tileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-            subdomains: ['a', 'b', 'c'],
-            maxZoom: 19,
-            crossOrigin: true
+        // Inicializar mapa cuando se abre el modal
+        const mapaModal = document.getElementById('mapaModal');
+        mapaModal.addEventListener('shown.bs.modal', function() {
+            inicializarMapa();
         });
 
-        // Eventos de carga de tiles para debug
-        tileLayer.on('loading', function() {
-            console.log('Empezando a cargar tiles...');
-        });
-
-        tileLayer.on('load', function() {
-            console.log('Tiles cargados exitosamente!');
-        });
-
-        tileLayer.on('tileerror', function(error, tile) {
-            console.error('Error cargando tile:', error);
-            console.error('URL del tile:', tile.src);
-        });
-
-        tileLayer.addTo(map);
-
-        // Forzar que el mapa se redibuje correctamente
-        setTimeout(function() {
-            map.invalidateSize();
-
-            // Debug: verificar que las tiles se están agregando al DOM
-            const mapContainer = document.getElementById('map');
-            const tiles = mapContainer.querySelectorAll('.leaflet-tile');
-            console.log(`Total de tiles en el DOM: ${tiles.length}`);
-
-            if (tiles.length > 0) {
-                console.log('Primera tile encontrada:', tiles[0]);
-                console.log('URL de la primera tile:', tiles[0].src);
-                console.log('Estilo de la primera tile:', window.getComputedStyle(tiles[0]));
-            } else {
-                console.warn('No se encontraron tiles en el DOM!');
-            }
-        }, 500);
-
-    // Icono personalizado
-    const tallerIcon = L.icon({
-        iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-violet.png',
-        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
-        iconSize: [25, 41],
-        iconAnchor: [12, 41],
-        popupAnchor: [1, -34],
-        shadowSize: [41, 41]
-    });
-
-    // Agregar marcadores
-    markers = [];
-    talleres.forEach(taller => {
-        // Validar que las coordenadas sean números válidos
-        if (isNaN(taller.lat) || isNaN(taller.lng)) {
-            console.error(`Coordenadas inválidas para taller ${taller.nombre}: lat=${taller.lat}, lng=${taller.lng}`);
-            return; // Saltar este taller
-        }
-
-        const marker = L.marker([taller.lat, taller.lng], {icon: tallerIcon})
-            .addTo(map)
-            .bindPopup(`
-                <h6>${taller.nombre}</h6>
-                <p style="margin: 0.25rem 0;"><i class="fas fa-map-marker-alt"></i> ${taller.direccion}</p>
-                <p style="margin: 0.25rem 0;"><i class="fas fa-phone"></i> ${taller.telefono}</p>
-                <p style="margin: 0.25rem 0;"><i class="fas fa-clock"></i> ${taller.horario}</p>
-            `);
-
-        marker.tallerId = taller.id;
-        markers.push(marker);
-
-        // Click en marcador selecciona el taller
-        marker.on('click', function() {
-            seleccionarTaller(taller.id);
-        });
-    });
-
-    // Ajustar el mapa para mostrar todos los marcadores
-    if (markers.length > 0) {
-        const group = L.featureGroup(markers);
-        // Si hay un solo marcador, centrar en él con zoom 15 (nivel barrio)
-        if (markers.length === 1) {
-            map.setView([talleres[0].lat, talleres[0].lng], 15);
-        } else {
-            // Si hay varios, ajustar bounds pero con zoom máximo 15
-            map.fitBounds(group.getBounds().pad(0.1), {maxZoom: 15});
-        }
-    }
-
-    // Click en card de taller
-    document.querySelectorAll('.taller-card').forEach(card => {
-        card.addEventListener('click', function(e) {
-            // No seleccionar si se hizo click en el botón de mapa
-            if (e.target.closest('.btn-ver-mapa')) {
-                return;
-            }
-
-            const tallerId = this.getAttribute('data-taller-id');
-            seleccionarTaller(tallerId);
-        });
-    });
-
-    // Validación del formulario
-    document.getElementById('form_taller').addEventListener('submit', function(e) {
-        const tallerSeleccionado = document.getElementById('taller_selected').value;
-
-        if (!tallerSeleccionado) {
-            e.preventDefault();
-            showWarning('Por favor, seleccione un taller antes de continuar', 'Taller Requerido');
-        }
-    });
-
-    // En modo embebido, forzar múltiples invalidaciones del mapa y asegurar scroll
-    if (document.body.classList.contains('embedded-mode')) {
-        // Invalidar mapa varias veces para asegurar renderizado correcto
-        [100, 300, 600, 1000].forEach(function(delay) {
-            setTimeout(function() {
-                if (map) {
-                    map.invalidateSize();
+        // Click en card de taller - abre modal de tipos de trámite
+        document.querySelectorAll('.taller-card').forEach(card => {
+            card.addEventListener('click', function(e) {
+                // No abrir modal si se hizo click en el botón de mapa
+                if (e.target.closest('.btn-ver-mapa')) {
+                    return;
                 }
-            }, delay);
+
+                const tallerId = this.getAttribute('data-taller-id');
+                const tallerNombre = this.querySelector('.taller-nombre').textContent.trim();
+                abrirModalTiposTramite(tallerId, tallerNombre);
+            });
         });
 
-        // Scroll al inicio de la página
-        setTimeout(function() {
-            window.scrollTo(0, 0);
-        }, 100);
-    }
+        // Botón confirmar del modal de tipos de trámite
+        document.getElementById('btnConfirmarTramite').addEventListener('click', confirmarSeleccion);
+
+        // Validación del formulario
+        document.getElementById('form_taller').addEventListener('submit', function(e) {
+            const tallerSeleccionado = document.getElementById('taller_selected').value;
+            const tipoVehiculoSeleccionado = document.getElementById('tipo_vehiculo_selected').value;
+
+            if (!tallerSeleccionado || !tipoVehiculoSeleccionado) {
+                e.preventDefault();
+                showWarning('Por favor, selecciona un taller y un tipo de trámite antes de continuar', 'Selección Requerida');
+            }
+        });
+
+        // Scroll al inicio en modo embebido
+        if (document.body.classList.contains('embedded-mode')) {
+            setTimeout(function() {
+                window.scrollTo(0, 0);
+            }, 100);
+        }
 
     }); // Fin DOMContentLoaded
 </script>

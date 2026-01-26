@@ -1,98 +1,366 @@
-<div class="modal-header" style="background: linear-gradient(135deg, var(--theme-primary) 0%, var(--theme-primary-dark) 100%);">
-    <h5 class="modal-title text-white">
-        <i class="fa fa-calendar-plus me-2"></i>{{ titulo }}
-    </h5>
-    <button type="button" class="close text-white" onclick="$('#modal-fullscreen').modal('hide');" aria-label="Cerrar">
-        <span aria-hidden="true">&times;</span>
-    </button>
-</div>
-
 <style>
-    .section-container {
-        margin-bottom: 1.5rem;
+    /* ========================================
+       FORM TURNO - DISENO PROFESIONAL
+       ======================================== */
+
+    .turno-form-container {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    /* Header del Modal */
+    .turno-form-header {
+        background: linear-gradient(135deg, var(--theme-primary) 0%, var(--theme-primary-dark, #3d1730) 100%);
+        padding: 1.25rem 1.5rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .turno-form-header h5 {
+        margin: 0;
+        color: white;
+        font-size: 1.15rem;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .turno-form-header .close-btn {
+        background: rgba(255,255,255,0.15);
+        border: none;
+        color: white;
+        width: 36px;
+        height: 36px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 1.25rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background 0.2s;
+    }
+
+    .turno-form-header .close-btn:hover {
+        background: rgba(255,255,255,0.25);
+    }
+
+    /* Body del Form */
+    .turno-form-body {
+        padding: 1.5rem;
+        background: #f8fafc;
+        max-height: 65vh;
+        overflow-y: auto;
+    }
+
+    /* Secciones */
+    .form-section {
+        background: white;
+        border-radius: 12px;
+        margin-bottom: 1.25rem;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        border: 1px solid #e2e8f0;
+        overflow: hidden;
+    }
+
+    .form-section:last-child {
+        margin-bottom: 0;
     }
 
     .section-header {
+        background: linear-gradient(to right, #f8fafc, white);
+        padding: 0.875rem 1.25rem;
+        border-bottom: 1px solid #e2e8f0;
         display: flex;
         align-items: center;
-        margin-bottom: 1rem;
-        padding-bottom: 0.5rem;
-        border-bottom: 2px solid var(--theme-primary);
+        gap: 0.75rem;
+    }
+
+    .section-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 8px;
+        background: var(--theme-primary);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1rem;
     }
 
     .section-title {
-        margin: 0;
-        font-size: 1.1rem;
+        font-size: 0.95rem;
         font-weight: 600;
-        color: #2c3e50;
+        color: #1e293b;
+        margin: 0;
     }
 
-    .form-label {
-        font-weight: 500;
-        color: #495057;
-        margin-bottom: 0.5rem;
+    .section-subtitle {
+        font-size: 0.75rem;
+        color: #64748b;
+        margin-top: 0.15rem;
     }
 
-    .form-label i {
-        font-size: 0.9rem;
+    .section-body {
+        padding: 1.25rem;
     }
 
-    .card.border-light {
-        border: 1px solid #e0e0e0 !important;
-        border-radius: 0.5rem;
-    }
-
-    .card-body {
-        background-color: #fafafa;
-    }
-
-    .btn-orange {
-        background-color: var(--theme-primary);
-        border-color: var(--theme-primary);
-        color: white;
-        font-weight: 500;
-        transition: all 0.3s ease;
-    }
-
-    .btn-orange:hover {
-        background-color: var(--theme-primary-dark);
-        border-color: var(--theme-primary-dark);
-        color: white;
-    }
-
-    .btn-outline-orange {
-        border-color: var(--theme-primary);
-        color: var(--theme-primary);
-        background: transparent;
-    }
-
-    .btn-outline-orange:hover {
-        background-color: var(--theme-primary);
-        border-color: var(--theme-primary);
-        color: white;
-    }
-
-    .form-group {
+    /* Campos del formulario */
+    .form-row {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 1rem;
         margin-bottom: 1rem;
     }
 
-    .shadow-sm {
-        box-shadow: 0 0.125rem 0.5rem rgba(0, 0, 0, 0.075) !important;
+    .form-row:last-child {
+        margin-bottom: 0;
+    }
+
+    .form-group {
+        margin-bottom: 0;
+    }
+
+    .form-label {
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: #475569;
+        margin-bottom: 0.5rem;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+    }
+
+    .form-label i {
+        color: var(--theme-primary);
+        font-size: 0.85rem;
+    }
+
+    .form-label .required {
+        color: #ef4444;
+        margin-left: 0.15rem;
+    }
+
+    .form-control {
+        border: 1.5px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 0.65rem 0.875rem;
+        font-size: 0.9rem;
+        transition: all 0.2s;
+        background: white;
+    }
+
+    .form-control:focus {
+        border-color: var(--theme-primary);
+        box-shadow: 0 0 0 3px rgba(87, 32, 67, 0.1);
+        outline: none;
+    }
+
+    .form-control:disabled,
+    .form-control[readonly] {
+        background: #f1f5f9;
+        color: #64748b;
+        cursor: not-allowed;
+    }
+
+    /* Campo readonly con valor destacado */
+    .readonly-value {
+        background: #f8fafc;
+        border: 1.5px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 0.65rem 0.875rem;
+        font-size: 0.9rem;
+        color: #1e293b;
+        font-weight: 500;
+    }
+
+    .readonly-value.highlight {
+        background: linear-gradient(135deg, #faf5f8 0%, #f8fafc 100%);
+        border-color: var(--theme-primary);
+        border-left-width: 4px;
+    }
+
+    /* Input group para botones de agregar */
+    .input-with-btn {
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .input-with-btn .form-control,
+    .input-with-btn .select2-container {
+        flex: 1;
+    }
+
+    .btn-add {
+        width: 42px;
+        height: 42px;
+        border-radius: 8px;
+        background: var(--theme-primary);
+        border: none;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.2s;
+        flex-shrink: 0;
+    }
+
+    .btn-add:hover {
+        background: var(--theme-primary-dark, #3d1730);
+        transform: translateY(-1px);
     }
 
     /* Select2 personalizado */
     .select2-container--default .select2-selection--single {
-        height: 38px;
-        border: 1px solid #ced4da;
+        height: 42px;
+        border: 1.5px solid #e2e8f0;
+        border-radius: 8px;
+        background: white;
     }
 
     .select2-container--default .select2-selection--single .select2-selection__rendered {
-        line-height: 36px;
-        color: #495057;
+        line-height: 40px;
+        padding-left: 0.875rem;
+        color: #1e293b;
     }
 
     .select2-container--default .select2-selection--single .select2-selection__arrow {
-        height: 36px;
+        height: 40px;
+        right: 8px;
+    }
+
+    .select2-container--default.select2-container--focus .select2-selection--single {
+        border-color: var(--theme-primary);
+        box-shadow: 0 0 0 3px rgba(87, 32, 67, 0.1);
+    }
+
+    /* Textarea */
+    textarea.form-control {
+        min-height: 100px;
+        resize: vertical;
+    }
+
+    /* Checkboxes mejorados */
+    .checkbox-group {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 0.75rem;
+    }
+
+    .checkbox-item {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.75rem 1rem;
+        background: #f8fafc;
+        border-radius: 8px;
+        border: 1px solid #e2e8f0;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .checkbox-item:hover {
+        background: #f1f5f9;
+        border-color: #cbd5e1;
+    }
+
+    .checkbox-item input[type="checkbox"] {
+        width: 18px;
+        height: 18px;
+        accent-color: var(--theme-primary);
+        cursor: pointer;
+    }
+
+    .checkbox-item label {
+        margin: 0;
+        cursor: pointer;
+        font-size: 0.85rem;
+        color: #475569;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .checkbox-item label i {
+        font-size: 1rem;
+    }
+
+    .checkbox-item.checked {
+        background: #ecfdf5;
+        border-color: #10b981;
+    }
+
+    .checkbox-item.checked label {
+        color: #065f46;
+    }
+
+    /* Info text */
+    .form-text {
+        font-size: 0.75rem;
+        color: #94a3b8;
+        margin-top: 0.4rem;
+        display: flex;
+        align-items: center;
+        gap: 0.35rem;
+    }
+
+    .form-text i {
+        font-size: 0.7rem;
+    }
+
+    /* Footer del Form */
+    .turno-form-footer {
+        padding: 1rem 1.5rem;
+        background: white;
+        border-top: 1px solid #e2e8f0;
+        display: flex;
+        justify-content: flex-end;
+        gap: 0.75rem;
+    }
+
+    .btn-submit {
+        background: var(--theme-primary);
+        border: none;
+        color: white;
+        padding: 0.65rem 1.5rem;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .btn-submit:hover {
+        background: var(--theme-primary-dark, #3d1730);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(87, 32, 67, 0.3);
+    }
+
+    .btn-cancel {
+        background: white;
+        border: 1.5px solid #e2e8f0;
+        color: #64748b;
+        padding: 0.65rem 1.5rem;
+        border-radius: 8px;
+        font-weight: 500;
+        font-size: 0.9rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .btn-cancel:hover {
+        background: #f8fafc;
+        border-color: #cbd5e1;
+        color: #475569;
     }
 
     /* Flatpickr personalizado */
@@ -101,7 +369,7 @@
     }
 
     .flatpickr-input:disabled {
-        background-color: #e9ecef !important;
+        background-color: #f1f5f9 !important;
     }
 
     .flatpickr-day.flatpickr-disabled,
@@ -141,295 +409,579 @@
         color: white !important;
     }
 
-    .flatpickr-months .flatpickr-prev-month:hover svg,
-    .flatpickr-months .flatpickr-next-month:hover svg {
-        fill: #ddd !important;
-    }
-
     .flatpickr-weekdays {
         background: #f8f9fa !important;
     }
 
     .flatpickr-weekday {
-        color: #572043 !important;
+        color: var(--theme-primary) !important;
         font-weight: 600 !important;
+    }
+
+    /* Alert info */
+    .info-alert {
+        background: #eff6ff;
+        border: 1px solid #bfdbfe;
+        border-radius: 8px;
+        padding: 0.75rem 1rem;
+        display: flex;
+        align-items: flex-start;
+        gap: 0.75rem;
+        margin-bottom: 1rem;
+    }
+
+    .info-alert i {
+        color: #3b82f6;
+        font-size: 1.1rem;
+        margin-top: 0.1rem;
+    }
+
+    .info-alert-text {
+        font-size: 0.85rem;
+        color: #1e40af;
+        line-height: 1.4;
+    }
+
+    /* Responsive - Tablets */
+    @media (max-width: 992px) {
+        .turno-form-body {
+            max-height: 60vh;
+        }
+
+        .form-row {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    /* Responsive - Moviles */
+    @media (max-width: 768px) {
+        .turno-form-header {
+            padding: 1rem 1.25rem;
+        }
+
+        .turno-form-header h5 {
+            font-size: 1rem;
+        }
+
+        .turno-form-body {
+            padding: 1rem;
+            max-height: 55vh;
+        }
+
+        .form-section {
+            margin-bottom: 1rem;
+            border-radius: 10px;
+        }
+
+        .section-header {
+            padding: 0.75rem 1rem;
+        }
+
+        .section-icon {
+            width: 32px;
+            height: 32px;
+            font-size: 0.9rem;
+        }
+
+        .section-title {
+            font-size: 0.9rem;
+        }
+
+        .section-subtitle {
+            font-size: 0.7rem;
+        }
+
+        .section-body {
+            padding: 1rem;
+        }
+
+        .form-row {
+            grid-template-columns: 1fr;
+            gap: 0.875rem;
+        }
+
+        .form-label {
+            font-size: 0.75rem;
+        }
+
+        .form-control {
+            padding: 0.6rem 0.75rem;
+            font-size: 0.85rem;
+        }
+
+        .readonly-value {
+            padding: 0.6rem 0.75rem;
+            font-size: 0.85rem;
+        }
+
+        .btn-add {
+            width: 38px;
+            height: 38px;
+        }
+
+        .select2-container--default .select2-selection--single {
+            height: 38px;
+        }
+
+        .select2-container--default .select2-selection--single .select2-selection__rendered {
+            line-height: 36px;
+        }
+
+        .select2-container--default .select2-selection--single .select2-selection__arrow {
+            height: 36px;
+        }
+
+        .checkbox-group {
+            grid-template-columns: 1fr;
+        }
+
+        .checkbox-item {
+            padding: 0.65rem 0.875rem;
+        }
+
+        .checkbox-item label {
+            font-size: 0.8rem;
+        }
+
+        .turno-form-footer {
+            padding: 1rem;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .turno-form-footer button {
+            width: 100%;
+            justify-content: center;
+            padding: 0.75rem 1rem;
+        }
+
+        .info-alert {
+            padding: 0.65rem 0.875rem;
+        }
+
+        .info-alert i {
+            font-size: 1rem;
+        }
+
+        .info-alert-text {
+            font-size: 0.8rem;
+        }
+    }
+
+    /* Responsive - Moviles pequenos */
+    @media (max-width: 480px) {
+        .turno-form-header {
+            padding: 0.875rem 1rem;
+        }
+
+        .turno-form-header h5 {
+            font-size: 0.95rem;
+            gap: 0.4rem;
+        }
+
+        .turno-form-header .close-btn {
+            width: 32px;
+            height: 32px;
+            font-size: 1.1rem;
+        }
+
+        .turno-form-body {
+            padding: 0.75rem;
+        }
+
+        .form-section {
+            margin-bottom: 0.75rem;
+        }
+
+        .section-header {
+            padding: 0.65rem 0.875rem;
+            gap: 0.5rem;
+        }
+
+        .section-icon {
+            width: 28px;
+            height: 28px;
+            font-size: 0.8rem;
+            border-radius: 6px;
+        }
+
+        .section-title {
+            font-size: 0.85rem;
+        }
+
+        .section-body {
+            padding: 0.875rem;
+        }
+
+        .form-row {
+            gap: 0.75rem;
+        }
+
+        .form-label {
+            font-size: 0.7rem;
+            margin-bottom: 0.4rem;
+        }
+
+        .form-control {
+            padding: 0.55rem 0.65rem;
+            font-size: 0.8rem;
+            border-radius: 6px;
+        }
+
+        .readonly-value {
+            padding: 0.55rem 0.65rem;
+            font-size: 0.8rem;
+            border-radius: 6px;
+        }
+
+        textarea.form-control {
+            min-height: 80px;
+        }
+
+        .turno-form-footer {
+            padding: 0.875rem;
+        }
+
+        .btn-submit, .btn-cancel {
+            font-size: 0.85rem;
+            padding: 0.65rem 1rem;
+        }
     }
 </style>
 
 <!-- Flatpickr CSS -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/material_blue.css">
 
-<form id="turno_form" method="POST" novalidate>
-    {% csrf_token %}
-    <input hidden id="pk" name="pk" value="{% if pk %}{{ pk }}{% endif %}">
+<div class="turno-form-container">
+    <!-- Header -->
+    <div class="turno-form-header">
+        <h5>
+            <i class="fa fa-{% if turno %}edit{% else %}calendar-plus{% endif %}"></i>
+            {{ titulo }}
+        </h5>
+        <button type="button" class="close-btn" onclick="$('#modal-lg').modal('hide');">
+            <i class="fa fa-times"></i>
+        </button>
+    </div>
 
-    <div class="modal-body">
-        <!-- Sección: Datos del Cliente -->
-        <div class="section-container mb-4">
-            <div class="section-header">
-                <i class="fa fa-user text-primary me-2"></i>
-                <h6 class="section-title">Datos del Cliente</h6>
+    <form id="turno_form" method="POST" novalidate>
+        {% csrf_token %}
+        <input type="hidden" id="pk" name="pk" value="{% if pk %}{{ pk }}{% endif %}">
+
+        <div class="turno-form-body">
+            {% if turno %}
+            <!-- Info de edicion -->
+            <div class="info-alert">
+                <i class="fa fa-info-circle"></i>
+                <div class="info-alert-text">
+                    <strong>Modo Edicion:</strong> Los datos del cliente, vehiculo, taller y tipo de tramite no pueden modificarse.
+                    Para cambiarlos, cancele este turno y cree uno nuevo.
+                </div>
             </div>
+            {% endif %}
 
-            <div class="card border-light shadow-sm">
-                <div class="card-body p-3">
-                    <div class="row">
-                        <div class="col-lg-6 col-md-12 form-group mb-3">
-                            <label for="cliente" class="form-label">
-                                <i class="fa fa-user text-muted me-1"></i>
-                                Cliente *
+            <!-- SECCION: CLIENTE -->
+            <div class="form-section">
+                <div class="section-header">
+                    <div class="section-icon">
+                        <i class="fa fa-user"></i>
+                    </div>
+                    <div>
+                        <h6 class="section-title">Cliente</h6>
+                        <p class="section-subtitle">Datos del titular del turno</p>
+                    </div>
+                </div>
+                <div class="section-body">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fa fa-user"></i>
+                                Cliente <span class="required">*</span>
                             </label>
                             {% if turno %}
-                            <!-- Modo edición: campo solo lectura -->
-                            <input type="text" class="form-control" value="{{ turno.cliente.dni }} - {{ turno.cliente.nombre }} {{ turno.cliente.apellido }}" readonly style="background-color: #e9ecef;">
+                            <div class="readonly-value highlight">
+                                <i class="fa fa-id-card me-2" style="color: var(--theme-primary);"></i>
+                                {{ turno.cliente.dni }} - {{ turno.cliente.nombre }} {{ turno.cliente.apellido }}
+                            </div>
                             <input type="hidden" id="cliente" name="cliente" value="{{ turno.cliente.id }}">
                             {% else %}
-                            <!-- Modo nuevo turno: campo editable -->
-                            <div class="input-group">
-                                <select id="cliente" name="cliente" class="form-control select2" required style="width: calc(100% - 42px) !important;">
-                                    <option value="">Seleccione un cliente</option>
+                            <div class="input-with-btn">
+                                <select id="cliente" name="cliente" class="form-control select2" required>
+                                    <option value="">Buscar cliente por DNI o nombre...</option>
                                     {% for c in clientes %}
-                                    <option value="{{ c.id }}">
-                                        {{ c.dni }} - {{ c.nombre }} {{ c.apellido }}
-                                    </option>
+                                    <option value="{{ c.id }}">{{ c.dni }} - {{ c.nombre }} {{ c.apellido }}</option>
                                     {% endfor %}
                                 </select>
-                                <div class="input-group-append">
-                                    <button type="button" class="btn btn-agregar-cliente" title="Agregar nuevo cliente" style="height: 38px; border-top-left-radius: 0; border-bottom-left-radius: 0; background-color: var(--theme-primary); border-color: var(--theme-primary); color: white;">
-                                        <i class="fa fa-plus"></i>
-                                    </button>
-                                </div>
+                                <button type="button" class="btn-add btn-agregar-cliente" title="Agregar nuevo cliente">
+                                    <i class="fa fa-plus"></i>
+                                </button>
                             </div>
-                            <div class="invalid-feedback">Debe seleccionar un cliente</div>
                             {% endif %}
                         </div>
-                        <div class="col-lg-6 col-md-12 form-group mb-3">
-                            <label for="vehiculo" class="form-label">
-                                <i class="fa fa-car text-muted me-1"></i>
-                                Vehículo *
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fa fa-car"></i>
+                                Vehiculo <span class="required">*</span>
                             </label>
                             {% if turno %}
-                            <!-- Modo edición: campo solo lectura -->
-                            <input type="text" class="form-control" value="{{ turno.vehiculo.dominio }}{% if turno.vehiculo.tipo_vehiculo %} - {{ turno.vehiculo.tipo_vehiculo.nombre_normalizado }}{% endif %}{% if turno.vehiculo.tiene_gnc %} (GNC){% endif %}" readonly style="background-color: #e9ecef;">
+                            <div class="readonly-value highlight">
+                                <i class="fa fa-car me-2" style="color: var(--theme-primary);"></i>
+                                {{ turno.vehiculo.dominio }}
+                                {% if turno.vehiculo.marca %} - {{ turno.vehiculo.marca }}{% endif %}
+                                {% if turno.vehiculo.modelo %} {{ turno.vehiculo.modelo }}{% endif %}
+                                {% if turno.vehiculo.tiene_gnc %}<span class="badge bg-warning text-dark ms-2">GNC</span>{% endif %}
+                            </div>
                             <input type="hidden" id="vehiculo" name="vehiculo" value="{{ turno.vehiculo.id }}">
                             {% else %}
-                            <!-- Modo nuevo turno: campo editable -->
-                            <div class="input-group">
-                                <select id="vehiculo" name="vehiculo" class="form-control select2" required style="width: calc(100% - 42px) !important;">
-                                    <option value="">Seleccione un vehículo</option>
+                            <div class="input-with-btn">
+                                <select id="vehiculo" name="vehiculo" class="form-control select2" required>
+                                    <option value="">Primero seleccione un cliente</option>
                                 </select>
-                                <div class="input-group-append">
-                                    <button type="button" class="btn btn-agregar-vehiculo" title="Agregar nuevo vehículo" style="height: 38px; border-top-left-radius: 0; border-bottom-left-radius: 0; background-color: var(--theme-primary); border-color: var(--theme-primary); color: white;">
-                                        <i class="fa fa-plus"></i>
-                                    </button>
-                                </div>
+                                <button type="button" class="btn-add btn-agregar-vehiculo" title="Agregar nuevo vehiculo">
+                                    <i class="fa fa-plus"></i>
+                                </button>
                             </div>
-                            <div class="invalid-feedback">Debe seleccionar un vehículo</div>
-                            <small class="form-text text-muted">
-                                <i class="fa fa-info-circle me-1"></i>
-                                Primero seleccione un cliente para ver sus vehículos
-                            </small>
+                            <span class="form-text"><i class="fa fa-info-circle"></i> Seleccione un cliente para ver sus vehiculos</span>
                             {% endif %}
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Sección: Datos del Turno -->
-        <div class="section-container mb-4">
-            <div class="section-header">
-                <i class="fa fa-calendar text-primary me-2"></i>
-                <h6 class="section-title">Datos del Turno</h6>
-            </div>
-
-            <div class="card border-light shadow-sm">
-                <div class="card-body p-3">
-                    <div class="row">
-                        <div class="col-lg-4 col-md-6 form-group mb-3">
-                            <label for="taller" class="form-label">
-                                <i class="fa fa-building text-muted me-1"></i>
-                                Taller *
+            <!-- SECCION: TURNO -->
+            <div class="form-section">
+                <div class="section-header">
+                    <div class="section-icon">
+                        <i class="fa fa-calendar"></i>
+                    </div>
+                    <div>
+                        <h6 class="section-title">Datos del Turno</h6>
+                        <p class="section-subtitle">Taller, fecha y horario de la cita</p>
+                    </div>
+                </div>
+                <div class="section-body">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fa fa-building"></i>
+                                Taller <span class="required">*</span>
                             </label>
                             {% if turno %}
-                            <!-- Modo edición: campo solo lectura -->
-                            <input type="text" class="form-control" value="{{ turno.taller.get_nombre }}" readonly style="background-color: #e9ecef;">
+                            <div class="readonly-value">{{ turno.taller.get_nombre }}</div>
                             <input type="hidden" id="taller" name="taller" value="{{ turno.taller.id }}">
                             {% else %}
-                            <!-- Modo nuevo turno: campo editable -->
                             <select id="taller" name="taller" class="form-control select2" required>
-                                <option value="">Seleccione un taller</option>
+                                <option value="">Seleccione un taller...</option>
                                 {% for t in talleres %}
-                                <option value="{{ t.id }}">
-                                    {{ t.get_nombre }}
-                                </option>
+                                <option value="{{ t.id }}">{{ t.get_nombre }}</option>
                                 {% endfor %}
                             </select>
-                            <div class="invalid-feedback">Debe seleccionar un taller</div>
                             {% endif %}
                         </div>
-                        <div class="col-lg-4 col-md-6 form-group mb-3">
-                            <label for="tipo_vehiculo" class="form-label">
-                                <i class="fa fa-tag text-muted me-1"></i>
-                                Tipo de Trámite *
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fa fa-tag"></i>
+                                Tipo de Tramite <span class="required">*</span>
                             </label>
                             {% if turno %}
-                            <!-- Modo edición: campo solo lectura -->
-                            <input type="text" class="form-control" value="{{ turno.tipo_vehiculo.nombre_normalizado }}" readonly style="background-color: #e9ecef;">
+                            <div class="readonly-value">{{ turno.tipo_vehiculo.nombre_normalizado }}</div>
                             <input type="hidden" id="tipo_vehiculo" name="tipo_vehiculo" value="{{ turno.tipo_vehiculo.id }}">
                             {% else %}
-                            <!-- Modo nuevo turno: campo editable -->
                             <select id="tipo_vehiculo" name="tipo_vehiculo" class="form-control select2" required disabled>
                                 <option value="">Primero seleccione un taller</option>
                             </select>
-                            <div class="invalid-feedback">Debe seleccionar un tipo de trámite</div>
-                            <small class="form-text text-muted" id="help-tipo-tramite">
-                                <i class="fa fa-info-circle me-1"></i>
-                                Seleccione un taller para ver los trámites disponibles
-                            </small>
-                            {% endif %}
-                        </div>
-                        <div class="col-lg-4 col-md-6 form-group mb-3">
-                            <label for="fecha" class="form-label">
-                                <i class="fa fa-calendar text-muted me-1"></i>
-                                Fecha del Turno *
-                            </label>
-                            <input type="text" id="fecha" name="fecha" class="form-control" required
-                                   value="{% if turno %}{{ turno.fecha|date:'Y-m-d' }}{% endif %}"
-                                   placeholder="Seleccione una fecha"
-                                   readonly>
-                            <div class="invalid-feedback">Debe seleccionar una fecha</div>
-                            <small id="info-dias-atencion" class="form-text text-muted" style="display: none;">
-                                <i class="fa fa-info-circle me-1"></i>
-                                <span id="texto-dias-atencion"></span>
-                            </small>
-                            {% if not turno %}
-                            <small class="form-text text-muted" id="help-fecha">
-                                <i class="fa fa-info-circle me-1"></i>
-                                Seleccione un tipo de trámite primero
-                            </small>
+                            <span class="form-text" id="help-tipo-tramite"><i class="fa fa-info-circle"></i> Seleccione un taller para ver los tramites</span>
                             {% endif %}
                         </div>
                     </div>
 
-                    <div class="row">
-                        <div class="col-lg-8 col-md-12 form-group mb-3">
-                            <label for="horario_turno" class="form-label">
-                                <i class="fa fa-clock-o text-muted me-1"></i>
-                                Horario del Turno *
+                    {% if turno %}
+                    <!-- MODO EDICION: Mostrar fecha actual + campo para cambiar -->
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fa fa-calendar"></i>
+                                Fecha Actual del Turno
+                            </label>
+                            <div class="readonly-value highlight">
+                                <i class="fa fa-calendar-check-o me-2" style="color: var(--theme-primary);"></i>
+                                {{ turno.fecha|date:'d/m/Y' }} ({{ turno.fecha|date:'l' }})
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fa fa-calendar-plus-o"></i>
+                                Cambiar Fecha <span class="required">*</span>
+                            </label>
+                            <input type="text" id="fecha" name="fecha" class="form-control" required
+                                   placeholder="Seleccione una nueva fecha">
+                            <span class="form-text" id="info-dias-atencion" style="display: none;">
+                                <i class="fa fa-calendar-check-o"></i>
+                                <span id="texto-dias-atencion"></span>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fa fa-clock-o"></i>
+                                Horario Actual
+                            </label>
+                            <div class="readonly-value highlight">
+                                <i class="fa fa-clock-o me-2" style="color: var(--theme-primary);"></i>
+                                {{ turno.hora_inicio|time:'H:i' }} - {{ turno.hora_fin|time:'H:i' }}
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fa fa-clock-o"></i>
+                                Cambiar Horario <span class="required">*</span>
                             </label>
                             <select id="horario_turno" class="form-control select2">
-                                <option value="">{% if turno %}{{ turno.hora_inicio|time:'H:i' }} - {{ turno.hora_fin|time:'H:i' }}{% else %}Seleccione una fecha primero{% endif %}</option>
+                                <option value="">Primero seleccione una nueva fecha</option>
                             </select>
-                            <input type="hidden" id="hora_inicio" name="hora_inicio" value="{% if turno %}{{ turno.hora_inicio|time:'H:i' }}{% endif %}">
-                            <input type="hidden" id="hora_fin" name="hora_fin" value="{% if turno %}{{ turno.hora_fin|time:'H:i' }}{% endif %}">
-                            <div class="invalid-feedback">Debe seleccionar un horario</div>
-                            <small id="info-horario" class="form-text text-muted" style="display: none;">
-                                <i class="fa fa-clock-o me-1"></i>
-                                Horario de atención: <span id="texto-horario"></span>
-                            </small>
+                            <input type="hidden" id="hora_inicio" name="hora_inicio" value="">
+                            <input type="hidden" id="hora_fin" name="hora_fin" value="">
+                            <span class="form-text" id="info-horario" style="display: none;">
+                                <i class="fa fa-clock-o"></i>
+                                Horario de atencion: <span id="texto-horario"></span>
+                            </span>
                         </div>
-                        <div class="col-lg-4 col-md-6 form-group mb-3">
-                            <label for="estado" class="form-label">
-                                <i class="fa fa-flag text-muted me-1"></i>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fa fa-flag"></i>
                                 Estado
                             </label>
-                            {% if turno %}
                             <select id="estado" name="estado" class="form-control">
                                 <option value="PENDIENTE" {% if turno.estado == 'PENDIENTE' %}selected{% endif %}>Pendiente</option>
                                 <option value="CONFIRMADO" {% if turno.estado == 'CONFIRMADO' %}selected{% endif %}>Confirmado</option>
                                 <option value="EN_CURSO" {% if turno.estado == 'EN_CURSO' %}selected{% endif %}>En Curso</option>
                                 <option value="COMPLETADO" {% if turno.estado == 'COMPLETADO' %}selected{% endif %}>Completado</option>
                                 <option value="CANCELADO" {% if turno.estado == 'CANCELADO' %}selected{% endif %}>Cancelado</option>
-                                <option value="NO_ASISTIO" {% if turno.estado == 'NO_ASISTIO' %}selected{% endif %}>No Asistió</option>
+                                <option value="NO_ASISTIO" {% if turno.estado == 'NO_ASISTIO' %}selected{% endif %}>No Asistio</option>
                             </select>
-                            {% else %}
-                            <input type="text" class="form-control" value="Pendiente" readonly style="background-color: #e9ecef;">
-                            <input type="hidden" id="estado" name="estado" value="PENDIENTE">
-                            {% endif %}
                         </div>
                     </div>
+                    {% else %}
+                    <!-- MODO CREACION: Solo campos para seleccionar -->
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fa fa-calendar"></i>
+                                Fecha <span class="required">*</span>
+                            </label>
+                            <input type="text" id="fecha" name="fecha" class="form-control" required
+                                   placeholder="Seleccione una fecha" disabled>
+                            <span class="form-text" id="info-dias-atencion" style="display: none;">
+                                <i class="fa fa-calendar-check-o"></i>
+                                <span id="texto-dias-atencion"></span>
+                            </span>
+                            <span class="form-text" id="help-fecha"><i class="fa fa-info-circle"></i> Seleccione un tipo de tramite primero</span>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fa fa-clock-o"></i>
+                                Horario <span class="required">*</span>
+                            </label>
+                            <select id="horario_turno" class="form-control select2" disabled>
+                                <option value="">Seleccione una fecha primero</option>
+                            </select>
+                            <input type="hidden" id="hora_inicio" name="hora_inicio" value="">
+                            <input type="hidden" id="hora_fin" name="hora_fin" value="">
+                            <span class="form-text" id="info-horario" style="display: none;">
+                                <i class="fa fa-clock-o"></i>
+                                Horario de atencion: <span id="texto-horario"></span>
+                            </span>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fa fa-flag"></i>
+                                Estado
+                            </label>
+                            <div class="readonly-value">
+                                <i class="fa fa-circle me-2" style="color: #fbbf24; font-size: 0.6rem;"></i>
+                                Pendiente
+                            </div>
+                            <input type="hidden" id="estado" name="estado" value="PENDIENTE">
+                        </div>
+                    </div>
+                    {% endif %}
                 </div>
             </div>
-        </div>
 
-        <!-- Sección: Observaciones -->
-        <div class="section-container mb-4">
-            <div class="section-header">
-                <i class="fa fa-comment text-primary me-2"></i>
-                <h6 class="section-title">Observaciones</h6>
-            </div>
-
-            <div class="card border-light shadow-sm">
-                <div class="card-body p-3">
-                    <div class="form-group mb-0">
-                        <label for="observaciones" class="form-label">
-                            <i class="fa fa-pencil text-muted me-1"></i>
-                            Notas adicionales
-                        </label>
+            <!-- SECCION: OBSERVACIONES -->
+            <div class="form-section">
+                <div class="section-header">
+                    <div class="section-icon">
+                        <i class="fa fa-comment"></i>
+                    </div>
+                    <div>
+                        <h6 class="section-title">Observaciones</h6>
+                        <p class="section-subtitle">Notas o informacion adicional</p>
+                    </div>
+                </div>
+                <div class="section-body">
+                    <div class="form-group">
                         <textarea id="observaciones" name="observaciones" class="form-control" rows="3"
                                   placeholder="Ingrese observaciones o notas adicionales sobre el turno...">{% if turno %}{{ turno.observaciones }}{% endif %}</textarea>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Sección: Notificaciones (solo en edición) -->
-        {% if turno %}
-        <div class="section-container mb-4">
-            <div class="section-header">
-                <i class="fa fa-bell text-primary me-2"></i>
-                <h6 class="section-title">Estado de Notificaciones</h6>
-            </div>
-
-            <div class="card border-light shadow-sm">
-                <div class="card-body p-3">
-                    <div class="row">
-                        <div class="col-lg-4 col-md-6 form-group mb-3">
-                            <div class="form-check">
-                                <input type="checkbox" class="form-check-input" id="email_enviado" name="email_enviado"
-                                       {% if turno.email_enviado %}checked{% endif %}>
-                                <label class="form-check-label" for="email_enviado">
-                                    <i class="fa fa-envelope text-info me-1"></i> Email de confirmación enviado
-                                </label>
-                            </div>
+            <!-- SECCION: NOTIFICACIONES (solo en edicion) -->
+            {% if turno %}
+            <div class="form-section">
+                <div class="section-header">
+                    <div class="section-icon">
+                        <i class="fa fa-bell"></i>
+                    </div>
+                    <div>
+                        <h6 class="section-title">Notificaciones</h6>
+                        <p class="section-subtitle">Estado de envio de notificaciones</p>
+                    </div>
+                </div>
+                <div class="section-body">
+                    <div class="checkbox-group">
+                        <div class="checkbox-item {% if turno.email_enviado %}checked{% endif %}">
+                            <input type="checkbox" id="email_enviado" name="email_enviado" {% if turno.email_enviado %}checked{% endif %}>
+                            <label for="email_enviado">
+                                <i class="fa fa-envelope text-info"></i>
+                                Email de confirmacion
+                            </label>
                         </div>
-                        <div class="col-lg-4 col-md-6 form-group mb-3">
-                            <div class="form-check">
-                                <input type="checkbox" class="form-check-input" id="whatsapp_enviado" name="whatsapp_enviado"
-                                       {% if turno.whatsapp_enviado %}checked{% endif %}>
-                                <label class="form-check-label" for="whatsapp_enviado">
-                                    <i class="fa fa-whatsapp text-success me-1"></i> WhatsApp enviado
-                                </label>
-                            </div>
+                        <div class="checkbox-item {% if turno.whatsapp_enviado %}checked{% endif %}">
+                            <input type="checkbox" id="whatsapp_enviado" name="whatsapp_enviado" {% if turno.whatsapp_enviado %}checked{% endif %}>
+                            <label for="whatsapp_enviado">
+                                <i class="fa fa-whatsapp text-success"></i>
+                                WhatsApp enviado
+                            </label>
                         </div>
-                        <div class="col-lg-4 col-md-6 form-group mb-3">
-                            <div class="form-check">
-                                <input type="checkbox" class="form-check-input" id="recordatorio_enviado" name="recordatorio_enviado"
-                                       {% if turno.recordatorio_enviado %}checked{% endif %}>
-                                <label class="form-check-label" for="recordatorio_enviado">
-                                    <i class="fa fa-clock-o text-warning me-1"></i> Recordatorio enviado
-                                </label>
-                            </div>
+                        <div class="checkbox-item {% if turno.recordatorio_enviado %}checked{% endif %}">
+                            <input type="checkbox" id="recordatorio_enviado" name="recordatorio_enviado" {% if turno.recordatorio_enviado %}checked{% endif %}>
+                            <label for="recordatorio_enviado">
+                                <i class="fa fa-bell text-warning"></i>
+                                Recordatorio enviado
+                            </label>
                         </div>
                     </div>
                 </div>
             </div>
+            {% endif %}
         </div>
-        {% endif %}
 
-    </div>
-
-    <div class="modal-footer">
-        <button type="submit" class="btn btn-outline-orange">
-            <i class="fa fa-save me-1"></i> Guardar
-        </button>
-        <button type="button" class="btn btn-outline-dark" onclick="$('#modal-fullscreen').modal('hide');">
-            <i class="fa fa-times me-1"></i> Cancelar
-        </button>
-    </div>
-</form>
+        <!-- Footer -->
+        <div class="turno-form-footer">
+            <button type="button" class="btn-cancel" onclick="$('#modal-lg').modal('hide');">
+                <i class="fa fa-times"></i> Cancelar
+            </button>
+            <button type="submit" class="btn-submit">
+                <i class="fa fa-save"></i> Guardar Turno
+            </button>
+        </div>
+    </form>
+</div>
 
 <!-- Flatpickr JS -->
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
@@ -437,16 +989,21 @@
 
 <script>
 // Cargar Select2
-cargarSelect2("#modal-fullscreen");
+cargarSelect2("#modal-lg");
+
+// Toggle de checkboxes
+$(".checkbox-item input[type='checkbox']").on("change", function() {
+    $(this).closest(".checkbox-item").toggleClass("checked", this.checked);
+});
 
 // ============================================
-// Variables de configuración
+// Variables de configuracion
 // ============================================
 var tallerConfig = null;
 var tipoTramiteConfig = null;
 var fechaPicker = null;
 
-// Mapeo de días en español
+// Mapeo de dias en espanol
 var diasSemana = {
     0: 'domingo',
     1: 'lunes',
@@ -457,7 +1014,6 @@ var diasSemana = {
     6: 'sabado'
 };
 
-// Mapeo inverso: nombre del día a número de día de la semana
 var diasNumero = {
     'domingo': 0,
     'lunes': 1,
@@ -471,10 +1027,10 @@ var diasNumero = {
 var diasNombres = {
     'lunes': 'Lun',
     'martes': 'Mar',
-    'miercoles': 'Mié',
+    'miercoles': 'Mie',
     'jueves': 'Jue',
     'viernes': 'Vie',
-    'sabado': 'Sáb',
+    'sabado': 'Sab',
     'domingo': 'Dom'
 };
 
@@ -484,16 +1040,17 @@ var diasNombres = {
 function inicializarFlatpickr() {
     if (fechaPicker) {
         fechaPicker.destroy();
+        fechaPicker = null;
     }
 
     var fechaMinima = new Date();
-    fechaMinima.setDate(fechaMinima.getDate() + 1); // Mínimo mañana
+    fechaMinima.setDate(fechaMinima.getDate() + 1);
 
     var fechaMaxima = new Date();
-    fechaMaxima.setDate(fechaMaxima.getDate() + 60); // Máximo 60 días
+    fechaMaxima.setDate(fechaMaxima.getDate() + 60);
 
-    fechaPicker = flatpickr("#fecha", {
-        locale: "es",
+    // Opciones base de Flatpickr
+    var fpOptions = {
         dateFormat: "Y-m-d",
         minDate: fechaMinima,
         maxDate: fechaMaxima,
@@ -502,11 +1059,17 @@ function inicializarFlatpickr() {
         disable: [],
         onChange: function(selectedDates, dateStr, instance) {
             if (selectedDates.length > 0) {
-                // Disparar el evento change para que se carguen los horarios
                 $("#fecha").trigger("change");
             }
         }
-    });
+    };
+
+    // Usar locale español solo si esta disponible
+    if (flatpickr.l10ns && flatpickr.l10ns.es) {
+        fpOptions.locale = "es";
+    }
+
+    fechaPicker = flatpickr("#fecha", fpOptions);
 }
 
 // ============================================
@@ -517,7 +1080,7 @@ function actualizarFechasDeshabilitadas() {
 
     var disabledDates = [];
 
-    // 1. Deshabilitar días de la semana que no atiende el taller
+    // Deshabilitar dias de la semana no laborables
     if (tallerConfig.dias_atencion) {
         var diasNoLaborables = [];
         for (var dia in diasNumero) {
@@ -527,17 +1090,15 @@ function actualizarFechasDeshabilitadas() {
         }
 
         if (diasNoLaborables.length > 0) {
-            // Flatpickr usa una función para deshabilitar días de la semana
             disabledDates.push(function(date) {
                 return diasNoLaborables.indexOf(date.getDay()) !== -1;
             });
         }
     }
 
-    // 2. Agregar fechas específicas no laborables (feriados)
+    // Agregar fechas no laborables especificas (feriados, etc.)
     if (tallerConfig.fechas_no_laborables && tallerConfig.fechas_no_laborables.length > 0) {
         tallerConfig.fechas_no_laborables.forEach(function(fecha) {
-            // Asegurar formato YYYY-MM-DD
             var fechaNormalizada = fecha;
             if (typeof fecha === 'object' && fecha !== null) {
                 fechaNormalizada = new Date(fecha).toISOString().split('T')[0];
@@ -548,14 +1109,11 @@ function actualizarFechasDeshabilitadas() {
         });
     }
 
-    // Actualizar Flatpickr con las fechas deshabilitadas
     fechaPicker.set('disable', disabledDates);
-
-    console.log("Fechas deshabilitadas actualizadas:", disabledDates);
 }
 
 // ============================================
-// Función auxiliar para resetear campos en cascada
+// Funcion auxiliar para resetear campos en cascada
 // ============================================
 function resetearCamposCascada(desde) {
     if (desde === 'taller' || desde === 'all') {
@@ -564,7 +1122,6 @@ function resetearCamposCascada(desde) {
         $("#help-tipo-tramite").show();
     }
     if (desde === 'taller' || desde === 'tipo' || desde === 'all') {
-        // Limpiar y deshabilitar Flatpickr
         if (fechaPicker) {
             fechaPicker.clear();
             fechaPicker.set('disable', []);
@@ -583,21 +1140,17 @@ function resetearCamposCascada(desde) {
 }
 
 // ============================================
-// 1. Cambio de Taller - Cargar tipos de trámite
+// 1. Cambio de Taller
 // ============================================
 $("#taller").on("change", function() {
     var tallerId = $(this).val();
     tallerConfig = null;
     tipoTramiteConfig = null;
 
-    // Resetear todos los campos dependientes
     resetearCamposCascada('taller');
 
-    if (!tallerId) {
-        return;
-    }
+    if (!tallerId) return;
 
-    // Cargar configuración del taller
     $.ajax({
         url: "{% url 'obtener_configuracion_taller' %}",
         type: "POST",
@@ -608,12 +1161,10 @@ $("#taller").on("change", function() {
         success: function(data) {
             if (data.success) {
                 tallerConfig = data.configuracion;
-                console.log("Configuración del taller cargada:", tallerConfig);
             }
         }
     });
 
-    // Cargar tipos de trámite disponibles para este taller
     $.ajax({
         url: "{% url 'obtener_tipos_tramite_taller' %}",
         type: "POST",
@@ -625,51 +1176,44 @@ $("#taller").on("change", function() {
             $("#tipo_vehiculo").html('<option value="">Cargando...</option>');
         },
         success: function(data) {
-            // Destruir Select2 antes de modificar opciones
             if ($("#tipo_vehiculo").hasClass("select2-hidden-accessible")) {
                 $("#tipo_vehiculo").select2('destroy');
             }
 
             if (data.success && data.tipos_tramite && data.tipos_tramite.length > 0) {
-                var html = '<option value="">Seleccione tipo de trámite</option>';
+                var html = '<option value="">Seleccione tipo de tramite</option>';
                 data.tipos_tramite.forEach(function(tipo) {
-                    // Formatear precio en pesos argentinos
                     var precioTexto = '';
                     if (tipo.precio && tipo.precio > 0) {
                         precioTexto = ' - $' + tipo.precio.toLocaleString('es-AR', {minimumFractionDigits: 0, maximumFractionDigits: 0});
                     }
-                    html += '<option value="' + tipo.id + '" data-duracion="' + tipo.duracion_minutos + '" data-intervalo="' + tipo.intervalo_minutos + '" data-precio="' + tipo.precio + '">' + tipo.nombre + precioTexto + '</option>';
+                    html += '<option value="' + tipo.id + '" data-duracion="' + tipo.duracion_minutos + '" data-intervalo="' + tipo.intervalo_minutos + '">' + tipo.nombre + precioTexto + '</option>';
                 });
                 $("#tipo_vehiculo").html(html).prop('disabled', false);
                 $("#help-tipo-tramite").hide();
             } else {
-                $("#tipo_vehiculo").html('<option value="">No hay trámites configurados para este taller</option>');
+                $("#tipo_vehiculo").html('<option value="">No hay tramites configurados</option>');
             }
 
-            // Reinicializar Select2
-            cargarSelect2("#modal-fullscreen");
+            cargarSelect2("#modal-lg");
         },
         error: function() {
-            $("#tipo_vehiculo").html('<option value="">Error al cargar trámites</option>');
-            cargarSelect2("#modal-fullscreen");
+            $("#tipo_vehiculo").html('<option value="">Error al cargar tramites</option>');
+            cargarSelect2("#modal-lg");
         }
     });
 });
 
 // ============================================
-// 2. Cambio de Tipo de Trámite - Habilitar fecha
+// 2. Cambio de Tipo de Tramite
 // ============================================
 $("#tipo_vehiculo").on("change", function() {
     var tipoId = $(this).val();
 
-    // Resetear campos dependientes
     resetearCamposCascada('tipo');
 
-    if (!tipoId) {
-        return;
-    }
+    if (!tipoId) return;
 
-    // Guardar configuración del tipo de trámite seleccionado
     var $selected = $(this).find('option:selected');
     tipoTramiteConfig = {
         id: tipoId,
@@ -677,16 +1221,13 @@ $("#tipo_vehiculo").on("change", function() {
         intervalo_minutos: parseInt($selected.data('intervalo')) || 30
     };
 
-    // Habilitar fecha
     $("#fecha").prop('disabled', false);
     $("#help-fecha").hide();
 
-    // Inicializar Flatpickr y configurar fechas deshabilitadas
     inicializarFlatpickr();
     actualizarFechasDeshabilitadas();
 
-    // Mostrar días de atención si están configurados
-    if (tallerConfig && tallerConfig.dias_atencion && Object.keys(tallerConfig.dias_atencion).length > 0) {
+    if (tallerConfig && tallerConfig.dias_atencion) {
         var diasActivos = [];
         for (var dia in tallerConfig.dias_atencion) {
             if (tallerConfig.dias_atencion[dia]) {
@@ -694,53 +1235,40 @@ $("#tipo_vehiculo").on("change", function() {
             }
         }
         if (diasActivos.length > 0) {
-            $("#texto-dias-atencion").text("Días de atención: " + diasActivos.join(", "));
+            $("#texto-dias-atencion").text("Dias de atencion: " + diasActivos.join(", "));
             $("#info-dias-atencion").show();
         }
     }
 });
 
 // ============================================
-// 3. Cambio de Fecha - Validar y cargar horarios
+// 3. Cambio de Fecha
 // ============================================
 $("#fecha").on("change", function() {
     var fecha = $(this).val();
 
-    // Resetear horarios
     resetearCamposCascada('fecha');
 
-    if (!fecha || !tallerConfig) {
-        return;
-    }
+    if (!fecha || !tallerConfig) return;
 
     var fechaObj = new Date(fecha + 'T12:00:00');
     var diaSemana = fechaObj.getDay();
     var diaTexto = diasSemana[diaSemana];
 
-    // Validar día de atención
-    if (tallerConfig.dias_atencion && Object.keys(tallerConfig.dias_atencion).length > 0) {
-        if (!tallerConfig.dias_atencion[diaTexto]) {
-            Swal.fire({
-                title: "Día no disponible",
-                text: "El taller no atiende los días " + diaTexto.charAt(0).toUpperCase() + diaTexto.slice(1),
-                icon: "warning"
-            });
-            $(this).val('');
-            return;
-        }
+    if (tallerConfig.dias_atencion && !tallerConfig.dias_atencion[diaTexto]) {
+        Swal.fire({
+            title: "Dia no disponible",
+            text: "El taller no atiende los dias " + diaTexto,
+            icon: "warning"
+        });
+        $(this).val('');
+        return;
     }
 
-    // Validar fechas no laborables (feriados)
     if (tallerConfig.fechas_no_laborables && tallerConfig.fechas_no_laborables.length > 0) {
-        console.log("Fecha seleccionada:", fecha);
-        console.log("Fechas no laborables:", tallerConfig.fechas_no_laborables);
-
-        // Normalizar la comparación - las fechas pueden venir en diferentes formatos
         var esFechaNoLaborable = tallerConfig.fechas_no_laborables.some(function(fechaNoLab) {
-            // Comparar como strings en formato YYYY-MM-DD
             var fechaNormalizada = fechaNoLab;
             if (typeof fechaNoLab === 'object' && fechaNoLab !== null) {
-                // Si es un objeto Date o similar
                 fechaNormalizada = new Date(fechaNoLab).toISOString().split('T')[0];
             }
             return fechaNormalizada === fecha;
@@ -749,7 +1277,7 @@ $("#fecha").on("change", function() {
         if (esFechaNoLaborable) {
             Swal.fire({
                 title: "Fecha no disponible",
-                text: "Esta fecha está marcada como no laborable (feriado o día especial)",
+                text: "Esta fecha esta marcada como no laborable",
                 icon: "warning"
             });
             $(this).val('');
@@ -757,10 +1285,9 @@ $("#fecha").on("change", function() {
         }
     }
 
-    // Cargar horarios disponibles
     var tallerId = $("#taller").val();
     var tipoId = $("#tipo_vehiculo").val();
-    var turnoId = $("#pk").val();  // ID del turno en edición (vacío si es nuevo)
+    var turnoId = $("#pk").val();
 
     $.ajax({
         url: "{% url 'obtener_horarios_disponibles' %}",
@@ -769,11 +1296,10 @@ $("#fecha").on("change", function() {
             'taller_id': tallerId,
             'tipo_vehiculo_id': tipoId,
             'fecha': fecha,
-            'turno_id': turnoId,  // Enviar ID para excluir el turno actual
+            'turno_id': turnoId,
             'csrfmiddlewaretoken': '{{ csrf_token }}'
         },
         beforeSend: function() {
-            // Destruir Select2 antes de modificar opciones
             if ($("#horario_turno").hasClass("select2-hidden-accessible")) {
                 $("#horario_turno").select2('destroy');
             }
@@ -787,7 +1313,7 @@ $("#fecha").on("change", function() {
                 data.horarios.forEach(function(slot) {
                     var disponibilidadText = '';
                     if (slot.capacidad > 1) {
-                        disponibilidadText = ' (' + (slot.capacidad - slot.ocupados) + '/' + slot.capacidad + ' disponibles)';
+                        disponibilidadText = ' (' + (slot.capacidad - slot.ocupados) + '/' + slot.capacidad + ' disp.)';
                     }
 
                     if (slot.disponible) {
@@ -797,18 +1323,17 @@ $("#fecha").on("change", function() {
                                 '</option>';
                     } else {
                         html += '<option value="" disabled style="color: #999;">' +
-                                slot.hora_inicio + ' - ' + slot.hora_fin + ' (No disponible)' +
+                                slot.hora_inicio + ' - ' + slot.hora_fin + ' (Ocupado)' +
                                 '</option>';
                     }
                 });
 
                 if (!hayDisponibles) {
-                    html = '<option value="">No hay horarios disponibles para esta fecha</option>';
+                    html = '<option value="">No hay horarios disponibles</option>';
                 }
 
                 $("#horario_turno").html(html).prop('disabled', false);
 
-                // Mostrar horario de atención
                 if (tallerConfig.horario_apertura && tallerConfig.horario_cierre) {
                     $("#texto-horario").text(tallerConfig.horario_apertura + " a " + tallerConfig.horario_cierre + " hs");
                     $("#info-horario").show();
@@ -817,18 +1342,17 @@ $("#fecha").on("change", function() {
                 $("#horario_turno").html('<option value="">No hay horarios disponibles</option>');
             }
 
-            // Reinicializar Select2
-            cargarSelect2("#modal-fullscreen");
+            cargarSelect2("#modal-lg");
         },
         error: function() {
             $("#horario_turno").html('<option value="">Error al cargar horarios</option>');
-            cargarSelect2("#modal-fullscreen");
+            cargarSelect2("#modal-lg");
         }
     });
 });
 
 // ============================================
-// 4. Cambio de Horario - Establecer hora inicio/fin
+// 4. Cambio de Horario
 // ============================================
 $("#horario_turno").on("change", function() {
     var valor = $(this).val();
@@ -844,22 +1368,22 @@ $("#horario_turno").on("change", function() {
     $("#hora_fin").val(partes[1]);
 });
 
-// Cargar vehículos del cliente seleccionado
+// ============================================
+// Cargar vehiculos del cliente
+// ============================================
 $("#cliente").on("change", function() {
     var clienteId = $(this).val();
     var $vehiculoSelect = $("#vehiculo");
 
-    // Destruir Select2 antes de modificar
     if ($vehiculoSelect.hasClass("select2-hidden-accessible")) {
         $vehiculoSelect.select2('destroy');
     }
 
-    // Limpiar select de vehículos
     $vehiculoSelect.empty().append('<option value="">Cargando...</option>');
 
     if (!clienteId) {
-        $vehiculoSelect.empty().append('<option value="">Seleccione un vehículo</option>');
-        cargarSelect2("#modal-fullscreen");
+        $vehiculoSelect.empty().append('<option value="">Seleccione un vehiculo</option>');
+        cargarSelect2("#modal-lg");
         return;
     }
 
@@ -871,30 +1395,32 @@ $("#cliente").on("change", function() {
             'csrfmiddlewaretoken': '{{ csrf_token }}'
         },
         success: function(data) {
-            $vehiculoSelect.empty().append('<option value="">Seleccione un vehículo</option>');
+            $vehiculoSelect.empty().append('<option value="">Seleccione un vehiculo</option>');
 
             if (data.vehiculos && data.vehiculos.length > 0) {
                 data.vehiculos.forEach(function(v) {
                     var texto = v.dominio;
-                    if (v.tipo) texto += ' - ' + v.tipo;
+                    if (v.marca) texto += ' - ' + v.marca;
+                    if (v.modelo) texto += ' ' + v.modelo;
                     if (v.tiene_gnc) texto += ' (GNC)';
                     $vehiculoSelect.append('<option value="' + v.id + '">' + texto + '</option>');
                 });
             } else {
-                $vehiculoSelect.append('<option value="" disabled>No hay vehículos registrados</option>');
+                $vehiculoSelect.append('<option value="" disabled>No hay vehiculos registrados</option>');
             }
 
-            cargarSelect2("#modal-fullscreen");
+            cargarSelect2("#modal-lg");
         },
-        error: function(xhr, status, error) {
-            console.error("Error al cargar vehículos:", status, error);
-            $vehiculoSelect.empty().append('<option value="">Error al cargar vehículos</option>');
-            cargarSelect2("#modal-fullscreen");
+        error: function() {
+            $vehiculoSelect.empty().append('<option value="">Error al cargar vehiculos</option>');
+            cargarSelect2("#modal-lg");
         }
     });
 });
 
-// Validación del formulario
+// ============================================
+// Validacion del formulario
+// ============================================
 $(document).on("submit", "#turno_form", function(e) {
     e.preventDefault();
 
@@ -915,11 +1441,10 @@ $(document).on("submit", "#turno_form", function(e) {
         return false;
     }
 
-    // Validar que hora fin sea mayor a hora inicio
     if (horaFin <= horaInicio) {
         Swal.fire({
             title: "Error en horarios",
-            text: "La hora de finalización debe ser mayor a la hora de inicio",
+            text: "La hora de finalizacion debe ser mayor a la hora de inicio",
             icon: "error"
         });
         return false;
@@ -949,7 +1474,7 @@ $(document).on("submit", "#turno_form", function(e) {
                     text: data.message || 'El turno fue guardado correctamente',
                     icon: 'success'
                 }).then(function() {
-                    $("#modal-fullscreen").modal('hide');
+                    $("#modal-lg").modal('hide');
                     cargarTabla();
                 });
             } else {
@@ -978,66 +1503,60 @@ $(".btn-agregar-cliente").on("click", function() {
     <div class="modal fade" id="modal-nuevo-cliente" tabindex="-1" role="dialog" data-backdrop="static">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
-                <div class="modal-header" style="background: linear-gradient(135deg, var(--theme-primary) 0%, var(--theme-primary-dark) 100%);">
-                    <h5 class="modal-title text-white">
-                        <i class="fa fa-user-plus me-2"></i>Nuevo Cliente
-                    </h5>
-                    <button type="button" class="close text-white" data-dismiss="modal" aria-label="Cerrar">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+                <div class="turno-form-header">
+                    <h5><i class="fa fa-user-plus"></i> Nuevo Cliente</h5>
+                    <button type="button" class="close-btn" data-dismiss="modal"><i class="fa fa-times"></i></button>
                 </div>
                 <form id="form-nuevo-cliente">
-                    <div class="modal-body">
-                        <div class="row">
-                            <div class="col-md-4 form-group mb-3">
-                                <label class="form-label"><i class="fa fa-id-card text-muted me-1"></i> DNI *</label>
-                                <input type="text" class="form-control" id="nuevo_cliente_dni" name="dni" maxlength="8" required placeholder="12345678">
-                            </div>
-                            <div class="col-md-4 form-group mb-3">
-                                <label class="form-label"><i class="fa fa-user text-muted me-1"></i> Nombre *</label>
-                                <input type="text" class="form-control" id="nuevo_cliente_nombre" name="nombre" required placeholder="Juan">
-                            </div>
-                            <div class="col-md-4 form-group mb-3">
-                                <label class="form-label"><i class="fa fa-user text-muted me-1"></i> Apellido *</label>
-                                <input type="text" class="form-control" id="nuevo_cliente_apellido" name="apellido" required placeholder="Pérez">
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6 form-group mb-3">
-                                <label class="form-label"><i class="fa fa-envelope text-muted me-1"></i> Email</label>
-                                <input type="email" class="form-control" id="nuevo_cliente_email" name="email" placeholder="correo@ejemplo.com">
-                            </div>
-                            <div class="col-md-6 form-group mb-3">
-                                <label class="form-label"><i class="fa fa-phone text-muted me-1"></i> Celular</label>
-                                <input type="text" class="form-control" id="nuevo_cliente_celular" name="celular" placeholder="3764123456">
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-12 form-group mb-3">
-                                <label class="form-label"><i class="fa fa-map-marker text-muted me-1"></i> Domicilio</label>
-                                <input type="text" class="form-control" id="nuevo_cliente_domicilio" name="domicilio" placeholder="Calle 123, Ciudad">
+                    <div class="turno-form-body" style="max-height: 60vh;">
+                        <div class="form-section">
+                            <div class="section-body">
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label class="form-label"><i class="fa fa-id-card"></i> DNI <span class="required">*</span></label>
+                                        <input type="text" class="form-control" id="nuevo_cliente_dni" name="dni" maxlength="8" required placeholder="12345678">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label"><i class="fa fa-user"></i> Nombre <span class="required">*</span></label>
+                                        <input type="text" class="form-control" id="nuevo_cliente_nombre" name="nombre" required placeholder="Juan">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label"><i class="fa fa-user"></i> Apellido <span class="required">*</span></label>
+                                        <input type="text" class="form-control" id="nuevo_cliente_apellido" name="apellido" required placeholder="Perez">
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label class="form-label"><i class="fa fa-envelope"></i> Email</label>
+                                        <input type="email" class="form-control" id="nuevo_cliente_email" name="email" placeholder="correo@ejemplo.com">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label"><i class="fa fa-phone"></i> Celular</label>
+                                        <input type="text" class="form-control" id="nuevo_cliente_celular" name="celular" placeholder="3764123456">
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group" style="grid-column: 1 / -1;">
+                                        <label class="form-label"><i class="fa fa-map-marker"></i> Domicilio</label>
+                                        <input type="text" class="form-control" id="nuevo_cliente_domicilio" name="domicilio" placeholder="Calle 123, Ciudad">
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <div class="modal-footer">
-                        <button type="submit" class="btn btn-outline-orange">
-                            <i class="fa fa-save me-1"></i> Guardar Cliente
-                        </button>
-                        <button type="button" class="btn btn-outline-dark" data-dismiss="modal">
-                            <i class="fa fa-times me-1"></i> Cancelar
-                        </button>
+                    <div class="turno-form-footer">
+                        <button type="button" class="btn-cancel" data-dismiss="modal"><i class="fa fa-times"></i> Cancelar</button>
+                        <button type="submit" class="btn-submit"><i class="fa fa-save"></i> Guardar Cliente</button>
                     </div>
                 </form>
             </div>
         </div>
     </div>`;
 
-    // Remover modal anterior si existe
     $("#modal-nuevo-cliente").remove();
     $("body").append(modalHtml);
     $("#modal-nuevo-cliente").modal("show");
 
-    // Submit del formulario
     $("#form-nuevo-cliente").off("submit").on("submit", function(e) {
         e.preventDefault();
 
@@ -1073,12 +1592,9 @@ $(".btn-agregar-cliente").on("click", function() {
             success: function(data) {
                 Swal.close();
                 if (data.success) {
-                    // Agregar nuevo cliente al select y seleccionarlo
                     var newOption = new Option(data.cliente.dni + ' - ' + data.cliente.nombre + ' ' + data.cliente.apellido, data.cliente.id, true, true);
                     $("#cliente").append(newOption).trigger('change');
-
                     $("#modal-nuevo-cliente").modal("hide");
-
                     Swal.fire({
                         title: "Cliente Creado",
                         text: "El cliente fue agregado correctamente",
@@ -1098,7 +1614,7 @@ $(".btn-agregar-cliente").on("click", function() {
 });
 
 // ============================================
-// Modal Agregar Vehículo
+// Modal Agregar Vehiculo
 // ============================================
 $(".btn-agregar-vehiculo").on("click", function() {
     var clienteId = $("#cliente").val();
@@ -1106,7 +1622,7 @@ $(".btn-agregar-vehiculo").on("click", function() {
     if (!clienteId) {
         Swal.fire({
             title: "Seleccione un cliente",
-            text: "Debe seleccionar un cliente antes de agregar un vehículo",
+            text: "Debe seleccionar un cliente antes de agregar un vehiculo",
             icon: "warning"
         });
         return;
@@ -1116,68 +1632,62 @@ $(".btn-agregar-vehiculo").on("click", function() {
     <div class="modal fade" id="modal-nuevo-vehiculo" tabindex="-1" role="dialog" data-backdrop="static">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
-                <div class="modal-header" style="background: linear-gradient(135deg, var(--theme-primary) 0%, var(--theme-primary-dark) 100%);">
-                    <h5 class="modal-title text-white">
-                        <i class="fa fa-car me-2"></i>Nuevo Vehículo
-                    </h5>
-                    <button type="button" class="close text-white" data-dismiss="modal" aria-label="Cerrar">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+                <div class="turno-form-header">
+                    <h5><i class="fa fa-car"></i> Nuevo Vehiculo</h5>
+                    <button type="button" class="close-btn" data-dismiss="modal"><i class="fa fa-times"></i></button>
                 </div>
                 <form id="form-nuevo-vehiculo">
                     <input type="hidden" id="nuevo_vehiculo_cliente_id" value="${clienteId}">
-                    <div class="modal-body">
-                        <div class="row">
-                            <div class="col-md-12 form-group mb-3">
-                                <label class="form-label"><i class="fa fa-hashtag text-muted me-1"></i> Dominio (Patente) *</label>
-                                <input type="text" class="form-control text-uppercase" id="nuevo_vehiculo_dominio" name="dominio" maxlength="10" required placeholder="ABC123 o AB123CD">
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6 form-group mb-3">
-                                <label class="form-label"><i class="fa fa-industry text-muted me-1"></i> Marca</label>
-                                <input type="text" class="form-control" id="nuevo_vehiculo_marca" name="marca" placeholder="Toyota">
-                            </div>
-                            <div class="col-md-6 form-group mb-3">
-                                <label class="form-label"><i class="fa fa-car text-muted me-1"></i> Modelo</label>
-                                <input type="text" class="form-control" id="nuevo_vehiculo_modelo" name="modelo" placeholder="Corolla">
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6 form-group mb-3">
-                                <div class="form-check mt-4">
-                                    <input type="checkbox" class="form-check-input" id="nuevo_vehiculo_gnc" name="tiene_gnc">
-                                    <label class="form-check-label" for="nuevo_vehiculo_gnc">
-                                        <i class="fa fa-fire text-warning me-1"></i> Tiene GNC
-                                    </label>
+                    <div class="turno-form-body" style="max-height: 60vh;">
+                        <div class="form-section">
+                            <div class="section-body">
+                                <div class="form-row">
+                                    <div class="form-group" style="grid-column: 1 / -1;">
+                                        <label class="form-label"><i class="fa fa-hashtag"></i> Dominio (Patente) <span class="required">*</span></label>
+                                        <input type="text" class="form-control text-uppercase" id="nuevo_vehiculo_dominio" name="dominio" maxlength="10" required placeholder="ABC123 o AB123CD" style="font-size: 1.25rem; font-weight: 600; letter-spacing: 2px; text-align: center;">
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label class="form-label"><i class="fa fa-industry"></i> Marca</label>
+                                        <input type="text" class="form-control" id="nuevo_vehiculo_marca" name="marca" placeholder="Toyota">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label"><i class="fa fa-car"></i> Modelo</label>
+                                        <input type="text" class="form-control" id="nuevo_vehiculo_modelo" name="modelo" placeholder="Corolla">
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group" style="grid-column: 1 / -1;">
+                                        <div class="checkbox-item">
+                                            <input type="checkbox" id="nuevo_vehiculo_gnc" name="tiene_gnc">
+                                            <label for="nuevo_vehiculo_gnc">
+                                                <i class="fa fa-fire text-warning"></i>
+                                                Tiene GNC instalado
+                                            </label>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="modal-footer">
-                        <button type="submit" class="btn btn-outline-orange">
-                            <i class="fa fa-save me-1"></i> Guardar Vehículo
-                        </button>
-                        <button type="button" class="btn btn-outline-dark" data-dismiss="modal">
-                            <i class="fa fa-times me-1"></i> Cancelar
-                        </button>
+                    <div class="turno-form-footer">
+                        <button type="button" class="btn-cancel" data-dismiss="modal"><i class="fa fa-times"></i> Cancelar</button>
+                        <button type="submit" class="btn-submit"><i class="fa fa-save"></i> Guardar Vehiculo</button>
                     </div>
                 </form>
             </div>
         </div>
     </div>`;
 
-    // Remover modal anterior si existe
     $("#modal-nuevo-vehiculo").remove();
     $("body").append(modalHtml);
     $("#modal-nuevo-vehiculo").modal("show");
 
-    // Convertir dominio a mayúsculas
     $("#nuevo_vehiculo_dominio").on("input", function() {
         $(this).val($(this).val().toUpperCase());
     });
 
-    // Submit del formulario
     $("#form-nuevo-vehiculo").off("submit").on("submit", function(e) {
         e.preventDefault();
 
@@ -1210,7 +1720,6 @@ $(".btn-agregar-vehiculo").on("click", function() {
             success: function(data) {
                 Swal.close();
                 if (data.success) {
-                    // Agregar nuevo vehículo al select y seleccionarlo
                     var displayText = data.vehiculo.dominio;
                     if (data.vehiculo.marca) displayText += ' - ' + data.vehiculo.marca;
                     if (data.vehiculo.modelo) displayText += ' ' + data.vehiculo.modelo;
@@ -1221,33 +1730,32 @@ $(".btn-agregar-vehiculo").on("click", function() {
                     $("#modal-nuevo-vehiculo").modal("hide");
 
                     Swal.fire({
-                        title: "Vehículo Creado",
-                        text: "El vehículo fue agregado correctamente",
+                        title: "Vehiculo Creado",
+                        text: "El vehiculo fue agregado correctamente",
                         icon: "success",
                         timer: 1500,
                         showConfirmButton: false
                     });
                 } else {
-                    Swal.fire("Error", data.error || "No se pudo crear el vehículo", "error");
+                    Swal.fire("Error", data.error || "No se pudo crear el vehiculo", "error");
                 }
             },
             error: function() {
-                Swal.fire("Error", "Error al guardar el vehículo", "error");
+                Swal.fire("Error", "Error al guardar el vehiculo", "error");
             }
         });
     });
 });
 
 // ============================================
-// Inicialización para edición de turnos existentes
+// Inicializacion para edicion de turnos existentes
 // ============================================
 {% if turno %}
-$(document).ready(function() {
+setTimeout(function() {
     var tallerId = $("#taller").val();
     var tipoVehiculoId = $("#tipo_vehiculo").val();
 
     if (tallerId) {
-        // Cargar configuración del taller para poder inicializar Flatpickr con las fechas correctas
         $.ajax({
             url: "{% url 'obtener_configuracion_taller' %}",
             type: "POST",
@@ -1258,113 +1766,33 @@ $(document).ready(function() {
             success: function(data) {
                 if (data.success) {
                     tallerConfig = data.configuracion;
-                    console.log("Configuración del taller cargada (edición):", tallerConfig);
 
-                    // Inicializar Flatpickr con la fecha actual
+                    // Inicializar Flatpickr normalmente
                     inicializarFlatpickr();
+
+                    // Aplicar restricciones de fechas
                     actualizarFechasDeshabilitadas();
 
-                    // Establecer la fecha actual del turno
-                    var fechaActual = "{{ turno.fecha|date:'Y-m-d' }}";
-                    if (fechaActual && fechaPicker) {
-                        fechaPicker.setDate(fechaActual, false);
+                    // Mostrar informacion de dias de atencion
+                    if (tallerConfig.dias_atencion) {
+                        var diasTexto = [];
+                        for (var dia in diasNombres) {
+                            if (tallerConfig.dias_atencion[dia]) {
+                                diasTexto.push(diasNombres[dia]);
+                            }
+                        }
+                        if (diasTexto.length > 0) {
+                            $("#texto-dias-atencion").text("Dias disponibles: " + diasTexto.join(', '));
+                            $("#info-dias-atencion").show();
+                        }
                     }
 
-                    // Cargar horarios disponibles para la fecha actual
-                    if (fechaActual && tipoVehiculoId) {
-                        cargarHorariosDisponibles(tallerId, tipoVehiculoId, fechaActual);
-                    }
+                    // Habilitar el campo de fecha
+                    $("#fecha").prop('disabled', false);
                 }
             }
         });
     }
-});
-
-// Función para cargar horarios disponibles (modo edición)
-function cargarHorariosDisponibles(tallerId, tipoVehiculoId, fecha) {
-    var horaInicioActual = "{{ turno.hora_inicio|time:'H:i' }}";
-    var horaFinActual = "{{ turno.hora_fin|time:'H:i' }}";
-    var turnoId = "{{ turno.id }}";
-
-    $.ajax({
-        url: "{% url 'obtener_horarios_disponibles' %}",
-        type: "POST",
-        data: {
-            'taller_id': tallerId,
-            'tipo_vehiculo_id': tipoVehiculoId,
-            'fecha': fecha,
-            'turno_id': turnoId,  // Enviar ID del turno para excluirlo
-            'csrfmiddlewaretoken': '{{ csrf_token }}'
-        },
-        beforeSend: function() {
-            if ($("#horario_turno").hasClass("select2-hidden-accessible")) {
-                $("#horario_turno").select2('destroy');
-            }
-            $("#horario_turno").html('<option value="">Cargando horarios...</option>');
-        },
-        success: function(data) {
-            if (data.success && data.horarios && data.horarios.length > 0) {
-                var html = '<option value="">Seleccione un horario</option>';
-                var hayDisponibles = false;
-                var horarioActualEncontrado = false;
-
-                data.horarios.forEach(function(slot) {
-                    var disponibilidadText = '';
-                    if (slot.capacidad > 1) {
-                        disponibilidadText = ' (' + (slot.capacidad - slot.ocupados) + '/' + slot.capacidad + ' disponibles)';
-                    }
-
-                    var esHorarioActual = (slot.hora_inicio === horaInicioActual && slot.hora_fin === horaFinActual);
-
-                    if (slot.disponible || esHorarioActual) {
-                        hayDisponibles = true;
-                        var selectedAttr = esHorarioActual ? ' selected' : '';
-                        if (esHorarioActual) horarioActualEncontrado = true;
-
-                        html += '<option value="' + slot.hora_inicio + '|' + slot.hora_fin + '"' + selectedAttr + '>' +
-                                slot.hora_inicio + ' - ' + slot.hora_fin + disponibilidadText +
-                                '</option>';
-                    } else {
-                        html += '<option value="" disabled style="color: #999;">' +
-                                slot.hora_inicio + ' - ' + slot.hora_fin + ' (No disponible)' +
-                                '</option>';
-                    }
-                });
-
-                // Si el horario actual no está en la lista (por algún cambio de configuración), agregarlo
-                if (!horarioActualEncontrado && horaInicioActual && horaFinActual) {
-                    html = '<option value="' + horaInicioActual + '|' + horaFinActual + '" selected>' +
-                           horaInicioActual + ' - ' + horaFinActual + ' (Horario actual)' +
-                           '</option>' + html.replace('<option value="">Seleccione un horario</option>', '');
-                }
-
-                if (!hayDisponibles) {
-                    html = '<option value="">No hay horarios disponibles para esta fecha</option>';
-                }
-
-                $("#horario_turno").html(html).prop('disabled', false);
-
-                // Mostrar horario de atención
-                if (tallerConfig && tallerConfig.horario_apertura && tallerConfig.horario_cierre) {
-                    $("#texto-horario").text(tallerConfig.horario_apertura + " a " + tallerConfig.horario_cierre + " hs");
-                    $("#info-horario").show();
-                }
-            } else {
-                // Si no hay horarios, mostrar el horario actual
-                $("#horario_turno").html('<option value="' + horaInicioActual + '|' + horaFinActual + '" selected>' +
-                                         horaInicioActual + ' - ' + horaFinActual + '</option>').prop('disabled', false);
-            }
-
-            // Reinicializar Select2
-            cargarSelect2("#modal-fullscreen");
-        },
-        error: function() {
-            // En caso de error, mostrar el horario actual
-            $("#horario_turno").html('<option value="' + horaInicioActual + '|' + horaFinActual + '" selected>' +
-                                     horaInicioActual + ' - ' + horaFinActual + '</option>').prop('disabled', false);
-            cargarSelect2("#modal-fullscreen");
-        }
-    });
-}
+}, 100);
 {% endif %}
 </script>

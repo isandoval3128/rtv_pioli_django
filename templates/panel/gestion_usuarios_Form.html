@@ -1,0 +1,717 @@
+<style>
+    /* ========================================
+       FORM USUARIO - DISENO PROFESIONAL
+       ======================================== */
+
+    .usuario-form-container {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    /* Header del Modal */
+    .usuario-form-header {
+        background: linear-gradient(135deg, var(--theme-primary) 0%, var(--theme-primary-dark, #3d1730) 100%);
+        padding: 1.25rem 1.5rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .usuario-form-header h5 {
+        margin: 0;
+        color: white;
+        font-size: 1.15rem;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .usuario-form-header .close-btn {
+        background: rgba(255,255,255,0.15);
+        border: none;
+        color: white;
+        width: 36px;
+        height: 36px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 1.25rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background 0.2s;
+    }
+
+    .usuario-form-header .close-btn:hover {
+        background: rgba(255,255,255,0.25);
+    }
+
+    /* Body del Form */
+    .usuario-form-body {
+        padding: 1.5rem;
+        background: #f8fafc;
+        max-height: 65vh;
+        overflow-y: auto;
+    }
+
+    /* Secciones */
+    .form-section {
+        background: white;
+        border-radius: 12px;
+        margin-bottom: 1.25rem;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        border: 1px solid #e2e8f0;
+        overflow: hidden;
+    }
+
+    .form-section:last-child {
+        margin-bottom: 0;
+    }
+
+    .section-header {
+        background: linear-gradient(to right, #f8fafc, white);
+        padding: 0.875rem 1.25rem;
+        border-bottom: 1px solid #e2e8f0;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .section-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 8px;
+        background: var(--theme-primary);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1rem;
+    }
+
+    .section-title {
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: #1e293b;
+        margin: 0;
+    }
+
+    .section-subtitle {
+        font-size: 0.75rem;
+        color: #64748b;
+        margin-top: 0.15rem;
+    }
+
+    .section-body {
+        padding: 1.25rem;
+    }
+
+    /* Campos del formulario */
+    .form-row {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .form-row:last-child {
+        margin-bottom: 0;
+    }
+
+    .form-group {
+        margin-bottom: 0;
+    }
+
+    .form-label {
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: #475569;
+        margin-bottom: 0.5rem;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+    }
+
+    .form-label i {
+        color: var(--theme-primary);
+        font-size: 0.85rem;
+    }
+
+    .form-label .required {
+        color: #ef4444;
+        margin-left: 0.15rem;
+    }
+
+    .form-control {
+        border: 1.5px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 0.65rem 0.875rem;
+        font-size: 0.9rem;
+        transition: all 0.2s;
+        background: white;
+        width: 100%;
+    }
+
+    .form-control:focus {
+        border-color: var(--theme-primary);
+        box-shadow: 0 0 0 3px rgba(87, 32, 67, 0.1);
+        outline: none;
+    }
+
+    .form-control:disabled,
+    .form-control[readonly] {
+        background: #f1f5f9;
+        color: #64748b;
+        cursor: not-allowed;
+    }
+
+    /* Checkboxes mejorados */
+    .checkbox-group {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 0.75rem;
+    }
+
+    .checkbox-item {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.75rem 1rem;
+        background: #f8fafc;
+        border-radius: 8px;
+        border: 1px solid #e2e8f0;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .checkbox-item:hover {
+        background: #f1f5f9;
+        border-color: #cbd5e1;
+    }
+
+    .checkbox-item input[type="checkbox"] {
+        width: 18px;
+        height: 18px;
+        accent-color: var(--theme-primary);
+        cursor: pointer;
+    }
+
+    .checkbox-item label {
+        margin: 0;
+        cursor: pointer;
+        font-size: 0.85rem;
+        color: #475569;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .checkbox-item label i {
+        font-size: 1rem;
+    }
+
+    .checkbox-item.checked {
+        background: #ecfdf5;
+        border-color: #10b981;
+    }
+
+    .checkbox-item.checked label {
+        color: #065f46;
+    }
+
+    /* Info text */
+    .form-text {
+        font-size: 0.75rem;
+        color: #94a3b8;
+        margin-top: 0.4rem;
+        display: flex;
+        align-items: center;
+        gap: 0.35rem;
+    }
+
+    .form-text i {
+        font-size: 0.7rem;
+    }
+
+    /* Footer del Form */
+    .usuario-form-footer {
+        padding: 1rem 1.5rem;
+        background: white;
+        border-top: 1px solid #e2e8f0;
+        display: flex;
+        justify-content: flex-end;
+        gap: 0.75rem;
+    }
+
+    .btn-submit {
+        background: var(--theme-primary);
+        border: none;
+        color: white;
+        padding: 0.65rem 1.5rem;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .btn-submit:hover {
+        background: var(--theme-primary-dark, #3d1730);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(87, 32, 67, 0.3);
+    }
+
+    .btn-cancel {
+        background: white;
+        border: 1.5px solid #e2e8f0;
+        color: #64748b;
+        padding: 0.65rem 1.5rem;
+        border-radius: 8px;
+        font-weight: 500;
+        font-size: 0.9rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .btn-cancel:hover {
+        background: #f8fafc;
+        border-color: #cbd5e1;
+        color: #475569;
+    }
+
+    /* Select2 personalizado */
+    .select2-container--default .select2-selection--single {
+        height: 42px;
+        border: 1.5px solid #e2e8f0;
+        border-radius: 8px;
+        background: white;
+    }
+
+    .select2-container--default .select2-selection--single .select2-selection__rendered {
+        line-height: 40px;
+        padding-left: 0.875rem;
+        color: #1e293b;
+    }
+
+    .select2-container--default .select2-selection--single .select2-selection__arrow {
+        height: 40px;
+        right: 8px;
+    }
+
+    .select2-container--default.select2-container--focus .select2-selection--single {
+        border-color: var(--theme-primary);
+        box-shadow: 0 0 0 3px rgba(87, 32, 67, 0.1);
+    }
+
+    /* Select2 Multiple */
+    .select2-container--default .select2-selection--multiple {
+        border: 1.5px solid #e2e8f0;
+        border-radius: 8px;
+        background: white;
+        min-height: 42px;
+        padding: 4px 8px;
+    }
+
+    .select2-container--default.select2-container--focus .select2-selection--multiple {
+        border-color: var(--theme-primary);
+        box-shadow: 0 0 0 3px rgba(87, 32, 67, 0.1);
+    }
+
+    .select2-container--default .select2-selection--multiple .select2-selection__choice {
+        background: var(--theme-primary);
+        border: none;
+        border-radius: 4px;
+        color: white;
+        padding: 4px 8px;
+        margin: 2px;
+        font-size: 0.8rem;
+    }
+
+    .select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
+        color: rgba(255,255,255,0.7);
+        margin-right: 6px;
+    }
+
+    .select2-container--default .select2-selection--multiple .select2-selection__choice__remove:hover {
+        color: white;
+        background: transparent;
+    }
+
+    /* Info alert */
+    .info-alert {
+        background: #eff6ff;
+        border: 1px solid #bfdbfe;
+        border-radius: 8px;
+        padding: 0.75rem 1rem;
+        display: flex;
+        align-items: flex-start;
+        gap: 0.75rem;
+        margin-bottom: 1rem;
+    }
+
+    .info-alert i {
+        color: #3b82f6;
+        font-size: 1.1rem;
+        margin-top: 0.1rem;
+    }
+
+    .info-alert-text {
+        font-size: 0.85rem;
+        color: #1e40af;
+        line-height: 1.4;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .usuario-form-header {
+            padding: 1rem 1.25rem;
+        }
+
+        .usuario-form-header h5 {
+            font-size: 1rem;
+        }
+
+        .usuario-form-body {
+            padding: 1rem;
+            max-height: 55vh;
+        }
+
+        .form-section {
+            margin-bottom: 1rem;
+            border-radius: 10px;
+        }
+
+        .section-header {
+            padding: 0.75rem 1rem;
+        }
+
+        .section-icon {
+            width: 32px;
+            height: 32px;
+            font-size: 0.9rem;
+        }
+
+        .section-title {
+            font-size: 0.9rem;
+        }
+
+        .section-body {
+            padding: 1rem;
+        }
+
+        .form-row {
+            grid-template-columns: 1fr;
+            gap: 0.875rem;
+        }
+
+        .usuario-form-footer {
+            padding: 1rem;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .usuario-form-footer button {
+            width: 100%;
+            justify-content: center;
+            padding: 0.75rem 1rem;
+        }
+
+        .checkbox-group {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<div class="usuario-form-container">
+    <!-- Header -->
+    <div class="usuario-form-header">
+        <h5>
+            <i class="fa fa-{% if usuario %}edit{% else %}user-plus{% endif %}"></i>
+            {{ titulo }}
+        </h5>
+        <button type="button" class="close-btn" onclick="$('#modal-lg').modal('hide');">
+            <i class="fa fa-times"></i>
+        </button>
+    </div>
+
+    <form id="usuario_form" method="POST" novalidate>
+        {% csrf_token %}
+        <input type="hidden" id="pk" name="pk" value="{% if usuario %}{{ usuario.id }}{% endif %}">
+
+        <div class="usuario-form-body">
+            {% if usuario %}
+            <div class="info-alert">
+                <i class="fa fa-info-circle"></i>
+                <div class="info-alert-text">
+                    <strong>Modo Edicion:</strong> Deje el campo de contrasena vacio si no desea cambiarla.
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- SECCION: DATOS DE ACCESO -->
+            <div class="form-section">
+                <div class="section-header">
+                    <div class="section-icon">
+                        <i class="fa fa-key"></i>
+                    </div>
+                    <div>
+                        <h6 class="section-title">Datos de Acceso</h6>
+                        <p class="section-subtitle">Credenciales de inicio de sesion</p>
+                    </div>
+                </div>
+                <div class="section-body">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fa fa-user"></i>
+                                Usuario <span class="required">*</span>
+                            </label>
+                            <input type="text" class="form-control" id="username" name="username"
+                                   value="{% if usuario %}{{ usuario.username }}{% endif %}"
+                                   required placeholder="nombre.usuario">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fa fa-lock"></i>
+                                Contrasena {% if not usuario %}<span class="required">*</span>{% endif %}
+                            </label>
+                            <input type="password" class="form-control" id="password" name="password"
+                                   {% if not usuario %}required{% endif %} placeholder="{% if usuario %}Dejar vacio para no cambiar{% else %}Ingrese contrasena{% endif %}">
+                            {% if usuario %}
+                            <span class="form-text"><i class="fa fa-info-circle"></i> Solo complete si desea cambiar la contrasena</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECCION: DATOS PERSONALES -->
+            <div class="form-section">
+                <div class="section-header">
+                    <div class="section-icon">
+                        <i class="fa fa-user"></i>
+                    </div>
+                    <div>
+                        <h6 class="section-title">Datos Personales</h6>
+                        <p class="section-subtitle">Informacion del usuario</p>
+                    </div>
+                </div>
+                <div class="section-body">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fa fa-user"></i>
+                                Nombre
+                            </label>
+                            <input type="text" class="form-control" id="first_name" name="first_name"
+                                   value="{% if usuario %}{{ usuario.first_name }}{% endif %}"
+                                   placeholder="Juan">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fa fa-user"></i>
+                                Apellido
+                            </label>
+                            <input type="text" class="form-control" id="last_name" name="last_name"
+                                   value="{% if usuario %}{{ usuario.last_name }}{% endif %}"
+                                   placeholder="Perez">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fa fa-envelope"></i>
+                                Email
+                            </label>
+                            <input type="email" class="form-control" id="email" name="email"
+                                   value="{% if usuario %}{{ usuario.email }}{% endif %}"
+                                   placeholder="correo@ejemplo.com">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECCION: CONFIGURACION -->
+            <div class="form-section">
+                <div class="section-header">
+                    <div class="section-icon">
+                        <i class="fa fa-cog"></i>
+                    </div>
+                    <div>
+                        <h6 class="section-title">Configuracion</h6>
+                        <p class="section-subtitle">Grupo, sector y origen</p>
+                    </div>
+                </div>
+                <div class="section-body">
+                    <div class="form-row">
+                        <div class="form-group" style="grid-column: 1 / -1;">
+                            <label class="form-label">
+                                <i class="fa fa-users"></i>
+                                Grupos (Menus)
+                            </label>
+                            <select id="grupos" name="grupos" class="form-control select2" multiple="multiple">
+                                {% for g in grupos %}
+                                <option value="{{ g.id }}" {% if usuario and g in usuario.groups.all %}selected{% endif %}>{{ g.name }}</option>
+                                {% endfor %}
+                            </select>
+                            <span class="form-text"><i class="fa fa-info-circle"></i> Seleccione los menus a los que tendra acceso el usuario</span>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fa fa-building"></i>
+                                Sector <span class="required">*</span>
+                            </label>
+                            <select id="sector" name="sector" class="form-control select2" required>
+                                <option value="">Seleccione sector</option>
+                                {% for s in sectores %}
+                                <option value="{{ s.id }}" {% if usuario and usuario.panel_profile and usuario.panel_profile.sector_id == s.id %}selected{% endif %}>{{ s.nombre }}</option>
+                                {% endfor %}
+                            </select>
+                            <span class="form-text"><i class="fa fa-info-circle"></i> Define el comportamiento al escanear turnos</span>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fa fa-id-badge"></i>
+                                Rol/Cargo
+                            </label>
+                            <select id="origen" name="origen" class="form-control select2">
+                                {% for code, label in origenes %}
+                                <option value="{{ code }}" {% if usuario and usuario.panel_profile and usuario.panel_profile.origen == code %}selected{% endif %}>{{ label }}</option>
+                                {% endfor %}
+                            </select>
+                            <span class="form-text"><i class="fa fa-info-circle"></i> Cargo especifico dentro del sector</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECCION: PERMISOS -->
+            <div class="form-section">
+                <div class="section-header">
+                    <div class="section-icon">
+                        <i class="fa fa-shield"></i>
+                    </div>
+                    <div>
+                        <h6 class="section-title">Permisos</h6>
+                        <p class="section-subtitle">Estado y privilegios del usuario</p>
+                    </div>
+                </div>
+                <div class="section-body">
+                    <div class="checkbox-group">
+                        <div class="checkbox-item {% if usuario and usuario.is_active %}checked{% elif not usuario %}checked{% endif %}">
+                            <input type="checkbox" id="is_active" name="is_active" {% if usuario and usuario.is_active %}checked{% elif not usuario %}checked{% endif %}>
+                            <label for="is_active">
+                                <i class="fa fa-check-circle text-success"></i>
+                                Usuario Activo
+                            </label>
+                        </div>
+                        <div class="checkbox-item {% if usuario and usuario.is_staff %}checked{% endif %}">
+                            <input type="checkbox" id="is_staff" name="is_staff" {% if usuario and usuario.is_staff %}checked{% endif %}>
+                            <label for="is_staff">
+                                <i class="fa fa-user-secret text-warning"></i>
+                                Acceso al Admin
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="usuario-form-footer">
+            <button type="button" class="btn-cancel" onclick="$('#modal-lg').modal('hide');">
+                <i class="fa fa-times"></i> Cancelar
+            </button>
+            <button type="submit" class="btn-submit">
+                <i class="fa fa-save"></i> Guardar Usuario
+            </button>
+        </div>
+    </form>
+</div>
+
+<script>
+// Cargar Select2
+cargarSelect2("#modal-lg");
+
+// Toggle de checkboxes
+$(".checkbox-item input[type='checkbox']").on("change", function() {
+    $(this).closest(".checkbox-item").toggleClass("checked", this.checked);
+});
+
+// Validacion del formulario
+$(document).on("submit", "#usuario_form", function(e) {
+    e.preventDefault();
+
+    var username = $("#username").val().trim();
+    var password = $("#password").val().trim();
+    var pk = $("#pk").val();
+
+    if (!username) {
+        Swal.fire({
+            title: "Campo obligatorio",
+            text: "El nombre de usuario es obligatorio",
+            icon: "warning"
+        });
+        return false;
+    }
+
+    // Validar contrasena solo para nuevos usuarios
+    if (!pk && !password) {
+        Swal.fire({
+            title: "Campo obligatorio",
+            text: "La contrasena es obligatoria para nuevos usuarios",
+            icon: "warning"
+        });
+        return false;
+    }
+
+    var formData = new FormData(this);
+
+    $.ajax({
+        url: "{% url 'gestion_usuarios_guardar' %}",
+        type: "POST",
+        data: formData,
+        processData: false,
+        contentType: false,
+        beforeSend: function() {
+            Swal.fire({
+                title: "Guardando...",
+                html: '<i class="fa fa-spinner fa-spin fa-2x"></i>',
+                showConfirmButton: false,
+                allowOutsideClick: false
+            });
+        },
+        success: function(data) {
+            Swal.close();
+            if (data.success) {
+                Swal.fire({
+                    title: 'Guardado!',
+                    text: data.message || 'El usuario fue guardado correctamente',
+                    icon: 'success'
+                }).then(function() {
+                    $("#modal-lg").modal('hide');
+                    cargarTabla();
+                });
+            } else {
+                Swal.fire({
+                    title: 'Error',
+                    text: data.error || 'No se pudo guardar el usuario',
+                    icon: 'error'
+                });
+            }
+        },
+        error: function() {
+            Swal.fire({
+                title: 'Error',
+                text: 'Error al guardar el usuario',
+                icon: 'error'
+            });
+        }
+    });
+});
+</script>

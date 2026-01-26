@@ -1,6 +1,8 @@
 from django.contrib import admin
+from django.contrib import messages
+from django.shortcuts import render, redirect
+from django.urls import path
 from .models import AboutSection, AboutImage, EmailConfig, WhatsAppConfig
-from django.contrib import admin
 from django.utils.html import format_html
 from .models import Service, PortfolioItem, TimelineEvent, ContactMessage, SiteConfiguration
 from django import forms
@@ -37,13 +39,15 @@ class EmailConfigAdmin(admin.ModelAdmin):
         'contact_admin_email',
         'email_host',
         'email_port',
-        'status'
+        'status',
+        'test_button'
     ]
     list_filter = ['es_principal', 'status', 'email_host']
     search_fields = ['nombre', 'email_host_user', 'contact_admin_email']
     list_editable = ['status']
     readonly_fields = ['created_at', 'updated_at']
     ordering = ['-es_principal', 'nombre']
+    change_list_template = 'admin/core/emailconfig_change_list.html'
 
     fieldsets = (
         ('Identificación', {
@@ -64,15 +68,147 @@ class EmailConfigAdmin(admin.ModelAdmin):
         }),
     )
 
-    actions = ['marcar_como_principal']
+    actions = ['marcar_como_principal', 'probar_configuracion']
+
+    def get_urls(self):
+        urls = super().get_urls()
+        custom_urls = [
+            path(
+                'test-email/<int:config_id>/',
+                self.admin_site.admin_view(self.test_email_view),
+                name='core_emailconfig_test'
+            ),
+        ]
+        return custom_urls + urls
+
+    def test_button(self, obj):
+        """Muestra un botón para probar la conexión de email"""
+        return format_html(
+            '<a class="button" href="test-email/{}/" style="background: #17a2b8; color: white; padding: 5px 10px; border-radius: 4px; text-decoration: none; font-size: 11px;">Probar</a>',
+            obj.pk
+        )
+    test_button.short_description = 'Test'
+    test_button.allow_tags = True
+
+    def test_email_view(self, request, config_id):
+        """Vista para probar la configuración de email"""
+        import smtplib
+        from email.mime.text import MIMEText
+        from email.mime.multipart import MIMEMultipart
+        from datetime import datetime
+
+        try:
+            config = EmailConfig.objects.get(pk=config_id)
+        except EmailConfig.DoesNotExist:
+            self.message_user(request, "Configuración no encontrada.", messages.ERROR)
+            return redirect('admin:core_emailconfig_changelist')
+
+        resultado = {
+            'config': config,
+            'exito': False,
+            'mensaje': '',
+            'detalles': [],
+            'fecha_test': datetime.now().strftime('%d/%m/%Y %H:%M:%S')
+        }
+
+        try:
+            # Paso 1: Conectar al servidor SMTP
+            resultado['detalles'].append(('Conectando al servidor SMTP...', 'info'))
+
+            if config.email_use_tls:
+                server = smtplib.SMTP(config.email_host, config.email_port, timeout=30)
+                resultado['detalles'].append((f'Conexión establecida con {config.email_host}:{config.email_port}', 'success'))
+
+                # Paso 2: Iniciar TLS
+                resultado['detalles'].append(('Iniciando conexión TLS...', 'info'))
+                server.starttls()
+                resultado['detalles'].append(('TLS activado correctamente', 'success'))
+            else:
+                server = smtplib.SMTP_SSL(config.email_host, config.email_port, timeout=30)
+                resultado['detalles'].append((f'Conexión SSL establecida con {config.email_host}:{config.email_port}', 'success'))
+
+            # Paso 3: Autenticación
+            resultado['detalles'].append(('Autenticando usuario...', 'info'))
+            server.login(config.email_host_user, config.email_host_password)
+            resultado['detalles'].append((f'Autenticación exitosa para {config.email_host_user}', 'success'))
+
+            # Paso 4: Enviar email de prueba
+            destinatario = config.contact_admin_email or config.email_host_user
+            remitente = config.default_from_email or config.email_host_user
+
+            resultado['detalles'].append((f'Enviando email de prueba a {destinatario}...', 'info'))
+
+            msg = MIMEMultipart('alternative')
+            msg['Subject'] = f'Test de Configuración - {config.nombre}'
+            msg['From'] = remitente
+            msg['To'] = destinatario
+
+            texto_html = f"""
+            <html>
+            <body style="font-family: Arial, sans-serif; padding: 20px;">
+                <div style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%); color: white; padding: 20px; border-radius: 10px; text-align: center;">
+                    <h1 style="margin: 0;">Conexión Exitosa</h1>
+                </div>
+                <div style="padding: 20px; background: #f8f9fa; border-radius: 10px; margin-top: 20px;">
+                    <h2>Configuración de Correo</h2>
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <tr><td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Nombre:</strong></td><td style="padding: 8px; border-bottom: 1px solid #ddd;">{config.nombre}</td></tr>
+                        <tr><td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Servidor:</strong></td><td style="padding: 8px; border-bottom: 1px solid #ddd;">{config.email_host}:{config.email_port}</td></tr>
+                        <tr><td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Usuario:</strong></td><td style="padding: 8px; border-bottom: 1px solid #ddd;">{config.email_host_user}</td></tr>
+                        <tr><td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>TLS:</strong></td><td style="padding: 8px; border-bottom: 1px solid #ddd;">{'Sí' if config.email_use_tls else 'No'}</td></tr>
+                        <tr><td style="padding: 8px;"><strong>Fecha del test:</strong></td><td style="padding: 8px;">{resultado['fecha_test']}</td></tr>
+                    </table>
+                </div>
+                <p style="color: #666; font-size: 12px; margin-top: 20px; text-align: center;">
+                    Este es un email de prueba enviado desde el panel de administración.
+                </p>
+            </body>
+            </html>
+            """
+
+            parte_html = MIMEText(texto_html, 'html')
+            msg.attach(parte_html)
+
+            server.sendmail(remitente, [destinatario], msg.as_string())
+            resultado['detalles'].append((f'Email enviado exitosamente a {destinatario}', 'success'))
+
+            # Cerrar conexión
+            server.quit()
+            resultado['detalles'].append(('Conexión cerrada correctamente', 'success'))
+
+            resultado['exito'] = True
+            resultado['mensaje'] = f'La configuración funciona correctamente. Se envió un email de prueba a {destinatario}.'
+
+        except smtplib.SMTPAuthenticationError as e:
+            resultado['detalles'].append((f'Error de autenticación: {str(e)}', 'error'))
+            resultado['mensaje'] = 'Error de autenticación. Verifique el usuario y contraseña.'
+        except smtplib.SMTPConnectError as e:
+            resultado['detalles'].append((f'Error de conexión: {str(e)}', 'error'))
+            resultado['mensaje'] = f'No se pudo conectar al servidor {config.email_host}:{config.email_port}.'
+        except smtplib.SMTPException as e:
+            resultado['detalles'].append((f'Error SMTP: {str(e)}', 'error'))
+            resultado['mensaje'] = f'Error de SMTP: {str(e)}'
+        except Exception as e:
+            resultado['detalles'].append((f'Error inesperado: {str(e)}', 'error'))
+            resultado['mensaje'] = f'Error inesperado: {str(e)}'
+
+        context = {
+            **self.admin_site.each_context(request),
+            'title': f'Test de Email - {config.nombre}',
+            'opts': self.model._meta,
+            'resultado': resultado,
+        }
+        return render(request, 'admin/core/emailconfig_test.html', context)
 
     def es_principal_display(self, obj):
         """Muestra un indicador visual si es la configuración principal"""
         if obj.es_principal:
             return format_html(
-                '<span style="color: #28a745; font-weight: bold;">✓ Principal</span>'
+                '<span style="color: {}; font-weight: bold;">{}</span>',
+                '#28a745',
+                '✓ Principal'
             )
-        return format_html('<span style="color: #999;">-</span>')
+        return format_html('<span style="color: {};">{}</span>', '#999', '-')
     es_principal_display.short_description = 'Principal'
     es_principal_display.admin_order_field = 'es_principal'
 
@@ -98,6 +234,19 @@ class EmailConfigAdmin(admin.ModelAdmin):
             f'"{config.nombre}" ahora es la configuración principal de correo.'
         )
     marcar_como_principal.short_description = 'Marcar como configuración principal'
+
+    @admin.action(description="Probar configuración de email seleccionada")
+    def probar_configuracion(self, request, queryset):
+        """Acción para probar la configuración seleccionada"""
+        if queryset.count() != 1:
+            self.message_user(
+                request,
+                'Seleccione exactamente una configuración para probar.',
+                messages.WARNING
+            )
+            return
+        config = queryset.first()
+        return redirect(f'test-email/{config.pk}/')
 
 class AboutImageInline(admin.TabularInline):
     model = AboutImage

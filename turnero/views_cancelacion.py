@@ -9,6 +9,7 @@ from django.contrib import messages
 from django.urls import reverse
 from django.core.mail import EmailMessage, get_connection
 from .models import Turno, Taller, TipoVehiculo
+from talleres.models import ConfiguracionTaller
 from core.models import EmailConfig
 
 
@@ -142,9 +143,19 @@ class ReprogramarTurnoView(View):
             turno.fecha = datetime.strptime(fecha, '%Y-%m-%d').date()
             turno.hora_inicio = datetime.strptime(hora_inicio, '%H:%M').time()
 
-            # Calcular hora_fin (sumar duración del tipo de vehículo)
+            # Calcular hora_fin usando el intervalo de la configuración del taller
             from datetime import timedelta
-            duracion = timedelta(minutes=turno.tipo_vehiculo.duracion_minutos)
+            try:
+                config = ConfiguracionTaller.objects.get(
+                    taller=taller,
+                    tipo_vehiculo=turno.tipo_vehiculo
+                )
+                duracion_minutos = config.intervalo_minutos
+            except ConfiguracionTaller.DoesNotExist:
+                # Fallback al duracion_minutos del tipo de vehículo
+                duracion_minutos = turno.tipo_vehiculo.duracion_minutos
+
+            duracion = timedelta(minutes=duracion_minutos)
             hora_inicio_dt = datetime.combine(turno.fecha, turno.hora_inicio)
             hora_fin_dt = hora_inicio_dt + duracion
             turno.hora_fin = hora_fin_dt.time()

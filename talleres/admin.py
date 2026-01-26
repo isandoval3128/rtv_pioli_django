@@ -81,6 +81,24 @@ class ImportarExcelForm(forms.Form):
     )
 
 
+class ConfiguracionMasivaForm(forms.Form):
+    """Formulario para configuración masiva de turnos"""
+    intervalo_minutos = forms.IntegerField(
+        label="Intervalo entre turnos (minutos)",
+        min_value=5,
+        max_value=120,
+        required=False,
+        widget=forms.NumberInput(attrs={'class': 'vIntegerField', 'placeholder': 'Ej: 30'})
+    )
+    turnos_simultaneos = forms.IntegerField(
+        label="Turnos Simultáneos",
+        min_value=1,
+        max_value=20,
+        required=False,
+        widget=forms.NumberInput(attrs={'class': 'vIntegerField', 'placeholder': 'Ej: 2'})
+    )
+
+
 @admin.register(TipoVehiculo)
 class TipoVehiculoAdmin(admin.ModelAdmin):
     list_display = (
@@ -203,6 +221,7 @@ class ConfiguracionTallerAdmin(admin.ModelAdmin):
     ordering = ('taller__nombre', 'tipo_vehiculo__nombre')
     list_editable = ('status', 'turnos_simultaneos', 'intervalo_minutos')
     change_list_template = 'admin/talleres/configuraciontaller_change_list.html'
+    actions = ['configurar_masivamente']
 
     autocomplete_fields = ['taller', 'tipo_vehiculo']
 
@@ -214,8 +233,75 @@ class ConfiguracionTallerAdmin(admin.ModelAdmin):
                 self.admin_site.admin_view(self.sincronizar_talleres_tramites),
                 name='talleres_configuraciontaller_sincronizar'
             ),
+            path(
+                'configurar-masivo/',
+                self.admin_site.admin_view(self.configurar_masivo_view),
+                name='talleres_configuraciontaller_configurar_masivo'
+            ),
         ]
         return custom_urls + urls
+
+    @admin.action(description="Configurar Intervalo y Turnos Simultáneos")
+    def configurar_masivamente(self, request, queryset):
+        """Acción para configurar intervalo y turnos simultáneos de forma masiva"""
+        selected = queryset.values_list('pk', flat=True)
+        selected_ids = ','.join(str(pk) for pk in selected)
+        return redirect(f'configurar-masivo/?ids={selected_ids}')
+
+    def configurar_masivo_view(self, request):
+        """Vista para el formulario de configuración masiva"""
+        ids = request.GET.get('ids', '')
+        if not ids:
+            self.message_user(request, "No se seleccionaron elementos.", messages.WARNING)
+            return redirect('admin:talleres_configuraciontaller_changelist')
+
+        id_list = [int(pk) for pk in ids.split(',') if pk.isdigit()]
+        queryset = ConfiguracionTaller.objects.filter(pk__in=id_list)
+
+        if request.method == 'POST':
+            form = ConfiguracionMasivaForm(request.POST)
+            if form.is_valid():
+                intervalo = form.cleaned_data.get('intervalo_minutos')
+                turnos = form.cleaned_data.get('turnos_simultaneos')
+
+                updates = {}
+                if intervalo:
+                    updates['intervalo_minutos'] = intervalo
+                if turnos:
+                    updates['turnos_simultaneos'] = turnos
+
+                if updates:
+                    updated = queryset.update(**updates)
+                    campos = []
+                    if intervalo:
+                        campos.append(f"Intervalo: {intervalo} min")
+                    if turnos:
+                        campos.append(f"Turnos Simultáneos: {turnos}")
+                    self.message_user(
+                        request,
+                        f"Se actualizaron {updated} configuraciones. {', '.join(campos)}",
+                        messages.SUCCESS
+                    )
+                else:
+                    self.message_user(
+                        request,
+                        "No se ingresaron valores para actualizar.",
+                        messages.WARNING
+                    )
+                return redirect('admin:talleres_configuraciontaller_changelist')
+        else:
+            form = ConfiguracionMasivaForm()
+
+        context = {
+            **self.admin_site.each_context(request),
+            'title': 'Configuración Masiva de Turnos',
+            'opts': self.model._meta,
+            'form': form,
+            'queryset': queryset,
+            'count': queryset.count(),
+            'ids': ids,
+        }
+        return render(request, 'admin/talleres/configuracion_masiva.html', context)
 
     def sincronizar_talleres_tramites(self, request):
         """

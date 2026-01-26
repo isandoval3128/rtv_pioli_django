@@ -24,6 +24,25 @@ urlpatterns = [
     path('turnos/whatsapp/', views.gestion_turnos_whatsapp, name='gestion_turnos_whatsapp'),
     path('turnos/imprimir/<int:pk>/', views.gestion_turnos_imprimir, name='gestion_turnos_imprimir'),
 
+    # Escaneo de QR - Atención de Turnos
+    path('turnos/escanear/', views.escanear_turno, name='escanear_turno'),
+    path('turnos/verificar/', views.verificar_turno_panel, name='verificar_turno_panel'),
+    path('turnos/registrar-atencion/', views.registrar_atencion_turno, name='registrar_atencion_turno'),
+
+    # Gestión de Usuarios
+    path('usuarios/', views.gestion_usuarios, name='gestion_usuarios'),
+    path('usuarios/ajax/', views.gestion_usuarios_ajax, name='gestion_usuarios_ajax'),
+    path('usuarios/form/', views.gestion_usuarios_form, name='gestion_usuarios_form'),
+    path('usuarios/ver/', views.gestion_usuarios_ver, name='gestion_usuarios_ver'),
+    path('usuarios/guardar/', views.gestion_usuarios_guardar, name='gestion_usuarios_guardar'),
+    path('usuarios/imprimir/<int:pk>/', views.gestion_usuarios_imprimir, name='gestion_usuarios_imprimir'),
+    path('usuarios/reset-password/', views.gestion_usuarios_reset_password, name='gestion_usuarios_reset_password'),
+    path('usuarios/toggle/', views.gestion_usuarios_toggle, name='gestion_usuarios_toggle'),
+
+    # Restablecimiento de contraseña (acceso público con token)
+    path('restablecer-password/confirmar/', views.password_reset_confirm, name='password_reset_confirm'),
+    path('restablecer-password/<str:token>/', views.password_reset_form, name='password_reset_form'),
+
     # Auxiliares
     path('vehiculos-cliente/', views.obtener_vehiculos_cliente, name='obtener_vehiculos_cliente'),
     path('cliente/guardar-rapido/', views.guardar_cliente_rapido, name='guardar_cliente_rapido'),

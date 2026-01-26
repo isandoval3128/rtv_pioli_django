@@ -234,13 +234,6 @@ class Step5ConfirmacionForm(forms.Form):
         }
     )
 
-    recaptcha_token = forms.CharField(
-        required=True,
-        widget=forms.HiddenInput(attrs={
-            'id': 'recaptcha_token'
-        })
-    )
-
 
 class CancelarTurnoForm(forms.Form):
     """Formulario para cancelar un turno"""

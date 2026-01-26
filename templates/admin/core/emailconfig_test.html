@@ -1,0 +1,90 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+    <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+    &rsaquo; <a href="{% url 'admin:core_emailconfig_changelist' %}">Configuraciones de Correo</a>
+    &rsaquo; Test de Email
+</div>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <h1>Test de Configuracion de Email</h1>
+
+    <!-- Información de la configuración -->
+    <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+        <h2 style="margin-top: 0; color: #417690;">
+            <span style="margin-right: 8px;">&#9993;</span>
+            {{ resultado.config.nombre }}
+        </h2>
+        <table style="width: 100%; border-collapse: collapse;">
+            <tr>
+                <td style="padding: 8px; border-bottom: 1px solid #ddd; width: 200px;"><strong>Servidor SMTP:</strong></td>
+                <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ resultado.config.email_host }}:{{ resultado.config.email_port }}</td>
+            </tr>
+            <tr>
+                <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Usuario:</strong></td>
+                <td style="padding: 8px; border-bottom: 1px solid #ddd;">{{ resultado.config.email_host_user }}</td>
+            </tr>
+            <tr>
+                <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>TLS:</strong></td>
+                <td style="padding: 8px; border-bottom: 1px solid #ddd;">{% if resultado.config.email_use_tls %}Si{% else %}No{% endif %}</td>
+            </tr>
+            <tr>
+                <td style="padding: 8px;"><strong>Fecha del test:</strong></td>
+                <td style="padding: 8px;">{{ resultado.fecha_test }}</td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- Resultado del test -->
+    {% if resultado.exito %}
+    <div style="background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%); padding: 20px; border-radius: 8px; margin-bottom: 20px; border-left: 5px solid #28a745;">
+        <h3 style="margin-top: 0; color: #155724;">
+            <span style="margin-right: 8px;">&#10004;</span>
+            Conexion Exitosa
+        </h3>
+        <p style="margin-bottom: 0; color: #155724;">{{ resultado.mensaje }}</p>
+    </div>
+    {% else %}
+    <div style="background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%); padding: 20px; border-radius: 8px; margin-bottom: 20px; border-left: 5px solid #dc3545;">
+        <h3 style="margin-top: 0; color: #721c24;">
+            <span style="margin-right: 8px;">&#10008;</span>
+            Error en la Conexion
+        </h3>
+        <p style="margin-bottom: 0; color: #721c24;">{{ resultado.mensaje }}</p>
+    </div>
+    {% endif %}
+
+    <!-- Log de pasos -->
+    <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+        <h3 style="margin-top: 0; color: #417690;">
+            <span style="margin-right: 8px;">&#128203;</span>
+            Registro de Pasos
+        </h3>
+        <div style="font-family: monospace; font-size: 13px;">
+            {% for detalle, tipo in resultado.detalles %}
+            <div style="padding: 8px 12px; margin: 4px 0; border-radius: 4px;
+                {% if tipo == 'success' %}background: #d4edda; color: #155724; border-left: 3px solid #28a745;
+                {% elif tipo == 'error' %}background: #f8d7da; color: #721c24; border-left: 3px solid #dc3545;
+                {% else %}background: #e7f3ff; color: #004085; border-left: 3px solid #17a2b8;{% endif %}">
+                {% if tipo == 'success' %}&#10004;{% elif tipo == 'error' %}&#10008;{% else %}&#9679;{% endif %}
+                {{ detalle }}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Botones -->
+    <div class="submit-row" style="margin-top: 20px; display: flex; gap: 10px;">
+        <a href="{% url 'admin:core_emailconfig_changelist' %}" class="button" style="background: #417690; color: white; padding: 10px 20px; text-decoration: none; border-radius: 4px;">
+            Volver al listado
+        </a>
+        <a href="{% url 'admin:core_emailconfig_test' resultado.config.pk %}" class="button" style="background: #17a2b8; color: white; padding: 10px 20px; text-decoration: none; border-radius: 4px;">
+            Volver a probar
+        </a>
+    </div>
+</div>
+{% endblock %}

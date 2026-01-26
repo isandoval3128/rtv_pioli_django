@@ -1,0 +1,530 @@
+<style>
+    /* Reset y Base */
+    .modal-usuario {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    /* Header minimalista */
+    .usuario-header {
+        background: var(--theme-primary);
+        padding: 1.25rem 1.5rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .usuario-header-left {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .usuario-avatar {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.2);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+        font-weight: 600;
+    }
+
+    .usuario-info h5 {
+        margin: 0;
+        color: white;
+        font-size: 1.1rem;
+        font-weight: 600;
+    }
+
+    .usuario-info .username {
+        color: rgba(255,255,255,0.8);
+        font-size: 0.85rem;
+        margin-top: 0.15rem;
+    }
+
+    .usuario-estado {
+        padding: 0.3rem 0.65rem;
+        border-radius: 4px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+
+    .usuario-estado.activo { background: #d1fae5; color: #065f46; }
+    .usuario-estado.inactivo { background: #fee2e2; color: #991b1b; }
+
+    .usuario-header .close-btn {
+        background: rgba(255,255,255,0.15);
+        border: none;
+        color: white;
+        width: 32px;
+        height: 32px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 1.25rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background 0.2s;
+    }
+
+    .usuario-header .close-btn:hover {
+        background: rgba(255,255,255,0.25);
+    }
+
+    /* Body */
+    .usuario-body {
+        padding: 1.5rem;
+        max-height: 70vh;
+        overflow-y: auto;
+    }
+
+    /* Secciones */
+    .section {
+        margin-bottom: 1.5rem;
+    }
+
+    .section:last-child {
+        margin-bottom: 0;
+    }
+
+    .section-header {
+        font-size: 0.7rem;
+        font-weight: 600;
+        color: #94a3b8;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 0.75rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .section-header i {
+        color: var(--theme-primary);
+    }
+
+    /* Grid de datos */
+    .data-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.875rem;
+    }
+
+    .data-item {
+        min-width: 0;
+    }
+
+    .data-item.full {
+        grid-column: 1 / -1;
+    }
+
+    .data-item.highlight {
+        background: var(--theme-primary);
+        padding: 0.75rem;
+        border-radius: 8px;
+    }
+
+    .data-item.highlight .data-label,
+    .data-item.highlight .data-value {
+        color: white;
+    }
+
+    .data-label {
+        font-size: 0.7rem;
+        color: #94a3b8;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+        margin-bottom: 0.2rem;
+    }
+
+    .data-value {
+        font-size: 0.95rem;
+        color: #1e293b;
+        font-weight: 500;
+        word-break: break-word;
+    }
+
+    .data-value.large {
+        font-size: 1.15rem;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+    }
+
+    .data-value.muted {
+        color: #94a3b8;
+        font-style: italic;
+        font-weight: 400;
+    }
+
+    /* Divider */
+    .divider {
+        height: 1px;
+        background: #e2e8f0;
+        margin: 1.25rem 0;
+    }
+
+    /* Info row compacta */
+    .info-row-compact {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.5rem 0;
+        border-bottom: 1px solid #f1f5f9;
+        font-size: 0.85rem;
+    }
+
+    .info-row-compact:last-child {
+        border-bottom: none;
+    }
+
+    .info-row-compact .label {
+        color: #64748b;
+    }
+
+    .info-row-compact .label i {
+        width: 18px;
+        margin-right: 0.4rem;
+    }
+
+    .info-row-compact .value {
+        font-weight: 500;
+        color: #1e293b;
+    }
+
+    .info-row-compact .badge {
+        font-size: 0.7rem;
+        padding: 0.2rem 0.5rem;
+        border-radius: 10px;
+        font-weight: 500;
+    }
+
+    .info-row-compact .badge.success {
+        background: #d1fae5;
+        color: #065f46;
+    }
+
+    .info-row-compact .badge.warning {
+        background: #fef3c7;
+        color: #92400e;
+    }
+
+    .info-row-compact .badge.info {
+        background: #dbeafe;
+        color: #1e40af;
+    }
+
+    /* Grupos badges */
+    .grupos-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+    .grupo-badge {
+        background: #f1f5f9;
+        color: #475569;
+        padding: 0.35rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 500;
+    }
+
+    /* Layout dos columnas */
+    .two-cols {
+        display: grid;
+        grid-template-columns: 1fr 280px;
+        gap: 1.5rem;
+    }
+
+    .col-main {
+        min-width: 0;
+    }
+
+    .col-side {
+        min-width: 0;
+    }
+
+    /* Footer */
+    .usuario-footer {
+        padding: 1rem 1.5rem;
+        background: #f8fafc;
+        border-top: 1px solid #e2e8f0;
+        display: flex;
+        justify-content: flex-end;
+        gap: 0.5rem;
+    }
+
+    .usuario-footer .btn {
+        padding: 0.5rem 1rem;
+        font-size: 0.85rem;
+    }
+
+    /* Responsive */
+    @media (max-width: 992px) {
+        .two-cols {
+            grid-template-columns: 1fr;
+        }
+
+        .col-side {
+            order: -1;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .usuario-header {
+            padding: 1rem;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+        }
+
+        .usuario-header-left {
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .usuario-avatar {
+            width: 40px;
+            height: 40px;
+            font-size: 1rem;
+        }
+
+        .usuario-info h5 {
+            font-size: 1rem;
+        }
+
+        .usuario-body {
+            padding: 1rem;
+            max-height: 65vh;
+        }
+
+        .data-grid {
+            grid-template-columns: 1fr;
+            gap: 0.75rem;
+        }
+
+        .usuario-footer {
+            padding: 0.875rem 1rem;
+            flex-wrap: wrap;
+        }
+
+        .usuario-footer .btn {
+            flex: 1;
+            min-width: 120px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .usuario-header {
+            padding: 0.875rem;
+        }
+
+        .usuario-body {
+            padding: 0.875rem;
+        }
+
+        .section-header {
+            font-size: 0.65rem;
+        }
+
+        .data-label {
+            font-size: 0.65rem;
+        }
+
+        .data-value {
+            font-size: 0.875rem;
+        }
+
+        .info-row-compact {
+            font-size: 0.8rem;
+        }
+
+        .usuario-footer .btn {
+            padding: 0.45rem 0.75rem;
+            font-size: 0.8rem;
+        }
+    }
+</style>
+
+<div class="modal-usuario">
+    <!-- Header -->
+    <div class="usuario-header">
+        <div class="usuario-header-left">
+            <div class="usuario-avatar">
+                {% if usuario.first_name and usuario.last_name %}
+                    {{ usuario.first_name.0|upper }}{{ usuario.last_name.0|upper }}
+                {% else %}
+                    {{ usuario.username.0|upper }}
+                {% endif %}
+            </div>
+            <div class="usuario-info">
+                <h5>{{ usuario.get_full_name|default:usuario.username }}</h5>
+                <div class="username">@{{ usuario.username }}</div>
+            </div>
+            <span class="usuario-estado {% if usuario.is_active %}activo{% else %}inactivo{% endif %}">
+                {% if usuario.is_active %}Activo{% else %}Inactivo{% endif %}
+            </span>
+        </div>
+        <button type="button" class="close-btn" onclick="$('#modal-lg').modal('hide');">
+            <i class="fa fa-times"></i>
+        </button>
+    </div>
+
+    <!-- Body -->
+    <div class="usuario-body">
+        <div class="two-cols">
+            <!-- Columna Principal -->
+            <div class="col-main">
+                <!-- Datos Personales -->
+                <div class="section">
+                    <div class="section-header">
+                        <i class="fa fa-user"></i> Datos Personales
+                    </div>
+                    <div class="data-grid">
+                        <div class="data-item">
+                            <div class="data-label">Nombre</div>
+                            <div class="data-value {% if not usuario.first_name %}muted{% endif %}">
+                                {{ usuario.first_name|default:"No registrado" }}
+                            </div>
+                        </div>
+                        <div class="data-item">
+                            <div class="data-label">Apellido</div>
+                            <div class="data-value {% if not usuario.last_name %}muted{% endif %}">
+                                {{ usuario.last_name|default:"No registrado" }}
+                            </div>
+                        </div>
+                        <div class="data-item full">
+                            <div class="data-label">Email</div>
+                            <div class="data-value {% if not usuario.email %}muted{% endif %}">
+                                {% if usuario.email %}
+                                <a href="mailto:{{ usuario.email }}" style="color: var(--theme-primary);">
+                                    <i class="fa fa-envelope me-1"></i>{{ usuario.email }}
+                                </a>
+                                {% else %}
+                                No registrado
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="divider"></div>
+
+                <!-- Configuracion -->
+                <div class="section">
+                    <div class="section-header">
+                        <i class="fa fa-cog"></i> Configuracion
+                    </div>
+                    <div class="data-grid">
+                        <div class="data-item highlight">
+                            <div class="data-label">Usuario</div>
+                            <div class="data-value large">{{ usuario.username }}</div>
+                        </div>
+                        <div class="data-item">
+                            <div class="data-label">Sector</div>
+                            <div class="data-value {% if not usuario.panel_profile or not usuario.panel_profile.sector %}muted{% endif %}">
+                                {% if usuario.panel_profile and usuario.panel_profile.sector %}
+                                    {{ usuario.panel_profile.sector.nombre }}
+                                {% else %}
+                                    Sin sector
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="data-item">
+                            <div class="data-label">Rol/Cargo</div>
+                            <div class="data-value {% if not usuario.panel_profile or not usuario.panel_profile.origen %}muted{% endif %}">
+                                {% if usuario.panel_profile and usuario.panel_profile.origen %}
+                                    {{ usuario.panel_profile.get_origen_display }}
+                                {% else %}
+                                    General
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="divider"></div>
+
+                <!-- Grupos -->
+                <div class="section">
+                    <div class="section-header">
+                        <i class="fa fa-users"></i> Grupos
+                    </div>
+                    {% if usuario.groups.exists %}
+                    <div class="grupos-list">
+                        {% for grupo in usuario.groups.all %}
+                        <span class="grupo-badge">
+                            <i class="fa fa-users me-1"></i>{{ grupo.name }}
+                        </span>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="data-value muted">Sin grupos asignados</div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Columna Lateral -->
+            <div class="col-side">
+                <!-- Permisos -->
+                <div class="section">
+                    <div class="section-header">
+                        <i class="fa fa-shield"></i> Permisos
+                    </div>
+                    <div class="info-row-compact">
+                        <span class="label"><i class="fa fa-check-circle"></i>Estado</span>
+                        <span class="badge {% if usuario.is_active %}success{% else %}warning{% endif %}">
+                            {% if usuario.is_active %}Activo{% else %}Inactivo{% endif %}
+                        </span>
+                    </div>
+                    <div class="info-row-compact">
+                        <span class="label"><i class="fa fa-user-secret"></i>Staff</span>
+                        <span class="badge {% if usuario.is_staff %}success{% else %}warning{% endif %}">
+                            {% if usuario.is_staff %}Si{% else %}No{% endif %}
+                        </span>
+                    </div>
+                    <div class="info-row-compact">
+                        <span class="label"><i class="fa fa-star"></i>Superusuario</span>
+                        <span class="badge {% if usuario.is_superuser %}info{% else %}warning{% endif %}">
+                            {% if usuario.is_superuser %}Si{% else %}No{% endif %}
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Auditoria -->
+                <div class="section">
+                    <div class="section-header">
+                        <i class="fa fa-info-circle"></i> Auditoria
+                    </div>
+                    <div class="info-row-compact">
+                        <span class="label">Creado</span>
+                        <span class="value">{{ usuario.date_joined|date:"d/m/Y H:i" }}</span>
+                    </div>
+                    <div class="info-row-compact">
+                        <span class="label">Ultimo acceso</span>
+                        <span class="value">
+                            {% if usuario.last_login %}
+                            {{ usuario.last_login|date:"d/m/Y H:i" }}
+                            {% else %}
+                            <em class="text-muted">Nunca</em>
+                            {% endif %}
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="usuario-footer">
+        <button type="button" class="btn btn-primary" onclick="gestionUsuario({{ usuario.id }}); $('#modal-lg').modal('hide');">
+            <i class="fa fa-edit me-1"></i> Editar
+        </button>
+        <button type="button" class="btn btn-outline-secondary" onclick="$('#modal-lg').modal('hide');">
+            Cerrar
+        </button>
+    </div>
+</div>

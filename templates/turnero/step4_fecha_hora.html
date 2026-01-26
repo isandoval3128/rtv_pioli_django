@@ -10,10 +10,24 @@
         padding: 1rem 1.5rem;
         border-radius: 10px;
         margin-bottom: 2rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+    }
+
+    .cliente-info i {
+        color: var(--primary-color);
+        flex-shrink: 0;
     }
 
     .cliente-info strong {
         color: var(--primary-color);
+    }
+
+    .cliente-info span {
+        flex: 1;
+        min-width: 0;
     }
 
     .search-title {
@@ -24,193 +38,276 @@
         align-items: center;
     }
 
+    /* Contenedor del calendario - MAS GRANDE */
     .calendario-container {
         background: white;
         padding: 2rem;
-        border-radius: 15px;
-        box-shadow: var(--card-shadow);
+        border-radius: 20px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
         margin-bottom: 2rem;
     }
 
-    .horarios-container {
-        background: white;
-        padding: 2rem;
-        border-radius: 15px;
-        box-shadow: var(--card-shadow);
-    }
-
-    .horario-btn {
-        background: white;
-        border: 2px solid #e9ecef;
-        border-radius: 10px;
-        padding: 1rem;
-        margin: 0.5rem;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        text-align: center;
-        min-width: 120px;
-    }
-
-    .horario-btn:hover {
-        border-color: var(--primary-color);
-        transform: translateY(-3px);
-        box-shadow: var(--card-shadow);
-    }
-
-    .horario-btn.selected {
-        border-color: var(--primary-color);
-        background: var(--primary-color);
-        color: white;
-    }
-
-    .horario-btn.disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-        background: #f8f9fa;
-    }
-
-    .horario-hora {
-        font-size: 1.3rem;
-        font-weight: 700;
-        margin-bottom: 0.25rem;
-    }
-
-    .horario-cupos {
-        font-size: 0.85rem;
-        opacity: 0.8;
-    }
-
-    .flatpickr-day.selected {
-        background: var(--primary-color) !important;
-        border-color: var(--primary-color) !important;
-    }
-
-    .flatpickr-day.today {
-        border-color: var(--secondary-color) !important;
-    }
-
-    .flatpickr-day:hover {
-        background: var(--secondary-color) !important;
-    }
-
-    /* Estilo del calendario inline */
+    /* Ocultar el input */
     #datepicker {
-        display: none; /* Ocultar el input cuando sea inline */
+        display: none;
     }
 
+    /* Calendario inline MAS GRANDE */
     .flatpickr-calendar.inline {
-        margin: 2rem auto !important;
+        margin: 1rem auto !important;
         display: block !important;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
-        border-radius: 15px !important;
+        box-shadow: none !important;
         border: none !important;
+        width: 100% !important;
+        max-width: 450px !important;
+        font-size: 1.1rem !important;
     }
 
     .flatpickr-months {
-        background: var(--primary-color) !important;
+        background: linear-gradient(135deg, var(--primary-color) 0%, #1a4a6e 100%) !important;
         border-radius: 15px 15px 0 0 !important;
+        padding: 0.75rem 0 !important;
+    }
+
+    .flatpickr-month {
+        height: 45px !important;
     }
 
     .flatpickr-current-month {
         color: white !important;
+        font-size: 1.25rem !important;
+        font-weight: 600 !important;
     }
 
     .flatpickr-monthDropdown-months,
     .numInputWrapper input {
         color: white !important;
+        font-size: 1.1rem !important;
     }
 
     .flatpickr-prev-month,
     .flatpickr-next-month {
         fill: white !important;
+        padding: 10px 15px !important;
+    }
+
+    .flatpickr-prev-month:hover svg,
+    .flatpickr-next-month:hover svg {
+        fill: var(--accent-color) !important;
     }
 
     .flatpickr-weekdays {
-        background: #f8f9fa !important;
+        background: #f0f4f8 !important;
+        padding: 0.5rem 0 !important;
     }
 
-    /* Responsive para pantallas pequeñas */
-    @media (max-width: 576px) {
-        .flatpickr-calendar.inline {
-            margin: 1rem auto !important;
-            max-width: 100% !important;
-            font-size: 14px !important;
-        }
-
-        .flatpickr-months {
-            padding: 0.5rem !important;
-        }
-
-        .flatpickr-current-month {
-            font-size: 1rem !important;
-        }
-
-        .flatpickr-day {
-            max-width: 35px !important;
-            height: 35px !important;
-            line-height: 35px !important;
-        }
-
-        .flatpickr-weekday {
-            font-size: 12px !important;
-        }
-
-        .calendario-container {
-            padding: 1rem !important;
-        }
-
-        .horarios-container {
-            padding: 1rem !important;
-        }
-
-        .horario-btn {
-            min-width: 100px !important;
-            padding: 0.75rem !important;
-            margin: 0.25rem !important;
-        }
-
-        .horario-hora {
-            font-size: 1.1rem !important;
-        }
-
-        .horario-cupos {
-            font-size: 0.75rem !important;
-        }
+    .flatpickr-weekday {
+        color: var(--primary-color) !important;
+        font-weight: 600 !important;
+        font-size: 0.95rem !important;
     }
 
-    /* Tablets */
-    @media (min-width: 577px) and (max-width: 768px) {
-        .flatpickr-calendar.inline {
-            font-size: 15px !important;
-        }
-
-        .horario-btn {
-            min-width: 110px !important;
-        }
+    .flatpickr-days {
+        width: 100% !important;
     }
 
+    .dayContainer {
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 100% !important;
+    }
+
+    .flatpickr-day {
+        max-width: 55px !important;
+        height: 50px !important;
+        line-height: 50px !important;
+        font-size: 1.1rem !important;
+        font-weight: 500 !important;
+        border-radius: 12px !important;
+        margin: 3px !important;
+    }
+
+    .flatpickr-day.selected {
+        background: var(--primary-color) !important;
+        border-color: var(--primary-color) !important;
+        font-weight: 700 !important;
+    }
+
+    .flatpickr-day.today {
+        border: 2px solid var(--accent-color) !important;
+        background: rgba(255, 193, 7, 0.1) !important;
+    }
+
+    .flatpickr-day:hover {
+        background: var(--secondary-color) !important;
+        border-color: var(--secondary-color) !important;
+    }
+
+    .flatpickr-day.flatpickr-disabled {
+        color: #ccc !important;
+    }
+
+    /* Contenedor de horarios */
+    .horarios-container {
+        background: white;
+        padding: 2rem;
+        border-radius: 20px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Fecha seleccionada */
     .fecha-seleccionada {
-        background: #f0f4f8;
+        background: linear-gradient(135deg, #e7f1ff 0%, #cfe2ff 100%);
         border-left: 4px solid var(--primary-color);
         padding: 1rem 1.5rem;
-        border-radius: 10px;
+        border-radius: 12px;
         margin-bottom: 1.5rem;
         display: none;
     }
 
     .fecha-seleccionada.show {
-        display: block;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
         animation: fadeInUp 0.5s ease;
+    }
+
+    .fecha-seleccionada i {
+        color: var(--primary-color);
+        font-size: 1.25rem;
     }
 
     .fecha-seleccionada strong {
         color: var(--primary-color);
-        font-size: 1.2rem;
+        font-size: 1.1rem;
     }
 
+    /* Tabs de franjas horarias */
+    .franjas-tabs {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+        border-bottom: 2px solid #e9ecef;
+        padding-bottom: 0;
+    }
+
+    .franja-tab {
+        flex: 1;
+        padding: 1rem 1.5rem;
+        background: transparent;
+        border: none;
+        border-bottom: 3px solid transparent;
+        margin-bottom: -2px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.75rem;
+        font-weight: 600;
+        color: #6c757d;
+        font-size: 1rem;
+    }
+
+    .franja-tab:hover {
+        color: var(--primary-color);
+        background: #f8f9fa;
+    }
+
+    .franja-tab.active {
+        color: var(--primary-color);
+        border-bottom-color: var(--primary-color);
+        background: linear-gradient(180deg, rgba(19, 48, 77, 0.05) 0%, transparent 100%);
+    }
+
+    .franja-tab i {
+        font-size: 1.25rem;
+    }
+
+    .franja-tab .badge {
+        background: var(--primary-color);
+        color: white;
+        font-size: 0.75rem;
+        padding: 0.25rem 0.5rem;
+        border-radius: 10px;
+    }
+
+    .franja-tab.active .badge {
+        background: var(--accent-color);
+        color: #333;
+    }
+
+    /* Contenido de franjas */
+    .franja-content {
+        display: none;
+        animation: fadeIn 0.3s ease;
+    }
+
+    .franja-content.active {
+        display: block;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Grid de horarios */
+    .horarios-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+        gap: 0.75rem;
+    }
+
+    .horario-btn {
+        background: white;
+        border: 2px solid #e9ecef;
+        border-radius: 12px;
+        padding: 0.85rem 0.5rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-align: center;
+    }
+
+    .horario-btn:hover {
+        border-color: var(--primary-color);
+        transform: translateY(-2px);
+        box-shadow: 0 5px 20px rgba(19, 48, 77, 0.15);
+    }
+
+    .horario-btn.selected {
+        border-color: var(--primary-color);
+        background: linear-gradient(135deg, var(--primary-color) 0%, #1a4a6e 100%);
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 20px rgba(19, 48, 77, 0.3);
+    }
+
+    .horario-btn.disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+        background: #f8f9fa;
+    }
+
+    .horario-hora {
+        font-size: 1.2rem;
+        font-weight: 700;
+        margin-bottom: 0.25rem;
+    }
+
+    .horario-cupos {
+        font-size: 0.8rem;
+        opacity: 0.8;
+    }
+
+    .horario-btn.selected .horario-cupos {
+        opacity: 0.9;
+    }
+
+    /* Loading y mensajes */
     .loading-horarios {
         text-align: center;
-        padding: 2rem;
+        padding: 3rem 2rem;
         display: none;
     }
 
@@ -220,7 +317,7 @@
 
     .no-horarios {
         text-align: center;
-        padding: 2rem;
+        padding: 3rem 2rem;
         color: #6c757d;
         display: none;
     }
@@ -228,86 +325,303 @@
     .no-horarios.show {
         display: block;
     }
+
+    .mensaje-seleccionar {
+        text-align: center;
+        padding: 2rem;
+        color: #6c757d;
+    }
+
+    .mensaje-seleccionar i {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        color: #adb5bd;
+    }
+
+    /* Contador de reserva */
+    .contador-reserva {
+        margin-top: 1rem;
+        padding: 0.75rem 1rem;
+        background: #fff3cd;
+        border-radius: 10px;
+        font-size: 0.9rem;
+        color: #856404;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .contador-reserva.expired {
+        background: #f8d7da;
+        color: #721c24;
+    }
+
+    /* Responsive - Tablets */
+    @media (max-width: 991px) {
+        .flatpickr-calendar.inline {
+            max-width: 400px !important;
+        }
+
+        .flatpickr-day {
+            max-width: 48px !important;
+            height: 45px !important;
+            line-height: 45px !important;
+        }
+    }
+
+    /* Responsive - Moviles */
+    @media (max-width: 767px) {
+        .calendario-container {
+            padding: 1.25rem;
+        }
+
+        .horarios-container {
+            padding: 1.25rem;
+        }
+
+        .flatpickr-calendar.inline {
+            max-width: 100% !important;
+            font-size: 1rem !important;
+        }
+
+        .flatpickr-day {
+            max-width: 40px !important;
+            height: 40px !important;
+            line-height: 40px !important;
+            font-size: 1rem !important;
+            margin: 2px !important;
+        }
+
+        .flatpickr-current-month {
+            font-size: 1.1rem !important;
+        }
+
+        .franjas-tabs {
+            gap: 0.5rem;
+        }
+
+        .franja-tab {
+            padding: 0.75rem 1rem;
+            font-size: 0.9rem;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .franja-tab i {
+            font-size: 1.1rem;
+        }
+
+        .horarios-grid {
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.5rem;
+        }
+
+        .horario-btn {
+            padding: 0.7rem 0.25rem;
+        }
+
+        .horario-hora {
+            font-size: 1rem;
+        }
+
+        .horario-cupos {
+            font-size: 0.7rem;
+        }
+
+        .cliente-info {
+            padding: 0.85rem 1rem;
+            font-size: 0.9rem;
+        }
+    }
+
+    /* Responsive - Moviles pequenos */
+    @media (max-width: 576px) {
+        .calendario-container {
+            padding: 1rem;
+        }
+
+        .horarios-container {
+            padding: 1rem;
+        }
+
+        .flatpickr-months {
+            padding: 0.5rem 0 !important;
+        }
+
+        .flatpickr-month {
+            height: 40px !important;
+        }
+
+        .flatpickr-day {
+            max-width: 36px !important;
+            height: 36px !important;
+            line-height: 36px !important;
+            font-size: 0.9rem !important;
+            border-radius: 8px !important;
+        }
+
+        .flatpickr-weekday {
+            font-size: 0.8rem !important;
+        }
+
+        .horarios-grid {
+            grid-template-columns: repeat(3, 1fr);
+        }
+
+        .horario-btn {
+            padding: 0.6rem 0.2rem;
+            border-radius: 10px;
+        }
+
+        .horario-hora {
+            font-size: 0.95rem;
+        }
+
+        .cliente-info {
+            padding: 0.75rem 1rem;
+            font-size: 0.85rem;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.25rem;
+        }
+
+        .cliente-info i {
+            display: none;
+        }
+
+        .cliente-info span {
+            width: 100%;
+            line-height: 1.5;
+        }
+
+        .fecha-seleccionada {
+            padding: 0.85rem 1rem;
+            font-size: 0.9rem;
+        }
+
+        .fecha-seleccionada i {
+            font-size: 1rem;
+        }
+
+        .fecha-seleccionada strong {
+            font-size: 1rem;
+        }
+    }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="row justify-content-center">
-    <div class="col-lg-10">
-        <!-- Info del progreso -->
-        <div class="cliente-info" data-aos="fade-down">
-            <i class="fas fa-tools"></i>
-            <strong>Taller:</strong> {{ taller.get_nombre }} -
-            <strong>Trámite:</strong> {{ tipo_vehiculo.nombre }}
-        </div>
+<!-- Navegacion volver -->
+<a href="{% url 'turnero:step3_taller' %}" class="nav-volver" data-aos="fade-right">
+    <i class="fas fa-arrow-left"></i>
+    <span>Volver al paso anterior</span>
+</a>
 
-        <div class="card-custom" data-aos="fade-up">
-            <div class="card-header-custom">
-                <h3>
-                    <i class="fas fa-calendar-alt"></i> Paso 4: Fecha y Horario
-                </h3>
-                <p class="mb-0 mt-2" style="font-size: 0.95rem; opacity: 0.9;">
-                    Seleccioná la fecha y horario que más te convenga
-                </p>
+<!-- Info del progreso -->
+<div class="cliente-info" data-aos="fade-down">
+    <i class="fas fa-user"></i>
+    <span><strong>Cliente:</strong> {{ cliente.nombre }} {{ cliente.apellido }} - <strong>Vehiculo:</strong> {{ vehiculo.dominio }} - <strong>Taller:</strong> {{ taller.get_nombre }}</span>
+</div>
+
+<div class="card-custom" data-aos="fade-up">
+    <div class="card-header-custom">
+        <h3>
+            <i class="fas fa-calendar-alt"></i> Fecha y Horario
+        </h3>
+        <p class="mb-0 mt-2">
+            Selecciona la fecha y horario que mas te convenga
+        </p>
+    </div>
+    <div class="card-body-custom">
+        <form method="post" id="form_fecha_hora">
+            {% csrf_token %}
+
+            <!-- Calendario -->
+            <div class="calendario-container" data-aos="fade-up">
+                <h4 class="search-title mb-3 justify-content-center">
+                    <i class="fas fa-calendar me-2"></i>Seleccionar Fecha
+                </h4>
+                <div class="text-center">
+                    <input type="text" class="form-control" id="datepicker"
+                           name="fecha" placeholder="Seleccione una fecha" required readonly>
+                </div>
             </div>
-            <div class="card-body-custom">
-                <form method="post" id="form_fecha_hora">
-                    {% csrf_token %}
 
-                    <!-- Calendario -->
-                    <div class="calendario-container" data-aos="fade-up">
-                        <h4 class="search-title mb-4 text-center">
-                            <i class="fas fa-calendar me-2"></i>Seleccionar Fecha
-                        </h4>
-                        <div class="text-center">
-                            <input type="text" class="form-control" id="datepicker"
-                                   name="fecha" placeholder="Seleccione una fecha" required readonly>
-                        </div>
-                    </div>
-
-                    <!-- Fecha seleccionada -->
-                    <div class="fecha-seleccionada" id="fecha_info">
-                        <i class="fas fa-calendar-check me-2"></i>
-                        <strong>Fecha seleccionada:</strong>
-                        <span id="fecha_display" class="ms-2"></span>
-                    </div>
-
-                    <!-- Horarios -->
-                    <div class="horarios-container" data-aos="fade-up">
-                        <h4 class="search-title mb-4">
-                            <i class="fas fa-clock me-2"></i>Horarios Disponibles
-                        </h4>
-
-                        <div class="loading-horarios" id="loading_horarios">
-                            <div class="spinner-border text-primary" role="status">
-                                <span class="visually-hidden">Cargando...</span>
-                            </div>
-                            <p class="mt-3">Cargando horarios disponibles...</p>
-                        </div>
-
-                        <div class="no-horarios" id="no_horarios">
-                            <i class="fas fa-info-circle fa-3x mb-3" style="color: #6c757d;"></i>
-                            <p class="mb-0">Por favor, seleccione una fecha para ver los horarios disponibles</p>
-                        </div>
-
-                        <div id="horarios_container" class="d-flex flex-wrap justify-content-center gap-2">
-                            <!-- Se cargan dinámicamente -->
-                        </div>
-
-                        <input type="hidden" name="hora_inicio" id="hora_inicio_field" required>
-                    </div>
-
-                    <div class="text-center mt-4" data-aos="fade-up">
-                        <a href="{% url 'turnero:step3_taller' %}" class="btn btn-secondary-custom me-2">
-                            <i class="fas fa-arrow-left me-2"></i>Volver
-                        </a>
-                        <button type="submit" class="btn btn-primary-custom btn-lg" id="btn_continuar">
-                            <i class="fas fa-arrow-right me-2"></i>Continuar al Paso 5
-                        </button>
-                    </div>
-                </form>
+            <!-- Fecha seleccionada -->
+            <div class="fecha-seleccionada" id="fecha_info">
+                <i class="fas fa-calendar-check"></i>
+                <span><strong>Fecha:</strong> <span id="fecha_display"></span></span>
             </div>
-        </div>
+
+            <!-- Horarios -->
+            <div class="horarios-container" data-aos="fade-up">
+                <h4 class="search-title mb-4">
+                    <i class="fas fa-clock me-2"></i>Horarios Disponibles
+                </h4>
+
+                <!-- Mensaje inicial -->
+                <div class="mensaje-seleccionar" id="mensaje_inicial">
+                    <i class="fas fa-hand-pointer"></i>
+                    <p class="mb-0">Selecciona una fecha en el calendario para ver los horarios disponibles</p>
+                </div>
+
+                <!-- Loading -->
+                <div class="loading-horarios" id="loading_horarios">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Cargando...</span>
+                    </div>
+                    <p class="mt-3 mb-0">Cargando horarios disponibles...</p>
+                </div>
+
+                <!-- Sin horarios -->
+                <div class="no-horarios" id="no_horarios">
+                    <i class="fas fa-calendar-times fa-3x mb-3" style="color: #dc3545;"></i>
+                    <p class="mb-0">No hay horarios disponibles para esta fecha.</p>
+                </div>
+
+                <!-- Tabs de franjas horarias -->
+                <div class="franjas-tabs d-none" id="franjas_tabs">
+                    <button type="button" class="franja-tab active" data-franja="manana" onclick="cambiarFranja('manana')">
+                        <i class="fas fa-sun"></i>
+                        <span>Manana</span>
+                        <span class="badge" id="count_manana">0</span>
+                    </button>
+                    <button type="button" class="franja-tab" data-franja="tarde" onclick="cambiarFranja('tarde')">
+                        <i class="fas fa-cloud-sun"></i>
+                        <span>Tarde</span>
+                        <span class="badge" id="count_tarde">0</span>
+                    </button>
+                </div>
+
+                <!-- Contenido franjas -->
+                <div id="franjas_content" class="d-none">
+                    <div class="franja-content active" id="franja_manana">
+                        <div class="horarios-grid" id="horarios_manana">
+                            <!-- Horarios de manana -->
+                        </div>
+                    </div>
+                    <div class="franja-content" id="franja_tarde">
+                        <div class="horarios-grid" id="horarios_tarde">
+                            <!-- Horarios de tarde -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Contador de reserva -->
+                <div class="contador-reserva d-none" id="contador_reserva">
+                    <i class="fas fa-clock"></i>
+                    <span id="contador_texto"></span>
+                </div>
+
+                <input type="hidden" name="hora_inicio" id="hora_inicio_field" required>
+            </div>
+
+            <div class="text-center mt-4" data-aos="fade-up">
+                <button type="submit" class="btn btn-primary-custom btn-lg" id="btn_continuar">
+                    <i class="fas fa-arrow-right me-2"></i>Continuar al Paso 5
+                </button>
+            </div>
+        </form>
     </div>
 </div>
 {% endblock %}
@@ -316,8 +630,9 @@
 <script>
     let fechaSeleccionada = null;
     let horaSeleccionada = null;
+    let temporizadorReserva = null;
 
-    // Configurar Flatpickr
+    // Configurar Flatpickr - Calendario mas grande
     const picker = flatpickr("#datepicker", {
         locale: "es",
         dateFormat: "Y-m-d",
@@ -352,23 +667,47 @@
         document.getElementById('fecha_display').textContent = fechaFormateada;
         document.getElementById('fecha_info').classList.add('show');
 
-        // Limpiar selección de hora
+        // Limpiar seleccion de hora
         horaSeleccionada = null;
         document.getElementById('hora_inicio_field').value = '';
-        document.querySelectorAll('.horario-btn').forEach(btn =>
-            btn.classList.remove('selected'));
+        document.querySelectorAll('.horario-btn').forEach(btn => btn.classList.remove('selected'));
+
+        // Ocultar contador de reserva
+        document.getElementById('contador_reserva').classList.add('d-none');
+        if (temporizadorReserva) {
+            clearInterval(temporizadorReserva);
+        }
+    }
+
+    // Cambiar entre franjas horarias
+    function cambiarFranja(franja) {
+        // Actualizar tabs
+        document.querySelectorAll('.franja-tab').forEach(tab => tab.classList.remove('active'));
+        document.querySelector(`[data-franja="${franja}"]`).classList.add('active');
+
+        // Actualizar contenido
+        document.querySelectorAll('.franja-content').forEach(content => content.classList.remove('active'));
+        document.getElementById(`franja_${franja}`).classList.add('active');
     }
 
     // Cargar horarios disponibles
     function cargarHorariosDisponibles(fecha) {
-        const container = document.getElementById('horarios_container');
         const loading = document.getElementById('loading_horarios');
         const noHorarios = document.getElementById('no_horarios');
+        const mensajeInicial = document.getElementById('mensaje_inicial');
+        const franjasTabs = document.getElementById('franjas_tabs');
+        const franjasContent = document.getElementById('franjas_content');
 
-        // Mostrar loading
-        container.innerHTML = '';
-        loading.classList.add('show');
+        // Ocultar todo y mostrar loading
+        mensajeInicial.style.display = 'none';
         noHorarios.classList.remove('show');
+        franjasTabs.classList.add('d-none');
+        franjasContent.classList.add('d-none');
+        loading.classList.add('show');
+
+        // Limpiar horarios anteriores
+        document.getElementById('horarios_manana').innerHTML = '';
+        document.getElementById('horarios_tarde').innerHTML = '';
 
         fetch(`{% url 'turnero:horarios_disponibles_ajax' %}?taller_id={{ taller.id }}&tipo_vehiculo_id={{ tipo_vehiculo.id }}&fecha=${fecha}`)
             .then(response => response.json())
@@ -376,27 +715,54 @@
                 loading.classList.remove('show');
 
                 if (data.horarios && data.horarios.length > 0) {
+                    // Separar horarios en manana y tarde
+                    const horariosManana = [];
+                    const horariosTarde = [];
+
                     data.horarios.forEach(horario => {
-                        const btn = document.createElement('div');
-                        btn.className = 'horario-btn';
-                        btn.innerHTML = `
-                            <div class="horario-hora">${horario.hora}</div>
-                            <div class="horario-cupos">
-                                <i class="fas fa-users me-1"></i>${horario.cupos} cupos
-                            </div>
-                        `;
-
-                        btn.addEventListener('click', function() {
-                            seleccionarHorario(horario.hora, this);
-                        });
-
-                        container.appendChild(btn);
+                        const hora = parseInt(horario.hora.split(':')[0]);
+                        if (hora < 12) {
+                            horariosManana.push(horario);
+                        } else {
+                            horariosTarde.push(horario);
+                        }
                     });
+
+                    // Actualizar contadores
+                    document.getElementById('count_manana').textContent = horariosManana.length;
+                    document.getElementById('count_tarde').textContent = horariosTarde.length;
+
+                    // Renderizar horarios de manana
+                    const containerManana = document.getElementById('horarios_manana');
+                    horariosManana.forEach(horario => {
+                        containerManana.appendChild(crearBotonHorario(horario));
+                    });
+
+                    // Renderizar horarios de tarde
+                    const containerTarde = document.getElementById('horarios_tarde');
+                    horariosTarde.forEach(horario => {
+                        containerTarde.appendChild(crearBotonHorario(horario));
+                    });
+
+                    // Mostrar tabs y contenido
+                    franjasTabs.classList.remove('d-none');
+                    franjasContent.classList.remove('d-none');
+
+                    // Seleccionar la franja con horarios disponibles
+                    if (horariosManana.length > 0) {
+                        cambiarFranja('manana');
+                    } else if (horariosTarde.length > 0) {
+                        cambiarFranja('tarde');
+                    }
+
+                    // Si una franja no tiene horarios, mostrar mensaje
+                    if (horariosManana.length === 0) {
+                        containerManana.innerHTML = '<p class="text-muted text-center py-3 w-100">No hay horarios disponibles en la manana</p>';
+                    }
+                    if (horariosTarde.length === 0) {
+                        containerTarde.innerHTML = '<p class="text-muted text-center py-3 w-100">No hay horarios disponibles en la tarde</p>';
+                    }
                 } else {
-                    noHorarios.innerHTML = `
-                        <i class="fas fa-calendar-times fa-3x mb-3" style="color: #dc3545;"></i>
-                        <p>No hay horarios disponibles para esta fecha. Por favor, seleccione otra fecha.</p>
-                    `;
                     noHorarios.classList.add('show');
                 }
             })
@@ -405,17 +771,35 @@
                 loading.classList.remove('show');
                 noHorarios.innerHTML = `
                     <i class="fas fa-exclamation-triangle fa-3x mb-3" style="color: #ffc107;"></i>
-                    <p>Ocurrió un error al cargar los horarios. Por favor, intente nuevamente.</p>
+                    <p class="mb-0">Ocurrio un error al cargar los horarios. Por favor, intente nuevamente.</p>
                 `;
                 noHorarios.classList.add('show');
             });
     }
 
+    // Crear boton de horario
+    function crearBotonHorario(horario) {
+        const btn = document.createElement('div');
+        btn.className = 'horario-btn';
+        btn.dataset.hora = horario.hora;
+        btn.innerHTML = `
+            <div class="horario-hora">${horario.hora}</div>
+            <div class="horario-cupos">
+                <i class="fas fa-car me-1"></i>${horario.cupos}
+            </div>
+        `;
+
+        btn.addEventListener('click', function() {
+            seleccionarHorario(horario.hora, this);
+        });
+
+        return btn;
+    }
+
     // Seleccionar horario con reserva temporal
     function seleccionarHorario(hora, elemento) {
-        // Remover selección anterior visual
-        document.querySelectorAll('.horario-btn').forEach(btn =>
-            btn.classList.remove('selected'));
+        // Remover seleccion anterior visual
+        document.querySelectorAll('.horario-btn').forEach(btn => btn.classList.remove('selected'));
 
         // Mostrar indicador de procesamiento
         elemento.classList.add('selected');
@@ -443,17 +827,16 @@
                 document.getElementById('hora_inicio_field').value = hora;
 
                 // Mostrar mensaje de reserva temporal
-                mostrarMensajeReserva(data.expira_en);
+                mostrarContadorReserva(data.expira_en);
             } else {
                 // Horario ya no disponible
                 elemento.classList.remove('selected');
                 elemento.classList.add('disabled');
 
-                // Mostrar advertencia y recargar horarios
                 if (typeof showWarning === 'function') {
-                    showWarning(data.error || 'Este horario ya no está disponible', 'Horario No Disponible');
+                    showWarning(data.error || 'Este horario ya no esta disponible', 'Horario No Disponible');
                 } else {
-                    alert(data.error || 'Este horario ya no está disponible');
+                    alert(data.error || 'Este horario ya no esta disponible');
                 }
 
                 // Recargar lista de horarios
@@ -473,40 +856,30 @@
         });
     }
 
-    // Mostrar mensaje de reserva temporal
-    let temporizadorReserva = null;
-    function mostrarMensajeReserva(minutos) {
-        // Limpiar temporizador anterior
+    // Mostrar contador de reserva temporal
+    function mostrarContadorReserva(minutos) {
         if (temporizadorReserva) {
             clearInterval(temporizadorReserva);
         }
 
         let segundosRestantes = minutos * 60;
-        const fechaInfo = document.getElementById('fecha_info');
+        const contadorDiv = document.getElementById('contador_reserva');
+        const contadorTexto = document.getElementById('contador_texto');
 
-        // Crear elemento para el contador si no existe
-        let contadorReserva = document.getElementById('contador_reserva');
-        if (!contadorReserva) {
-            contadorReserva = document.createElement('div');
-            contadorReserva.id = 'contador_reserva';
-            contadorReserva.style.cssText = 'margin-top: 10px; padding: 8px 15px; background: #fff3cd; border-radius: 5px; font-size: 0.9rem; color: #856404;';
-            fechaInfo.appendChild(contadorReserva);
-        }
+        contadorDiv.classList.remove('d-none', 'expired');
 
         function actualizarContador() {
             const mins = Math.floor(segundosRestantes / 60);
             const secs = segundosRestantes % 60;
-            contadorReserva.innerHTML = `<i class="fas fa-clock me-2"></i>Horario reservado temporalmente. Tiempo restante: <strong>${mins}:${secs.toString().padStart(2, '0')}</strong>`;
+            contadorTexto.innerHTML = `Horario reservado temporalmente. Tiempo restante: <strong>${mins}:${secs.toString().padStart(2, '0')}</strong>`;
 
             if (segundosRestantes <= 0) {
                 clearInterval(temporizadorReserva);
-                contadorReserva.innerHTML = '<i class="fas fa-exclamation-triangle me-2"></i>La reserva ha expirado. Por favor, seleccione nuevamente un horario.';
-                contadorReserva.style.background = '#f8d7da';
-                contadorReserva.style.color = '#721c24';
+                contadorDiv.classList.add('expired');
+                contadorTexto.innerHTML = '<i class="fas fa-exclamation-triangle me-2"></i>La reserva ha expirado. Por favor, seleccione nuevamente un horario.';
                 horaSeleccionada = null;
                 document.getElementById('hora_inicio_field').value = '';
                 document.querySelectorAll('.horario-btn').forEach(btn => btn.classList.remove('selected'));
-                // Recargar horarios
                 cargarHorariosDisponibles(fechaSeleccionada);
             }
             segundosRestantes--;
@@ -516,14 +889,14 @@
         temporizadorReserva = setInterval(actualizarContador, 1000);
     }
 
-    // Validación del formulario
+    // Validacion del formulario
     document.getElementById('form_fecha_hora').addEventListener('submit', function(e) {
         if (!fechaSeleccionada) {
             e.preventDefault();
             if (typeof showWarning === 'function') {
-                showWarning('Por favor, seleccione una fecha', 'Fecha Requerida');
+                showWarning('Por favor, selecciona una fecha', 'Fecha Requerida');
             } else {
-                alert('Por favor, seleccione una fecha');
+                alert('Por favor, selecciona una fecha');
             }
             return;
         }
@@ -531,9 +904,9 @@
         if (!horaSeleccionada) {
             e.preventDefault();
             if (typeof showWarning === 'function') {
-                showWarning('Por favor, seleccione un horario', 'Horario Requerido');
+                showWarning('Por favor, selecciona un horario', 'Horario Requerido');
             } else {
-                alert('Por favor, seleccione un horario');
+                alert('Por favor, selecciona un horario');
             }
             return;
         }
