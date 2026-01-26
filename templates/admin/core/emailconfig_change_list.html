@@ -1,0 +1,64 @@
+{% extends "admin/change_list.html" %}
+{% load i18n static %}
+
+{% block extrahead %}
+{{ block.super }}
+<style>
+    /* Estilos para la columna de test */
+    .field-test_button a.button {
+        white-space: nowrap;
+    }
+
+    /* Indicador de estado principal */
+    .field-es_principal_display span {
+        padding: 3px 8px;
+        border-radius: 4px;
+        font-size: 11px;
+    }
+
+    /* Info box */
+    .emailconfig-info {
+        background: linear-gradient(135deg, #e7f3ff 0%, #cce5ff 100%);
+        border-left: 4px solid #417690;
+        padding: 15px 20px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+    }
+
+    .emailconfig-info h3 {
+        margin: 0 0 10px 0;
+        color: #417690;
+        font-size: 16px;
+    }
+
+    .emailconfig-info p {
+        margin: 0;
+        color: #004085;
+        font-size: 13px;
+    }
+
+    .emailconfig-info ul {
+        margin: 10px 0 0 0;
+        padding-left: 20px;
+        color: #004085;
+        font-size: 13px;
+    }
+</style>
+{% endblock %}
+
+{% block object-tools-items %}
+{{ block.super }}
+{% endblock %}
+
+{% block result_list %}
+<div class="emailconfig-info">
+    <h3>&#9993; Configuracion de Correo SMTP</h3>
+    <p>Gestiona las configuraciones de correo para el envio de emails del sistema.</p>
+    <ul>
+        <li><strong>Probar:</strong> Click en el boton "Probar" para verificar si la configuracion funciona correctamente.</li>
+        <li><strong>Principal:</strong> Solo una configuracion puede ser la principal (se usa para enviar correos del sistema).</li>
+        <li><strong>Activo:</strong> Las configuraciones inactivas no se utilizaran.</li>
+    </ul>
+</div>
+{{ block.super }}
+{% endblock %}

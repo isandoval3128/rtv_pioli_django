@@ -74,9 +74,76 @@
         justify-content: center;
     }
 
+    /* Responsive - Tablets */
+    @media (max-width: 991px) {
+        .search-section {
+            padding: 1.5rem;
+        }
+
+        .form-section {
+            padding: 1.5rem;
+        }
+
+        .search-title {
+            font-size: 1.15rem;
+        }
+    }
+
+    /* Responsive - Móviles */
     @media (max-width: 767px) {
         .btn-search {
             margin-top: 0.5rem;
+        }
+
+        .search-section {
+            padding: 1.25rem;
+        }
+
+        .form-section {
+            padding: 1.25rem;
+        }
+
+        .search-title {
+            font-size: 1rem;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.25rem;
+        }
+
+        .divider-text {
+            font-size: 0.85rem;
+        }
+
+        .result-info {
+            padding: 1rem;
+        }
+
+        .result-info h5 {
+            font-size: 1rem;
+        }
+    }
+
+    /* Responsive - Móviles pequeños */
+    @media (max-width: 576px) {
+        .search-section {
+            padding: 1rem;
+        }
+
+        .form-section {
+            padding: 1rem;
+        }
+
+        .search-title {
+            font-size: 0.95rem;
+        }
+
+        .input-icon i {
+            font-size: 0.9rem;
+        }
+
+        .btn-search {
+            padding: 0.65rem 1rem;
+            font-size: 0.9rem;
         }
     }
 
@@ -134,18 +201,16 @@
 {% endblock %}
 
 {% block content %}
-<div class="row justify-content-center">
-    <div class="col-lg-10">
-        <div class="card-custom" data-aos="fade-up">
-            <div class="card-header-custom">
-                <h3>
-                    <i class="fas fa-user"></i> Paso 1: Datos del Cliente
-                </h3>
-                <p class="mb-0 mt-2" style="font-size: 0.95rem; opacity: 0.9;">
-                    Buscá tus datos por DNI o cargá tu información si es la primera vez
-                </p>
-            </div>
-            <div class="card-body-custom">
+<div class="card-custom" data-aos="fade-up">
+    <div class="card-header-custom">
+        <h3>
+            <i class="fas fa-user"></i> Datos del Cliente
+        </h3>
+        <p class="mb-0 mt-2">
+            Busca tus datos por DNI o completa tu informacion si es la primera vez
+        </p>
+    </div>
+    <div class="card-body-custom">
                 {% if error %}
                 <div class="alert alert-error-custom" role="alert">
                     <i class="fas fa-exclamation-triangle"></i> {{ error }}
@@ -235,6 +300,7 @@
                                        name="email" placeholder="ejemplo@email.com">
                                 <small class="text-muted d-block mt-1">Para recibir notificaciones</small>
                             </div>
+                            {% comment "Campo localidad oculto temporalmente - descomentar si se necesita restaurar" %}
                             <div class="col-md-6">
                                 <label for="{{ form.localidad.id_for_label }}" class="form-label">
                                     <i class="fas fa-map-marker-alt me-2"></i>Localidad
@@ -248,8 +314,10 @@
                                     {% endfor %}
                                 </select>
                             </div>
+                            {% endcomment %}
                         </div>
 
+                        {% comment "Campo domicilio oculto temporalmente - descomentar si se necesita restaurar" %}
                         <div class="mt-3">
                             <label for="{{ form.domicilio.id_for_label }}" class="form-label">
                                 <i class="fas fa-home me-2"></i>Domicilio
@@ -257,6 +325,7 @@
                             <input type="text" class="form-control" id="{{ form.domicilio.id_for_label }}"
                                    name="domicilio" placeholder="Calle y número">
                         </div>
+                        {% endcomment %}
 
                         <div class="text-center mt-4">
                             <button type="submit" class="btn btn-primary-custom btn-lg">
@@ -273,8 +342,6 @@
                 </form>
             </div>
         </div>
-    </div>
-</div>
 {% endblock %}
 
 {% block extra_js %}
@@ -321,11 +388,27 @@
 
                     // Guardar ID en sesión para usarlo después
                     document.getElementById('dni_busqueda_field').value = dni;
+
+                    // Scroll hacia el resultado encontrado
+                    setTimeout(() => {
+                        document.getElementById('result_info').scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'center'
+                        });
+                    }, 100);
                 } else {
                     showInfo('No se encontró un cliente con ese DNI. Podés completar el formulario para registrarte.', 'Cliente No Encontrado');
                     document.getElementById('result_info').classList.remove('show');
                     mostrarFormulario();
                     document.getElementById('{{ form.dni.id_for_label }}').value = dni;
+
+                    // Scroll hacia el formulario
+                    setTimeout(() => {
+                        document.getElementById('form_datos').scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }, 100);
                 }
             })
             .catch(error => {

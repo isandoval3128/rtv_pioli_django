@@ -1,6 +1,7 @@
 
 from django.db import models
 from django.core.exceptions import ValidationError
+from django.utils import timezone
 
 # Modelo para configuración de correo SMTP
 class EmailConfig(models.Model):
@@ -23,7 +24,7 @@ class EmailConfig(models.Model):
     default_from_email = models.EmailField(max_length=255, verbose_name='Correo remitente', blank=True)
     contact_admin_email = models.EmailField(max_length=255, verbose_name='Correo destinatario', blank=True)
     status = models.BooleanField(default=True, verbose_name='Activo')
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name='Fecha de creación')
+    created_at = models.DateTimeField(default=timezone.now, verbose_name='Fecha de creación')
     updated_at = models.DateTimeField(auto_now=True, verbose_name='Última actualización')
 
     class Meta:

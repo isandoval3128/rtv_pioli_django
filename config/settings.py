@@ -29,6 +29,11 @@ DEBUG = True
 
 ALLOWED_HOSTS = ["rtvpioli.com.ar", "www.rtvpioli.com.ar", '167.71.93.198', 'localhost', '127.0.0.1']
 
+# URL base del sitio para generacion de QR y enlaces
+SITE_URL = "https://rtvpioli.com.ar"
+# URL local para desarrollo (descomentar para probar QR en local)
+SITE_URL_LOCAL = "http://127.0.0.1:8000"  # Cambiar a tu IP local si queres escanear desde el celular (ej: "http://192.168.1.X:8000")
+
 
 # Application definition
 

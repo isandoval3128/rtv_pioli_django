@@ -1,0 +1,198 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR No Valido - RTV Jujuy</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --danger-color: #dc2626;
+            --danger-dark: #991b1b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, var(--danger-color) 0%, var(--danger-dark) 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .error-container {
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .error-card {
+            background: white;
+            border-radius: 20px;
+            padding: 2.5rem 2rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
+        }
+
+        .error-icon {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, #fecaca 0%, #fca5a5 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            position: relative;
+        }
+
+        .error-icon i {
+            font-size: 3rem;
+            color: var(--danger-color);
+        }
+
+        .error-icon::before {
+            content: '';
+            position: absolute;
+            width: 120px;
+            height: 120px;
+            border: 3px dashed #fca5a5;
+            border-radius: 50%;
+            animation: rotate 10s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .error-title {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--danger-color);
+            margin-bottom: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .error-message {
+            color: #6b7280;
+            font-size: 1rem;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .error-code {
+            background: #fef2f2;
+            border: 2px solid #fecaca;
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .error-code-label {
+            font-size: 0.75rem;
+            color: #9ca3af;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.25rem;
+        }
+
+        .error-code-value {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--danger-dark);
+            font-family: 'Courier New', monospace;
+        }
+
+        .warning-box {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border: 2px solid #f59e0b;
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .warning-box i {
+            color: #d97706;
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .warning-box p {
+            color: #92400e;
+            font-size: 0.85rem;
+            font-weight: 500;
+            line-height: 1.5;
+        }
+
+        .help-text {
+            color: #9ca3af;
+            font-size: 0.8rem;
+            line-height: 1.5;
+        }
+
+        .help-text a {
+            color: var(--danger-color);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .footer-text {
+            margin-top: 1.5rem;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.8rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="error-container">
+        <div class="error-card">
+            <div class="error-icon">
+                <i class="fas fa-shield-xmark"></i>
+            </div>
+
+            <h1 class="error-title">QR No Valido</h1>
+
+            <p class="error-message">
+                Este codigo QR no fue generado por nuestro sistema o ha sido modificado.
+            </p>
+
+            {% if codigo %}
+            <div class="error-code">
+                <div class="error-code-label">Codigo intentado</div>
+                <div class="error-code-value">{{ codigo }}</div>
+            </div>
+            {% endif %}
+
+            <div class="warning-box">
+                <i class="fas fa-exclamation-triangle"></i>
+                <p>
+                    <strong>Atencion:</strong> Solo los QR generados oficialmente por el sistema de turnos RTV son validos.
+                    No acepte codigos de terceros o modificados.
+                </p>
+            </div>
+
+            <p class="help-text">
+                Si crees que esto es un error, contacta al
+                <a href="tel:+543884000000">soporte tecnico</a> o verifica que el turno fue creado correctamente en el sistema.
+            </p>
+        </div>
+
+        <p class="footer-text">
+            <i class="fas fa-lock"></i> Sistema de Turnos RTV - Verificacion Segura
+        </p>
+    </div>
+</body>
+</html>

@@ -140,6 +140,23 @@ class Turno(models.Model):
         help_text="Usuario que creó el turno (para turnos desde el admin)"
     )
 
+    # Campos de atencion (cuando se escanea el QR en el taller)
+    atendido_por = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='turnos_atendidos',
+        verbose_name="Atendido por",
+        help_text="Usuario del taller que registro la atencion del turno"
+    )
+    fecha_atencion = models.DateTimeField(
+        null=True,
+        blank=True,
+        verbose_name="Fecha de Atencion",
+        help_text="Fecha y hora en que se registro la atencion del turno"
+    )
+
     class Meta:
         verbose_name = "Turno"
         verbose_name_plural = "Turnos"
@@ -170,8 +187,33 @@ class Turno(models.Model):
         if not self.qr_code:
             self.generar_qr()
 
+    @staticmethod
+    def generar_token_verificacion(codigo):
+        """Genera un token HMAC para verificar autenticidad del QR"""
+        import hmac
+        import hashlib
+        from django.conf import settings
+
+        # Usa SECRET_KEY de Django como clave para el HMAC
+        key = settings.SECRET_KEY.encode('utf-8')
+        message = f"rtv_turno_{codigo}".encode('utf-8')
+
+        # Genera HMAC-SHA256 y toma los primeros 16 caracteres (suficiente seguridad)
+        token = hmac.new(key, message, hashlib.sha256).hexdigest()[:16]
+        return token
+
+    @staticmethod
+    def verificar_token(codigo, token):
+        """Verifica si el token es válido para el código dado"""
+        import hmac
+        token_esperado = Turno.generar_token_verificacion(codigo)
+        return hmac.compare_digest(token, token_esperado) if token else False
+
     def generar_qr(self):
-        """Genera código QR con la información del turno"""
+        """Genera código QR con URL de verificación del turno (con token de seguridad)"""
+        from django.conf import settings
+        import hmac
+
         # Crear instancia de QR
         qr = qrcode.QRCode(
             version=1,
@@ -180,20 +222,29 @@ class Turno(models.Model):
             border=4,
         )
 
-        # Datos a codificar en el QR
-        qr_data = (
-            f"TURNO: {self.codigo}\n"
-            f"DOMINIO: {self.vehiculo.dominio}\n"
-            f"FECHA: {self.fecha.strftime('%d/%m/%Y')}\n"
-            f"HORA: {self.hora_inicio.strftime('%H:%M')} HS\n"
-            f"TALLER: {self.taller.get_nombre()}"
-        )
+        # Generar token de verificación HMAC
+        token = self.generar_token_verificacion(self.codigo)
 
-        qr.add_data(qr_data)
+        # URL de verificación del turno (página profesional al escanear)
+        # Usa SITE_URL_LOCAL si está definido (para desarrollo), sino usa SITE_URL (producción)
+        import socket
+        hostname = socket.gethostname().lower()
+
+        # Si hay SITE_URL_LOCAL configurado y no estamos en el servidor de producción
+        site_url_local = getattr(settings, 'SITE_URL_LOCAL', None)
+        site_url_prod = getattr(settings, 'SITE_URL', 'https://rtvpioli.com.ar')
+
+        # Detecta producción por IP del servidor o nombre del host
+        es_produccion = '167.71.93.198' in hostname or 'rtvpioli' in hostname or site_url_local is None
+
+        site_url = site_url_prod if es_produccion else site_url_local
+        qr_url = f"{site_url}/turnero/verificar/{self.codigo}/?t={token}"
+
+        qr.add_data(qr_url)
         qr.make(fit=True)
 
-        # Crear imagen del QR con colores del theme-purple
-        img = qr.make_image(fill_color="#572043", back_color="white")
+        # Crear imagen del QR con colores del tema RTV
+        img = qr.make_image(fill_color="#13304d", back_color="white")
 
         # Guardar en BytesIO
         buffer = BytesIO()
@@ -247,9 +298,39 @@ class Turno(models.Model):
 
     @property
     def dias_para_turno(self):
-        """Calcula días faltantes para el turno"""
+        """Calcula dias faltantes para el turno"""
         delta = self.fecha - timezone.now().date()
         return delta.days
+
+    def registrar_atencion(self, usuario, ip_address=None):
+        """
+        Registra la atencion del turno por un usuario del taller.
+        Cambia el estado a EN_CURSO y guarda quien atendio.
+        """
+        from turnero.models import HistorialTurno
+
+        # Guardar datos de atencion
+        self.atendido_por = usuario
+        self.fecha_atencion = timezone.now()
+        self.estado = 'EN_CURSO'
+        self.save(update_fields=['atendido_por', 'fecha_atencion', 'estado', 'updated_at'])
+
+        # Registrar en historial
+        HistorialTurno.objects.create(
+            turno=self,
+            accion='ATENCION_REGISTRADA',
+            descripcion=f'Turno registrado como atendido por {usuario.get_full_name() or usuario.username}',
+            usuario=usuario,
+            ip_address=ip_address
+        )
+
+        return True
+
+    @property
+    def ya_fue_atendido(self):
+        """Verifica si el turno ya fue atendido"""
+        return self.atendido_por is not None or self.estado in ['EN_CURSO', 'COMPLETADO']
+
 
 class HistorialTurno(models.Model):
     """Historial de cambios y acciones sobre turnos (auditoría)"""

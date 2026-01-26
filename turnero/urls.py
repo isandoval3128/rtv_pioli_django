@@ -22,6 +22,9 @@ urlpatterns = [
     # Success
     path('turno/<str:codigo>/success/', views.TurnoSuccessView.as_view(), name='turno_success'),
 
+    # Verificar turno (para escaneo QR)
+    path('verificar/<str:codigo>/', views.VerificarTurnoView.as_view(), name='verificar_turno'),
+
     # Consultar turno
     path('consultar/', views.ConsultarTurnoView.as_view(), name='consultar_turno'),
 
@@ -36,6 +39,7 @@ urlpatterns = [
     # AJAX endpoints
     path('ajax/buscar-persona/', views.buscar_persona_ajax, name='buscar_persona_ajax'),
     path('ajax/buscar-vehiculo/', views.buscar_vehiculo_ajax, name='buscar_vehiculo_ajax'),
+    path('ajax/tipos-tramite-taller/', views.obtener_tipos_tramite_taller_ajax, name='tipos_tramite_taller_ajax'),
     path('ajax/horarios-disponibles/', views.obtener_horarios_disponibles_ajax, name='horarios_disponibles_ajax'),
     path('ajax/fechas-disponibles/', views.obtener_fechas_disponibles_ajax, name='fechas_disponibles_ajax'),
     path('ajax/reservar-horario/', views.reservar_horario_ajax, name='reservar_horario_ajax'),

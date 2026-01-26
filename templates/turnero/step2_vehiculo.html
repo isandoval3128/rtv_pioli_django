@@ -199,28 +199,133 @@
         font-size: 0.85rem;
         font-weight: 600;
     }
+
+    /* Responsive - Tablets */
+    @media (max-width: 991px) {
+        .search-section {
+            padding: 1.5rem;
+        }
+
+        .form-section {
+            padding: 1.5rem;
+        }
+
+        .patente-preview {
+            font-size: 1.75rem;
+            padding: 0.75rem 1.5rem;
+        }
+
+        .tipo-vehiculo-card {
+            padding: 1rem;
+        }
+    }
+
+    /* Responsive - Móviles */
+    @media (max-width: 767px) {
+        .search-section {
+            padding: 1.25rem;
+        }
+
+        .form-section {
+            padding: 1.25rem;
+        }
+
+        .patente-preview {
+            font-size: 1.5rem;
+            padding: 0.75rem 1rem;
+            letter-spacing: 0.2rem;
+        }
+
+        .tipo-vehiculo-card {
+            padding: 1rem;
+        }
+
+        .tipo-vehiculo-card h5 {
+            font-size: 0.95rem;
+        }
+
+        .tipo-vehiculo-card p {
+            font-size: 0.85rem;
+        }
+
+        .tipo-vehiculo-card .d-flex {
+            flex-direction: column;
+        }
+
+        .tipo-vehiculo-card .text-end {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            margin-left: 0 !important;
+        }
+
+        .precio-badge {
+            font-size: 0.85rem;
+            padding: 0.35rem 0.6rem;
+            min-width: 100px;
+        }
+
+        .duracion-badge {
+            font-size: 0.75rem;
+            padding: 0.25rem 0.6rem;
+        }
+    }
+
+    /* Responsive - Móviles pequeños */
+    @media (max-width: 576px) {
+        .search-section {
+            padding: 1rem;
+        }
+
+        .form-section {
+            padding: 1rem;
+        }
+
+        .search-title {
+            font-size: 1rem;
+        }
+
+        .patente-preview {
+            font-size: 1.25rem;
+            padding: 0.5rem 0.75rem;
+        }
+
+        .tipo-vehiculo-card::before {
+            font-size: 1.2rem;
+            right: 0.75rem;
+            top: 0.75rem;
+        }
+
+        .divider-text {
+            font-size: 0.8rem;
+        }
+    }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="row justify-content-center">
-    <div class="col-lg-10">
-        <!-- Info del cliente -->
-        <div class="cliente-info" data-aos="fade-down">
-            <i class="fas fa-user-check"></i>
-            <strong>Cliente:</strong> {{ cliente.apellido }}, {{ cliente.nombre }} -
-            <strong>DNI:</strong> {{ cliente.dni }}
-        </div>
+<!-- Navegacion volver -->
+<a href="{% url 'turnero:step1_cliente' %}" class="nav-volver" data-aos="fade-right">
+    <i class="fas fa-arrow-left"></i>
+    <span>Volver al paso anterior</span>
+</a>
 
-        <div class="card-custom" data-aos="fade-up">
-            <div class="card-header-custom">
-                <h3>
-                    <i class="fas fa-car"></i> Paso 2: Datos del Vehículo
-                </h3>
-                <p class="mb-0 mt-2" style="font-size: 0.95rem; opacity: 0.9;">
-                    Buscá tu vehículo por dominio o registrá uno nuevo
-                </p>
-            </div>
+<!-- Info del cliente -->
+<div class="cliente-info" data-aos="fade-down">
+    <i class="fas fa-user-check"></i>
+    <span><strong>Cliente:</strong> {{ cliente.nombre }} {{ cliente.apellido }} - <strong>DNI:</strong> {{ cliente.dni }}</span>
+</div>
+
+<div class="card-custom" data-aos="fade-up">
+    <div class="card-header-custom">
+        <h3>
+            <i class="fas fa-car"></i> Datos del Vehiculo
+        </h3>
+{% comment %}         <p class="mb-0 mt-2">
+            Busca tu vehiculo por dominio o registra uno nuevo
+        </p> {% endcomment %}
+    </div>
             <div class="card-body-custom">
                 {% if error %}
                 <div class="alert alert-error-custom" role="alert">
@@ -294,7 +399,9 @@
                             </div>
                         </div>
 
-                        <div class="mb-4 mt-4">
+                        <!-- SECCIÓN OCULTA: Tipo de Trámite RTO (deshabilitada temporalmente por pedido del cliente) -->
+                        <!-- Para reactivar: quitar la clase "d-none" del div contenedor -->
+                        <div class="mb-4 mt-4 d-none" id="seccion_tipo_tramite">
                             <label class="form-label">
                                 <i class="fas fa-clipboard-list me-2"></i>Tipo de Trámite RTO *
                             </label>
@@ -372,13 +479,11 @@
                                 </div>
                                 {% endfor %}
                             </div>
-                            <input type="hidden" name="tipo_vehiculo" id="tipo_vehiculo_selected">
                         </div>
+                        <!-- El campo hidden se mantiene para el backend -->
+                        <input type="hidden" name="tipo_vehiculo" id="tipo_vehiculo_selected">
 
                         <div class="text-center mt-4">
-                            <a href="{% url 'turnero:step1_cliente' %}" class="btn btn-secondary-custom me-2">
-                                <i class="fas fa-arrow-left me-2"></i>Volver
-                            </a>
                             <button type="submit" class="btn btn-primary-custom btn-lg">
                                 <i class="fas fa-arrow-right me-2"></i>Continuar al Paso 3
                             </button>
@@ -393,8 +498,6 @@
                 </form>
             </div>
         </div>
-    </div>
-</div>
 {% endblock %}
 
 {% block extra_js %}
@@ -439,11 +542,33 @@
                         `Tipo: ${data.data.tipo_vehiculo_nombre}`;
                     document.getElementById('result_vehiculo').classList.add('show');
                     document.getElementById('dominio_busqueda_field').value = dominio;
+
+                    // Scroll hacia el resultado encontrado
+                    setTimeout(() => {
+                        document.getElementById('result_vehiculo').scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'center'
+                        });
+                    }, 100);
                 } else {
-                    showInfo('No se encontró un vehículo con ese dominio. Podés registrarlo completando el formulario.', 'Vehículo No Encontrado');
                     document.getElementById('result_vehiculo').classList.remove('show');
                     mostrarFormularioVehiculo();
                     document.getElementById('{{ form.dominio.id_for_label }}').value = dominio;
+
+                    // Mostrar mensaje y hacer scroll DESPUÉS de que se cierre
+                    Swal.fire({
+                        icon: 'info',
+                        title: 'Vehículo No Encontrado',
+                        text: 'No se encontró un vehículo con ese dominio. Podés registrarlo completando el formulario.',
+                        confirmButtonColor: '#13304D',
+                        confirmButtonText: 'Aceptar'
+                    }).then(() => {
+                        // Scroll hacia el formulario después de cerrar el modal
+                        document.getElementById('form_datos_vehiculo').scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    });
                 }
             })
             .catch(error => {
@@ -500,7 +625,6 @@
         // Solo validar si el formulario de datos está visible (nuevo vehículo)
         if (document.getElementById('form_datos_vehiculo').style.display !== 'none') {
             const dominio = document.getElementById('{{ form.dominio.id_for_label }}').value;
-            const tipoSeleccionado = document.getElementById('tipo_vehiculo_selected').value;
 
             // Validar formato de dominio
             if (!validarFormatoDominio(dominio)) {
@@ -513,12 +637,7 @@
                 return;
             }
 
-            // Validar tipo de trámite seleccionado
-            if (!tipoSeleccionado) {
-                e.preventDefault();
-                showWarning('Por favor, seleccione un tipo de trámite RTO', 'Tipo de Trámite Requerido');
-                return;
-            }
+            // NOTA: Validación de tipo_vehiculo removida - se auto-selecciona en el backend
         }
     });
 

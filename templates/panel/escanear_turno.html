@@ -1,0 +1,1036 @@
+{% extends "panel/base.html" %}
+{% load static %}
+
+{% block title %}Escanear Turno - RTV Pioli{% endblock %}
+
+{% block extraCss %}
+<style>
+    .scanner-container {
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    .scanner-card {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        overflow: hidden;
+    }
+
+    .scanner-header {
+        background: linear-gradient(135deg, var(--theme-primary) 0%, var(--theme-primary-dark, #1a4f7a) 100%);
+        color: white;
+        padding: 20px;
+        text-align: center;
+    }
+
+    .scanner-header h4 {
+        margin: 0;
+        font-weight: 600;
+    }
+
+    .scanner-header p {
+        margin: 5px 0 0;
+        opacity: 0.9;
+        font-size: 0.9rem;
+    }
+
+    .scanner-body {
+        padding: 20px;
+    }
+
+    /* Tabs de modo */
+    .mode-tabs {
+        display: flex;
+        border-bottom: 2px solid #e5e7eb;
+        margin-bottom: 20px;
+    }
+
+    .mode-tab {
+        flex: 1;
+        padding: 12px;
+        text-align: center;
+        cursor: pointer;
+        border: none;
+        background: none;
+        font-weight: 500;
+        color: #6b7280;
+        transition: all 0.3s ease;
+        border-bottom: 2px solid transparent;
+        margin-bottom: -2px;
+    }
+
+    .mode-tab:hover {
+        color: var(--theme-primary);
+    }
+
+    .mode-tab.active {
+        color: var(--theme-primary);
+        border-bottom-color: var(--theme-primary);
+    }
+
+    .mode-tab i {
+        margin-right: 8px;
+    }
+
+    /* Panel de contenido */
+    .mode-content {
+        display: none;
+    }
+
+    .mode-content.active {
+        display: block;
+    }
+
+    /* QR Scanner */
+    #qr-reader {
+        width: 100%;
+        max-width: 400px;
+        margin: 0 auto;
+        border-radius: 12px;
+        overflow: hidden;
+    }
+
+    #qr-reader video {
+        border-radius: 12px;
+    }
+
+    .scanner-status {
+        text-align: center;
+        padding: 15px;
+        margin-top: 15px;
+        border-radius: 8px;
+        font-weight: 500;
+    }
+
+    .scanner-status.scanning {
+        background: #dbeafe;
+        color: #1e40af;
+    }
+
+    .scanner-status.success {
+        background: #d1fae5;
+        color: #065f46;
+    }
+
+    .scanner-status.error {
+        background: #fee2e2;
+        color: #991b1b;
+    }
+
+    /* Formulario manual */
+    .manual-form {
+        max-width: 400px;
+        margin: 0 auto;
+    }
+
+    .manual-form .form-group {
+        margin-bottom: 15px;
+    }
+
+    .manual-form label {
+        font-weight: 500;
+        color: #374151;
+        margin-bottom: 5px;
+        display: block;
+    }
+
+    .manual-form .form-control {
+        border-radius: 8px;
+        padding: 12px 15px;
+        border: 2px solid #e5e7eb;
+        font-size: 1rem;
+    }
+
+    .manual-form .form-control:focus {
+        border-color: var(--theme-primary);
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    .btn-verificar {
+        width: 100%;
+        padding: 14px;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 1rem;
+        border: none;
+        background: var(--theme-primary);
+        color: white;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .btn-verificar:hover {
+        background: var(--theme-primary-dark, #1a4f7a);
+        transform: translateY(-1px);
+    }
+
+    .btn-verificar:disabled {
+        background: #9ca3af;
+        cursor: not-allowed;
+        transform: none;
+    }
+
+    /* Resultado del turno */
+    .resultado-container {
+        display: none;
+        margin-top: 20px;
+    }
+
+    .resultado-container.visible {
+        display: block;
+    }
+
+    .turno-card {
+        background: #f8fafc;
+        border-radius: 12px;
+        padding: 20px;
+        border: 2px solid #e2e8f0;
+    }
+
+    .turno-card.turno-valido {
+        border-color: #10b981;
+        background: #ecfdf5;
+    }
+
+    .turno-card.turno-atendido {
+        border-color: #f59e0b;
+        background: #fffbeb;
+    }
+
+    .turno-card.turno-error {
+        border-color: #ef4444;
+        background: #fef2f2;
+    }
+
+    .turno-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 15px;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .turno-codigo {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: #1f2937;
+        font-family: 'Courier New', monospace;
+    }
+
+    .turno-estado {
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+    }
+
+    .estado-pendiente { background: #fef3c7; color: #92400e; }
+    .estado-confirmado { background: #d1fae5; color: #065f46; }
+    .estado-en_curso { background: #dbeafe; color: #1e40af; }
+    .estado-completado { background: #10b981; color: white; }
+    .estado-cancelado { background: #fee2e2; color: #991b1b; }
+
+    .turno-info {
+        display: grid;
+        gap: 12px;
+    }
+
+    .info-row {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .info-row i {
+        width: 20px;
+        color: var(--theme-primary);
+        flex-shrink: 0;
+        margin-top: 2px;
+    }
+
+    .info-label {
+        font-size: 0.8rem;
+        color: #6b7280;
+        display: block;
+    }
+
+    .info-value {
+        font-weight: 500;
+        color: #1f2937;
+    }
+
+    /* Botones de accion */
+    .acciones-turno {
+        margin-top: 20px;
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .btn-registrar-atencion {
+        flex: 1;
+        min-width: 200px;
+        padding: 14px 20px;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 1rem;
+        border: none;
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        color: white;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+    }
+
+    .btn-registrar-atencion:hover:not(:disabled) {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+    }
+
+    .btn-registrar-atencion:disabled {
+        background: #9ca3af;
+        cursor: not-allowed;
+        transform: none;
+    }
+
+    .btn-nuevo-escaneo {
+        padding: 14px 20px;
+        border-radius: 8px;
+        font-weight: 500;
+        font-size: 1rem;
+        border: 2px solid #e5e7eb;
+        background: white;
+        color: #374151;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .btn-nuevo-escaneo:hover {
+        border-color: var(--theme-primary);
+        color: var(--theme-primary);
+    }
+
+    /* Alert de atencion registrada */
+    .alerta-atencion {
+        display: none;
+        padding: 15px;
+        border-radius: 8px;
+        margin-top: 15px;
+        text-align: center;
+    }
+
+    .alerta-atencion.success {
+        display: block;
+        background: #d1fae5;
+        color: #065f46;
+        border: 2px solid #10b981;
+    }
+
+    .alerta-atencion i {
+        font-size: 1.5rem;
+        margin-bottom: 10px;
+        display: block;
+    }
+
+    /* Tipo de usuario badge */
+    .usuario-tipo-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        margin-bottom: 15px;
+    }
+
+    .usuario-tipo-badge.taller {
+        background: #dbeafe;
+        color: #1e40af;
+    }
+
+    .usuario-tipo-badge.administracion {
+        background: #fef3c7;
+        color: #92400e;
+    }
+
+    /* Loading */
+    .loading-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0,0,0,0.5);
+        z-index: 9999;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .loading-overlay.visible {
+        display: flex;
+    }
+
+    .loading-spinner {
+        background: white;
+        padding: 30px 50px;
+        border-radius: 12px;
+        text-align: center;
+    }
+
+    .loading-spinner i {
+        font-size: 2rem;
+        color: var(--theme-primary);
+        margin-bottom: 10px;
+    }
+
+    /* Responsive */
+    @media (max-width: 576px) {
+        .scanner-body {
+            padding: 15px;
+        }
+
+        .mode-tab {
+            padding: 10px 8px;
+            font-size: 0.9rem;
+        }
+
+        .mode-tab i {
+            margin-right: 5px;
+        }
+
+        .turno-codigo {
+            font-size: 1.1rem;
+        }
+
+        .acciones-turno {
+            flex-direction: column;
+        }
+
+        .btn-registrar-atencion,
+        .btn-nuevo-escaneo {
+            width: 100%;
+        }
+    }
+
+    /* Selector de turnos multiples */
+    .turnos-multiples {
+        margin-top: 15px;
+    }
+
+    .turnos-multiples-header {
+        font-weight: 600;
+        margin-bottom: 10px;
+        color: #374151;
+    }
+
+    .turno-option {
+        padding: 12px;
+        border: 2px solid #e5e7eb;
+        border-radius: 8px;
+        margin-bottom: 10px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .turno-option:hover {
+        border-color: var(--theme-primary);
+        background: #f8fafc;
+    }
+
+    .turno-option.selected {
+        border-color: var(--theme-primary);
+        background: #eff6ff;
+    }
+
+    .turno-option-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .turno-option-codigo {
+        font-weight: 600;
+        font-family: 'Courier New', monospace;
+    }
+
+    .turno-option-hora {
+        font-size: 0.9rem;
+        color: #6b7280;
+    }
+
+    .turno-option-vehiculo {
+        font-size: 0.85rem;
+        color: #6b7280;
+        margin-top: 5px;
+    }
+</style>
+{% endblock %}
+
+{% block page_title %}
+<i class="fa fa-qrcode me-2"></i> Escanear Turno
+{% endblock %}
+
+{% block content %}
+<div class="scanner-container">
+    <div class="text-center mb-3">
+        {% if es_taller %}
+        <span class="usuario-tipo-badge taller">
+            <i class="fa fa-wrench"></i> Usuario Taller
+        </span>
+        {% else %}
+        <span class="usuario-tipo-badge administracion">
+            <i class="fa fa-building"></i> Usuario Administracion
+        </span>
+        {% endif %}
+    </div>
+
+    <div class="scanner-card">
+        <div class="scanner-header">
+            <h4><i class="fa fa-qrcode me-2"></i> Verificar Turno</h4>
+            <p>Escanea el codigo QR o ingresa los datos manualmente</p>
+        </div>
+
+        <div class="scanner-body">
+            <!-- Tabs -->
+            <div class="mode-tabs">
+                <button class="mode-tab active" data-mode="qr">
+                    <i class="fa fa-camera"></i> Escanear QR
+                </button>
+                <button class="mode-tab" data-mode="manual">
+                    <i class="fa fa-keyboard"></i> Ingreso Manual
+                </button>
+            </div>
+
+            <!-- Contenido QR Scanner -->
+            <div class="mode-content active" id="mode-qr">
+                <div id="qr-reader"></div>
+                <div class="scanner-status scanning" id="scanner-status">
+                    <i class="fa fa-spinner fa-spin me-2"></i> Iniciando camara...
+                </div>
+                <div class="text-center mt-3">
+                    <button class="btn btn-sm btn-outline-secondary" id="btn-cambiar-camara">
+                        <i class="fa fa-sync-alt me-1"></i> Cambiar Camara
+                    </button>
+                </div>
+            </div>
+
+            <!-- Contenido Manual -->
+            <div class="mode-content" id="mode-manual">
+                <form class="manual-form" id="form-manual">
+                    <div class="form-group">
+                        <label for="busqueda">Codigo de Turno o DNI</label>
+                        <input type="text"
+                               class="form-control"
+                               id="busqueda"
+                               name="busqueda"
+                               placeholder="Ej: TRN-ABC123 o 12345678"
+                               autocomplete="off">
+                    </div>
+                    <button type="submit" class="btn-verificar" id="btn-verificar-manual">
+                        <i class="fa fa-search me-2"></i> Verificar Turno
+                    </button>
+                </form>
+            </div>
+
+            <!-- Resultado -->
+            <div class="resultado-container" id="resultado-container">
+                <div class="turno-card" id="turno-card">
+                    <div class="turno-header">
+                        <span class="turno-codigo" id="turno-codigo"></span>
+                        <span class="turno-estado" id="turno-estado"></span>
+                    </div>
+
+                    <div class="turno-info" id="turno-info">
+                        <!-- Se llena dinamicamente -->
+                    </div>
+
+                    <div class="acciones-turno" id="acciones-turno">
+                        <!-- Se llena dinamicamente -->
+                    </div>
+
+                    <div class="alerta-atencion" id="alerta-atencion">
+                        <i class="fa fa-check-circle"></i>
+                        <strong>Atencion Registrada</strong>
+                        <p class="mb-0 mt-1">El turno ha sido marcado como atendido.</p>
+                    </div>
+                </div>
+
+                <!-- Turnos multiples -->
+                <div class="turnos-multiples" id="turnos-multiples" style="display: none;">
+                    <div class="turnos-multiples-header">
+                        <i class="fa fa-list me-1"></i> Se encontraron varios turnos para hoy:
+                    </div>
+                    <div id="lista-turnos"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Loading overlay -->
+<div class="loading-overlay" id="loading-overlay">
+    <div class="loading-spinner">
+        <i class="fa fa-spinner fa-spin"></i>
+        <p class="mb-0">Verificando...</p>
+    </div>
+</div>
+{% endblock %}
+
+{% block extraJS %}
+<!-- HTML5 QR Code Scanner -->
+<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+
+<script>
+const ES_TALLER = {{ es_taller|yesno:"true,false" }};
+let html5QrCode = null;
+let camaraActual = 0;
+let camarasDisponibles = [];
+let turnoActual = null;
+
+$(document).ready(function() {
+    // Tabs de modo
+    $('.mode-tab').on('click', function() {
+        const mode = $(this).data('mode');
+
+        $('.mode-tab').removeClass('active');
+        $(this).addClass('active');
+
+        $('.mode-content').removeClass('active');
+        $('#mode-' + mode).addClass('active');
+
+        // Iniciar/detener scanner
+        if (mode === 'qr') {
+            iniciarScanner();
+        } else {
+            detenerScanner();
+        }
+    });
+
+    // Form manual
+    $('#form-manual').on('submit', function(e) {
+        e.preventDefault();
+        const busqueda = $('#busqueda').val().trim();
+        if (busqueda) {
+            verificarTurno(busqueda);
+        }
+    });
+
+    // Cambiar camara
+    $('#btn-cambiar-camara').on('click', cambiarCamara);
+
+    // Iniciar scanner automaticamente
+    iniciarScanner();
+});
+
+function iniciarScanner() {
+    if (html5QrCode) {
+        return;
+    }
+
+    html5QrCode = new Html5Qrcode("qr-reader");
+
+    Html5Qrcode.getCameras().then(cameras => {
+        if (cameras && cameras.length) {
+            camarasDisponibles = cameras;
+            // Preferir camara trasera
+            let camaraId = cameras[0].id;
+            for (let cam of cameras) {
+                if (cam.label.toLowerCase().includes('back') ||
+                    cam.label.toLowerCase().includes('trasera') ||
+                    cam.label.toLowerCase().includes('rear')) {
+                    camaraId = cam.id;
+                    break;
+                }
+            }
+
+            html5QrCode.start(
+                camaraId,
+                {
+                    fps: 10,
+                    qrbox: { width: 250, height: 250 }
+                },
+                onScanSuccess,
+                onScanError
+            ).then(() => {
+                $('#scanner-status').removeClass('error').addClass('scanning')
+                    .html('<i class="fa fa-qrcode me-2"></i> Apunta al codigo QR del turno');
+            }).catch(err => {
+                console.error('Error al iniciar camara:', err);
+                $('#scanner-status').removeClass('scanning').addClass('error')
+                    .html('<i class="fa fa-exclamation-triangle me-2"></i> No se pudo acceder a la camara');
+            });
+        } else {
+            $('#scanner-status').removeClass('scanning').addClass('error')
+                .html('<i class="fa fa-video-slash me-2"></i> No se encontraron camaras disponibles');
+        }
+    }).catch(err => {
+        console.error('Error al obtener camaras:', err);
+        $('#scanner-status').removeClass('scanning').addClass('error')
+            .html('<i class="fa fa-exclamation-triangle me-2"></i> Error al acceder a la camara');
+    });
+}
+
+function detenerScanner() {
+    if (html5QrCode && html5QrCode.isScanning) {
+        html5QrCode.stop().then(() => {
+            html5QrCode = null;
+        }).catch(err => console.error('Error al detener scanner:', err));
+    }
+}
+
+function cambiarCamara() {
+    if (camarasDisponibles.length < 2) {
+        Swal.fire({
+            icon: 'info',
+            title: 'Solo hay una camara disponible',
+            timer: 2000,
+            showConfirmButton: false
+        });
+        return;
+    }
+
+    camaraActual = (camaraActual + 1) % camarasDisponibles.length;
+
+    if (html5QrCode && html5QrCode.isScanning) {
+        html5QrCode.stop().then(() => {
+            html5QrCode.start(
+                camarasDisponibles[camaraActual].id,
+                { fps: 10, qrbox: { width: 250, height: 250 } },
+                onScanSuccess,
+                onScanError
+            );
+        });
+    }
+}
+
+function onScanSuccess(decodedText, decodedResult) {
+    // Detener scanner temporalmente
+    if (html5QrCode && html5QrCode.isScanning) {
+        html5QrCode.pause(true);
+    }
+
+    // Extraer codigo del turno de la URL escaneada
+    let codigo = decodedText;
+
+    // Si es una URL, extraer el codigo
+    if (decodedText.includes('/verificar/')) {
+        const match = decodedText.match(/\/verificar\/([A-Z0-9-]+)/i);
+        if (match) {
+            codigo = match[1];
+        }
+    }
+
+    $('#scanner-status').removeClass('scanning error').addClass('success')
+        .html('<i class="fa fa-check-circle me-2"></i> QR detectado: ' + codigo);
+
+    verificarTurno(codigo);
+}
+
+function onScanError(error) {
+    // Errores normales de escaneo, no hacer nada
+}
+
+function verificarTurno(busqueda) {
+    $('#loading-overlay').addClass('visible');
+    $('#resultado-container').removeClass('visible');
+    $('#turnos-multiples').hide();
+
+    $.ajax({
+        url: '{% url "verificar_turno_panel" %}',
+        method: 'POST',
+        data: {
+            busqueda: busqueda,
+            csrfmiddlewaretoken: '{{ csrf_token }}'
+        },
+        success: function(response) {
+            $('#loading-overlay').removeClass('visible');
+
+            if (response.error) {
+                mostrarError(response.error);
+                reanudarScanner();
+                return;
+            }
+
+            if (response.multiples) {
+                // Multiples turnos encontrados
+                mostrarTurnosMultiples(response.turnos);
+            } else {
+                // Turno unico
+                mostrarTurno(response);
+            }
+        },
+        error: function(xhr) {
+            $('#loading-overlay').removeClass('visible');
+            let mensaje = 'Error al verificar el turno';
+            if (xhr.responseJSON && xhr.responseJSON.error) {
+                mensaje = xhr.responseJSON.error;
+            }
+            mostrarError(mensaje);
+            reanudarScanner();
+        }
+    });
+}
+
+function mostrarError(mensaje) {
+    Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: mensaje,
+        confirmButtonColor: 'var(--theme-primary)'
+    });
+}
+
+function mostrarTurnosMultiples(turnos) {
+    $('#resultado-container').removeClass('visible');
+    $('#turnos-multiples').show();
+
+    let html = '';
+    turnos.forEach(function(turno) {
+        html += `
+            <div class="turno-option" data-codigo="${turno.codigo}">
+                <div class="turno-option-header">
+                    <span class="turno-option-codigo">${turno.codigo}</span>
+                    <span class="turno-option-hora">${turno.hora}</span>
+                </div>
+                <div class="turno-option-vehiculo">
+                    <i class="fa fa-car me-1"></i> ${turno.vehiculo}
+                </div>
+            </div>
+        `;
+    });
+
+    $('#lista-turnos').html(html);
+
+    // Click en opcion de turno
+    $('.turno-option').on('click', function() {
+        const codigo = $(this).data('codigo');
+        verificarTurno(codigo);
+    });
+}
+
+function mostrarTurno(data) {
+    turnoActual = data;
+    $('#turnos-multiples').hide();
+    $('#alerta-atencion').hide();
+
+    const turno = data.turno;
+
+    // Codigo y estado
+    $('#turno-codigo').text(turno.codigo);
+    $('#turno-estado').text(turno.estado_display)
+        .removeClass()
+        .addClass('turno-estado estado-' + turno.estado.toLowerCase());
+
+    // Clase del card segun estado
+    $('#turno-card').removeClass('turno-valido turno-atendido turno-error');
+    if (data.ya_fue_atendido) {
+        $('#turno-card').addClass('turno-atendido');
+    } else if (['PENDIENTE', 'CONFIRMADO'].includes(turno.estado)) {
+        $('#turno-card').addClass('turno-valido');
+    }
+
+    // Info del turno
+    let infoHtml = `
+        <div class="info-row">
+            <i class="fa fa-user"></i>
+            <div>
+                <span class="info-label">Cliente</span>
+                <span class="info-value">${turno.cliente.nombre}</span>
+            </div>
+        </div>
+        <div class="info-row">
+            <i class="fa fa-id-card"></i>
+            <div>
+                <span class="info-label">Documento</span>
+                <span class="info-value">${turno.cliente.documento_tipo} ${turno.cliente.documento}</span>
+            </div>
+        </div>
+        <div class="info-row">
+            <i class="fa fa-car"></i>
+            <div>
+                <span class="info-label">Vehiculo</span>
+                <span class="info-value">${turno.vehiculo.dominio} - ${turno.vehiculo.marca} ${turno.vehiculo.modelo}</span>
+            </div>
+        </div>
+        <div class="info-row">
+            <i class="fa fa-calendar"></i>
+            <div>
+                <span class="info-label">Fecha y Hora</span>
+                <span class="info-value">${turno.fecha} - ${turno.hora}</span>
+            </div>
+        </div>
+        <div class="info-row">
+            <i class="fa fa-clipboard-list"></i>
+            <div>
+                <span class="info-label">Tipo de Tramite</span>
+                <span class="info-value">${turno.tipo_tramite}</span>
+            </div>
+        </div>
+    `;
+
+    if (turno.taller) {
+        infoHtml += `
+            <div class="info-row">
+                <i class="fa fa-building"></i>
+                <div>
+                    <span class="info-label">Taller</span>
+                    <span class="info-value">${turno.taller}</span>
+                </div>
+            </div>
+        `;
+    }
+
+    if (data.ya_fue_atendido && turno.atendido_por) {
+        infoHtml += `
+            <div class="info-row">
+                <i class="fa fa-user-check"></i>
+                <div>
+                    <span class="info-label">Atendido por</span>
+                    <span class="info-value">${turno.atendido_por}</span>
+                </div>
+            </div>
+        `;
+        if (turno.fecha_atencion) {
+            infoHtml += `
+                <div class="info-row">
+                    <i class="fa fa-clock"></i>
+                    <div>
+                        <span class="info-label">Fecha de Atencion</span>
+                        <span class="info-value">${turno.fecha_atencion}</span>
+                    </div>
+                </div>
+            `;
+        }
+    }
+
+    $('#turno-info').html(infoHtml);
+
+    // Botones de accion
+    let accionesHtml = '';
+
+    if (data.puede_registrar_atencion && !data.ya_fue_atendido) {
+        accionesHtml += `
+            <button class="btn-registrar-atencion" id="btn-registrar-atencion">
+                <i class="fa fa-check-circle"></i> Registrar Atencion
+            </button>
+        `;
+    } else if (data.ya_fue_atendido) {
+        accionesHtml += `
+            <div class="alert alert-warning mb-0 w-100">
+                <i class="fa fa-info-circle me-2"></i>
+                Este turno ya fue atendido
+            </div>
+        `;
+    }
+
+    accionesHtml += `
+        <button class="btn-nuevo-escaneo" id="btn-nuevo-escaneo">
+            <i class="fa fa-redo"></i> Nuevo Escaneo
+        </button>
+    `;
+
+    $('#acciones-turno').html(accionesHtml);
+
+    // Eventos de botones
+    $('#btn-registrar-atencion').on('click', registrarAtencion);
+    $('#btn-nuevo-escaneo').on('click', nuevoEscaneo);
+
+    $('#resultado-container').addClass('visible');
+}
+
+function registrarAtencion() {
+    if (!turnoActual) return;
+
+    Swal.fire({
+        title: 'Confirmar Atencion',
+        html: `
+            <p>Se registrara la atencion del turno:</p>
+            <p><strong>${turnoActual.turno.codigo}</strong></p>
+            <p class="text-muted">Cliente: ${turnoActual.turno.cliente.nombre}</p>
+        `,
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Si, Registrar',
+        cancelButtonText: 'Cancelar',
+        confirmButtonColor: '#10b981'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $('#loading-overlay').addClass('visible');
+
+            $.ajax({
+                url: '{% url "registrar_atencion_turno" %}',
+                method: 'POST',
+                data: {
+                    turno_id: turnoActual.turno.id,
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                },
+                success: function(response) {
+                    $('#loading-overlay').removeClass('visible');
+
+                    if (response.success) {
+                        // Actualizar UI
+                        $('#btn-registrar-atencion').prop('disabled', true).html(
+                            '<i class="fa fa-check"></i> Atencion Registrada'
+                        );
+                        $('#alerta-atencion').addClass('success').show();
+                        $('#turno-card').removeClass('turno-valido').addClass('turno-atendido');
+
+                        // Actualizar estado
+                        $('#turno-estado').text('En Curso')
+                            .removeClass()
+                            .addClass('turno-estado estado-en_curso');
+
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Atencion Registrada',
+                            text: 'El turno ha sido marcado como atendido correctamente.',
+                            timer: 3000,
+                            showConfirmButton: false
+                        });
+                    } else {
+                        mostrarError(response.error || 'Error al registrar la atencion');
+                    }
+                },
+                error: function(xhr) {
+                    $('#loading-overlay').removeClass('visible');
+                    let mensaje = 'Error al registrar la atencion';
+                    if (xhr.responseJSON && xhr.responseJSON.error) {
+                        mensaje = xhr.responseJSON.error;
+                    }
+                    mostrarError(mensaje);
+                }
+            });
+        }
+    });
+}
+
+function nuevoEscaneo() {
+    turnoActual = null;
+    $('#resultado-container').removeClass('visible');
+    $('#turnos-multiples').hide();
+    $('#busqueda').val('');
+    reanudarScanner();
+}
+
+function reanudarScanner() {
+    if (html5QrCode && !html5QrCode.isScanning) {
+        try {
+            html5QrCode.resume();
+            $('#scanner-status').removeClass('success error').addClass('scanning')
+                .html('<i class="fa fa-qrcode me-2"></i> Apunta al codigo QR del turno');
+        } catch (e) {
+            // Si falla, reiniciar el scanner
+            html5QrCode = null;
+            iniciarScanner();
+        }
+    }
+}
+</script>
+{% endblock %}

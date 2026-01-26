@@ -1,266 +1,784 @@
 {% extends 'turnero/base.html' %}
 
-{% block title %}Turno Confirmado - Turnos RTV{% endblock %}
+{% block title %}Turno Confirmado - {{ turno.codigo }} - Turnos RTV{% endblock %}
 
 {% block extra_css %}
 <style>
     .success-container {
-        max-width: 800px;
+        max-width: 900px;
         margin: 0 auto;
     }
 
+    /* Header de exito compacto */
     .success-header {
-        background: var(--primary-color);
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
         color: white;
-        padding: 3rem 2rem;
+        padding: 1.5rem 2rem;
         border-radius: 15px;
         text-align: center;
-        margin-bottom: 2rem;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 8px 25px rgba(40, 167, 69, 0.25);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 1.5rem;
+        flex-wrap: wrap;
+    }
+
+    .success-header-left {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .success-icon {
+        font-size: 2.5rem;
+        animation: bounceIn 0.6s ease;
+    }
+
+    @keyframes bounceIn {
+        0% { transform: scale(0); opacity: 0; }
+        50% { transform: scale(1.2); }
+        100% { transform: scale(1); opacity: 1; }
+    }
+
+    .success-text h1 {
+        font-size: 1.4rem;
+        font-weight: 700;
+        margin: 0;
+    }
+
+    .success-text p {
+        font-size: 0.9rem;
+        opacity: 0.9;
+        margin: 0;
+    }
+
+    /* Codigo del turno en el header */
+    .turno-codigo-badge {
+        background: white;
+        border-radius: 10px;
+        padding: 0.75rem 1.25rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .turno-codigo-badge .label {
+        font-size: 0.7rem;
+        color: #6c757d;
+        text-transform: uppercase;
+        letter-spacing: 0.05rem;
+    }
+
+    .turno-codigo-badge .code {
+        color: var(--primary-color);
+        font-size: 1.3rem;
+        font-weight: 800;
+        letter-spacing: 0.1rem;
+        font-family: 'Courier New', monospace;
+    }
+
+    /* Acciones rapidas - minimalistas */
+    .quick-actions {
+        display: flex;
+        justify-content: center;
+        gap: 0.75rem;
+        margin-bottom: 1.5rem;
+        flex-wrap: wrap;
+    }
+
+    .quick-action-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.6rem 1.25rem;
+        border-radius: 25px;
+        border: 1px solid #e0e0e0;
+        background: white;
+        color: #555;
+        font-size: 0.85rem;
+        font-weight: 500;
+        text-decoration: none;
+        transition: all 0.2s ease;
+        cursor: pointer;
+    }
+
+    .quick-action-btn:hover {
+        border-color: var(--primary-color);
+        color: var(--primary-color);
+        background: rgba(19, 48, 77, 0.03);
+    }
+
+    .quick-action-btn i {
+        font-size: 0.9rem;
+    }
+
+    .quick-action-btn.whatsapp:hover {
+        border-color: #25D366;
+        color: #25D366;
+    }
+
+    /* Ticket de fecha y hora */
+    .ticket-container {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .ticket-card {
+        background: white;
+        border-radius: 12px;
+        padding: 1.25rem 1rem;
+        text-align: center;
+        box-shadow: 0 3px 15px rgba(0,0,0,0.05);
         position: relative;
         overflow: hidden;
     }
 
-    .success-icon {
-        font-size: 5rem;
-        margin-bottom: 1rem;
-        animation: scaleIn 0.5s ease;
+    .ticket-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
     }
 
-    @keyframes scaleIn {
-        from {
-            transform: scale(0);
-        }
-        to {
-            transform: scale(1);
-        }
-    }
-
-    .success-title {
-        font-size: 2.5rem;
-        font-weight: 700;
-        margin-bottom: 0.5rem;
-    }
-
-    .success-subtitle {
-        font-size: 1.2rem;
-        opacity: 0.95;
-    }
-
-    .turno-codigo {
-        background: white;
-        color: var(--primary-color);
-        padding: 1rem 2rem;
-        border-radius: 15px;
-        font-size: 2rem;
-        font-weight: 700;
-        letter-spacing: 0.2rem;
-        margin: 1.5rem auto;
-        display: inline-block;
-        box-shadow: var(--card-shadow);
-    }
-
-    .qr-container {
-        background: white;
-        padding: 2rem;
-        border-radius: 15px;
-        text-align: center;
-        box-shadow: var(--card-shadow);
-        margin-bottom: 2rem;
-    }
-
-    .qr-code {
-        max-width: 300px;
-        margin: 0 auto;
-        padding: 1rem;
-        background: white;
-        border: 3px solid var(--primary-color);
-        border-radius: 10px;
-    }
-
-    .info-turno {
-        background: #f8f9fa;
-        padding: 2rem;
-        border-radius: 15px;
-        margin-bottom: 2rem;
-    }
-
-    .info-row {
+    .ticket-card .icon {
+        width: 45px;
+        height: 45px;
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+        border-radius: 50%;
         display: flex;
-        justify-content: space-between;
-        padding: 1rem;
-        border-bottom: 2px solid white;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 0.75rem;
+        color: white;
+        font-size: 1.1rem;
     }
 
-    .info-row:last-child {
-        border-bottom: none;
-    }
-
-    .info-label {
-        font-weight: 600;
+    .ticket-card .label {
+        font-size: 0.75rem;
         color: #6c757d;
+        text-transform: uppercase;
+        letter-spacing: 0.05rem;
+        margin-bottom: 0.35rem;
     }
 
-    .info-value {
+    .ticket-card .value {
+        font-size: 1.25rem;
         font-weight: 700;
         color: var(--primary-color);
-        text-align: right;
     }
 
-    .acciones-container {
+    .ticket-card .sub-value {
+        font-size: 0.85rem;
+        color: #6c757d;
+        margin-top: 0.2rem;
+    }
+
+    /* QR Container compacto */
+    .qr-section {
         background: white;
-        padding: 2rem;
-        border-radius: 15px;
-        box-shadow: var(--card-shadow);
-    }
-
-    .btn-accion {
-        width: 100%;
-        margin-bottom: 1rem;
+        border-radius: 12px;
         padding: 1rem;
-        font-weight: 600;
-        border-radius: 10px;
-        transition: all 0.3s ease;
-    }
-
-    .btn-accion i {
-        margin-right: 0.5rem;
-    }
-
-    .instrucciones {
-        background: #f8f9fa;
-        border-left: 5px solid var(--primary-color);
-        padding: 1.5rem;
-        border-radius: 10px;
-        margin-bottom: 2rem;
-    }
-
-    .instrucciones h5 {
-        color: var(--primary-color);
-        font-weight: 700;
+        text-align: center;
+        box-shadow: 0 3px 15px rgba(0,0,0,0.05);
         margin-bottom: 1rem;
     }
 
-    .instrucciones ol li {
-        margin-bottom: 0.75rem;
-        color: #333;
-        font-weight: 500;
+    .qr-code-wrapper {
+        display: inline-block;
+        padding: 0.75rem;
+        background: white;
+        border: 2px solid var(--primary-color);
+        border-radius: 10px;
+    }
+
+    .qr-code-wrapper img {
+        max-width: 140px;
+        display: block;
+    }
+
+    .qr-hint {
+        margin-top: 0.5rem;
+        color: #6c757d;
+        font-size: 0.8rem;
+    }
+
+    .qr-hint i {
+        color: var(--primary-color);
+    }
+
+    /* Info compacta inline */
+    .info-compact {
+        background: white;
+        border-radius: 12px;
+        padding: 1rem 1.25rem;
+        box-shadow: 0 3px 15px rgba(0,0,0,0.05);
+        margin-bottom: 1rem;
+    }
+
+    .info-compact-item {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.5rem 0;
+        font-size: 0.9rem;
+        color: #444;
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+    .info-compact-item:last-child {
+        border-bottom: none;
+        padding-bottom: 0;
+    }
+
+    .info-compact-item i {
+        width: 20px;
+        color: var(--primary-color);
+        font-size: 0.9rem;
+    }
+
+    /* Recordatorio simple */
+    .recordatorio-simple {
+        background: #fffbf0;
+        border: 1px solid #ffe5b4;
+        border-radius: 10px;
+        padding: 0.85rem 1rem;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        font-size: 0.9rem;
+        color: #555;
+    }
+
+    .recordatorio-simple i {
+        color: #e67e00;
+        font-size: 1rem;
+    }
+
+    .recordatorio-simple strong {
+        color: var(--primary-color);
+    }
+
+    /* Boton volver al inicio */
+    .footer-actions {
+        text-align: center;
+        margin-bottom: 1rem;
+    }
+
+    .btn-home {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.75rem 1.5rem;
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+        color: white;
+        border-radius: 50px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(19, 48, 77, 0.25);
+    }
+
+    .btn-home:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(19, 48, 77, 0.35);
+        color: white;
+    }
+
+    /* Cancelacion simple */
+    .cancelacion-simple {
+        text-align: center;
+        font-size: 0.85rem;
+        color: #6c757d;
+        margin: 0;
+    }
+
+    .cancelacion-simple i {
+        color: var(--primary-color);
+        margin-right: 0.3rem;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .success-header {
+            flex-direction: column;
+            gap: 1rem;
+            padding: 1.25rem;
+        }
+
+        .success-header-left {
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .success-icon {
+            font-size: 2rem;
+        }
+
+        .ticket-container {
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.5rem;
+        }
+
+        .ticket-card {
+            padding: 1rem 0.5rem;
+        }
+
+        .ticket-card .value {
+            font-size: 1rem;
+        }
+
+        .ticket-card .label {
+            font-size: 0.65rem;
+        }
+
+        .qr-code-wrapper img {
+            max-width: 120px;
+        }
+
+        .quick-actions {
+            gap: 0.5rem;
+        }
+
+        .quick-action-btn {
+            padding: 0.5rem 1rem;
+            font-size: 0.8rem;
+        }
+
+        .recordatorio-simple {
+            flex-direction: column;
+            text-align: center;
+            gap: 0.5rem;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .success-container {
+            padding: 0 0.5rem;
+        }
+
+        .ticket-container {
+            gap: 0.4rem;
+        }
+
+        .ticket-card {
+            padding: 0.75rem 0.4rem;
+        }
+
+        .ticket-card .icon {
+            width: 28px;
+            height: 28px;
+            font-size: 0.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .ticket-card .value {
+            font-size: 0.9rem;
+        }
+
+        .ticket-card .sub-value {
+            font-size: 0.7rem;
+        }
+
+        .quick-action-btn span {
+            display: none;
+        }
+
+        .quick-action-btn {
+            padding: 0.6rem;
+            border-radius: 50%;
+        }
+
+        .quick-action-btn i {
+            font-size: 1rem;
+        }
+
+        .info-compact-item {
+            font-size: 0.85rem;
+        }
+    }
+
+    /* Print styles */
+    @media print {
+        /* Reset general */
+        * {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+            color-adjust: exact !important;
+        }
+
+        body {
+            background: white !important;
+            font-size: 11pt !important;
+            line-height: 1.4 !important;
+        }
+
+        /* Ocultar elementos no necesarios */
+        .quick-actions,
+        .footer-actions,
+        .cancelacion-alert,
+        .nav-volver,
+        .btn-scroll-top,
+        header,
+        footer,
+        .navbar,
+        .breadcrumb,
+        .steps-progress {
+            display: none !important;
+        }
+
+        /* Desactivar animaciones AOS */
+        [data-aos] {
+            opacity: 1 !important;
+            transform: none !important;
+            transition: none !important;
+        }
+
+        /* Contenedor principal */
+        .success-container {
+            max-width: 100% !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+
+        /* Header de confirmacion */
+        .success-header {
+            background: #28a745 !important;
+            color: white !important;
+            padding: 15px 20px !important;
+            border-radius: 8px !important;
+            margin-bottom: 15px !important;
+            box-shadow: none !important;
+            page-break-inside: avoid !important;
+        }
+
+        .success-icon {
+            font-size: 1.8rem !important;
+        }
+
+        .success-text h1 {
+            font-size: 1.3rem !important;
+        }
+
+        .success-text p {
+            font-size: 0.85rem !important;
+        }
+
+        .turno-codigo-badge {
+            background: white !important;
+            padding: 8px 15px !important;
+        }
+
+        .turno-codigo-badge .code {
+            font-size: 1.2rem !important;
+        }
+
+        /* Tickets de fecha/hora/taller */
+        .ticket-container {
+            display: flex !important;
+            justify-content: space-between !important;
+            gap: 10px !important;
+            margin-bottom: 15px !important;
+            page-break-inside: avoid !important;
+        }
+
+        .ticket-card {
+            flex: 1 !important;
+            background: #f8f9fa !important;
+            border: 1px solid #dee2e6 !important;
+            border-radius: 6px !important;
+            padding: 12px 10px !important;
+            box-shadow: none !important;
+            min-width: auto !important;
+        }
+
+        .ticket-card::before {
+            background: #13304d !important;
+            height: 3px !important;
+        }
+
+        .ticket-card .icon {
+            width: 35px !important;
+            height: 35px !important;
+            background: #13304d !important;
+            font-size: 0.9rem !important;
+            margin-bottom: 8px !important;
+        }
+
+        .ticket-card .label {
+            font-size: 0.7rem !important;
+        }
+
+        .ticket-card .value {
+            font-size: 1rem !important;
+            color: #13304d !important;
+        }
+
+        .ticket-card .sub-value {
+            font-size: 0.75rem !important;
+        }
+
+        /* Seccion QR */
+        .qr-section {
+            background: white !important;
+            border: 2px solid #13304d !important;
+            border-radius: 8px !important;
+            padding: 15px !important;
+            margin-bottom: 15px !important;
+            box-shadow: none !important;
+            page-break-inside: avoid !important;
+            text-align: center !important;
+        }
+
+        .qr-section h3 {
+            font-size: 0.95rem !important;
+            color: #13304d !important;
+            margin-bottom: 10px !important;
+        }
+
+        .qr-code-wrapper {
+            padding: 8px !important;
+            border: 1px solid #13304d !important;
+        }
+
+        .qr-code-wrapper img {
+            max-width: 140px !important;
+        }
+
+        .qr-hint {
+            font-size: 0.8rem !important;
+            margin-top: 8px !important;
+        }
+
+        /* Info compacta */
+        .info-compact {
+            background: #f8f9fa !important;
+            border: 1px solid #dee2e6 !important;
+            border-radius: 6px !important;
+            padding: 10px 15px !important;
+            margin-bottom: 10px !important;
+        }
+
+        .info-compact-item {
+            padding: 4px 0 !important;
+            font-size: 0.8rem !important;
+            border-bottom: 1px solid #e0e0e0 !important;
+        }
+
+        .info-compact-item:last-child {
+            border-bottom: none !important;
+        }
+
+        .info-compact-item i {
+            color: #13304d !important;
+        }
+
+        /* Recordatorio */
+        .recordatorio-simple {
+            background: #fffbf0 !important;
+            border: 1px solid #ffe5b4 !important;
+            border-radius: 6px !important;
+            padding: 10px !important;
+            margin-bottom: 10px !important;
+            font-size: 0.8rem !important;
+        }
+
+        .recordatorio-simple i {
+            color: #e67e00 !important;
+        }
+
+        /* Ocultar cancelacion en impresion */
+        .cancelacion-simple {
+            display: none !important;
+        }
+
+        /* Pie de pagina para impresion */
+        .print-footer {
+            display: block !important;
+            margin-top: 20px !important;
+            padding-top: 15px !important;
+            border-top: 2px solid #13304d !important;
+            text-align: center !important;
+        }
+
+        .print-footer-content {
+            display: flex !important;
+            justify-content: center !important;
+            align-items: center !important;
+            gap: 10px !important;
+            font-size: 0.8rem !important;
+            color: #333 !important;
+            margin-bottom: 5px !important;
+        }
+
+        .print-logo {
+            font-weight: 700 !important;
+            color: #13304d !important;
+        }
+
+        .print-separator {
+            color: #ccc !important;
+        }
+
+        .print-code {
+            font-family: 'Courier New', monospace !important;
+            font-weight: 600 !important;
+        }
+
+        .print-validity {
+            font-size: 0.7rem !important;
+            color: #6c757d !important;
+            font-style: italic !important;
+        }
+
+        /* Configuracion de pagina */
+        @page {
+            size: A4 portrait;
+            margin: 15mm 12mm;
+        }
+    }
+
+    /* Ocultar pie de impresion en pantalla */
+    .print-footer {
+        display: none;
     }
 </style>
 {% endblock %}
 
 {% block content %}
 <div class="success-container">
-    <!-- Header de éxito -->
+    <!-- Header compacto -->
     <div class="success-header" data-aos="zoom-in">
-        <div class="success-icon">
-            <i class="fas fa-check-circle"></i>
+        <div class="success-header-left">
+            <div class="success-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <div class="success-text">
+                <h1>Turno Confirmado</h1>
+                <p>Tu reserva se realizo exitosamente</p>
+            </div>
         </div>
-        <h1 class="success-title">¡Turno Confirmado!</h1>
-        <p class="success-subtitle">Tu reserva se ha realizado exitosamente</p>
-        <div class="turno-codigo mt-3">{{ turno.codigo }}</div>
+        <div class="turno-codigo-badge">
+            <span class="label">Codigo</span>
+            <span class="code">{{ turno.codigo }}</span>
+        </div>
     </div>
 
-    <!-- QR Code -->
-    <div class="qr-container" data-aos="fade-up">
-        <h3 style="color: var(--primary-color); font-weight: 700; margin-bottom: 1.5rem;">
-            <i class="fas fa-qrcode me-2"></i>Tu Código QR
-        </h3>
-        {% if turno.qr_code %}
-        <div class="qr-code">
-            <img src="{{ turno.qr_code.url }}" alt="QR Code" style="max-width: 100%;">
+    <!-- Acciones rapidas -->
+    <div class="quick-actions" data-aos="fade-up">
+        <button type="button" class="quick-action-btn" onclick="window.print()">
+            <i class="fas fa-print"></i>
+            <span>Imprimir</span>
+        </button>
+        <button type="button" class="quick-action-btn" onclick="descargarQR()">
+            <i class="fas fa-download"></i>
+            <span>Descargar QR</span>
+        </button>
+        <a href="https://wa.me/?text=Mi%20turno%20RTV%20esta%20confirmado.%20Codigo:%20{{ turno.codigo }}%20-%20{{ turno.fecha|date:'d/m/Y' }}%20{{ turno.hora_inicio|time:'H:i' }}hs"
+           target="_blank" class="quick-action-btn whatsapp">
+            <i class="fab fa-whatsapp"></i>
+            <span>WhatsApp</span>
+        </a>
+    </div>
+
+    <!-- Tickets de fecha, hora y taller -->
+    <div class="ticket-container" data-aos="fade-up">
+        <div class="ticket-card">
+            <div class="icon">
+                <i class="fas fa-calendar-alt"></i>
+            </div>
+            <div class="label">Fecha</div>
+            <div class="value">{{ turno.fecha|date:"d/m/Y" }}</div>
+            <div class="sub-value">{{ turno.fecha|date:"l" }}</div>
         </div>
-        <p class="mt-3 text-muted">
-            <i class="fas fa-info-circle"></i>
-            Mostrá este código QR al llegar al taller
+        <div class="ticket-card">
+            <div class="icon">
+                <i class="fas fa-clock"></i>
+            </div>
+            <div class="label">Horario</div>
+            <div class="value">{{ turno.hora_inicio|time:"H:i" }} hs</div>
+            <div class="sub-value">Llegar 10 min antes</div>
+        </div>
+        <div class="ticket-card">
+            <div class="icon">
+                <i class="fas fa-map-marker-alt"></i>
+            </div>
+            <div class="label">Taller</div>
+            <div class="value" style="font-size: 1rem;">{{ turno.taller.get_nombre }}</div>
+            <div class="sub-value">{{ turno.taller.get_localidad.nombre }}</div>
+        </div>
+    </div>
+
+    <!-- QR Code compacto -->
+    <div class="qr-section" data-aos="fade-up">
+        {% if turno.qr_code %}
+        <div class="qr-code-wrapper">
+            <img src="{{ turno.qr_code.url }}" alt="QR Code">
+        </div>
+        <p class="qr-hint">
+            <i class="fas fa-info-circle"></i> Mostra este codigo al llegar al taller
         </p>
         {% else %}
-        <div class="alert alert-warning">
-            <i class="fas fa-exclamation-triangle"></i>
-            El código QR se está generando. Revisá tu email en unos minutos.
+        <div class="alert alert-warning" style="border-radius: 10px; margin: 0;">
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            El codigo QR se esta generando. Revisa tu email en unos minutos.
         </div>
         {% endif %}
     </div>
 
-    <!-- Información del turno -->
-    <div class="info-turno" data-aos="fade-up">
-        <h4 style="color: var(--primary-color); font-weight: 700; margin-bottom: 1.5rem;">
-            <i class="fas fa-clipboard-list me-2"></i>Detalles del Turno
-        </h4>
-        <div class="info-row">
-            <span class="info-label"><i class="fas fa-calendar me-2"></i>Fecha:</span>
-            <span class="info-value">{{ turno.fecha|date:"d/m/Y" }} ({{ turno.fecha|date:"l" }})</span>
+    <!-- Info compacta inline -->
+    <div class="info-compact" data-aos="fade-up">
+        <div class="info-compact-item">
+            <i class="fas fa-user"></i>
+            <span>{{ turno.cliente.nombre }} {{ turno.cliente.apellido }} - DNI {{ turno.cliente.dni }}</span>
         </div>
-        <div class="info-row">
-            <span class="info-label"><i class="fas fa-clock me-2"></i>Horario:</span>
-            <span class="info-value">{{ turno.hora_inicio|time:"H:i" }} hs</span>
+        <div class="info-compact-item">
+            <i class="fas fa-car"></i>
+            <span>{{ turno.vehiculo.dominio }} - {{ turno.tipo_vehiculo.nombre }}</span>
         </div>
-        <div class="info-row">
-            <span class="info-label"><i class="fas fa-car me-2"></i>Vehículo:</span>
-            <span class="info-value">{{ turno.vehiculo.dominio }}</span>
-        </div>
-        <div class="info-row">
-            <span class="info-label"><i class="fas fa-clipboard-check me-2"></i>Trámite:</span>
-            <span class="info-value">{{ turno.tipo_vehiculo.nombre }}</span>
-        </div>
-        <div class="info-row">
-            <span class="info-label"><i class="fas fa-map-marker-alt me-2"></i>Taller:</span>
-            <span class="info-value">{{ turno.taller.get_nombre }}</span>
-        </div>
-        <div class="info-row">
-            <span class="info-label"><i class="fas fa-map me-2"></i>Dirección:</span>
-            <span class="info-value">{{ turno.taller.get_direccion }}, {{ turno.taller.get_localidad.nombre }}</span>
-        </div>
-        <div class="info-row">
-            <span class="info-label"><i class="fas fa-phone me-2"></i>Teléfono:</span>
-            <span class="info-value">{{ turno.taller.get_telefono }}</span>
+        <div class="info-compact-item">
+            <i class="fas fa-map-marker-alt"></i>
+            <span>{{ turno.taller.get_direccion }} - Tel: {{ turno.taller.get_telefono }}</span>
         </div>
     </div>
 
-    <!-- Instrucciones -->
-    <div class="instrucciones" data-aos="fade-up">
-        <h5 class="mb-3"><i class="fas fa-list-ol me-2"></i>¿Qué debo hacer ahora?</h5>
-        <ol class="ps-4">
-            <li class="mb-3"><strong>Guardá este código:</strong> Anotá el código de turno <strong>{{ turno.codigo }}</strong> o guardá una captura de pantalla</li>
-            <li class="mb-3"><strong>Revisá tu email:</strong> Te enviamos un correo de confirmación con todos los detalles</li>
-            <li class="mb-3"><strong>Prepará la documentación:</strong> DNI, cédula del vehículo, comprobante de pago y seguro vigente</li>
-            <li class="mb-3"><strong>Llegá 10 minutos antes:</strong> Presentate en {{ turno.taller.get_nombre }} el día {{ turno.fecha|date:"d/m/Y" }} a las {{ turno.hora_inicio|time:"H:i" }} hs</li>
-            <li><strong>Mostrá el QR:</strong> Al llegar, mostrá tu código QR o el código de turno</li>
-        </ol>
+    <!-- Recordatorio simple -->
+    <div class="recordatorio-simple" data-aos="fade-up">
+        <i class="fas fa-lightbulb"></i>
+        <span><strong>Recorda:</strong> Llega 10 min antes con DNI, cedula del vehiculo y seguro vigente.</span>
     </div>
 
-    <!-- Acciones -->
-    <div class="acciones-container" data-aos="fade-up">
-        <h4 style="color: var(--primary-color); font-weight: 700; margin-bottom: 1.5rem;">
-            <i class="fas fa-tasks me-2"></i>Acciones
-        </h4>
-
-        <button type="button" class="btn btn-primary-custom btn-accion" onclick="window.print()">
-            <i class="fas fa-print me-2"></i>Imprimir Comprobante
-        </button>
-
-        <button type="button" class="btn btn-secondary-custom btn-accion" onclick="descargarQR()">
-            <i class="fas fa-download me-2"></i>Descargar Código QR
-        </button>
-
-        <a href="mailto:?subject=Turno RTV Confirmado&body=Mi turno para RTV está confirmado. Código: {{ turno.codigo }}. Fecha: {{ turno.fecha|date:'d/m/Y' }} a las {{ turno.hora_inicio|time:'H:i' }} hs."
-           class="btn btn-secondary-custom btn-accion">
-            <i class="fas fa-envelope me-2"></i>Enviar por Email
+    <!-- Boton volver al inicio -->
+    <div class="footer-actions" data-aos="fade-up">
+        <a href="{% url 'turnero:home' %}" class="btn-home">
+            <i class="fas fa-home"></i>
+            <span>Volver al Inicio</span>
         </a>
-
-        <div class="mt-4 text-center">
-            <a href="{% url 'turnero:home' %}" class="btn btn-accent">
-                <i class="fas fa-home me-2"></i>Volver al Inicio
-            </a>
-        </div>
     </div>
 
-    <!-- Información de cancelación -->
-    <div class="alert alert-info mt-4" data-aos="fade-up">
-        <h6 class="mb-2"><i class="fas fa-info-circle me-2"></i>¿Necesitás cancelar?</h6>
-        <p class="mb-0">
-            Podés cancelar tu turno hasta 24 horas antes del horario asignado.
-            Si necesitás cancelar, comunicate al {{ turno.taller.get_telefono }} o enviá un email a {{ turno.taller.get_email }}.
-        </p>
+    <!-- Info cancelacion compacta -->
+    <p class="cancelacion-simple" data-aos="fade-up">
+        <i class="fas fa-info-circle"></i> ¿Cancelar? Hasta 24hs antes al <strong>{{ turno.taller.get_telefono }}</strong>
+    </p>
+
+    <!-- Pie de pagina solo para impresion -->
+    <div class="print-footer">
+        <div class="print-footer-content">
+            <span class="print-logo">Sistema de Turnos RTV</span>
+            <span class="print-separator">|</span>
+            <span class="print-date" id="printDate"></span>
+            <span class="print-separator">|</span>
+            <span class="print-code">Codigo: {{ turno.codigo }}</span>
+        </div>
+        <div class="print-validity">Este comprobante es valido como confirmacion del turno</div>
     </div>
 </div>
 {% endblock %}
@@ -275,11 +793,43 @@
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
-        showToast('Código QR descargado correctamente', 'success');
+        showToast('Codigo QR descargado', 'success');
         {% else %}
-        showInfo('El código QR aún se está generando. Por favor, intentá nuevamente en unos minutos o descargalo desde tu email de confirmación.', 'QR en Proceso');
+        showInfo('El codigo QR aun se esta generando. Intenta en unos minutos.', 'QR en Proceso');
         {% endif %}
     }
+
+    // Configurar fecha de impresion antes de imprimir
+    window.addEventListener('beforeprint', function() {
+        const now = new Date();
+        const dateStr = now.toLocaleDateString('es-AR', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+        const printDateEl = document.getElementById('printDate');
+        if (printDateEl) {
+            printDateEl.textContent = 'Impreso: ' + dateStr;
+        }
+    });
+
+    // Establecer fecha inicial por si el usuario imprime inmediatamente
+    document.addEventListener('DOMContentLoaded', function() {
+        const now = new Date();
+        const dateStr = now.toLocaleDateString('es-AR', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+        const printDateEl = document.getElementById('printDate');
+        if (printDateEl) {
+            printDateEl.textContent = 'Impreso: ' + dateStr;
+        }
+    });
 
     // Verificar si estamos en un iframe (embedded mode)
     function isEmbedded() {
@@ -292,18 +842,11 @@
 
     // Si estamos embebidos, notificar al parent que el turno fue creado
     if (isEmbedded()) {
-        // Enviar mensaje al parent con la información del turno
         window.parent.postMessage({
             type: 'turno_creado',
             codigo: '{{ turno.codigo }}',
             id: {{ turno.id }}
         }, '*');
     }
-
-    // Confetti animation al cargar la página
-    setTimeout(function() {
-        // Aquí se podría agregar una librería de confetti como canvas-confetti
-        console.log('¡Turno confirmado con éxito!');
-    }, 500);
 </script>
 {% endblock %}

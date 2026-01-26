@@ -6,8 +6,641 @@
 <style>
 
     /* ========================================
-    ESTILOS CONSOLIDADOS
+       DISEÑO PREMIUM - SENIOR LEVEL
+       Sistema de diseño profesional y cohesivo
     ======================================== */
+
+    /* ========================================
+       VARIABLES CSS - SISTEMA DE DISEÑO
+    ======================================== */
+    :root {
+        /* Colores principales */
+        --primary-900: #001d3d;
+        --primary-800: #002855;
+        --primary-700: #003466;
+        --primary-600: #004080;
+        --primary-500: #0056b3;
+        --primary-400: #3d8bfd;
+        --primary-300: #6ea8fe;
+        --primary-200: #9ec5fe;
+        --primary-100: #cfe2ff;
+        --primary-50: #e7f1ff;
+
+        /* Colores de acento */
+        --accent-gold: #f0b429;
+        --accent-gold-light: #ffd666;
+        --accent-emerald: #10b981;
+        --accent-coral: #f87171;
+
+        /* Neutros */
+        --neutral-900: #111827;
+        --neutral-800: #1f2937;
+        --neutral-700: #374151;
+        --neutral-600: #4b5563;
+        --neutral-500: #6b7280;
+        --neutral-400: #9ca3af;
+        --neutral-300: #d1d5db;
+        --neutral-200: #e5e7eb;
+        --neutral-100: #f3f4f6;
+        --neutral-50: #f9fafb;
+
+        /* Gradientes premium */
+        --gradient-primary: linear-gradient(135deg, var(--primary-700) 0%, var(--primary-500) 50%, var(--primary-400) 100%);
+        --gradient-premium: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        --gradient-subtle: linear-gradient(180deg, var(--neutral-50) 0%, var(--primary-50) 100%);
+        --gradient-glass: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.7) 100%);
+        --gradient-shine: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.4) 50%, transparent 100%);
+
+        /* Sombras profesionales */
+        --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.05);
+        --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+        --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        --shadow-inner: inset 0 2px 4px 0 rgba(0, 0, 0, 0.06);
+        --shadow-glow: 0 0 40px rgba(0, 86, 179, 0.3);
+        --shadow-glow-strong: 0 0 60px rgba(0, 86, 179, 0.5);
+
+        /* Glassmorphism */
+        --glass-bg: rgba(255, 255, 255, 0.85);
+        --glass-bg-light: rgba(255, 255, 255, 0.6);
+        --glass-border: rgba(255, 255, 255, 0.2);
+        --glass-blur: 20px;
+
+        /* Espaciado */
+        --space-1: 0.25rem;
+        --space-2: 0.5rem;
+        --space-3: 0.75rem;
+        --space-4: 1rem;
+        --space-5: 1.25rem;
+        --space-6: 1.5rem;
+        --space-8: 2rem;
+        --space-10: 2.5rem;
+        --space-12: 3rem;
+        --space-16: 4rem;
+
+        /* Bordes */
+        --radius-sm: 0.375rem;
+        --radius-md: 0.5rem;
+        --radius-lg: 0.75rem;
+        --radius-xl: 1rem;
+        --radius-2xl: 1.5rem;
+        --radius-full: 9999px;
+
+        /* Transiciones */
+        --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+        --transition-base: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+        --transition-slow: 500ms cubic-bezier(0.4, 0, 0.2, 1);
+        --transition-bounce: 500ms cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    /* ========================================
+       ANIMACIONES PREMIUM
+    ======================================== */
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(40px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeInDown {
+        from { opacity: 0; transform: translateY(-40px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeInScale {
+        from { opacity: 0; transform: scale(0.95); }
+        to { opacity: 1; transform: scale(1); }
+    }
+
+    @keyframes slideInLeft {
+        from { opacity: 0; transform: translateX(-60px); }
+        to { opacity: 1; transform: translateX(0); }
+    }
+
+    @keyframes slideInRight {
+        from { opacity: 0; transform: translateX(60px); }
+        to { opacity: 1; transform: translateX(0); }
+    }
+
+    @keyframes float {
+        0%, 100% { transform: translateY(0) rotate(0deg); }
+        33% { transform: translateY(-15px) rotate(2deg); }
+        66% { transform: translateY(-8px) rotate(-1deg); }
+    }
+
+    @keyframes pulse {
+        0%, 100% { opacity: 1; transform: scale(1); }
+        50% { opacity: 0.8; transform: scale(1.05); }
+    }
+
+    @keyframes shimmer {
+        0% { transform: translateX(-100%); }
+        100% { transform: translateX(100%); }
+    }
+
+    @keyframes gradientFlow {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+
+    @keyframes glow {
+        0%, 100% { box-shadow: 0 0 20px rgba(0, 86, 179, 0.3); }
+        50% { box-shadow: 0 0 40px rgba(0, 86, 179, 0.5); }
+    }
+
+    @keyframes morphBlob {
+        0%, 100% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
+        25% { border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%; }
+        50% { border-radius: 50% 60% 30% 60% / 30% 60% 70% 40%; }
+        75% { border-radius: 60% 40% 60% 30% / 70% 30% 50% 60%; }
+    }
+
+    @keyframes bounceIn {
+        0% { opacity: 0; transform: scale(0.3); }
+        50% { opacity: 1; transform: scale(1.05); }
+        70% { transform: scale(0.9); }
+        100% { transform: scale(1); }
+    }
+
+    /* ========================================
+       EFECTOS GLASSMORPHISM PREMIUM
+    ======================================== */
+    .glass-card {
+        background: var(--glass-bg);
+        backdrop-filter: blur(var(--glass-blur));
+        -webkit-backdrop-filter: blur(var(--glass-blur));
+        border: 1px solid var(--glass-border);
+        border-radius: var(--radius-2xl);
+        box-shadow: var(--shadow-xl);
+    }
+
+    .glass-card-elevated {
+        background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.85) 100%);
+        backdrop-filter: blur(25px);
+        -webkit-backdrop-filter: blur(25px);
+        border: 1px solid rgba(255, 255, 255, 0.4);
+        border-radius: var(--radius-2xl);
+        box-shadow: var(--shadow-2xl), inset 0 1px 0 rgba(255,255,255,0.5);
+    }
+
+    /* ========================================
+       FORMAS DECORATIVAS PREMIUM
+    ======================================== */
+    .floating-shapes {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        pointer-events: none;
+        z-index: 1;
+    }
+
+    .floating-shape {
+        position: absolute;
+        animation: float 8s ease-in-out infinite, morphBlob 12s ease-in-out infinite;
+        filter: blur(1px);
+    }
+
+    .floating-shape-1 {
+        width: 200px;
+        height: 200px;
+        background: linear-gradient(135deg, rgba(102, 126, 234, 0.25), rgba(118, 75, 162, 0.2));
+        top: 5%;
+        left: 3%;
+        animation-delay: 0s;
+        box-shadow: 0 0 60px rgba(102, 126, 234, 0.3);
+    }
+
+    .floating-shape-2 {
+        width: 280px;
+        height: 280px;
+        background: linear-gradient(135deg, rgba(240, 180, 41, 0.2), rgba(248, 113, 113, 0.15));
+        top: 55%;
+        right: 5%;
+        animation-delay: 2s;
+        box-shadow: 0 0 80px rgba(240, 180, 41, 0.25);
+    }
+
+    .floating-shape-3 {
+        width: 150px;
+        height: 150px;
+        background: linear-gradient(135deg, rgba(16, 185, 129, 0.25), rgba(59, 130, 246, 0.2));
+        bottom: 15%;
+        left: 8%;
+        animation-delay: 4s;
+        box-shadow: 0 0 50px rgba(16, 185, 129, 0.3);
+    }
+
+    .floating-shape-4 {
+        width: 120px;
+        height: 120px;
+        background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(236, 72, 153, 0.15));
+        top: 20%;
+        right: 15%;
+        animation-delay: 1s;
+        box-shadow: 0 0 40px rgba(139, 92, 246, 0.25);
+    }
+
+    /* ========================================
+       HERO / MASTHEAD PREMIUM
+    ======================================== */
+    .masthead {
+        position: relative;
+    }
+
+    .masthead::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.1) 100%);
+        z-index: 1;
+        pointer-events: none;
+    }
+
+    .masthead-card {
+        animation: fadeInScale 1s ease-out;
+        position: relative;
+        border: none !important;
+        box-shadow: none !important;
+        background: transparent !important;
+        transition: all var(--transition-slow);
+    }
+
+    .masthead-card::before {
+        display: none;
+    }
+
+    .masthead-card:hover {
+        transform: none;
+        box-shadow: none !important;
+    }
+
+    .masthead-heading {
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .masthead-subheading {
+        font-weight: 300;
+        letter-spacing: 0.05em;
+        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    /* ========================================
+       BOTONES PREMIUM
+    ======================================== */
+    .btn-modern {
+        position: relative;
+        overflow: hidden;
+        font-weight: 600;
+        letter-spacing: 0.025em;
+        border: none !important;
+        padding: 1rem 2rem;
+        border-radius: var(--radius-lg);
+        transition: all var(--transition-base);
+        box-shadow: var(--shadow-lg);
+    }
+
+    .btn-modern::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: var(--gradient-shine);
+        transition: left 0.6s ease;
+    }
+
+    .btn-modern::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(180deg, rgba(255,255,255,0.2) 0%, transparent 50%);
+        pointer-events: none;
+    }
+
+    .btn-modern:hover {
+        transform: translateY(-4px) scale(1.02);
+        box-shadow: var(--shadow-xl), var(--shadow-glow);
+    }
+
+    .btn-modern:hover::before {
+        left: 100%;
+    }
+
+    .btn-modern:active {
+        transform: translateY(-2px) scale(1);
+    }
+
+    /* Shimmer automático */
+    @keyframes autoShimmer {
+        0%, 85%, 100% { left: -100%; }
+        95% { left: 100%; }
+    }
+
+    .btn-modern .shimmer-effect {
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 50%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.25), transparent);
+        animation: autoShimmer 4s ease-in-out infinite;
+    }
+
+    /* ========================================
+       SECCIONES PREMIUM
+    ======================================== */
+    .page-section {
+        position: relative;
+        overflow: hidden;
+    }
+
+    .page-section::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, var(--neutral-200), transparent);
+    }
+
+    .page-section.bg-light {
+        background: var(--gradient-subtle);
+    }
+
+    /* Títulos de sección */
+    .section-heading {
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        color: var(--primary-800);
+        position: relative;
+        display: inline-block;
+    }
+
+    .section-heading::after {
+        content: '';
+        position: absolute;
+        bottom: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 60px;
+        height: 4px;
+        background: var(--gradient-primary);
+        border-radius: var(--radius-full);
+    }
+
+    .section-subheading {
+        font-weight: 400;
+        color: var(--neutral-500);
+        margin-top: var(--space-6);
+    }
+
+    /* ========================================
+       ANIMACIONES ON-SCROLL
+    ======================================== */
+    .animate-on-scroll {
+        opacity: 0;
+        transform: translateY(40px);
+        transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+    }
+
+    .animate-on-scroll.visible {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    .animate-on-scroll.from-left {
+        transform: translateX(-40px);
+    }
+
+    .animate-on-scroll.from-right {
+        transform: translateX(40px);
+    }
+
+    .animate-on-scroll.from-left.visible,
+    .animate-on-scroll.from-right.visible {
+        transform: translateX(0);
+    }
+
+    .animate-delay-1 { transition-delay: 0.1s; }
+    .animate-delay-2 { transition-delay: 0.2s; }
+    .animate-delay-3 { transition-delay: 0.3s; }
+    .animate-delay-4 { transition-delay: 0.4s; }
+    .animate-delay-5 { transition-delay: 0.5s; }
+
+    /* ========================================
+       CARDS PREMIUM
+    ======================================== */
+    .card-premium {
+        background: white;
+        border: none;
+        border-radius: var(--radius-xl);
+        box-shadow: var(--shadow-md);
+        transition: all var(--transition-base);
+        overflow: hidden;
+        position: relative;
+    }
+
+    .card-premium::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: var(--gradient-primary);
+        transform: scaleX(0);
+        transition: transform var(--transition-base);
+    }
+
+    .card-premium:hover {
+        transform: translateY(-8px);
+        box-shadow: var(--shadow-xl);
+    }
+
+    .card-premium:hover::before {
+        transform: scaleX(1);
+    }
+
+    /* ========================================
+       SERVICIOS MEJORADOS
+    ======================================== */
+    #services .fa-stack {
+        transition: all var(--transition-bounce);
+    }
+
+    #services .fa-stack:hover {
+        transform: translateY(-10px) scale(1.1) !important;
+    }
+
+    #services .service-desc-card {
+        background: linear-gradient(135deg, var(--neutral-50) 0%, white 100%) !important;
+        border: 1px solid var(--neutral-100) !important;
+        border-radius: var(--radius-xl) !important;
+        transition: all var(--transition-base);
+    }
+
+    #services .service-desc-card:hover {
+        box-shadow: var(--shadow-lg) !important;
+        border-color: var(--primary-100) !important;
+    }
+
+    #services h4 {
+        color: var(--primary-800);
+        font-weight: 700;
+    }
+
+    /* ========================================
+       INDICADOR DE SCROLL
+    ======================================== */
+    .scroll-indicator {
+        position: absolute;
+        bottom: 40px;
+        left: 0;
+        right: 0;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        z-index: 10;
+        animation: float 2s ease-in-out infinite;
+        transition: opacity var(--transition-base);
+    }
+
+    .scroll-indicator a {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+        text-decoration: none;
+        color: white;
+        padding: 0.75rem 1.5rem;
+        border-radius: 2rem;
+        background: rgba(0, 0, 0, 0.25);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        transition: all 0.3s ease;
+    }
+
+    .scroll-indicator a:hover {
+        background: rgba(0, 0, 0, 0.4);
+        transform: translateY(-3px);
+        color: white;
+    }
+
+    .scroll-indicator i,
+    .scroll-indicator svg {
+        font-size: 1.25rem;
+        width: 1.25rem;
+        height: 1.25rem;
+        filter: drop-shadow(0 2px 8px rgba(0,0,0,0.3));
+        animation: bounceDown 1.5s ease-in-out infinite;
+    }
+
+    .scroll-indicator span {
+        font-size: 0.7rem;
+        font-weight: 600;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        opacity: 0.95;
+    }
+
+    @keyframes bounceDown {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(4px); }
+    }
+
+    /* ========================================
+       EFECTOS HOVER GLOBALES
+    ======================================== */
+    .hover-lift {
+        transition: all var(--transition-base);
+    }
+
+    .hover-lift:hover {
+        transform: translateY(-8px);
+        box-shadow: var(--shadow-xl);
+    }
+
+    .hover-glow {
+        transition: all var(--transition-base);
+    }
+
+    .hover-glow:hover {
+        box-shadow: var(--shadow-lg), var(--shadow-glow);
+    }
+
+    .hover-scale {
+        transition: transform var(--transition-base);
+    }
+
+    .hover-scale:hover {
+        transform: scale(1.05);
+    }
+
+    /* ========================================
+       SEPARADORES DECORATIVOS
+    ======================================== */
+    .divider-gradient {
+        height: 4px;
+        width: 100px;
+        background: var(--gradient-primary);
+        border-radius: var(--radius-full);
+        margin: var(--space-6) auto;
+    }
+
+    .divider-dots {
+        display: flex;
+        justify-content: center;
+        gap: var(--space-3);
+        margin: var(--space-8) auto;
+    }
+
+    .divider-dots span {
+        width: 8px;
+        height: 8px;
+        background: var(--primary-400);
+        border-radius: var(--radius-full);
+        opacity: 0.6;
+    }
+
+    .divider-dots span:nth-child(2) {
+        opacity: 0.8;
+        transform: scale(1.2);
+    }
+
+    .divider-dots span:nth-child(3) {
+        opacity: 0.6;
+    }
+
+    /* ========================================
+       RESPONSIVE - ANIMACIONES
+    ======================================== */
+    @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after {
+            animation-duration: 0.01ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: 0.01ms !important;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .floating-shape {
+            opacity: 0.15;
+        }
+        .floating-shape-1 { width: 100px; height: 100px; }
+        .floating-shape-2 { width: 140px; height: 140px; }
+        .floating-shape-3 { width: 80px; height: 80px; }
+        .floating-shape-4 { display: none; }
+    }
 
 
     /* Bloque de estilo #1 */
@@ -287,12 +920,7 @@
         }
 
         .masthead-card-overlay {
-            position: absolute;
-            inset: 0;
-            border-radius: 1.5rem;
-            pointer-events: none;
-            z-index: 0;
-            transition: opacity 0.2s;
+            display: none;
         }
 
     /* Bloque de estilo #2 */
@@ -508,104 +1136,315 @@
     }
 
     /* Bloque de estilo #9 */
-    /* Estilos base para todos los botones flotantes */
+    /* Estilos base para todos los botones flotantes - DISEÑO PREMIUM */
     .whatsapp-float, .facebook-float, .instagram-float, .scroll-top-float {
         position: fixed;
-        right: 18px;
+        right: 20px;
         border-radius: 50%;
-        width: 56px;
-        height: 56px;
+        width: 54px;
+        height: 54px;
         display: none;
         align-items: center;
         justify-content: center;
-        box-shadow: 0 4px 16px rgba(0,0,0,0.18);
-        font-size: 2.2rem;
-        transition: background 0.2s, box-shadow 0.2s;
+        font-size: 1.5rem;
         text-decoration: none;
         color: #fff;
+        cursor: pointer;
+        /* Transiciones suaves y profesionales */
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        /* Borde sutil con brillo */
+        border: 2px solid rgba(255, 255, 255, 0.2);
+        /* Efecto glassmorphism */
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
     }
 
-    /* WhatsApp - Tercero desde abajo */
-    .whatsapp-float {
-        bottom: 140px;
-        z-index: 9999;
-        background: rgba(37, 211, 102, 0.75);
-        opacity: 0.85;
-    }
-    .whatsapp-float:hover {
-        box-shadow: 0 8px 32px rgba(0,0,0,0.28);
-        background: rgba(37, 211, 102, 0.95);
-        opacity: 1;
-    }
-
-    /* Facebook - Cuarto desde abajo */
-    .facebook-float {
-        bottom: 200px;
-        z-index: 9997;
-        background: rgba(24, 119, 242, 0.75);
-        opacity: 0.85;
-    }
-    .facebook-float:hover {
-        box-shadow: 0 8px 32px rgba(0,0,0,0.28);
-        background: rgba(24, 119, 242, 0.95);
-        opacity: 1;
+    /* Efecto de brillo interno para todos los botones */
+    .whatsapp-float::before, .facebook-float::before, .instagram-float::before, .scroll-top-float::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        border-radius: 50%;
+        background: linear-gradient(135deg, rgba(255,255,255,0.3) 0%, transparent 50%);
+        opacity: 0;
+        transition: opacity 0.4s ease;
+        pointer-events: none;
     }
 
-    /* Instagram - Quinto desde abajo (más arriba) */
-    .instagram-float {
-        bottom: 260px;
-        z-index: 9996;
-        background: linear-gradient(45deg, rgba(240, 148, 51, 0.75) 0%, rgba(230, 104, 60, 0.75) 25%, rgba(220, 39, 67, 0.75) 50%, rgba(204, 35, 102, 0.75) 75%, rgba(188, 24, 136, 0.75) 100%);
-        opacity: 0.85;
-    }
-    .instagram-float:hover {
-        box-shadow: 0 8px 32px rgba(0,0,0,0.28);
-        background: linear-gradient(45deg, rgba(240, 148, 51, 0.95) 0%, rgba(230, 104, 60, 0.95) 25%, rgba(220, 39, 67, 0.95) 50%, rgba(204, 35, 102, 0.95) 75%, rgba(188, 24, 136, 0.95) 100%);
+    .whatsapp-float:hover::before, .facebook-float:hover::before, .instagram-float:hover::before, .scroll-top-float:hover::before {
         opacity: 1;
     }
 
     /* Scroll to top - Primero desde abajo */
     .scroll-top-float {
-        bottom: 18px;
+        bottom: 20px;
         z-index: 9998;
-        background: #003466;
-        opacity: 0.92;
+        background: linear-gradient(135deg, #003466 0%, #0056b3 100%);
+        box-shadow:
+            0 4px 15px rgba(0, 52, 102, 0.4),
+            0 8px 30px rgba(0, 52, 102, 0.2),
+            inset 0 1px 1px rgba(255, 255, 255, 0.1);
     }
     .scroll-top-float:hover {
-        box-shadow: 0 8px 32px rgba(0,0,0,0.28);
-        background: #0056b3;
+        transform: translateY(-5px) scale(1.05);
+        box-shadow:
+            0 8px 25px rgba(0, 52, 102, 0.5),
+            0 15px 40px rgba(0, 52, 102, 0.3),
+            inset 0 1px 1px rgba(255, 255, 255, 0.2);
+        background: linear-gradient(135deg, #0056b3 0%, #0077cc 100%);
+    }
+    .scroll-top-float:active {
+        transform: translateY(-2px) scale(1.02);
     }
 
-    /* Estilos para íconos */
+    /* WhatsApp - Segundo desde abajo */
+    .whatsapp-float {
+        bottom: 160px;
+        z-index: 9999;
+        background: linear-gradient(135deg, #25d366 0%, #128c7e 100%);
+        box-shadow:
+            0 4px 15px rgba(37, 211, 102, 0.4),
+            0 8px 30px rgba(37, 211, 102, 0.2),
+            inset 0 1px 1px rgba(255, 255, 255, 0.1);
+    }
+    .whatsapp-float:hover {
+        transform: translateY(-5px) scale(1.05);
+        box-shadow:
+            0 8px 25px rgba(37, 211, 102, 0.5),
+            0 15px 40px rgba(37, 211, 102, 0.3),
+            inset 0 1px 1px rgba(255, 255, 255, 0.2);
+        background: linear-gradient(135deg, #2eec74 0%, #25d366 100%);
+    }
+    .whatsapp-float:active {
+        transform: translateY(-2px) scale(1.02);
+    }
+
+    /* Facebook - Tercero desde abajo */
+    .facebook-float {
+        bottom: 230px;
+        z-index: 9997;
+        background: linear-gradient(135deg, #1877f2 0%, #0d5cbd 100%);
+        box-shadow:
+            0 4px 15px rgba(24, 119, 242, 0.4),
+            0 8px 30px rgba(24, 119, 242, 0.2),
+            inset 0 1px 1px rgba(255, 255, 255, 0.1);
+    }
+    .facebook-float:hover {
+        transform: translateY(-5px) scale(1.05);
+        box-shadow:
+            0 8px 25px rgba(24, 119, 242, 0.5),
+            0 15px 40px rgba(24, 119, 242, 0.3),
+            inset 0 1px 1px rgba(255, 255, 255, 0.2);
+        background: linear-gradient(135deg, #3b8ff5 0%, #1877f2 100%);
+    }
+    .facebook-float:active {
+        transform: translateY(-2px) scale(1.02);
+    }
+
+    /* Instagram - Cuarto desde abajo */
+    .instagram-float {
+        bottom: 300px;
+        z-index: 9996;
+        background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+        box-shadow:
+            0 4px 15px rgba(225, 48, 108, 0.4),
+            0 8px 30px rgba(225, 48, 108, 0.2),
+            inset 0 1px 1px rgba(255, 255, 255, 0.1);
+    }
+    .instagram-float:hover {
+        transform: translateY(-5px) scale(1.05);
+        box-shadow:
+            0 8px 25px rgba(225, 48, 108, 0.5),
+            0 15px 40px rgba(225, 48, 108, 0.3),
+            inset 0 1px 1px rgba(255, 255, 255, 0.2);
+        background: linear-gradient(45deg, #ffb347 0%, #f09433 25%, #e6683c 50%, #dc2743 75%, #cc2366 100%);
+    }
+    .instagram-float:active {
+        transform: translateY(-2px) scale(1.02);
+    }
+
+    /* Estilos para íconos - más elegantes */
     .whatsapp-float i, .facebook-float i, .instagram-float i, .scroll-top-float i {
         color: #fff;
-        transition: color 0.2s;
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+        position: relative;
+        z-index: 1;
     }
 
-    /* Responsive - Móviles */
-    @media (max-width: 575px) {
-        .whatsapp-float, .facebook-float, .instagram-float, .scroll-top-float {
-            right: 4vw;
-            width: 44px;
-            height: 44px;
-            font-size: 1.5rem;
-            max-width: 44px;
-            max-height: 44px;
+    .whatsapp-float:hover i, .facebook-float:hover i, .instagram-float:hover i, .scroll-top-float:hover i {
+        transform: scale(1.1);
+    }
+
+    /* Animación de pulso sutil para WhatsApp (el más importante) */
+    @keyframes pulseWhatsApp {
+        0%, 100% { box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4), 0 8px 30px rgba(37, 211, 102, 0.2), 0 0 0 0 rgba(37, 211, 102, 0.4); }
+        50% { box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4), 0 8px 30px rgba(37, 211, 102, 0.2), 0 0 0 8px rgba(37, 211, 102, 0); }
+    }
+
+    .whatsapp-float {
+        animation: pulseWhatsApp 3s ease-in-out infinite;
+    }
+
+    .whatsapp-float:hover {
+        animation: none;
+    }
+
+    /* Contenedor de botones sociales - Desktop (sin cambios) */
+    .social-float-container {
+        display: contents; /* En desktop, se comporta como si no existiera */
+    }
+
+    /* Responsive - Móviles: Botones sociales horizontales en la parte inferior */
+    @media (max-width: 767px) {
+        /* Contenedor horizontal para redes sociales - Diseño Premium Glassmorphism */
+        .social-float-container {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            display: none; /* Se muestra via JS */
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            gap: 0;
+            /* Fondo premium con glassmorphism */
+            background: linear-gradient(180deg,
+                rgba(255, 255, 255, 0.05) 0%,
+                rgba(255, 255, 255, 0.15) 50%,
+                rgba(255, 255, 255, 0.25) 100%);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 -4px 30px rgba(0, 0, 0, 0.1);
+            padding: 0.85rem 1rem;
+            padding-bottom: calc(0.85rem + env(safe-area-inset-bottom, 0px));
+            z-index: 9990;
         }
-        .whatsapp-float {
-            bottom: 100px;
+
+        /* Reset de estilos para botones sociales en móvil - PREMIUM */
+        .social-float-container .social-float-btn {
+            position: relative !important;
+            bottom: auto !important;
+            right: auto !important;
+            left: auto !important;
+            width: 52px;
+            height: 52px;
+            font-size: 1.4rem;
+            margin: 0 0.6rem;
+            display: flex !important;
+            opacity: 1;
+            /* Transiciones premium */
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            /* Borde premium */
+            border: 2px solid rgba(255, 255, 255, 0.25);
+            /* Desactivar animación de pulso en móvil */
+            animation: none !important;
         }
-        .facebook-float {
-            bottom: 160px;
+
+        /* WhatsApp en móvil - Premium */
+        .social-float-container .whatsapp-float {
+            background: linear-gradient(135deg, #25d366 0%, #128c7e 100%);
+            box-shadow:
+                0 4px 15px rgba(37, 211, 102, 0.4),
+                0 8px 25px rgba(37, 211, 102, 0.2),
+                inset 0 1px 1px rgba(255, 255, 255, 0.15);
         }
-        .instagram-float {
-            bottom: 220px;
+        .social-float-container .whatsapp-float:hover,
+        .social-float-container .whatsapp-float:active {
+            background: linear-gradient(135deg, #2eec74 0%, #25d366 100%);
+            transform: translateY(-3px) scale(1.08);
+            box-shadow:
+                0 8px 20px rgba(37, 211, 102, 0.5),
+                0 12px 35px rgba(37, 211, 102, 0.3),
+                inset 0 1px 1px rgba(255, 255, 255, 0.2);
         }
+
+        /* Facebook en móvil - Premium */
+        .social-float-container .facebook-float {
+            background: linear-gradient(135deg, #1877f2 0%, #0d5cbd 100%);
+            box-shadow:
+                0 4px 15px rgba(24, 119, 242, 0.4),
+                0 8px 25px rgba(24, 119, 242, 0.2),
+                inset 0 1px 1px rgba(255, 255, 255, 0.15);
+        }
+        .social-float-container .facebook-float:hover,
+        .social-float-container .facebook-float:active {
+            background: linear-gradient(135deg, #3b8ff5 0%, #1877f2 100%);
+            transform: translateY(-3px) scale(1.08);
+            box-shadow:
+                0 8px 20px rgba(24, 119, 242, 0.5),
+                0 12px 35px rgba(24, 119, 242, 0.3),
+                inset 0 1px 1px rgba(255, 255, 255, 0.2);
+        }
+
+        /* Instagram en móvil - Premium */
+        .social-float-container .instagram-float {
+            background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+            box-shadow:
+                0 4px 15px rgba(225, 48, 108, 0.4),
+                0 8px 25px rgba(225, 48, 108, 0.2),
+                inset 0 1px 1px rgba(255, 255, 255, 0.15);
+        }
+        .social-float-container .instagram-float:hover,
+        .social-float-container .instagram-float:active {
+            background: linear-gradient(45deg, #ffb347 0%, #f09433 25%, #e6683c 50%, #dc2743 75%, #cc2366 100%);
+            transform: translateY(-3px) scale(1.08);
+            box-shadow:
+                0 8px 20px rgba(225, 48, 108, 0.5),
+                0 12px 35px rgba(225, 48, 108, 0.3),
+                inset 0 1px 1px rgba(255, 255, 255, 0.2);
+        }
+
+        /* Efecto de brillo interno en hover para móvil */
+        .social-float-container .social-float-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(255,255,255,0.35) 0%, transparent 50%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            pointer-events: none;
+        }
+        .social-float-container .social-float-btn:hover::before,
+        .social-float-container .social-float-btn:active::before {
+            opacity: 1;
+        }
+
+        /* Botón scroll to top se mantiene arriba a la derecha - Premium */
         .scroll-top-float {
-            bottom: 18px;
+            right: 16px;
+            bottom: 90px; /* Encima de la barra de redes sociales */
+            width: 46px;
+            height: 46px;
+            font-size: 1.25rem;
         }
+
         body {
             overflow-x: hidden;
+        }
+    }
+
+    /* Pantallas muy pequeñas */
+    @media (max-width: 400px) {
+        .social-float-container .social-float-btn {
+            width: 46px;
+            height: 46px;
+            font-size: 1.25rem;
+            margin: 0 0.4rem;
+        }
+
+        .scroll-top-float {
+            width: 42px;
+            height: 42px;
+            font-size: 1.1rem;
         }
     }
 </style>
@@ -615,6 +1454,13 @@
 {% if site_config.header_background_video %}
         <!-- 1. Video de fondo -->
         <header class="masthead" style="position: relative; overflow: hidden;">
+            <!-- Formas flotantes decorativas premium -->
+            <div class="floating-shapes">
+                <div class="floating-shape floating-shape-1"></div>
+                <div class="floating-shape floating-shape-2"></div>
+                <div class="floating-shape floating-shape-3"></div>
+                <div class="floating-shape floating-shape-4"></div>
+            </div>
             <video autoplay loop muted playsinline style="position: absolute; top: 0; left: 0; width: {{ site_config.header_video_width|default:'100%' }}; height: {{ site_config.header_video_height|default:'100%' }}; object-fit: cover; z-index: 0; filter: brightness({{ site_config.header_video_brightness|default:0.5 }}) contrast({{ site_config.header_video_contrast|default:1.0 }});">
                 <source src="{{ site_config.header_background_video.url }}" type="video/mp4">
                 Tu navegador no soporta el video de fondo.
@@ -690,8 +1536,8 @@
                     <!-- Texto tutorial sobre los botones -->
                     <div class="hero-btns-block d-flex flex-column align-items-center w-100">
                         <div class="d-flex flex-wrap justify-content-center gap-3 w-100">
-                            <a class="btn btn-xl text-uppercase header-btn hero-btn-fixed" href="{{ site_config.header_btn1_url }}" target="_blank" style="background-color: {{ site_config.header_btn_bgcolor }}; color: #fff; transition: transform 0.2s cubic-bezier(.4,2,.3,1), box-shadow 0.2s; box-shadow: 0 2px 8px rgba(2,25,122,0.08); min-width:220px;" onmouseover="this.style.transform='translateY(-6px) scale(1.04)';this.style.boxShadow='0 8px 24px rgba(2,25,122,0.18)';" onmouseout="this.style.transform='none';this.style.boxShadow='0 2px 8px rgba(2,25,122,0.08)';">{{ site_config.header_btn1_text }}</a>
-                            <a class="btn btn-xl text-uppercase header-btn hero-btn-fixed" href="{{ site_config.header_btn2_url }}" target="_blank" style="background-color: {{ site_config.header_btn_bgcolor }}; color: #fff; transition: transform 0.2s cubic-bezier(.4,2,.3,1), box-shadow 0.2s; box-shadow: 0 2px 8px rgba(2,25,122,0.08); min-width:220px;" onmouseover="this.style.transform='translateY(-6px) scale(1.04)';this.style.boxShadow='0 8px 24px rgba(2,25,122,0.18)';" onmouseout="this.style.transform='none';this.style.boxShadow='0 2px 8px rgba(2,25,122,0.08)';">{{ site_config.header_btn2_text }}</a>
+                            <a class="btn btn-xl text-uppercase header-btn hero-btn-fixed btn-modern hover-glow" href="{{ site_config.header_btn1_url }}" target="_blank" style="background-color: {{ site_config.header_btn_bgcolor }}; color: #fff; transition: transform 0.3s cubic-bezier(.4,2,.3,1), box-shadow 0.3s; box-shadow: 0 2px 8px rgba(2,25,122,0.08); min-width:220px;">{{ site_config.header_btn1_text }}</a>
+                            <a class="btn btn-xl text-uppercase header-btn hero-btn-fixed btn-modern hover-glow" href="{{ site_config.header_btn2_url }}" target="_blank" style="background-color: {{ site_config.header_btn_bgcolor }}; color: #fff; transition: transform 0.3s cubic-bezier(.4,2,.3,1), box-shadow 0.3s; box-shadow: 0 2px 8px rgba(2,25,122,0.08); min-width:220px;">{{ site_config.header_btn2_text }}</a>
                         </div>
                         {% if site_config.header_btns_text %}
                         <div class="text-center mt-3 px-2" style="font-size:1.15rem; color:{{ site_config.header_btns_text_color|default:'#fff' }}; font-weight:500; max-width:600px; width:100%;">
@@ -710,10 +1556,24 @@
                     </div>
                 </div>
             </div>
+            <!-- Indicador de scroll animado premium -->
+            <div class="scroll-indicator d-none d-md-block">
+                <a href="#services">
+                    <span>Descubrí más</span>
+                    <i class="fas fa-chevron-down"></i>
+                </a>
+            </div>
         </header>
 {% elif site_config.header_background %}
     <!-- 2. Imagen de fondo -->
     <header class="masthead" style="background-image: url('{{ site_config.header_background.url }}'); position: relative; overflow: hidden;">
+        <!-- Formas flotantes decorativas premium -->
+        <div class="floating-shapes">
+            <div class="floating-shape floating-shape-1"></div>
+            <div class="floating-shape floating-shape-2"></div>
+            <div class="floating-shape floating-shape-3"></div>
+            <div class="floating-shape floating-shape-4"></div>
+        </div>
         <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; background-image: url('{{ site_config.header_background.url }}'); background-size: cover; background-position: center;" class="masthead-animated-bg"></div>
         <div class="container" style="position: relative; z-index: 1;">
             <div class="masthead-card"
@@ -761,14 +1621,28 @@
                 {% endif %}
             </div>
             <div class="d-flex flex-wrap justify-content-center gap-3 mt-3">
-                <a class="btn btn-xl text-uppercase header-btn" href="{{ site_config.header_btn1_url }}" target="_blank" style="background-color: {{ site_config.header_btn_bgcolor }}; color: #fff; min-width: 220px; transition: transform 0.2s cubic-bezier(.4,2,.3,1), box-shadow 0.2s; box-shadow: 0 2px 8px rgba(2,25,122,0.08);" onmouseover="this.style.transform='translateY(-6px) scale(1.04)';this.style.boxShadow='0 8px 24px rgba(2,25,122,0.18)';" onmouseout="this.style.transform='none';this.style.boxShadow='0 2px 8px rgba(2,25,122,0.08)';">{{ site_config.header_btn1_text }}</a>
-                <a class="btn btn-xl text-uppercase header-btn" href="{{ site_config.header_btn2_url }}" target="_blank" style="background-color: {{ site_config.header_btn_bgcolor }}; color: #fff; min-width: 220px; transition: transform 0.2s cubic-bezier(.4,2,.3,1), box-shadow 0.2s; box-shadow: 0 2px 8px rgba(2,25,122,0.08);" onmouseover="this.style.transform='translateY(-6px) scale(1.04)';this.style.boxShadow='0 8px 24px rgba(2,25,122,0.18)';" onmouseout="this.style.transform='none';this.style.boxShadow='0 2px 8px rgba(2,25,122,0.08)';">{{ site_config.header_btn2_text }}</a>
+                <a class="btn btn-xl text-uppercase header-btn btn-modern hover-glow" href="{{ site_config.header_btn1_url }}" target="_blank" style="background-color: {{ site_config.header_btn_bgcolor }}; color: #fff; min-width: 220px; transition: transform 0.3s cubic-bezier(.4,2,.3,1), box-shadow 0.3s; box-shadow: 0 2px 8px rgba(2,25,122,0.08);">{{ site_config.header_btn1_text }}</a>
+                <a class="btn btn-xl text-uppercase header-btn btn-modern hover-glow" href="{{ site_config.header_btn2_url }}" target="_blank" style="background-color: {{ site_config.header_btn_bgcolor }}; color: #fff; min-width: 220px; transition: transform 0.3s cubic-bezier(.4,2,.3,1), box-shadow 0.3s; box-shadow: 0 2px 8px rgba(2,25,122,0.08);">{{ site_config.header_btn2_text }}</a>
             </div>
+        </div>
+        <!-- Indicador de scroll animado premium -->
+        <div class="scroll-indicator d-none d-md-block">
+            <a href="#services">
+                <span>Descubrí más</span>
+                <i class="fas fa-chevron-down"></i>
+            </a>
         </div>
     </header>
 {% elif site_config.hero_card_bg_color %}
     <!-- 3. Color de fondo -->
     <header class="masthead" style="background-color: {{ site_config.hero_card_bg_color }}; position: relative; overflow: hidden;">
+        <!-- Formas flotantes decorativas premium -->
+        <div class="floating-shapes">
+            <div class="floating-shape floating-shape-1"></div>
+            <div class="floating-shape floating-shape-2"></div>
+            <div class="floating-shape floating-shape-3"></div>
+            <div class="floating-shape floating-shape-4"></div>
+        </div>
         <div class="container" style="position: relative; z-index: 1;">
             <div class="masthead-card"
                 style="
@@ -816,15 +1690,29 @@
                 {% endif %}
             </div>
             <div class="d-flex flex-wrap justify-content-center gap-3 mt-3">
-                <a class="btn btn-xl text-uppercase header-btn" href="{{ site_config.header_btn1_url }}" target="_blank" style="background-color: {{ site_config.header_btn_bgcolor }}; color: #fff; min-width: 220px; transition: transform 0.2s cubic-bezier(.4,2,.3,1), box-shadow 0.2s; box-shadow: 0 2px 8px rgba(2,25,122,0.08);" onmouseover="this.style.transform='translateY(-6px) scale(1.04)';this.style.boxShadow='0 8px 24px rgba(2,25,122,0.18)';" onmouseout="this.style.transform='none';this.style.boxShadow='0 2px 8px rgba(2,25,122,0.08)';">{{ site_config.header_btn1_text }}</a>
-                <a class="btn btn-xl text-uppercase header-btn" href="{{ site_config.header_btn2_url }}" target="_blank" style="background-color: {{ site_config.header_btn_bgcolor }}; color: #fff; min-width: 220px; transition: transform 0.2s cubic-bezier(.4,2,.3,1), box-shadow 0.2s; box-shadow: 0 2px 8px rgba(2,25,122,0.08);" onmouseover="this.style.transform='translateY(-6px) scale(1.04)';this.style.boxShadow='0 8px 24px rgba(2,25,122,0.18)';" onmouseout="this.style.transform='none';this.style.boxShadow='0 2px 8px rgba(2,25,122,0.08)';">{{ site_config.header_btn2_text }}</a>
+                <a class="btn btn-xl text-uppercase header-btn btn-modern hover-glow" href="{{ site_config.header_btn1_url }}" target="_blank" style="background-color: {{ site_config.header_btn_bgcolor }}; color: #fff; min-width: 220px; transition: transform 0.3s cubic-bezier(.4,2,.3,1), box-shadow 0.3s; box-shadow: 0 2px 8px rgba(2,25,122,0.08);">{{ site_config.header_btn1_text }}</a>
+                <a class="btn btn-xl text-uppercase header-btn btn-modern hover-glow" href="{{ site_config.header_btn2_url }}" target="_blank" style="background-color: {{ site_config.header_btn_bgcolor }}; color: #fff; min-width: 220px; transition: transform 0.3s cubic-bezier(.4,2,.3,1), box-shadow 0.3s; box-shadow: 0 2px 8px rgba(2,25,122,0.08);">{{ site_config.header_btn2_text }}</a>
             </div>
 
+        </div>
+        <!-- Indicador de scroll animado premium -->
+        <div class="scroll-indicator d-none d-md-block">
+            <a href="#services" style="color: var(--primary-700);">
+                <span style="color: var(--primary-700);">Descubrí más</span>
+                <i class="fas fa-chevron-down"></i>
+            </a>
         </div>
     </header>
 {% else %}
     <!-- 4. Sin video, imagen ni color -->
-    <header class="masthead" style="background: #f8f9fa; position: relative; overflow: hidden;">
+    <header class="masthead" style="background: linear-gradient(135deg, #f8f9fa 0%, #e7f1ff 100%); position: relative; overflow: hidden;">
+        <!-- Formas flotantes decorativas premium -->
+        <div class="floating-shapes">
+            <div class="floating-shape floating-shape-1"></div>
+            <div class="floating-shape floating-shape-2"></div>
+            <div class="floating-shape floating-shape-3"></div>
+            <div class="floating-shape floating-shape-4"></div>
+        </div>
         <div class="container" style="position: relative; z-index: 1;">
             <div class="masthead-card"
                 style="
@@ -871,10 +1759,17 @@
                 {% endif %}
             </div>
             <div class="d-flex flex-wrap justify-content-center gap-3 mt-3">
-                <a class="btn btn-xl text-uppercase header-btn" href="{{ site_config.header_btn1_url }}" target="_blank" style="background-color: {{ site_config.header_btn_bgcolor|default:'#007bff' }}; color: #fff; min-width: 220px; transition: transform 0.2s cubic-bezier(.4,2,.3,1), box-shadow 0.2s; box-shadow: 0 2px 8px rgba(2,25,122,0.08);" onmouseover="this.style.transform='translateY(-6px) scale(1.04)';this.style.boxShadow='0 8px 24px rgba(2,25,122,0.18)';" onmouseout="this.style.transform='none';this.style.boxShadow='0 2px 8px rgba(2,25,122,0.08)';">{{ site_config.header_btn1_text }}</a>
-                
-                <a class="btn btn-xl text-uppercase header-btn" href="{{ site_config.header_btn2_url }}" target="_blank" style="background-color: {{ site_config.header_btn_bgcolor|default:'#007bff' }}; color: #fff; min-width: 220px; transition: transform 0.2s cubic-bezier(.4,2,.3,1), box-shadow 0.2s; box-shadow: 0 2px 8px rgba(2,25,122,0.08);" onmouseover="this.style.transform='translateY(-6px) scale(1.04)';this.style.boxShadow='0 8px 24px rgba(2,25,122,0.18)';" onmouseout="this.style.transform='none';this.style.boxShadow='0 2px 8px rgba(2,25,122,0.08)';">{{ site_config.header_btn1_text }}</a>
+                <a class="btn btn-xl text-uppercase header-btn btn-modern hover-glow" href="{{ site_config.header_btn1_url }}" target="_blank" style="background-color: {{ site_config.header_btn_bgcolor|default:'#007bff' }}; color: #fff; min-width: 220px; transition: transform 0.3s cubic-bezier(.4,2,.3,1), box-shadow 0.3s; box-shadow: 0 2px 8px rgba(2,25,122,0.08);">{{ site_config.header_btn1_text }}</a>
+
+                <a class="btn btn-xl text-uppercase header-btn btn-modern hover-glow" href="{{ site_config.header_btn2_url }}" target="_blank" style="background-color: {{ site_config.header_btn_bgcolor|default:'#007bff' }}; color: #fff; min-width: 220px; transition: transform 0.3s cubic-bezier(.4,2,.3,1), box-shadow 0.3s; box-shadow: 0 2px 8px rgba(2,25,122,0.08);">{{ site_config.header_btn2_text }}</a>
             </div>
+        </div>
+        <!-- Indicador de scroll animado premium -->
+        <div class="scroll-indicator d-none d-md-block">
+            <a href="#services" style="color: var(--primary-700);">
+                <span style="color: var(--primary-700);">Descubrí más</span>
+                <i class="fas fa-chevron-down"></i>
+            </a>
         </div>
     </header>
 {% endif %}
@@ -981,27 +1876,30 @@
 </div>
 {% endfor %}
 
-<!-- Botón flotante de WhatsApp -->
-{% if whatsapp_config and whatsapp_config.numero_internacional %}
-    <a href="https://wa.me/{{ whatsapp_config.numero_internacional|cut:'+' }}" target="_blank" class="whatsapp-float" aria-label="WhatsApp">
-        <i class="fab fa-whatsapp"></i>
-        <span class="visually-hidden">{{ whatsapp_config.nombre }}: {{ whatsapp_config.descripcion }}</span>
-    </a>
-{% endif %}
+<!-- Contenedor de botones flotantes de redes sociales -->
+<div class="social-float-container" id="socialFloatContainer">
+    <!-- Botón flotante de WhatsApp -->
+    {% if whatsapp_config and whatsapp_config.numero_internacional %}
+        <a href="https://wa.me/{{ whatsapp_config.numero_internacional|cut:'+' }}" target="_blank" class="whatsapp-float social-float-btn" aria-label="WhatsApp">
+            <i class="fab fa-whatsapp"></i>
+            <span class="visually-hidden">{{ whatsapp_config.nombre }}: {{ whatsapp_config.descripcion }}</span>
+        </a>
+    {% endif %}
 
-<!-- Botón flotante de Facebook -->
-{% if site_config.facebook_url %}
-    <a href="{{ site_config.facebook_url }}" target="_blank" class="facebook-float" aria-label="Facebook">
-        <i class="fab fa-facebook-f"></i>
-    </a>
-{% endif %}
+    <!-- Botón flotante de Facebook -->
+    {% if site_config.facebook_url %}
+        <a href="{{ site_config.facebook_url }}" target="_blank" class="facebook-float social-float-btn" aria-label="Facebook">
+            <i class="fab fa-facebook-f"></i>
+        </a>
+    {% endif %}
 
-<!-- Botón flotante de Instagram -->
-{% if site_config.instagram_url %}
-    <a href="{{ site_config.instagram_url }}" target="_blank" class="instagram-float" aria-label="Instagram">
-        <i class="fab fa-instagram"></i>
-    </a>
-{% endif %}
+    <!-- Botón flotante de Instagram -->
+    {% if site_config.instagram_url %}
+        <a href="{{ site_config.instagram_url }}" target="_blank" class="instagram-float social-float-btn" aria-label="Instagram">
+            <i class="fab fa-instagram"></i>
+        </a>
+    {% endif %}
+</div>
 
 <!-- Botón flotante para volver arriba -->
 <a href="#top" id="scrollToTopBtn" class="scroll-top-float" aria-label="Volver arriba" style="display:none;">
@@ -1012,23 +1910,47 @@
     // Manejo de botones flotantes al hacer scroll
     window.addEventListener('scroll', function() {
         var scrollBtn = document.getElementById('scrollToTopBtn');
+        var socialContainer = document.getElementById('socialFloatContainer');
         var whatsappBtn = document.querySelector('.whatsapp-float');
         var facebookBtn = document.querySelector('.facebook-float');
         var instagramBtn = document.querySelector('.instagram-float');
 
+        // Detectar si estamos en modo móvil (767px o menos)
+        var isMobile = window.innerWidth <= 767;
+
         if (window.scrollY > 250) {
-            // Mostrar todos los botones flotantes
+            // Mostrar botón scroll to top
             if (scrollBtn) scrollBtn.style.display = 'flex';
-            if (whatsappBtn) whatsappBtn.style.display = 'flex';
-            if (facebookBtn) facebookBtn.style.display = 'flex';
-            if (instagramBtn) instagramBtn.style.display = 'flex';
+
+            if (isMobile) {
+                // En móvil: mostrar el contenedor horizontal
+                if (socialContainer) socialContainer.style.display = 'flex';
+            } else {
+                // En desktop: mostrar botones individuales
+                if (whatsappBtn) whatsappBtn.style.display = 'flex';
+                if (facebookBtn) facebookBtn.style.display = 'flex';
+                if (instagramBtn) instagramBtn.style.display = 'flex';
+            }
         } else {
             // Ocultar todos los botones flotantes
             if (scrollBtn) scrollBtn.style.display = 'none';
-            if (whatsappBtn) whatsappBtn.style.display = 'none';
-            if (facebookBtn) facebookBtn.style.display = 'none';
-            if (instagramBtn) instagramBtn.style.display = 'none';
+
+            if (isMobile) {
+                // En móvil: ocultar el contenedor
+                if (socialContainer) socialContainer.style.display = 'none';
+            } else {
+                // En desktop: ocultar botones individuales
+                if (whatsappBtn) whatsappBtn.style.display = 'none';
+                if (facebookBtn) facebookBtn.style.display = 'none';
+                if (instagramBtn) instagramBtn.style.display = 'none';
+            }
         }
+    });
+
+    // Re-evaluar al cambiar tamaño de ventana
+    window.addEventListener('resize', function() {
+        // Disparar evento scroll para re-evaluar visibilidad
+        window.dispatchEvent(new Event('scroll'));
     });
 
     // Funcionalidad del botón "Volver arriba"
@@ -1038,6 +1960,170 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         });
     }
+
+    // ========================================
+    // SISTEMA DE ANIMACIONES PREMIUM
+    // ========================================
+    document.addEventListener('DOMContentLoaded', function() {
+
+        // ========================================
+        // Intersection Observer para animaciones
+        // ========================================
+        const observerOptions = {
+            root: null,
+            rootMargin: '-50px 0px',
+            threshold: [0, 0.1, 0.25]
+        };
+
+        const animationObserver = new IntersectionObserver(function(entries) {
+            entries.forEach(function(entry) {
+                if (entry.isIntersecting && entry.intersectionRatio >= 0.1) {
+                    entry.target.classList.add('visible');
+                    // Dejar de observar para mejor rendimiento
+                    animationObserver.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        // ========================================
+        // Aplicar animaciones a secciones
+        // ========================================
+        const sectionsToAnimate = document.querySelectorAll('.page-section .container');
+        sectionsToAnimate.forEach(function(section, index) {
+            section.classList.add('animate-on-scroll');
+            section.classList.add('animate-delay-' + Math.min(index % 5 + 1, 5));
+            animationObserver.observe(section);
+        });
+
+        // ========================================
+        // Animación para cards con efecto stagger
+        // ========================================
+        const cardsToAnimate = document.querySelectorAll('.page-section .card, .page-section .planta-card, .service-desc-card');
+        cardsToAnimate.forEach(function(card, index) {
+            card.classList.add('animate-on-scroll');
+            card.classList.add('animate-delay-' + Math.min((index % 5) + 1, 5));
+            card.classList.add('hover-lift');
+            animationObserver.observe(card);
+        });
+
+        // ========================================
+        // Animación para iconos de servicios
+        // ========================================
+        const serviceIcons = document.querySelectorAll('#services .fa-stack');
+        serviceIcons.forEach(function(icon, index) {
+            icon.style.animationDelay = (index * 0.15) + 's';
+        });
+
+        // ========================================
+        // Smooth scroll mejorado
+        // ========================================
+        document.querySelectorAll('a[href^="#"]').forEach(function(anchor) {
+            anchor.addEventListener('click', function(e) {
+                const href = this.getAttribute('href');
+                if (href !== '#' && href !== '#top') {
+                    e.preventDefault();
+                    const target = document.querySelector(href);
+                    if (target) {
+                        const headerOffset = 80;
+                        const elementPosition = target.getBoundingClientRect().top;
+                        const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+
+                        window.scrollTo({
+                            top: offsetPosition,
+                            behavior: 'smooth'
+                        });
+                    }
+                }
+            });
+        });
+
+        // ========================================
+        // Indicador de scroll con fade progresivo
+        // ========================================
+        const scrollIndicator = document.querySelector('.scroll-indicator');
+        if (scrollIndicator) {
+            let ticking = false;
+            window.addEventListener('scroll', function() {
+                if (!ticking) {
+                    window.requestAnimationFrame(function() {
+                        const scrollY = window.scrollY;
+                        const fadeStart = 50;
+                        const fadeEnd = 200;
+
+                        if (scrollY <= fadeStart) {
+                            scrollIndicator.style.opacity = '1';
+                            scrollIndicator.style.transform = 'translateY(0)';
+                            scrollIndicator.style.pointerEvents = 'auto';
+                        } else if (scrollY >= fadeEnd) {
+                            scrollIndicator.style.opacity = '0';
+                            scrollIndicator.style.transform = 'translateY(20px)';
+                            scrollIndicator.style.pointerEvents = 'none';
+                        } else {
+                            const progress = (scrollY - fadeStart) / (fadeEnd - fadeStart);
+                            scrollIndicator.style.opacity = String(1 - progress);
+                            scrollIndicator.style.transform = 'translateY(' + (progress * 20) + 'px)';
+                            scrollIndicator.style.pointerEvents = 'auto';
+                        }
+                        ticking = false;
+                    });
+                    ticking = true;
+                }
+            });
+        }
+
+        // ========================================
+        // Efecto parallax suave para formas flotantes
+        // ========================================
+        const floatingShapes = document.querySelectorAll('.floating-shape');
+        if (floatingShapes.length > 0 && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            let parallaxTicking = false;
+            window.addEventListener('scroll', function() {
+                if (!parallaxTicking) {
+                    window.requestAnimationFrame(function() {
+                        const scrollY = window.scrollY;
+                        floatingShapes.forEach(function(shape, index) {
+                            const speed = 0.05 + (index * 0.02);
+                            const yPos = -(scrollY * speed);
+                            shape.style.transform = 'translateY(' + yPos + 'px)';
+                        });
+                        parallaxTicking = false;
+                    });
+                    parallaxTicking = true;
+                }
+            });
+        }
+
+        // ========================================
+        // Hover effect para títulos de sección
+        // ========================================
+        const sectionHeadings = document.querySelectorAll('.section-heading');
+        sectionHeadings.forEach(function(heading) {
+            heading.style.transition = 'transform 0.3s ease, color 0.3s ease';
+            heading.addEventListener('mouseenter', function() {
+                this.style.transform = 'scale(1.02)';
+            });
+            heading.addEventListener('mouseleave', function() {
+                this.style.transform = 'scale(1)';
+            });
+        });
+
+        // ========================================
+        // Cursor personalizado para botones (desktop)
+        // ========================================
+        if (window.innerWidth > 768) {
+            const buttons = document.querySelectorAll('.btn-modern');
+            buttons.forEach(function(btn) {
+                btn.addEventListener('mouseenter', function() {
+                    document.body.style.cursor = 'pointer';
+                });
+                btn.addEventListener('mouseleave', function() {
+                    document.body.style.cursor = 'default';
+                });
+            });
+        }
+
+        console.log('✨ Sistema de animaciones premium cargado');
+    });
 </script>
 
 {% endblock %}
@@ -1052,11 +2138,12 @@
     <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
     <script>
     $(document).ready(function() {
-      // Inicializa DataTables solo en la tabla de tarifas
-      $('.excel-table-responsive table').DataTable({
-        "pageLength": 10,
+      // Inicializa DataTables solo en la tabla de tarifas - Paginación cada 5 elementos
+      $('table.excel-table-responsive').DataTable({
+        "pageLength": 5,
         "lengthChange": false,
         "searching": false,
+        "info": true,
         "language": {
           "url": "https://cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json"
         }

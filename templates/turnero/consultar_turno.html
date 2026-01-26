@@ -4,35 +4,76 @@
 
 {% block extra_css %}
 <style>
-    .search-container {
-        max-width: 900px;
+    /* ========== Expandir contenedor ========== */
+    .content-wrapper {
+        max-width: 1000px !important;
+    }
+
+    .main-content {
+        justify-content: flex-start !important;
+        padding-top: 2rem !important;
+        background: #f1f5f9 !important;
+    }
+
+    /* ========== Hero Section ========== */
+    .consultar-hero {
+        background: linear-gradient(135deg, #13304D 0%, #1a4a6e 50%, #2d6a9f 100%);
+        color: white;
+        padding: 3rem 2.5rem;
+        border-radius: 20px;
+        text-align: center;
+        margin-bottom: 2rem;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .consultar-hero::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -20%;
+        width: 400px;
+        height: 400px;
+        background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%);
+        border-radius: 50%;
+    }
+
+    .consultar-hero-icon {
+        width: 70px;
+        height: 70px;
+        background: rgba(255, 255, 255, 0.15);
+        border-radius: 18px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1.5rem;
+        font-size: 1.8rem;
+    }
+
+    .consultar-hero h2 {
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 0.75rem;
+    }
+
+    .consultar-hero p {
+        font-size: 1.05rem;
+        opacity: 0.9;
+        max-width: 500px;
         margin: 0 auto;
     }
 
+    /* ========== Search Box ========== */
     .search-box {
         background: white;
         padding: 2rem;
-        border-radius: 15px;
-        box-shadow: var(--card-shadow);
+        border-radius: 20px;
+        box-shadow: 0 4px 20px rgba(19, 48, 77, 0.1);
         margin-bottom: 2rem;
+        border: 1px solid rgba(19, 48, 77, 0.08);
     }
 
-    .search-header {
-        text-align: center;
-        margin-bottom: 2rem;
-    }
-
-    .search-header h2 {
-        color: var(--primary-color);
-        font-weight: 700;
-        margin-bottom: 1rem;
-    }
-
-    .search-header p {
-        color: #6c757d;
-        font-size: 1.1rem;
-    }
-
+    /* ========== Tipo búsqueda ========== */
     .tipo-busqueda-options {
         display: flex;
         gap: 1rem;
@@ -43,8 +84,8 @@
 
     .tipo-busqueda-option {
         flex: 1;
-        min-width: 150px;
-        max-width: 200px;
+        min-width: 140px;
+        max-width: 180px;
     }
 
     .tipo-busqueda-option input[type="radio"] {
@@ -53,110 +94,316 @@
 
     .tipo-busqueda-option label {
         display: block;
-        padding: 1rem;
-        border: 2px solid #e9ecef;
-        border-radius: 10px;
+        padding: 1.25rem 1rem;
+        border: 2px solid #e2e8f0;
+        border-radius: 16px;
         text-align: center;
         cursor: pointer;
-        transition: all 0.3s ease;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         background: white;
         font-weight: 600;
-        color: #6c757d;
+        color: #64748b;
     }
 
-    .tipo-busqueda-option label i {
+    .tipo-busqueda-option label i.icon-main {
         display: block;
-        font-size: 2rem;
+        font-size: 1.75rem;
         margin-bottom: 0.5rem;
-        color: var(--primary-color);
+        color: #13304D;
+        transition: transform 0.3s ease;
+    }
+
+    .tipo-busqueda-option label .check-indicator {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        width: 22px;
+        height: 22px;
+        background: #10b981;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 0.7rem;
+        opacity: 0;
+        transform: scale(0);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .tipo-busqueda-option label {
+        position: relative;
+    }
+
+    .tipo-busqueda-option label:hover {
+        border-color: #13304D;
+        transform: translateY(-2px);
     }
 
     .tipo-busqueda-option input[type="radio"]:checked + label {
-        border-color: var(--primary-color);
-        background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
-        color: var(--primary-color);
+        border-color: #13304D;
+        background: linear-gradient(135deg, rgba(19, 48, 77, 0.06) 0%, rgba(19, 48, 77, 0.02) 100%);
+        color: #13304D;
         transform: translateY(-3px);
-        box-shadow: var(--card-shadow);
+        box-shadow: 0 8px 25px rgba(19, 48, 77, 0.15);
     }
 
+    .tipo-busqueda-option input[type="radio"]:checked + label i.icon-main {
+        transform: scale(1.1);
+    }
+
+    .tipo-busqueda-option input[type="radio"]:checked + label .check-indicator {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    /* Indicador de selección actual */
+    .seleccion-actual {
+        text-align: center;
+        margin-bottom: 1.5rem;
+        padding: 0.75rem 1.25rem;
+        background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+        border-radius: 50px;
+        color: white;
+        font-weight: 600;
+        font-size: 0.95rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        margin-left: 50%;
+        transform: translateX(-50%);
+    }
+
+    .seleccion-actual i {
+        font-size: 1rem;
+    }
+
+    .seleccion-actual span {
+        transition: opacity 0.15s ease;
+    }
+
+    /* ========== Info Búsqueda ========== */
     .info-busqueda {
-        background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
-        border-left: 5px solid var(--info-color);
-        padding: 1rem 1.5rem;
-        border-radius: 10px;
-        margin-bottom: 2rem;
+        background: linear-gradient(135deg, rgba(19, 48, 77, 0.06) 0%, rgba(19, 48, 77, 0.02) 100%);
+        border-left: 4px solid #13304D;
+        padding: 1rem 1.25rem;
+        border-radius: 12px;
+        margin-bottom: 1.5rem;
+        font-size: 0.9rem;
+        color: #475569;
     }
 
     .info-busqueda i {
-        color: var(--info-color);
+        color: #13304D;
         margin-right: 0.5rem;
     }
 
-    .turno-card {
-        background: white;
-        border-radius: 15px;
-        box-shadow: var(--card-shadow);
-        margin-bottom: 2rem;
-        overflow: hidden;
+    /* ========== Input de búsqueda ========== */
+    .search-input-wrapper {
+        position: relative;
+        margin-bottom: 1.5rem;
+    }
+
+    .search-input-wrapper .form-label {
+        color: #13304D;
+        font-weight: 600;
+        margin-bottom: 0.75rem;
+    }
+
+    .search-input-wrapper .form-control {
+        border: 2px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 1rem 1.25rem;
+        font-size: 1.1rem;
         transition: all 0.3s ease;
     }
 
+    .search-input-wrapper .form-control:focus {
+        border-color: #13304D;
+        box-shadow: 0 0 0 4px rgba(19, 48, 77, 0.1);
+    }
+
+    .btn-buscar {
+        background: linear-gradient(135deg, #13304D 0%, #1a4a6e 100%);
+        color: white;
+        border: none;
+        padding: 1rem 2rem;
+        border-radius: 12px;
+        font-weight: 600;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        width: 100%;
+    }
+
+    .btn-buscar:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(19, 48, 77, 0.25);
+        color: white;
+    }
+
+    /* ========== Resultados Header ========== */
+    .resultados-header {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+        padding: 1rem 1.5rem;
+        background: white;
+        border-radius: 12px;
+        border: 1px solid rgba(19, 48, 77, 0.08);
+    }
+
+    .resultados-header-icon {
+        width: 45px;
+        height: 45px;
+        background: linear-gradient(135deg, #13304D 0%, #1a4a6e 100%);
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.1rem;
+    }
+
+    .resultados-header h4 {
+        margin: 0;
+        color: #13304D;
+        font-weight: 700;
+        font-size: 1.1rem;
+    }
+
+    /* ========== Turno Card ========== */
+    .turno-card {
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 4px 20px rgba(19, 48, 77, 0.1);
+        margin-bottom: 1.5rem;
+        overflow: hidden;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        border: 1px solid rgba(19, 48, 77, 0.08);
+    }
+
     .turno-card:hover {
-        box-shadow: var(--card-shadow-hover);
-        transform: translateY(-3px);
+        box-shadow: 0 12px 35px rgba(19, 48, 77, 0.15);
+        transform: translateY(-4px);
     }
 
     .turno-card-header {
-        background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+        background: linear-gradient(135deg, #13304D 0%, #1a4a6e 100%);
         color: white;
-        padding: 1.5rem;
+        padding: 1rem 1.5rem;
         display: flex;
         justify-content: space-between;
         align-items: center;
     }
 
     .turno-codigo {
-        font-size: 1.5rem;
+        font-size: 1.2rem;
         font-weight: 700;
-        letter-spacing: 0.1rem;
+        letter-spacing: 0.05rem;
     }
 
     .estado-badge {
         padding: 0.5rem 1rem;
-        border-radius: 20px;
+        border-radius: 50px;
         font-weight: 600;
-        font-size: 0.9rem;
+        font-size: 0.85rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
     }
 
     .estado-pendiente {
-        background: #ffc107;
-        color: #856404;
+        background: #fbbf24;
+        color: #78350f;
     }
 
     .estado-confirmado {
-        background: #28a745;
+        background: #10b981;
         color: white;
     }
 
     .estado-completado {
-        background: #17a2b8;
+        background: #06b6d4;
         color: white;
     }
 
-    .estado-en-curso {
-        background: #fd7e14;
+    .estado-en_curso {
+        background: #f97316;
+        color: white;
+    }
+
+    .estado-cancelado {
+        background: #ef4444;
         color: white;
     }
 
     .turno-card-body {
-        padding: 2rem;
+        padding: 1.5rem;
     }
 
+    /* ========== Fecha Destacada (compacta) ========== */
+    .fecha-destacada {
+        background: linear-gradient(135deg, rgba(19, 48, 77, 0.06) 0%, rgba(19, 48, 77, 0.02) 100%);
+        padding: 1rem 1.25rem;
+        border-radius: 12px;
+        margin-bottom: 1.25rem;
+        border: 1px solid rgba(19, 48, 77, 0.08);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 1.5rem;
+        flex-wrap: wrap;
+    }
+
+    .fecha-destacada .fecha-info {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .fecha-destacada .dia {
+        font-size: 2.25rem;
+        font-weight: 700;
+        color: #13304D;
+        line-height: 1;
+    }
+
+    .fecha-destacada .fecha-texto {
+        text-align: left;
+    }
+
+    .fecha-destacada .mes {
+        font-size: 0.9rem;
+        color: #13304D;
+        font-weight: 600;
+    }
+
+    .fecha-destacada .dia-semana {
+        font-size: 0.8rem;
+        color: #64748b;
+    }
+
+    .fecha-destacada .hora {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #13304D;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: white;
+        padding: 0.5rem 1rem;
+        border-radius: 50px;
+        box-shadow: 0 2px 8px rgba(19, 48, 77, 0.1);
+    }
+
+    /* ========== Info Rows ========== */
     .turno-info-row {
         display: flex;
         justify-content: space-between;
-        padding: 0.75rem 0;
-        border-bottom: 1px solid #f0f0f0;
+        align-items: center;
+        padding: 0.6rem 0;
+        border-bottom: 1px solid #f1f5f9;
     }
 
     .turno-info-row:last-child {
@@ -164,110 +411,358 @@
     }
 
     .turno-label {
-        color: #6c757d;
+        color: #64748b;
         font-weight: 500;
+        font-size: 0.85rem;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .turno-label i {
+        color: #13304D;
+        width: 16px;
+        text-align: center;
+        font-size: 0.8rem;
     }
 
     .turno-value {
-        color: var(--primary-color);
+        color: #13304D;
         font-weight: 600;
         text-align: right;
+        font-size: 0.85rem;
     }
 
-    .fecha-destacada {
-        background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
-        padding: 1.5rem;
-        border-radius: 10px;
-        text-align: center;
-        margin-bottom: 1.5rem;
-    }
-
-    .fecha-destacada .dia {
-        font-size: 3rem;
-        font-weight: 700;
-        color: var(--primary-color);
-        line-height: 1;
-    }
-
-    .fecha-destacada .mes {
-        font-size: 1.2rem;
-        color: #6c757d;
-        font-weight: 600;
-    }
-
-    .fecha-destacada .hora {
-        font-size: 1.8rem;
-        font-weight: 700;
-        color: var(--primary-color);
-        margin-top: 0.5rem;
-    }
-
+    /* ========== Acciones ========== */
     .turno-acciones {
         display: flex;
-        gap: 1rem;
-        margin-top: 1.5rem;
+        gap: 0.5rem;
+        margin-top: 1rem;
         flex-wrap: wrap;
     }
 
     .turno-acciones .btn {
         flex: 1;
-        min-width: 150px;
+        min-width: 120px;
+        padding: 0.5rem 0.75rem;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 0.8rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        transition: all 0.3s ease;
     }
 
+    .btn-ver-detalles {
+        background: linear-gradient(135deg, #13304D 0%, #1a4a6e 100%);
+        color: white;
+        border: none;
+    }
+
+    .btn-ver-detalles:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(19, 48, 77, 0.25);
+        color: white;
+    }
+
+    .btn-ver-qr {
+        background: white;
+        color: #13304D;
+        border: 2px solid #13304D;
+    }
+
+    .btn-ver-qr:hover {
+        background: #13304D;
+        color: white;
+    }
+
+    .btn-reprogramar {
+        background: white;
+        color: #f59e0b;
+        border: 2px solid #f59e0b;
+    }
+
+    .btn-reprogramar:hover {
+        background: #f59e0b;
+        color: white;
+    }
+
+    .btn-cancelar {
+        background: white;
+        color: #ef4444;
+        border: 2px solid #ef4444;
+    }
+
+    .btn-cancelar:hover {
+        background: #ef4444;
+        color: white;
+    }
+
+    /* ========== No Results ========== */
     .no-results {
         text-align: center;
-        padding: 3rem 2rem;
+        padding: 4rem 2rem;
         background: white;
-        border-radius: 15px;
-        box-shadow: var(--card-shadow);
+        border-radius: 20px;
+        box-shadow: 0 4px 20px rgba(19, 48, 77, 0.1);
+        border: 1px solid rgba(19, 48, 77, 0.08);
     }
 
-    .no-results i {
-        font-size: 5rem;
-        color: #6c757d;
-        margin-bottom: 1rem;
-        opacity: 0.5;
+    .no-results-icon {
+        width: 100px;
+        height: 100px;
+        background: linear-gradient(135deg, rgba(19, 48, 77, 0.08) 0%, rgba(19, 48, 77, 0.04) 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1.5rem;
+    }
+
+    .no-results-icon i {
+        font-size: 2.5rem;
+        color: #64748b;
     }
 
     .no-results h4 {
-        color: var(--primary-color);
+        color: #13304D;
+        font-weight: 700;
+        margin-bottom: 0.75rem;
+        font-size: 1.25rem;
+    }
+
+    .no-results p {
+        color: #64748b;
+        margin-bottom: 2rem;
+        font-size: 1rem;
+    }
+
+    .btn-nuevo-turno {
+        background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+        color: white;
+        border: none;
+        padding: 1rem 2rem;
+        border-radius: 12px;
+        font-weight: 600;
+        font-size: 1rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        transition: all 0.3s ease;
+    }
+
+    .btn-nuevo-turno:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(16, 185, 129, 0.35);
+        color: white;
+    }
+
+    /* ========== Modal Styles ========== */
+    .modal-content {
+        border: none;
+        border-radius: 20px;
+        overflow: hidden;
+    }
+
+    .modal-header-custom {
+        background: linear-gradient(135deg, #13304D 0%, #1a4a6e 100%);
+        color: white;
+        padding: 2rem;
+        text-align: center;
+        position: relative;
+    }
+
+    .modal-header-icon {
+        font-size: 2.5rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .modal-header-custom h4 {
+        font-weight: 700;
+        font-size: 1.6rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .modal-estado-badge {
+        background: rgba(255, 255, 255, 0.2);
+        padding: 0.4rem 1rem;
+        border-radius: 50px;
+        font-size: 0.85rem;
+        font-weight: 600;
+    }
+
+    .modal-body-custom {
+        padding: 2rem;
+        max-height: 60vh;
+        overflow-y: auto;
+    }
+
+    .modal-fecha-box {
+        background: linear-gradient(135deg, rgba(19, 48, 77, 0.06) 0%, rgba(19, 48, 77, 0.02) 100%);
+        padding: 2rem;
+        border-radius: 16px;
+        text-align: center;
+        margin-bottom: 1.5rem;
+        border: 1px solid rgba(19, 48, 77, 0.08);
+    }
+
+    .modal-qr-box {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 16px;
+        text-align: center;
+        margin-bottom: 1.5rem;
+        border: 2px solid #e2e8f0;
+    }
+
+    .modal-qr-box h5 {
+        color: #13304D;
         font-weight: 700;
         margin-bottom: 1rem;
     }
 
-    .no-results p {
-        color: #6c757d;
-        margin-bottom: 2rem;
+    .modal-qr-img {
+        max-width: 200px;
+        margin: 0 auto;
+        padding: 1rem;
+        background: white;
+        border: 3px solid #13304D;
+        border-radius: 12px;
     }
 
-    /* Estilos para el modal */
-    .modal-content {
-        max-height: 90vh;
+    .modal-info-section {
+        background: #f8fafc;
+        padding: 1.5rem;
+        border-radius: 16px;
+        margin-bottom: 1.5rem;
     }
 
-    .modal-body {
-        overflow-y: auto;
+    .modal-info-section h5 {
+        color: #13304D;
+        font-weight: 700;
+        margin-bottom: 1.25rem;
+        display: flex;
+        align-items: center;
+        gap: 10px;
     }
 
+    .modal-info-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+    }
 
+    .modal-info-item {
+        padding: 0.5rem 0;
+    }
+
+    .modal-info-label {
+        color: #64748b;
+        font-size: 0.8rem;
+        margin-bottom: 0.25rem;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .modal-info-value {
+        color: #13304D;
+        font-weight: 600;
+        font-size: 0.95rem;
+    }
+
+    .modal-info-value a {
+        color: #13304D;
+        text-decoration: none;
+    }
+
+    .modal-info-value a:hover {
+        text-decoration: underline;
+    }
+
+    .modal-recordatorio {
+        background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+        border-left: 4px solid #f59e0b;
+        padding: 1.25rem;
+        border-radius: 12px;
+    }
+
+    .modal-recordatorio h6 {
+        color: #92400e;
+        font-weight: 700;
+        margin-bottom: 0.75rem;
+    }
+
+    .modal-recordatorio ul {
+        color: #92400e;
+        margin: 0;
+        padding-left: 1.25rem;
+        font-size: 0.9rem;
+    }
+
+    .modal-recordatorio li {
+        margin-bottom: 0.5rem;
+    }
+
+    .modal-recordatorio li:last-child {
+        margin-bottom: 0;
+    }
+
+    .modal-footer-custom {
+        border-top: 1px solid #e2e8f0;
+        padding: 1.25rem 2rem;
+        display: flex;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .modal-footer-custom .btn {
+        padding: 0.75rem 1.5rem;
+        border-radius: 10px;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    /* ========== Responsive ========== */
     @media (max-width: 768px) {
+        .consultar-hero {
+            padding: 2rem 1.5rem;
+        }
+
+        .consultar-hero h2 {
+            font-size: 1.5rem;
+        }
+
         .tipo-busqueda-options {
             flex-direction: column;
+            align-items: center;
         }
 
         .tipo-busqueda-option {
             max-width: 100%;
+            width: 100%;
         }
 
         .turno-card-header {
             flex-direction: column;
             gap: 1rem;
             text-align: center;
+            padding: 1.25rem;
+        }
+
+        .turno-card-body {
+            padding: 1.5rem;
         }
 
         .turno-info-row {
             flex-direction: column;
             gap: 0.25rem;
+            align-items: flex-start;
         }
 
         .turno-value {
@@ -278,423 +773,419 @@
             flex-direction: column;
         }
 
-        /* Modal en móviles */
-        .modal-dialog {
-            margin: 0.5rem;
+        .turno-acciones .btn {
+            min-width: 100%;
         }
 
-        .modal-body {
-            padding: 1rem !important;
+        .modal-info-grid {
+            grid-template-columns: 1fr;
         }
 
-        .modal-header {
-            padding: 1.5rem 1rem !important;
-        }
-
-        .modal-footer {
+        .modal-footer-custom {
             flex-direction: column;
-            gap: 0.5rem;
         }
 
-        .modal-footer .btn {
+        .modal-footer-custom .btn {
             width: 100%;
+            justify-content: center;
         }
     }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="search-container">
-    <div class="search-header" data-aos="fade-down">
-        <h2><i class="fas fa-search me-2"></i>Consultar Turno</h2>
-        <p>Buscá tu turno ingresando el código, dominio del vehículo o DNI</p>
+<!-- Hero Section -->
+<div class="consultar-hero" data-aos="fade-down">
+    <div class="consultar-hero-icon">
+        <i class="fas fa-search"></i>
     </div>
+    <h2>Consultar Turno</h2>
+    <p>Buscá tu turno ingresando el código, dominio del vehículo o DNI</p>
+</div>
 
-    <!-- Formulario de búsqueda -->
-    <div class="search-box" data-aos="fade-up">
-        <form method="post" id="form_buscar">
-            {% csrf_token %}
+<!-- Formulario de búsqueda -->
+<div class="search-box" data-aos="fade-up">
+    <form method="post" id="form_buscar">
+        {% csrf_token %}
 
-            <!-- Info de ayuda -->
-            <div class="info-busqueda">
-                <i class="fas fa-info-circle"></i>
-                <strong>Podés buscar por:</strong> Código de turno (ej: TRN-ABC123), Dominio del vehículo (ej: ABC123) o DNI del cliente (ej: 12345678)
-            </div>
+        <!-- Instrucción inicial -->
+        <p style="text-align: center; color: #64748b; margin-bottom: 1.25rem; font-size: 0.95rem;">
+            <i class="fas fa-hand-pointer me-2" style="color: #13304D;"></i>
+            <strong>Paso 1:</strong> Seleccioná cómo querés buscar tu turno
+        </p>
 
-            <!-- Tipo de búsqueda -->
-            <div class="tipo-busqueda-options">
-                <div class="tipo-busqueda-option">
-                    <input type="radio" name="tipo_busqueda" id="tipo_codigo" value="codigo" checked>
-                    <label for="tipo_codigo">
-                        <i class="fas fa-ticket-alt"></i>
-                        Código de Turno
-                    </label>
-                </div>
-                <div class="tipo-busqueda-option">
-                    <input type="radio" name="tipo_busqueda" id="tipo_dominio" value="dominio">
-                    <label for="tipo_dominio">
-                        <i class="fas fa-car"></i>
-                        Dominio
-                    </label>
-                </div>
-                <div class="tipo-busqueda-option">
-                    <input type="radio" name="tipo_busqueda" id="tipo_dni" value="dni">
-                    <label for="tipo_dni">
-                        <i class="fas fa-id-card"></i>
-                        DNI
-                    </label>
-                </div>
-            </div>
-
-            <!-- Campo de búsqueda -->
-            <div class="mb-3">
-                <label for="valor_busqueda" class="form-label">
-                    <i class="fas fa-search me-2"></i>Ingrese el valor a buscar
+        <!-- Tipo de búsqueda -->
+        <div class="tipo-busqueda-options">
+            <div class="tipo-busqueda-option">
+                <input type="radio" name="tipo_busqueda" id="tipo_codigo" value="codigo" checked>
+                <label for="tipo_codigo">
+                    <span class="check-indicator"><i class="fas fa-check"></i></span>
+                    <i class="fas fa-ticket-alt icon-main"></i>
+                    Código de Turno
                 </label>
-                <input type="text" class="form-control form-control-lg"
-                       id="valor_busqueda" name="valor_busqueda"
-                       placeholder="Ej: TRN-ABC123, ABC123 o 12345678"
-                       required autofocus>
             </div>
+            <div class="tipo-busqueda-option">
+                <input type="radio" name="tipo_busqueda" id="tipo_dominio" value="dominio">
+                <label for="tipo_dominio">
+                    <span class="check-indicator"><i class="fas fa-check"></i></span>
+                    <i class="fas fa-car icon-main"></i>
+                    Dominio
+                </label>
+            </div>
+            <div class="tipo-busqueda-option">
+                <input type="radio" name="tipo_busqueda" id="tipo_dni" value="dni">
+                <label for="tipo_dni">
+                    <span class="check-indicator"><i class="fas fa-check"></i></span>
+                    <i class="fas fa-id-card icon-main"></i>
+                    DNI
+                </label>
+            </div>
+        </div>
 
-            <button type="submit" class="btn btn-primary-custom btn-lg w-100">
-                <i class="fas fa-search me-2"></i>Buscar Turno
-            </button>
-        </form>
-    </div>
+        <!-- Indicador de selección actual -->
+        <div class="seleccion-actual" id="seleccion-actual">
+            <i class="fas fa-check-circle"></i>
+            <span id="texto-seleccion">Buscando por: Código de Turno</span>
+        </div>
 
-    <!-- Resultados de búsqueda -->
-    {% if turnos is not None %}
-        {% if turnos %}
-            <div id="resultados-busqueda" data-aos="fade-up">
-                <h4 class="mb-4" style="color: var(--primary-color); font-weight: 700;">
-                    <i class="fas fa-list me-2"></i>
+        <!-- Campo de búsqueda -->
+        <div class="search-input-wrapper">
+            <label for="valor_busqueda" class="form-label">
+                <strong>Paso 2:</strong> <span id="label-busqueda">Ingresá el código de turno</span>
+            </label>
+            <input type="text" class="form-control"
+                   id="valor_busqueda" name="valor_busqueda"
+                   placeholder="Ej: TRN-ABC123"
+                   required autofocus>
+        </div>
+
+        <button type="submit" class="btn btn-buscar">
+            <i class="fas fa-search me-2"></i>Buscar Turno
+        </button>
+    </form>
+</div>
+
+<!-- Resultados de búsqueda -->
+{% if turnos is not None %}
+    {% if turnos %}
+        <div id="resultados-busqueda" data-aos="fade-up">
+            <div class="resultados-header">
+                <div class="resultados-header-icon">
+                    <i class="fas fa-list"></i>
+                </div>
+                <h4>
                     {% if turnos|length == 1 %}
                         Turno encontrado
                     {% else %}
                         {{ turnos|length }} turnos encontrados
                     {% endif %}
                 </h4>
+            </div>
 
-                {% for turno in turnos %}
-                <div class="turno-card" data-aos="fade-up" data-aos-delay="{% widthratio forloop.counter0 1 100 %}">
-                    <!-- Header -->
-                    <div class="turno-card-header">
-                        <div>
-                            <i class="fas fa-ticket-alt me-2"></i>
-                            <span class="turno-codigo">{{ turno.codigo }}</span>
-                        </div>
-                        <div>
-                            <span class="estado-badge estado-{{ turno.estado|lower }}">
-                                {% if turno.estado == 'PENDIENTE' %}
-                                    <i class="fas fa-clock me-1"></i>Pendiente
-                                {% elif turno.estado == 'CONFIRMADO' %}
-                                    <i class="fas fa-check-circle me-1"></i>Confirmado
-                                {% elif turno.estado == 'EN_CURSO' %}
-                                    <i class="fas fa-spinner me-1"></i>En Curso
-                                {% elif turno.estado == 'COMPLETADO' %}
-                                    <i class="fas fa-check-double me-1"></i>Completado
-                                {% endif %}
-                            </span>
-                        </div>
+            {% for turno in turnos %}
+            <div class="turno-card" data-aos="fade-up" data-aos-delay="{% widthratio forloop.counter0 1 100 %}">
+                <!-- Header -->
+                <div class="turno-card-header">
+                    <div>
+                        <i class="fas fa-ticket-alt me-2"></i>
+                        <span class="turno-codigo">{{ turno.codigo }}</span>
                     </div>
+                    <div>
+                        <span class="estado-badge estado-{{ turno.estado|lower }}">
+                            {% if turno.estado == 'PENDIENTE' %}
+                                <i class="fas fa-clock"></i>Pendiente
+                            {% elif turno.estado == 'CONFIRMADO' %}
+                                <i class="fas fa-check-circle"></i>Confirmado
+                            {% elif turno.estado == 'EN_CURSO' %}
+                                <i class="fas fa-spinner"></i>En Curso
+                            {% elif turno.estado == 'COMPLETADO' %}
+                                <i class="fas fa-check-double"></i>Completado
+                            {% elif turno.estado == 'CANCELADO' %}
+                                <i class="fas fa-times-circle"></i>Cancelado
+                            {% endif %}
+                        </span>
+                    </div>
+                </div>
 
-                    <!-- Body -->
-                    <div class="turno-card-body">
-                        <!-- Fecha destacada -->
-                        <div class="fecha-destacada">
-                            <div class="mes">{{ turno.fecha|date:"F Y" }}</div>
+                <!-- Body -->
+                <div class="turno-card-body">
+                    <!-- Fecha destacada (compacta) -->
+                    <div class="fecha-destacada">
+                        <div class="fecha-info">
                             <div class="dia">{{ turno.fecha|date:"d" }}</div>
-                            <div class="mb-1">{{ turno.fecha|date:"l" }}</div>
-                            <div class="hora">
-                                <i class="fas fa-clock me-2"></i>{{ turno.hora_inicio|time:"H:i" }} hs
+                            <div class="fecha-texto">
+                                <div class="mes">{{ turno.fecha|date:"F Y" }}</div>
+                                <div class="dia-semana">{{ turno.fecha|date:"l" }}</div>
                             </div>
                         </div>
-
-                        <!-- Información del turno -->
-                        <div class="turno-info-row">
-                            <span class="turno-label"><i class="fas fa-user me-2"></i>Cliente:</span>
-                            <span class="turno-value">{{ turno.cliente.apellido }}, {{ turno.cliente.nombre }}</span>
-                        </div>
-                        <div class="turno-info-row">
-                            <span class="turno-label"><i class="fas fa-id-card me-2"></i>DNI:</span>
-                            <span class="turno-value">{{ turno.cliente.dni }}</span>
-                        </div>
-                        <div class="turno-info-row">
-                            <span class="turno-label"><i class="fas fa-car me-2"></i>Vehículo:</span>
-                            <span class="turno-value">{{ turno.vehiculo.dominio }}</span>
-                        </div>
-                        <div class="turno-info-row">
-                            <span class="turno-label"><i class="fas fa-clipboard-check me-2"></i>Trámite:</span>
-                            <span class="turno-value">{{ turno.tipo_vehiculo.nombre }}</span>
-                        </div>
-                        <div class="turno-info-row">
-                            <span class="turno-label"><i class="fas fa-tools me-2"></i>Taller:</span>
-                            <span class="turno-value">{{ turno.taller.get_nombre }}</span>
-                        </div>
-                        <div class="turno-info-row">
-                            <span class="turno-label"><i class="fas fa-map-marker-alt me-2"></i>Dirección:</span>
-                            <span class="turno-value">{{ turno.taller.get_direccion }}, {{ turno.taller.get_localidad.nombre }}</span>
-                        </div>
-                        <div class="turno-info-row">
-                            <span class="turno-label"><i class="fas fa-phone me-2"></i>Teléfono:</span>
-                            <span class="turno-value">{{ turno.taller.get_telefono }}</span>
-                        </div>
-
-                        {% if turno.observaciones %}
-                        <div class="turno-info-row">
-                            <span class="turno-label"><i class="fas fa-comment me-2"></i>Observaciones:</span>
-                            <span class="turno-value">{{ turno.observaciones }}</span>
-                        </div>
-                        {% endif %}
-
-                        <!-- Acciones -->
-                        <div class="turno-acciones">
-                            <button type="button" class="btn btn-primary-custom"
-                                    data-bs-toggle="modal" data-bs-target="#modalDetalle{{ turno.id }}">
-                                <i class="fas fa-eye me-2"></i>Ver Detalles
-                            </button>
-                            {% if turno.qr_code %}
-                            <button type="button" class="btn btn-secondary-custom"
-                                    onclick="descargarQR('{{ turno.qr_code.url }}', '{{ turno.codigo }}')">
-                                <i class="fas fa-qrcode me-2"></i>Ver QR
-                            </button>
-                            {% endif %}
-                            {% if turno.puede_cancelar or turno.puede_reprogramar %}
-                            <button type="button" class="btn btn-outline-danger"
-                                    onclick="mostrarOpcionesCancelacion({{ turno.id }}, '{{ turno.codigo }}', {{ turno.puede_reprogramar|yesno:'true,false' }})">
-                                <i class="fas fa-times-circle me-2"></i>Cancelar / Reprogramar
-                            </button>
-                            {% endif %}
+                        <div class="hora">
+                            <i class="fas fa-clock"></i>{{ turno.hora_inicio|time:"H:i" }} hs
                         </div>
                     </div>
-                </div>
-                {% endfor %}
-            </div>
 
-        <!-- Modales de detalle (fuera del contenedor de resultados) -->
-        {% for turno in turnos %}
-        <div class="modal fade" id="modalDetalle{{ turno.id }}" tabindex="-1" aria-labelledby="modalDetalleLabel{{ turno.id }}" aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
-                        <div class="modal-content" style="border: none; border-radius: 20px; overflow: hidden;">
-                            <!-- Header del modal -->
-                            <div class="modal-header" style="background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%); color: white; border: none; padding: 2rem;">
-                                <div class="w-100 text-center">
-                                    <div style="font-size: 3rem; margin-bottom: 0.5rem;">
-                                        <i class="fas fa-ticket-alt"></i>
-                                    </div>
-                                    <h4 class="modal-title mb-2" id="modalDetalleLabel{{ turno.id }}" style="font-weight: 700; font-size: 1.8rem;">
-                                        {{ turno.codigo }}
-                                    </h4>
-                                    <span class="badge" style="background: rgba(255,255,255,0.3); padding: 0.5rem 1rem; font-size: 0.9rem;">
-                                        {% if turno.estado == 'PENDIENTE' %}
-                                            <i class="fas fa-clock me-1"></i>Pendiente
-                                        {% elif turno.estado == 'CONFIRMADO' %}
-                                            <i class="fas fa-check-circle me-1"></i>Confirmado
-                                        {% elif turno.estado == 'EN_CURSO' %}
-                                            <i class="fas fa-spinner me-1"></i>En Curso
-                                        {% elif turno.estado == 'COMPLETADO' %}
-                                            <i class="fas fa-check-double me-1"></i>Completado
-                                        {% endif %}
-                                    </span>
-                                </div>
-                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close" style="position: absolute; top: 1rem; right: 1rem;"></button>
-                            </div>
-
-                            <!-- Body del modal -->
-                            <div class="modal-body" style="padding: 2rem;">
-                                <!-- Fecha y hora destacada -->
-                                <div style="background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%); padding: 2rem; border-radius: 15px; text-align: center; margin-bottom: 2rem;">
-                                    <div style="color: #6c757d; font-size: 1.1rem; font-weight: 600; margin-bottom: 0.5rem;">
-                                        {{ turno.fecha|date:"F Y" }}
-                                    </div>
-                                    <div style="color: var(--primary-color); font-size: 3.5rem; font-weight: 700; line-height: 1;">
-                                        {{ turno.fecha|date:"d" }}
-                                    </div>
-                                    <div style="color: #6c757d; font-size: 1rem; margin-bottom: 1rem;">
-                                        {{ turno.fecha|date:"l" }}
-                                    </div>
-                                    <div style="color: var(--primary-color); font-size: 2rem; font-weight: 700;">
-                                        <i class="fas fa-clock me-2"></i>{{ turno.hora_inicio|time:"H:i" }} hs
-                                    </div>
-                                </div>
-
-                                <!-- QR Code -->
-                                {% if turno.qr_code %}
-                                <div style="background: white; padding: 1.5rem; border-radius: 15px; text-align: center; margin-bottom: 2rem; border: 2px solid #e9ecef;">
-                                    <h5 style="color: var(--primary-color); font-weight: 700; margin-bottom: 1rem;">
-                                        <i class="fas fa-qrcode me-2"></i>Código QR
-                                    </h5>
-                                    <div style="max-width: 250px; margin: 0 auto; padding: 1rem; background: white; border: 3px solid var(--primary-color); border-radius: 10px;">
-                                        <img src="{{ turno.qr_code.url }}" alt="QR Code" style="max-width: 100%; display: block;">
-                                    </div>
-                                    <p class="mt-3 mb-0" style="color: #6c757d; font-size: 0.9rem;">
-                                        <i class="fas fa-info-circle me-1"></i>
-                                        Mostrá este código al llegar al taller
-                                    </p>
-                                </div>
-                                {% endif %}
-
-                                <!-- Información del turno -->
-                                <div style="background: #f8f9fa; padding: 1.5rem; border-radius: 15px; margin-bottom: 1.5rem;">
-                                    <h5 style="color: var(--primary-color); font-weight: 700; margin-bottom: 1.5rem;">
-                                        <i class="fas fa-info-circle me-2"></i>Detalles del Turno
-                                    </h5>
-
-                                    <div class="row g-3">
-                                        <div class="col-6">
-                                            <div style="color: #6c757d; font-size: 0.85rem; margin-bottom: 0.25rem;">
-                                                <i class="fas fa-user me-1"></i>Cliente
-                                            </div>
-                                            <div style="color: var(--primary-color); font-weight: 600;">
-                                                {{ turno.cliente.apellido }}, {{ turno.cliente.nombre }}
-                                            </div>
-                                        </div>
-                                        <div class="col-6">
-                                            <div style="color: #6c757d; font-size: 0.85rem; margin-bottom: 0.25rem;">
-                                                <i class="fas fa-id-card me-1"></i>DNI
-                                            </div>
-                                            <div style="color: var(--primary-color); font-weight: 600;">
-                                                {{ turno.cliente.dni }}
-                                            </div>
-                                        </div>
-                                        <div class="col-6">
-                                            <div style="color: #6c757d; font-size: 0.85rem; margin-bottom: 0.25rem;">
-                                                <i class="fas fa-car me-1"></i>Vehículo
-                                            </div>
-                                            <div style="color: var(--primary-color); font-weight: 600;">
-                                                {{ turno.vehiculo.dominio }}
-                                            </div>
-                                        </div>
-                                        <div class="col-6">
-                                            <div style="color: #6c757d; font-size: 0.85rem; margin-bottom: 0.25rem;">
-                                                <i class="fas fa-clipboard-check me-1"></i>Trámite
-                                            </div>
-                                            <div style="color: var(--primary-color); font-weight: 600;">
-                                                {{ turno.tipo_vehiculo.nombre }}
-                                            </div>
-                                        </div>
-                                        <div class="col-12">
-                                            <div style="color: #6c757d; font-size: 0.85rem; margin-bottom: 0.25rem;">
-                                                <i class="fas fa-tools me-1"></i>Taller
-                                            </div>
-                                            <div style="color: var(--primary-color); font-weight: 600;">
-                                                {{ turno.taller.get_nombre }}
-                                            </div>
-                                        </div>
-                                        <div class="col-12">
-                                            <div style="color: #6c757d; font-size: 0.85rem; margin-bottom: 0.25rem;">
-                                                <i class="fas fa-map-marker-alt me-1"></i>Dirección
-                                            </div>
-                                            <div style="color: var(--primary-color); font-weight: 600;">
-                                                {{ turno.taller.get_direccion }}, {{ turno.taller.get_localidad.nombre }}
-                                            </div>
-                                        </div>
-                                        <div class="col-6">
-                                            <div style="color: #6c757d; font-size: 0.85rem; margin-bottom: 0.25rem;">
-                                                <i class="fas fa-phone me-1"></i>Teléfono
-                                            </div>
-                                            <div style="color: var(--primary-color); font-weight: 600;">
-                                                <a href="tel:{{ turno.taller.get_telefono }}" style="color: var(--primary-color); text-decoration: none;">
-                                                    {{ turno.taller.get_telefono }}
-                                                </a>
-                                            </div>
-                                        </div>
-                                        {% if turno.taller.get_email %}
-                                        <div class="col-6">
-                                            <div style="color: #6c757d; font-size: 0.85rem; margin-bottom: 0.25rem;">
-                                                <i class="fas fa-envelope me-1"></i>Email
-                                            </div>
-                                            <div style="color: var(--primary-color); font-weight: 600; font-size: 0.85rem;">
-                                                <a href="mailto:{{ turno.taller.get_email }}" style="color: var(--primary-color); text-decoration: none;">
-                                                    {{ turno.taller.get_email }}
-                                                </a>
-                                            </div>
-                                        </div>
-                                        {% endif %}
-                                        {% if turno.observaciones %}
-                                        <div class="col-12">
-                                            <div style="color: #6c757d; font-size: 0.85rem; margin-bottom: 0.25rem;">
-                                                <i class="fas fa-comment me-1"></i>Observaciones
-                                            </div>
-                                            <div style="color: var(--primary-color); font-weight: 600;">
-                                                {{ turno.observaciones }}
-                                            </div>
-                                        </div>
-                                        {% endif %}
-                                    </div>
-                                </div>
-
-                                <!-- Instrucciones -->
-                                <div style="background: linear-gradient(135deg, #fff3cd 0%, #ffeeba 100%); border-left: 5px solid var(--warning-color); padding: 1.5rem; border-radius: 10px;">
-                                    <h6 style="color: #856404; font-weight: 700; margin-bottom: 1rem;">
-                                        <i class="fas fa-exclamation-circle me-2"></i>Recordatorios Importantes
-                                    </h6>
-                                    <ul style="color: #856404; margin-bottom: 0; padding-left: 1.5rem; font-size: 0.9rem;">
-                                        <li class="mb-2">Presentate <strong>10 minutos antes</strong> del horario</li>
-                                        <li class="mb-2">Traé tu <strong>DNI, cédula y comprobante de pago</strong></li>
-                                        <li class="mb-2">El vehículo debe estar en <strong>condiciones técnicas adecuadas</strong></li>
-                                        <li>Mostrá el <strong>código QR o código de turno</strong></li>
-                                    </ul>
-                                </div>
-                            </div>
-
-                            <!-- Footer del modal -->
-                            <div class="modal-footer" style="border-top: 2px solid #f0f0f0; padding: 1.5rem; gap: 0.5rem;">
-                                {% if turno.qr_code %}
-                                <button type="button" class="btn btn-secondary-custom"
-                                        onclick="descargarQR('{{ turno.qr_code.url }}', '{{ turno.codigo }}')">
-                                    <i class="fas fa-download me-2"></i>Descargar QR
-                                </button>
-                                {% endif %}
-                                <button type="button" class="btn btn-primary-custom" onclick="imprimirTurno('{{ turno.codigo }}')">
-                                    <i class="fas fa-print me-2"></i>Imprimir
-                                </button>
-                                <button type="button" class="btn btn-secondary-custom" data-bs-dismiss="modal">
-                                    <i class="fas fa-times me-2"></i>Cerrar
-                                </button>
-                            </div>
-                        </div>
+                    <!-- Información del turno -->
+                    <div class="turno-info-row">
+                        <span class="turno-label"><i class="fas fa-user"></i>Cliente</span>
+                        <span class="turno-value">{{ turno.cliente.nombre }} {{ turno.cliente.apellido }}</span>
                     </div>
-                </div>
-        {% endfor %}
-        {% else %}
-            <!-- No hay resultados -->
-            <div class="no-results" id="sin-resultados" data-aos="zoom-in">
-                <i class="fas fa-search"></i>
-                <h4>No se encontraron turnos</h4>
-                <p>
-                    No se encontraron turnos con
-                    {% if tipo_busqueda == 'codigo' %}
-                        el código <strong>{{ valor_busqueda }}</strong>
-                    {% elif tipo_busqueda == 'dominio' %}
-                        el dominio <strong>{{ valor_busqueda }}</strong>
-                    {% elif tipo_busqueda == 'dni' %}
-                        el DNI <strong>{{ valor_busqueda }}</strong>
+                    <div class="turno-info-row">
+                        <span class="turno-label"><i class="fas fa-id-card"></i>DNI</span>
+                        <span class="turno-value">{{ turno.cliente.dni }}</span>
+                    </div>
+                    <div class="turno-info-row">
+                        <span class="turno-label"><i class="fas fa-car"></i>Vehículo</span>
+                        <span class="turno-value">{{ turno.vehiculo.dominio }}</span>
+                    </div>
+                    <div class="turno-info-row">
+                        <span class="turno-label"><i class="fas fa-clipboard-check"></i>Trámite</span>
+                        <span class="turno-value">{{ turno.tipo_vehiculo.nombre }}</span>
+                    </div>
+                    <div class="turno-info-row">
+                        <span class="turno-label"><i class="fas fa-building"></i>Taller</span>
+                        <span class="turno-value">{{ turno.taller.get_nombre }}</span>
+                    </div>
+
+                    {% if turno.observaciones %}
+                    <div class="turno-info-row">
+                        <span class="turno-label"><i class="fas fa-comment"></i>Observaciones</span>
+                        <span class="turno-value">{{ turno.observaciones }}</span>
+                    </div>
                     {% endif %}
-                </p>
-                <a href="{% url 'turnero:step1_cliente' %}" class="btn btn-accent btn-lg">
-                    <i class="fas fa-calendar-plus me-2"></i>Solicitar un Turno
-                </a>
+
+                    <!-- Acciones -->
+                    <div class="turno-acciones">
+                        <button type="button" class="btn btn-ver-detalles"
+                                data-bs-toggle="modal" data-bs-target="#modalDetalle{{ turno.id }}">
+                            <i class="fas fa-eye"></i>Ver Detalles
+                        </button>
+                        {% if turno.qr_code %}
+                        <button type="button" class="btn btn-ver-qr"
+                                onclick="descargarQR('{{ turno.qr_code.url }}', '{{ turno.codigo }}')">
+                            <i class="fas fa-qrcode"></i>Ver QR
+                        </button>
+                        {% endif %}
+                        {% if turno.puede_reprogramar %}
+                        <button type="button" class="btn btn-reprogramar"
+                                onclick="solicitarReprogramacion({{ turno.id }})">
+                            <i class="fas fa-calendar-alt"></i>Reprogramar
+                        </button>
+                        {% endif %}
+                        {% if turno.puede_cancelar %}
+                        <button type="button" class="btn btn-cancelar"
+                                onclick="confirmarCancelacion({{ turno.id }}, '{{ turno.codigo }}')">
+                            <i class="fas fa-times-circle"></i>Cancelar
+                        </button>
+                        {% endif %}
+                    </div>
+                </div>
             </div>
-        {% endif %}
+            {% endfor %}
+        </div>
+
+    <!-- Modales de detalle -->
+    {% for turno in turnos %}
+    <div class="modal fade" id="modalDetalle{{ turno.id }}" tabindex="-1" aria-labelledby="modalDetalleLabel{{ turno.id }}" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
+            <div class="modal-content">
+                <!-- Header del modal -->
+                <div class="modal-header-custom">
+                    <div class="modal-header-icon">
+                        <i class="fas fa-ticket-alt"></i>
+                    </div>
+                    <h4 id="modalDetalleLabel{{ turno.id }}">{{ turno.codigo }}</h4>
+                    <span class="modal-estado-badge">
+                        {% if turno.estado == 'PENDIENTE' %}
+                            <i class="fas fa-clock me-1"></i>Pendiente
+                        {% elif turno.estado == 'CONFIRMADO' %}
+                            <i class="fas fa-check-circle me-1"></i>Confirmado
+                        {% elif turno.estado == 'EN_CURSO' %}
+                            <i class="fas fa-spinner me-1"></i>En Curso
+                        {% elif turno.estado == 'COMPLETADO' %}
+                            <i class="fas fa-check-double me-1"></i>Completado
+                        {% endif %}
+                    </span>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close" style="position: absolute; top: 1rem; right: 1rem;"></button>
+                </div>
+
+                <!-- Body del modal -->
+                <div class="modal-body-custom">
+                    <!-- Fecha y hora destacada -->
+                    <div class="modal-fecha-box">
+                        <div style="color: #64748b; font-size: 1rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">
+                            {{ turno.fecha|date:"F Y" }}
+                        </div>
+                        <div style="color: #13304D; font-size: 3.5rem; font-weight: 700; line-height: 1; margin: 0.25rem 0;">
+                            {{ turno.fecha|date:"d" }}
+                        </div>
+                        <div style="color: #64748b; font-size: 1rem; margin-bottom: 1rem;">
+                            {{ turno.fecha|date:"l" }}
+                        </div>
+                        <div style="display: inline-flex; align-items: center; gap: 10px; background: white; padding: 0.6rem 1.5rem; border-radius: 50px; color: #13304D; font-size: 1.5rem; font-weight: 700; box-shadow: 0 2px 10px rgba(19,48,77,0.1);">
+                            <i class="fas fa-clock"></i>{{ turno.hora_inicio|time:"H:i" }} hs
+                        </div>
+                    </div>
+
+                    <!-- QR Code -->
+                    {% if turno.qr_code %}
+                    <div class="modal-qr-box">
+                        <h5><i class="fas fa-qrcode me-2"></i>Código QR</h5>
+                        <div class="modal-qr-img">
+                            <img src="{{ turno.qr_code.url }}" alt="QR Code" style="max-width: 100%; display: block;">
+                        </div>
+                        <p style="color: #64748b; font-size: 0.85rem; margin-top: 1rem; margin-bottom: 0;">
+                            <i class="fas fa-info-circle me-1"></i>Mostrá este código al llegar al taller
+                        </p>
+                    </div>
+                    {% endif %}
+
+                    <!-- Información del turno -->
+                    <div class="modal-info-section">
+                        <h5><i class="fas fa-info-circle"></i>Detalles del Turno</h5>
+                        <div class="modal-info-grid">
+                            <div class="modal-info-item">
+                                <div class="modal-info-label"><i class="fas fa-user"></i>Cliente</div>
+                                <div class="modal-info-value">{{ turno.cliente.nombre }} {{ turno.cliente.apellido }}</div>
+                            </div>
+                            <div class="modal-info-item">
+                                <div class="modal-info-label"><i class="fas fa-id-card"></i>DNI</div>
+                                <div class="modal-info-value">{{ turno.cliente.dni }}</div>
+                            </div>
+                            <div class="modal-info-item">
+                                <div class="modal-info-label"><i class="fas fa-car"></i>Vehículo</div>
+                                <div class="modal-info-value">{{ turno.vehiculo.dominio }}</div>
+                            </div>
+                            <div class="modal-info-item">
+                                <div class="modal-info-label"><i class="fas fa-clipboard-check"></i>Trámite</div>
+                                <div class="modal-info-value">{{ turno.tipo_vehiculo.nombre }}</div>
+                            </div>
+                            <div class="modal-info-item" style="grid-column: span 2;">
+                                <div class="modal-info-label"><i class="fas fa-building"></i>Taller</div>
+                                <div class="modal-info-value">{{ turno.taller.get_nombre }}</div>
+                            </div>
+                            <div class="modal-info-item" style="grid-column: span 2;">
+                                <div class="modal-info-label"><i class="fas fa-map-marker-alt"></i>Dirección</div>
+                                <div class="modal-info-value">{{ turno.taller.get_direccion }}, {{ turno.taller.get_localidad.nombre }}</div>
+                            </div>
+                            <div class="modal-info-item">
+                                <div class="modal-info-label"><i class="fas fa-phone"></i>Teléfono</div>
+                                <div class="modal-info-value">
+                                    <a href="tel:{{ turno.taller.get_telefono }}">{{ turno.taller.get_telefono }}</a>
+                                </div>
+                            </div>
+                            {% if turno.taller.get_email %}
+                            <div class="modal-info-item">
+                                <div class="modal-info-label"><i class="fas fa-envelope"></i>Email</div>
+                                <div class="modal-info-value" style="font-size: 0.85rem;">
+                                    <a href="mailto:{{ turno.taller.get_email }}">{{ turno.taller.get_email }}</a>
+                                </div>
+                            </div>
+                            {% endif %}
+                            {% if turno.observaciones %}
+                            <div class="modal-info-item" style="grid-column: span 2;">
+                                <div class="modal-info-label"><i class="fas fa-comment"></i>Observaciones</div>
+                                <div class="modal-info-value">{{ turno.observaciones }}</div>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Recordatorios -->
+                    <div class="modal-recordatorio">
+                        <h6><i class="fas fa-exclamation-circle me-2"></i>Recordatorios Importantes</h6>
+                        <ul>
+                            <li>Presentate <strong>10 minutos antes</strong> del horario</li>
+                            <li>Traé tu <strong>DNI y cédula del vehículo</strong></li>
+                            <li>El vehículo debe estar en <strong>condiciones técnicas adecuadas</strong></li>
+                            <li>Mostrá el <strong>código QR o código de turno</strong></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Footer del modal -->
+                <div class="modal-footer-custom">
+                    {% if turno.qr_code %}
+                    <button type="button" class="btn btn-ver-qr"
+                            onclick="descargarQR('{{ turno.qr_code.url }}', '{{ turno.codigo }}')">
+                        <i class="fas fa-download"></i>Descargar QR
+                    </button>
+                    {% endif %}
+                    <button type="button" class="btn btn-ver-detalles" onclick="imprimirTurno('{{ turno.codigo }}')">
+                        <i class="fas fa-print"></i>Imprimir
+                    </button>
+                    <button type="button" class="btn btn-ver-qr" data-bs-dismiss="modal">
+                        <i class="fas fa-times"></i>Cerrar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+    {% else %}
+        <!-- No hay resultados -->
+        <div class="no-results" id="sin-resultados" data-aos="zoom-in">
+            <div class="no-results-icon">
+                <i class="fas fa-search"></i>
+            </div>
+            <h4>No se encontraron turnos</h4>
+            <p>
+                No se encontraron turnos con
+                {% if tipo_busqueda == 'codigo' %}
+                    el código <strong>{{ valor_busqueda }}</strong>
+                {% elif tipo_busqueda == 'dominio' %}
+                    el dominio <strong>{{ valor_busqueda }}</strong>
+                {% elif tipo_busqueda == 'dni' %}
+                    el DNI <strong>{{ valor_busqueda }}</strong>
+                {% endif %}
+            </p>
+            <a href="{% url 'turnero:step1_cliente' %}" class="btn btn-nuevo-turno">
+                <i class="fas fa-calendar-plus"></i>Solicitar un Turno
+            </a>
+        </div>
     {% endif %}
-</div>
+{% endif %}
 {% endblock %}
 
 {% block extra_js %}
 <script>
-    // Actualizar placeholder según tipo de búsqueda
+    // Actualizar placeholder e indicador según tipo de búsqueda
+    const textoSeleccion = document.getElementById('texto-seleccion');
+    const labelBusqueda = document.getElementById('label-busqueda');
+    const tiposTexto = {
+        'codigo': {
+            texto: 'Buscando por: Código de Turno',
+            placeholder: 'Ej: TRN-ABC123',
+            label: 'Ingresá el código de turno'
+        },
+        'dominio': {
+            texto: 'Buscando por: Dominio del Vehículo',
+            placeholder: 'Ej: ABC123 o AB123CD',
+            label: 'Ingresá el dominio del vehículo'
+        },
+        'dni': {
+            texto: 'Buscando por: DNI del Cliente',
+            placeholder: 'Ej: 12345678',
+            label: 'Ingresá el DNI del cliente'
+        }
+    };
+
     document.querySelectorAll('input[name="tipo_busqueda"]').forEach(radio => {
         radio.addEventListener('change', function() {
             const input = document.getElementById('valor_busqueda');
-            if (this.value === 'codigo') {
-                input.placeholder = 'Ej: TRN-ABC123';
-            } else if (this.value === 'dominio') {
-                input.placeholder = 'Ej: ABC123 o AB123CD';
-            } else if (this.value === 'dni') {
-                input.placeholder = 'Ej: 12345678';
-            }
+            const tipo = tiposTexto[this.value];
+
+            // Actualizar placeholder
+            input.placeholder = tipo.placeholder;
+
+            // Actualizar label del campo
+            labelBusqueda.textContent = tipo.label;
+
+            // Actualizar texto de selección con animación
+            textoSeleccion.style.opacity = '0';
+            setTimeout(() => {
+                textoSeleccion.textContent = tipo.texto;
+                textoSeleccion.style.opacity = '1';
+            }, 150);
+
             input.focus();
         });
     });
@@ -715,64 +1206,21 @@
         window.open(`/turnero/imprimir/${codigo}/`, '_blank');
     }
 
-    // Mostrar opciones de cancelación/reprogramación
-    function mostrarOpcionesCancelacion(turnoId, codigo, puedeReprogramar) {
-        Swal.fire({
-            title: '¿Qué deseas hacer con tu turno?',
-            html: `
-                <p class="mb-4">Código de turno: <strong>${codigo}</strong></p>
-                <div class="d-grid gap-3">
-                    ${puedeReprogramar ? `
-                    <button type="button" class="btn btn-primary btn-lg" id="btn-reprogramar">
-                        <i class="fas fa-calendar-alt me-2"></i>
-                        Reprogramar Turno
-                    </button>
-                    <p class="text-muted small mb-0">Te enviaremos un email con un link seguro para reprogramar</p>
-                    ` : ''}
-                    <button type="button" class="btn btn-danger btn-lg" id="btn-cancelar-definitivo">
-                        <i class="fas fa-times-circle me-2"></i>
-                        Cancelar Definitivamente
-                    </button>
-                    <p class="text-muted small mb-0">El turno se cancelará y no podrá recuperarse</p>
-                </div>
-            `,
-            showConfirmButton: false,
-            showCancelButton: true,
-            cancelButtonText: 'Volver',
-            customClass: {
-                popup: 'swal2-custom-width'
-            },
-            didOpen: () => {
-                // Botón reprogramar
-                const btnReprogramar = document.getElementById('btn-reprogramar');
-                if (btnReprogramar) {
-                    btnReprogramar.addEventListener('click', () => {
-                        Swal.close();
-                        solicitarReprogramacion(turnoId);
-                    });
-                }
-
-                // Botón cancelar definitivo
-                const btnCancelar = document.getElementById('btn-cancelar-definitivo');
-                btnCancelar.addEventListener('click', () => {
-                    Swal.close();
-                    cancelarDefinitivo(turnoId, codigo);
-                });
-            }
-        });
-    }
-
     // Solicitar reprogramación (envía email)
     function solicitarReprogramacion(turnoId) {
         Swal.fire({
-            title: '¿Confirmar reprogramación?',
+            title: '<i class="fas fa-calendar-alt text-warning me-2"></i> Reprogramar Turno',
             html: `
-                <p>Te enviaremos un email con un link seguro para reprogramar tu turno.</p>
-                <p class="text-muted small">El link será válido por 48 horas.</p>
+                <p>Te enviaremos un <strong>email con un link seguro</strong> para elegir una nueva fecha y hora.</p>
+                <div class="alert alert-info mt-3 mb-0" style="font-size: 0.9rem;">
+                    <i class="fas fa-info-circle me-2"></i>
+                    El link será válido por <strong>48 horas</strong>
+                </div>
             `,
-            icon: 'info',
+            icon: 'question',
             showCancelButton: true,
-            confirmButtonText: 'Sí, enviar email',
+            confirmButtonColor: '#f59e0b',
+            confirmButtonText: '<i class="fas fa-paper-plane me-2"></i>Enviar email',
             cancelButtonText: 'Cancelar',
             showLoaderOnConfirm: true,
             preConfirm: () => {
@@ -799,7 +1247,10 @@
             if (result.isConfirmed) {
                 Swal.fire({
                     title: '¡Email enviado!',
-                    text: result.value.message,
+                    html: `
+                        <p>${result.value.message}</p>
+                        <p class="text-muted small mt-2">Revisá tu bandeja de entrada y spam</p>
+                    `,
                     icon: 'success',
                     confirmButtonText: 'Entendido'
                 });
@@ -807,18 +1258,21 @@
         });
     }
 
-    // Cancelar definitivo
-    function cancelarDefinitivo(turnoId, codigo) {
+    // Confirmar cancelación
+    function confirmarCancelacion(turnoId, codigo) {
         Swal.fire({
-            title: '¿Cancelar definitivamente?',
+            title: '<i class="fas fa-exclamation-triangle text-danger me-2"></i> Cancelar Turno',
             html: `
                 <p>¿Estás seguro de que querés cancelar el turno <strong>${codigo}</strong>?</p>
-                <p class="text-danger"><strong>Esta acción no se puede deshacer.</strong></p>
+                <div class="alert alert-danger mt-3 mb-0" style="font-size: 0.9rem;">
+                    <i class="fas fa-exclamation-circle me-2"></i>
+                    <strong>Esta acción no se puede deshacer</strong>
+                </div>
             `,
             icon: 'warning',
             showCancelButton: true,
-            confirmButtonColor: '#dc3545',
-            confirmButtonText: 'Sí, cancelar turno',
+            confirmButtonColor: '#ef4444',
+            confirmButtonText: '<i class="fas fa-times-circle me-2"></i>Sí, cancelar turno',
             cancelButtonText: 'No, mantener turno',
             showLoaderOnConfirm: true,
             preConfirm: () => {
@@ -849,7 +1303,6 @@
                     icon: 'success',
                     confirmButtonText: 'Entendido'
                 }).then(() => {
-                    // Recargar la página para actualizar la lista
                     location.reload();
                 });
             }
@@ -881,18 +1334,13 @@
             showWarning('Por favor, ingrese un valor para buscar', 'Campo Requerido');
             return;
         }
-
-        // No mostrar loading para evitar conflictos con los modales
-        // El formulario se enviará normalmente
     });
 
     // Scroll automático a resultados cuando se realiza una búsqueda
     {% if turnos is not None %}
     document.addEventListener('DOMContentLoaded', function() {
-        // Esperar a que AOS termine las animaciones iniciales
         setTimeout(function() {
             {% if turnos %}
-            // Scroll a resultados encontrados
             const resultados = document.getElementById('resultados-busqueda');
             if (resultados) {
                 const offsetTop = resultados.getBoundingClientRect().top + window.pageYOffset - 20;
@@ -902,7 +1350,6 @@
                 });
             }
             {% else %}
-            // Scroll a mensaje de sin resultados
             const sinResultados = document.getElementById('sin-resultados');
             if (sinResultados) {
                 const offsetTop = sinResultados.getBoundingClientRect().top + window.pageYOffset - 20;
@@ -912,20 +1359,7 @@
                 });
             }
             {% endif %}
-        }, 300); // Pequeño delay para que cargue bien la página
-
-        {% if turnos %}
-        // Debug: verificar modales
-        console.log('Total de modales en el DOM:', document.querySelectorAll('.modal').length);
-        document.querySelectorAll('.modal').forEach(modal => {
-            console.log('Modal ID:', modal.id);
-        });
-
-        // Verificar botones de "Ver Detalles"
-        document.querySelectorAll('[data-bs-toggle="modal"]').forEach(btn => {
-            console.log('Botón encontrado, target:', btn.getAttribute('data-bs-target'));
-        });
-        {% endif %}
+        }, 300);
     });
     {% endif %}
 </script>

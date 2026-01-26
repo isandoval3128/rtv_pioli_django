@@ -1,51 +1,602 @@
+<!-- Decoraciones de fondo -->
+<div class="services-decoration-left"></div>
+<div class="services-decoration-right"></div>
+<div class="services-decoration-geometric"></div>
+<div class="services-decoration-geometric-2"></div>
+<div class="services-lines-decoration"></div>
+
 <div class="container">
-        <div class="text-center">
-            <h2 class="section-heading text-uppercase">Servicios</h2>
-            <h3 class="section-subheading text-muted">Nuestros servicios profesionales</h3>
+    <!-- Header de sección con diseño moderno -->
+    <div class="services-header text-center mb-5">
+        <span class="section-badge" data-aos="fade-down" data-aos-delay="50">Lo que hacemos</span>
+        <h2 class="section-heading text-uppercase" data-aos="fade-up" data-aos-delay="100">Servicios</h2>
+        <p class="section-subheading" data-aos="fade-up" data-aos-delay="150">Soluciones profesionales para tu vehículo</p>
+        <div class="divider-dots" data-aos="fade-up" data-aos-delay="200">
+            <span></span>
+            <span></span>
+            <span></span>
         </div>
-        <div class="row text-center">
-            {% for service in services %}
-            <div class="col-md-4">
-                <span class="fa-stack fa-4x" onmouseover="this.style.transform='translateY(-8px) scale(1.08)';this.style.transition='transform 0.2s cubic-bezier(.4,2,.3,1)';" onmouseout="this.style.transform='none';">
-                    <i class="fas fa-circle fa-stack-2x" style="color: {{ site_config.service_icon_bgcolor }};"></i>
-                    <i class="fas {{ service.icon }} fa-stack-1x" style="color: {{ site_config.service_icon_fgcolor }};"></i>
-                </span>
-                <h4 class="my-3">{{ service.title }}</h4>
-                <div class="service-desc-card shadow-sm border-0 mb-4 animate__animated animate__fadeIn" style="background: #f8f9fa; border-radius: 1rem; transition: box-shadow 0.2s;">
-                    <div class="card-body p-3">
-                        <p class="service-desc-text" style="font-size:1.08rem; color:#003466; text-align:justify; margin-bottom:0;">
-                            {{ service.description|linebreaksbr }}
-                        </p>
+    </div>
+
+    <!-- Grid de servicios con layout moderno -->
+    <div class="services-grid">
+        {% for service in services %}
+        <div class="service-card-modern {% if forloop.counter|divisibleby:2 %}offset-card{% endif %}"
+             data-aos="fade-up"
+             data-aos-delay="{{ forloop.counter0|add:1 }}00">
+
+            <!-- Icono decorativo de fondo -->
+            <div class="service-bg-icon">
+                <i class="fas {{ service.icon }}"></i>
+            </div>
+
+            <!-- Contenido de la card -->
+            <div class="service-card-content">
+                <!-- Icono principal -->
+                <div class="service-icon-wrapper">
+                    <div class="service-icon" style="background: {{ site_config.service_icon_bgcolor|default:'#003466' }};">
+                        <i class="fas {{ service.icon }}" style="color: {{ site_config.service_icon_fgcolor|default:'#fff' }};"></i>
                     </div>
+                    <div class="service-number">0{{ forloop.counter }}</div>
                 </div>
+
+                <!-- Título y descripción -->
+                <div class="service-text">
+                    <h4 class="service-title">{{ service.title }}</h4>
+                    <div class="service-divider"></div>
+                    <p class="service-description">
+                        {{ service.description|linebreaksbr }}
+                    </p>
+                </div>
+
+                <!-- Botón de adjunto si existe -->
                 {% if service.attachment_html %}
-                    <button type="button" class="btn btn-sm mt-2 mb-2" data-bs-toggle="modal" data-bs-target="#attachmentModal{{ service.id }}" style="background-color: #003466; color: #fff; border: none; box-shadow: 0 2px 8px rgba(2,25,122,0.08); transition: background-color 0.2s, box-shadow 0.2s;"
-                        onmouseover="this.style.boxShadow='0 8px 24px rgba(2,25,122,0.18)';" onmouseout="this.style.boxShadow='0 2px 8px rgba(2,25,122,0.08)';">
-                        Ver adjunto de {{ service.title }}
+                <div class="service-action">
+                    <button type="button"
+                            class="btn-service-detail"
+                            data-bs-toggle="modal"
+                            data-bs-target="#attachmentModal{{ service.id }}">
+                        <span>Ver más detalles</span>
+                        <i class="fas fa-arrow-right"></i>
                     </button>
-                    <!-- Modal para archivo adjunto -->
-                    <div class="modal fade" id="attachmentModal{{ service.id }}" tabindex="-1" aria-labelledby="attachmentModalLabel{{ service.id }}" aria-hidden="true">
-                        <div class="modal-dialog modal-lg modal-dialog-centered">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="attachmentModalLabel{{ service.id }}">Archivo adjunto - {{ service.title }}</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-                                </div>
-                                <div class="modal-body">
-                                    <div class="attachment-preview">
-                                        {{ service.attachment_html|safe }}
-                                    </div>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                </div>
                 {% endif %}
             </div>
-            {% empty %}
-                <p class="text-center text-muted">No hay servicios disponibles.</p>
-            {% endfor %}
+
+            <!-- Decoración de esquina -->
+            <div class="service-corner"></div>
         </div>
+        {% empty %}
+        <div class="col-12">
+            <p class="text-center text-muted py-5">No hay servicios disponibles.</p>
+        </div>
+        {% endfor %}
+    </div>
 </div>
+
+<!-- Modales para archivos adjuntos -->
+{% for service in services %}
+{% if service.attachment_html %}
+<div class="modal fade" id="attachmentModal{{ service.id }}" tabindex="-1" aria-labelledby="attachmentModalLabel{{ service.id }}" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content" style="border-radius: 1.5rem; overflow: hidden;">
+            <div class="modal-header" style="background: linear-gradient(135deg, #003466 0%, #0056b3 100%); border: none;">
+                <h5 class="modal-title text-white" id="attachmentModalLabel{{ service.id }}">
+                    <i class="fas {{ service.icon }} me-2"></i>{{ service.title }}
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body p-4">
+                <div class="attachment-preview">
+                    {{ service.attachment_html|safe }}
+                </div>
+            </div>
+            <div class="modal-footer" style="border: none;">
+                <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal" style="border-radius: 0.75rem;">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endfor %}
+
+<style>
+/* ========================================
+   SECCIÓN SERVICIOS - DISEÑO PREMIUM
+======================================== */
+
+/* Fondo de la sección con gradiente y decoraciones */
+#services {
+    position: relative;
+    background: linear-gradient(180deg, #f8fafc 0%, #eef4fb 50%, #e8f0f8 100%);
+    overflow: hidden;
+}
+
+/* Patrón de puntos sutiles */
+#services::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(circle at 1px 1px, rgba(0, 52, 102, 0.03) 1px, transparent 0);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* Decoración de ondas en la parte superior */
+#services::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 150px;
+    background: linear-gradient(180deg, white 0%, transparent 100%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* Container con z-index para estar sobre las decoraciones */
+#services > .container {
+    position: relative;
+    z-index: 1;
+}
+
+/* Decoración flotante izquierda */
+.services-decoration-left {
+    position: absolute;
+    top: 15%;
+    left: -100px;
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, rgba(0, 86, 179, 0.08) 0%, transparent 70%);
+    border-radius: 50%;
+    filter: blur(40px);
+    animation: floatDecorationSlow 15s ease-in-out infinite;
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* Decoración flotante derecha */
+.services-decoration-right {
+    position: absolute;
+    bottom: 10%;
+    right: -80px;
+    width: 350px;
+    height: 350px;
+    background: radial-gradient(circle, rgba(0, 119, 204, 0.06) 0%, transparent 70%);
+    border-radius: 50%;
+    filter: blur(50px);
+    animation: floatDecorationSlow 18s ease-in-out infinite reverse;
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* Decoración geométrica superior derecha */
+.services-decoration-geometric {
+    position: absolute;
+    top: 80px;
+    right: 5%;
+    width: 120px;
+    height: 120px;
+    border: 2px solid rgba(0, 52, 102, 0.06);
+    border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+    animation: morphShape 20s ease-in-out infinite;
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* Decoración geométrica inferior izquierda */
+.services-decoration-geometric-2 {
+    position: absolute;
+    bottom: 15%;
+    left: 8%;
+    width: 80px;
+    height: 80px;
+    border: 2px solid rgba(0, 86, 179, 0.05);
+    border-radius: 50%;
+    animation: pulseDecoration 8s ease-in-out infinite;
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* Líneas decorativas diagonales */
+.services-lines-decoration {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 40%;
+    height: 100%;
+    background: repeating-linear-gradient(
+        -45deg,
+        transparent,
+        transparent 80px,
+        rgba(0, 52, 102, 0.015) 80px,
+        rgba(0, 52, 102, 0.015) 81px
+    );
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* Animaciones para decoraciones */
+@keyframes floatDecorationSlow {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    25% { transform: translate(20px, -30px) scale(1.05); }
+    50% { transform: translate(-10px, -20px) scale(0.95); }
+    75% { transform: translate(15px, 10px) scale(1.02); }
+}
+
+@keyframes morphShape {
+    0%, 100% { border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%; transform: rotate(0deg); }
+    25% { border-radius: 58% 42% 75% 25% / 76% 46% 54% 24%; }
+    50% { border-radius: 50% 50% 33% 67% / 55% 27% 73% 45%; transform: rotate(90deg); }
+    75% { border-radius: 33% 67% 58% 42% / 63% 68% 32% 37%; }
+}
+
+@keyframes pulseDecoration {
+    0%, 100% { transform: scale(1); opacity: 0.5; }
+    50% { transform: scale(1.2); opacity: 0.8; }
+}
+
+/* Badge de sección */
+.section-badge {
+    display: block;
+    width: fit-content;
+    margin-left: auto;
+    margin-right: auto;
+    background: linear-gradient(135deg, var(--primary-100, #cfe2ff) 0%, var(--primary-50, #e7f1ff) 100%);
+    color: var(--primary-700, #003466);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 0.6rem 1.5rem;
+    border-radius: 50px;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 2px 10px rgba(0, 52, 102, 0.08);
+}
+
+/* Divisor de puntos */
+.divider-dots {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.divider-dots span {
+    width: 8px;
+    height: 8px;
+    background: linear-gradient(135deg, #003466, #0056b3);
+    border-radius: 50%;
+    opacity: 0.6;
+}
+
+.divider-dots span:nth-child(2) {
+    width: 12px;
+    height: 12px;
+    opacity: 1;
+}
+
+/* Section heading mejorado */
+#services .section-heading {
+    color: #003466;
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin-bottom: 0.75rem;
+    letter-spacing: -0.02em;
+}
+
+#services .section-subheading {
+    font-size: 1.1rem;
+    color: #64748b;
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+/* Header de servicios */
+.services-header {
+    padding-top: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.services-header .section-badge {
+    margin-bottom: 1.25rem;
+}
+
+.services-header .section-heading {
+    margin-top: 0;
+    margin-bottom: 0.75rem;
+    display: block;
+    width: 100%;
+}
+
+.services-header .section-subheading {
+    margin-bottom: 0;
+    display: block;
+    width: 100%;
+}
+
+.services-header .divider-dots {
+    margin-top: 1.5rem;
+}
+
+/* Grid de servicios */
+.services-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 2rem;
+    padding: 1rem 0;
+}
+
+/* Card de servicio moderna */
+.service-card-modern {
+    position: relative;
+    background: linear-gradient(180deg, #ffffff 0%, #fafcff 100%);
+    border-radius: 1.5rem;
+    padding: 2rem;
+    box-shadow:
+        0 4px 6px rgba(0, 52, 102, 0.04),
+        0 10px 20px rgba(0, 52, 102, 0.08),
+        0 1px 3px rgba(0, 52, 102, 0.06);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(10px);
+}
+
+/* Borde gradiente sutil */
+.service-card-modern::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, transparent 0%, rgba(0, 86, 179, 0.3) 50%, transparent 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.service-card-modern:hover::before {
+    opacity: 1;
+}
+
+.service-card-modern:hover {
+    transform: translateY(-12px);
+    box-shadow:
+        0 8px 12px rgba(0, 52, 102, 0.06),
+        0 20px 40px rgba(0, 52, 102, 0.12),
+        0 30px 60px rgba(0, 86, 179, 0.1);
+    background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+}
+
+/* Card offset para efecto escalonado */
+.service-card-modern.offset-card {
+    margin-top: 2rem;
+}
+
+@media (max-width: 768px) {
+    .service-card-modern.offset-card {
+        margin-top: 0;
+    }
+}
+
+/* Icono de fondo decorativo */
+.service-bg-icon {
+    position: absolute;
+    top: -20px;
+    right: -20px;
+    font-size: 8rem;
+    opacity: 0.03;
+    color: #003466;
+    transition: all 0.4s ease;
+    pointer-events: none;
+}
+
+.service-card-modern:hover .service-bg-icon {
+    opacity: 0.08;
+    transform: scale(1.1) rotate(10deg);
+}
+
+/* Contenido de la card */
+.service-card-content {
+    position: relative;
+    z-index: 1;
+}
+
+/* Wrapper del icono */
+.service-icon-wrapper {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+}
+
+/* Icono principal */
+.service-icon {
+    width: 70px;
+    height: 70px;
+    border-radius: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.75rem;
+    box-shadow: 0 8px 25px rgba(0, 52, 102, 0.25);
+    transition: all 0.3s ease;
+}
+
+.service-card-modern:hover .service-icon {
+    transform: scale(1.1) rotate(-5deg);
+    box-shadow: 0 12px 35px rgba(0, 52, 102, 0.35);
+}
+
+/* Número del servicio */
+.service-number {
+    font-size: 3rem;
+    font-weight: 800;
+    color: rgba(0, 52, 102, 0.08);
+    line-height: 1;
+    transition: all 0.3s ease;
+}
+
+.service-card-modern:hover .service-number {
+    color: rgba(0, 86, 179, 0.15);
+}
+
+/* Texto del servicio */
+.service-text {
+    margin-bottom: 1.5rem;
+}
+
+.service-title {
+    color: #003466;
+    font-weight: 700;
+    font-size: 1.35rem;
+    margin-bottom: 0.75rem;
+    transition: color 0.3s ease;
+}
+
+.service-card-modern:hover .service-title {
+    color: #0056b3;
+}
+
+.service-divider {
+    width: 50px;
+    height: 3px;
+    background: linear-gradient(90deg, #003466, #0056b3);
+    border-radius: 2px;
+    margin-bottom: 1rem;
+    transition: width 0.3s ease;
+}
+
+.service-card-modern:hover .service-divider {
+    width: 80px;
+}
+
+.service-description {
+    color: #5a6a7a;
+    font-size: 0.95rem;
+    line-height: 1.7;
+    text-align: left;
+    margin: 0;
+}
+
+/* Botón de acción */
+.service-action {
+    margin-top: auto;
+}
+
+.btn-service-detail {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: transparent;
+    border: 2px solid #003466;
+    color: #003466;
+    padding: 0.6rem 1.25rem;
+    border-radius: 50px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-service-detail:hover {
+    background: #003466;
+    color: white;
+    transform: translateX(5px);
+}
+
+.btn-service-detail i {
+    transition: transform 0.3s ease;
+}
+
+.btn-service-detail:hover i {
+    transform: translateX(5px);
+}
+
+/* Decoración de esquina */
+.service-corner {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100px;
+    height: 100px;
+    background: linear-gradient(135deg, transparent 50%, rgba(0, 86, 179, 0.05) 50%);
+    transition: all 0.4s ease;
+}
+
+.service-card-modern:hover .service-corner {
+    width: 120px;
+    height: 120px;
+    background: linear-gradient(135deg, transparent 50%, rgba(0, 86, 179, 0.1) 50%);
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+    /* Reducir decoraciones en tablet */
+    .services-decoration-left,
+    .services-decoration-right {
+        opacity: 0.5;
+    }
+
+    .services-decoration-geometric,
+    .services-decoration-geometric-2 {
+        display: none;
+    }
+
+    .services-lines-decoration {
+        width: 30%;
+        opacity: 0.5;
+    }
+}
+
+@media (max-width: 576px) {
+    /* Ocultar decoraciones en móvil */
+    .services-decoration-left,
+    .services-decoration-right,
+    .services-lines-decoration {
+        display: none;
+    }
+
+    /* Simplificar el fondo en móvil */
+    #services {
+        background: linear-gradient(180deg, #f9fafb 0%, #f1f5f9 100%);
+    }
+
+    #services::before {
+        background-size: 30px 30px;
+        opacity: 0.5;
+    }
+
+    .services-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+
+    .service-card-modern {
+        padding: 1.5rem;
+    }
+
+    .service-icon {
+        width: 60px;
+        height: 60px;
+        font-size: 1.5rem;
+    }
+
+    .service-number {
+        font-size: 2.5rem;
+    }
+
+    .service-title {
+        font-size: 1.2rem;
+    }
+
+    .service-bg-icon {
+        font-size: 6rem;
+    }
+}
+</style>

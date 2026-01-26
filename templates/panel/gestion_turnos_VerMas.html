@@ -1,555 +1,652 @@
 <style>
-    .section-container {
-        margin-bottom: 1.5rem;
+    /* Reset y Base */
+    .modal-turno {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     }
 
-    .section-header {
+    /* Header minimalista */
+    .turno-header {
+        background: var(--theme-primary);
+        padding: 1.25rem 1.5rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .turno-header-left {
         display: flex;
         align-items: center;
-        margin-bottom: 1rem;
-        padding-bottom: 0.5rem;
-        border-bottom: 2px solid var(--theme-primary);
+        gap: 1rem;
     }
 
-    .section-title {
-        margin: 0;
+    .turno-codigo {
+        font-family: 'Courier New', monospace;
         font-size: 1.1rem;
+        font-weight: 700;
+        color: white;
+        background: rgba(255,255,255,0.15);
+        padding: 0.4rem 0.75rem;
+        border-radius: 6px;
+        letter-spacing: 1px;
+    }
+
+    .turno-estado {
+        padding: 0.3rem 0.65rem;
+        border-radius: 4px;
+        font-size: 0.75rem;
         font-weight: 600;
-        color: #2c3e50;
-    }
-
-    .card.border-light {
-        border: 1px solid #e0e0e0 !important;
-        border-radius: 0.5rem;
-    }
-
-    .card-body.bg-section {
-        background-color: #fafafa;
-    }
-
-    .btn-orange {
-        background-color: var(--theme-primary);
-        border-color: var(--theme-primary);
-        color: white;
-        font-weight: 500;
-        transition: all 0.3s ease;
-    }
-
-    .btn-orange:hover {
-        background-color: var(--theme-primary-dark);
-        border-color: var(--theme-primary-dark);
-        color: white;
-    }
-
-    .btn-outline-orange {
-        border-color: var(--theme-primary);
-        color: var(--theme-primary);
-        background: transparent;
-    }
-
-    .btn-outline-orange:hover {
-        background-color: var(--theme-primary);
-        border-color: var(--theme-primary);
-        color: white;
-    }
-
-    .info-card {
-        background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
-        border: 1px solid #e9ecef;
-        border-radius: 0.5rem;
-        padding: 1rem;
-        margin-bottom: 0.75rem;
-        transition: all 0.2s ease;
-    }
-
-    .info-card:hover {
-        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-        border-color: var(--theme-primary);
-    }
-
-    .info-label {
-        font-size: 0.8rem;
-        color: #6c757d;
-        font-weight: 500;
         text-transform: uppercase;
-        letter-spacing: 0.5px;
-        margin-bottom: 0.25rem;
+    }
+
+    .turno-estado.pendiente { background: #fef3c7; color: #92400e; }
+    .turno-estado.confirmado { background: #d1fae5; color: #065f46; }
+    .turno-estado.en_curso { background: #dbeafe; color: #1e40af; }
+    .turno-estado.completado { background: #059669; color: white; }
+    .turno-estado.cancelado { background: #fee2e2; color: #991b1b; }
+    .turno-estado.no_asistio { background: #6b7280; color: white; }
+
+    .turno-header .close-btn {
+        background: rgba(255,255,255,0.15);
+        border: none;
+        color: white;
+        width: 32px;
+        height: 32px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 1.25rem;
         display: flex;
         align-items: center;
+        justify-content: center;
+        transition: background 0.2s;
     }
 
-    .info-label i {
-        margin-right: 0.5rem;
-        color: var(--theme-primary);
+    .turno-header .close-btn:hover {
+        background: rgba(255,255,255,0.25);
+    }
+
+    /* Body */
+    .turno-body {
+        padding: 1.5rem;
+        max-height: 70vh;
+        overflow-y: auto;
+    }
+
+    /* Alerta Atencion */
+    .atencion-alert {
+        background: #ecfdf5;
+        border-left: 4px solid #10b981;
+        padding: 0.875rem 1rem;
+        margin-bottom: 1.5rem;
+        border-radius: 0 8px 8px 0;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .atencion-alert i {
+        color: #10b981;
+        font-size: 1.25rem;
+    }
+
+    .atencion-alert-content {
+        flex: 1;
+    }
+
+    .atencion-alert-title {
+        font-weight: 600;
+        color: #065f46;
         font-size: 0.9rem;
     }
 
-    .info-value {
-        font-size: 1rem;
-        color: #2c3e50;
-        font-weight: 600;
+    .atencion-alert-meta {
+        font-size: 0.8rem;
+        color: #047857;
+        margin-top: 0.15rem;
     }
 
-    .info-value.empty {
-        color: #adb5bd;
+    /* Secciones */
+    .section {
+        margin-bottom: 1.5rem;
+    }
+
+    .section:last-child {
+        margin-bottom: 0;
+    }
+
+    .section-header {
+        font-size: 0.7rem;
+        font-weight: 600;
+        color: #94a3b8;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 0.75rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .section-header i {
+        color: var(--theme-primary);
+    }
+
+    /* Grid de datos */
+    .data-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.875rem;
+    }
+
+    .data-item {
+        min-width: 0;
+    }
+
+    .data-item.full {
+        grid-column: 1 / -1;
+    }
+
+    .data-item.highlight {
+        background: var(--theme-primary);
+        padding: 0.75rem;
+        border-radius: 8px;
+    }
+
+    .data-item.highlight .data-label,
+    .data-item.highlight .data-value {
+        color: white;
+    }
+
+    .data-label {
+        font-size: 0.7rem;
+        color: #94a3b8;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+        margin-bottom: 0.2rem;
+    }
+
+    .data-value {
+        font-size: 0.95rem;
+        color: #1e293b;
+        font-weight: 500;
+        word-break: break-word;
+    }
+
+    .data-value.large {
+        font-size: 1.15rem;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+    }
+
+    .data-value.muted {
+        color: #94a3b8;
         font-style: italic;
         font-weight: 400;
     }
 
-    .shadow-sm {
-        box-shadow: 0 0.125rem 0.5rem rgba(0, 0, 0, 0.075) !important;
+    /* Divider */
+    .divider {
+        height: 1px;
+        background: #e2e8f0;
+        margin: 1.25rem 0;
     }
 
-    .badge-estado {
-        display: inline-block;
-        padding: 6px 12px;
-        font-size: 12px;
-        font-weight: 600;
-        border-radius: 4px;
-    }
-
-    .badge-pendiente {
-        background-color: #fff3cd;
-        color: #856404;
-    }
-
-    .badge-confirmado {
-        background-color: #d4edda;
-        color: #155724;
-    }
-
-    .badge-en-curso {
-        background-color: #cce5ff;
-        color: #004085;
-    }
-
-    .badge-completado {
-        background-color: #28a745;
-        color: white;
-    }
-
-    .badge-cancelado {
-        background-color: #f8d7da;
-        color: #721c24;
-    }
-
-    .badge-no-asistio {
-        background-color: #6c757d;
-        color: white;
-    }
-
-    .qr-container {
-        text-align: center;
-        padding: 1rem;
-        background: #f8f9fa;
-        border-radius: 0.5rem;
-    }
-
-    .qr-container img {
-        max-width: 150px;
-        border: 2px solid var(--theme-primary);
-        border-radius: 8px;
-        padding: 5px;
-        background: white;
-    }
-
-    .historial-item {
-        padding: 10px 15px;
-        border-left: 3px solid var(--theme-primary);
-        background: #f8f9fa;
-        margin-bottom: 10px;
-        border-radius: 0 4px 4px 0;
-    }
-
-    .historial-item .fecha {
-        font-size: 0.8rem;
-        color: #6c757d;
-    }
-
-    .historial-item .accion {
-        font-weight: 600;
-        color: #2c3e50;
-    }
-
-    .historial-item .descripcion {
-        font-size: 0.9rem;
-        color: #495057;
-    }
-
-    .notificacion-badge {
-        display: inline-flex;
+    /* Info row compacta */
+    .info-row-compact {
+        display: flex;
+        justify-content: space-between;
         align-items: center;
-        gap: 5px;
-        padding: 4px 10px;
-        border-radius: 20px;
-        font-size: 12px;
+        padding: 0.5rem 0;
+        border-bottom: 1px solid #f1f5f9;
+        font-size: 0.85rem;
+    }
+
+    .info-row-compact:last-child {
+        border-bottom: none;
+    }
+
+    .info-row-compact .label {
+        color: #64748b;
+    }
+
+    .info-row-compact .label i {
+        width: 18px;
+        margin-right: 0.4rem;
+    }
+
+    .info-row-compact .value {
+        font-weight: 500;
+        color: #1e293b;
+    }
+
+    .info-row-compact .badge {
+        font-size: 0.7rem;
+        padding: 0.2rem 0.5rem;
+        border-radius: 10px;
         font-weight: 500;
     }
 
-    .notificacion-enviado {
-        background-color: #d4edda;
-        color: #155724;
+    .info-row-compact .badge.success {
+        background: #d1fae5;
+        color: #065f46;
     }
 
-    .notificacion-pendiente {
-        background-color: #fff3cd;
-        color: #856404;
+    .info-row-compact .badge.warning {
+        background: #fef3c7;
+        color: #92400e;
+    }
+
+    /* QR mini */
+    .qr-mini {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        background: #f8fafc;
+        padding: 0.75rem;
+        border-radius: 8px;
+        border: 1px solid #e2e8f0;
+    }
+
+    .qr-mini img {
+        width: 70px;
+        height: 70px;
+        border-radius: 6px;
+        border: 2px solid var(--theme-primary);
+    }
+
+    .qr-mini-text {
+        font-size: 0.8rem;
+        color: #64748b;
+    }
+
+    /* Historial compacto */
+    .historial-compact {
+        max-height: 150px;
+        overflow-y: auto;
+    }
+
+    .historial-entry {
+        padding: 0.5rem 0;
+        border-bottom: 1px solid #f1f5f9;
+        font-size: 0.8rem;
+    }
+
+    .historial-entry:last-child {
+        border-bottom: none;
+    }
+
+    .historial-entry-action {
+        font-weight: 600;
+        color: #1e293b;
+    }
+
+    .historial-entry-desc {
+        color: #64748b;
+        margin-top: 0.15rem;
+    }
+
+    .historial-entry-meta {
+        color: #94a3b8;
+        font-size: 0.7rem;
+        margin-top: 0.25rem;
+    }
+
+    /* Footer */
+    .turno-footer {
+        padding: 1rem 1.5rem;
+        background: #f8fafc;
+        border-top: 1px solid #e2e8f0;
+        display: flex;
+        justify-content: flex-end;
+        gap: 0.5rem;
+    }
+
+    .turno-footer .btn {
+        padding: 0.5rem 1rem;
+        font-size: 0.85rem;
+    }
+
+    /* Layout dos columnas */
+    .two-cols {
+        display: grid;
+        grid-template-columns: 1fr 280px;
+        gap: 1.5rem;
+    }
+
+    .col-main {
+        min-width: 0;
+    }
+
+    .col-side {
+        min-width: 0;
+    }
+
+    /* ===================== */
+    /* RESPONSIVE            */
+    /* ===================== */
+
+    @media (max-width: 992px) {
+        .two-cols {
+            grid-template-columns: 1fr;
+        }
+
+        .col-side {
+            order: -1;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .turno-header {
+            padding: 1rem;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+        }
+
+        .turno-header-left {
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .turno-codigo {
+            font-size: 1rem;
+        }
+
+        .turno-body {
+            padding: 1rem;
+            max-height: 65vh;
+        }
+
+        .data-grid {
+            grid-template-columns: 1fr;
+            gap: 0.75rem;
+        }
+
+        .data-item.highlight {
+            padding: 0.65rem;
+        }
+
+        .atencion-alert {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.5rem;
+        }
+
+        .qr-mini {
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .turno-footer {
+            padding: 0.875rem 1rem;
+            flex-wrap: wrap;
+        }
+
+        .turno-footer .btn {
+            flex: 1;
+            min-width: 120px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .turno-header {
+            padding: 0.875rem;
+        }
+
+        .turno-codigo {
+            font-size: 0.9rem;
+            padding: 0.35rem 0.6rem;
+        }
+
+        .turno-estado {
+            font-size: 0.7rem;
+        }
+
+        .turno-body {
+            padding: 0.875rem;
+        }
+
+        .section-header {
+            font-size: 0.65rem;
+        }
+
+        .data-label {
+            font-size: 0.65rem;
+        }
+
+        .data-value {
+            font-size: 0.875rem;
+        }
+
+        .data-value.large {
+            font-size: 1rem;
+        }
+
+        .info-row-compact {
+            font-size: 0.8rem;
+        }
+
+        .turno-footer .btn {
+            padding: 0.45rem 0.75rem;
+            font-size: 0.8rem;
+        }
     }
 </style>
 
-<div class="modal-header" style="background: linear-gradient(135deg, var(--theme-primary) 0%, var(--theme-primary-dark) 100%);">
-    <h5 class="modal-title text-white">
-        <i class="fa fa-calendar-check-o me-2"></i>Detalle del Turno: {{ turno.codigo }}
-    </h5>
-    <button type="button" class="close text-white" onclick="$('#modal-lg').modal('hide');" aria-label="Cerrar">
-        <span aria-hidden="true">&times;</span>
-    </button>
-</div>
-
-<div class="modal-body">
-    <!-- Estado del Turno -->
-    <div class="section-container mb-4">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <span class="badge-estado
-                {% if turno.estado == 'PENDIENTE' %}badge-pendiente
-                {% elif turno.estado == 'CONFIRMADO' %}badge-confirmado
-                {% elif turno.estado == 'EN_CURSO' %}badge-en-curso
-                {% elif turno.estado == 'COMPLETADO' %}badge-completado
-                {% elif turno.estado == 'CANCELADO' %}badge-cancelado
-                {% elif turno.estado == 'NO_ASISTIO' %}badge-no-asistio
-                {% endif %}">
-                {{ turno.get_estado_display }}
-            </span>
-            <span class="text-muted small">
-                <i class="fa fa-clock-o me-1"></i>Creado: {{ turno.created_at|date:"d/m/Y H:i" }}
-            </span>
+<div class="modal-turno">
+    <!-- Header -->
+    <div class="turno-header">
+        <div class="turno-header-left">
+            <span class="turno-codigo">{{ turno.codigo }}</span>
+            <span class="turno-estado {{ turno.estado|lower }}">{{ turno.get_estado_display }}</span>
         </div>
+        <button type="button" class="close-btn" onclick="$('#modal-lg').modal('hide');">
+            <i class="fa fa-times"></i>
+        </button>
     </div>
 
-    <!-- Fila 1: Datos del Cliente + Código QR (misma altura) -->
-    <div class="row align-items-stretch mb-4">
-        <!-- Datos del Cliente -->
-        <div class="col-lg-8">
-            <div class="section-container h-100 mb-0">
-                <div class="section-header">
-                    <i class="fa fa-user text-primary me-2"></i>
-                    <h6 class="section-title">Datos del Cliente</h6>
-                </div>
-
-                <div class="card border-light shadow-sm h-100">
-                    <div class="card-body bg-section p-3">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="info-card">
-                                    <div class="info-label">
-                                        <i class="fa fa-user"></i> Nombre Completo
-                                    </div>
-                                    <div class="info-value">{{ turno.cliente.nombre }} {{ turno.cliente.apellido }}</div>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="info-card">
-                                    <div class="info-label">
-                                        <i class="fa fa-id-card"></i> DNI
-                                    </div>
-                                    <div class="info-value">{{ turno.cliente.dni }}</div>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="info-card">
-                                    <div class="info-label">
-                                        <i class="fa fa-envelope"></i> Email
-                                    </div>
-                                    <div class="info-value {% if not turno.cliente.email %}empty{% endif %}">
-                                        {{ turno.cliente.email|default:"No registrado" }}
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="info-card">
-                                    <div class="info-label">
-                                        <i class="fa fa-phone"></i> Teléfono
-                                    </div>
-                                    <div class="info-value {% if not turno.cliente.celular %}empty{% endif %}">
-                                        {{ turno.cliente.celular|default:"No registrado" }}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+    <!-- Body -->
+    <div class="turno-body">
+        <!-- Alerta si fue atendido -->
+        {% if turno.atendido_por %}
+        <div class="atencion-alert">
+            <i class="fa fa-check-circle"></i>
+            <div class="atencion-alert-content">
+                <div class="atencion-alert-title">Atendido por {{ turno.atendido_por.get_full_name|default:turno.atendido_por.username }}</div>
+                <div class="atencion-alert-meta">{{ turno.fecha_atencion|date:"d/m/Y" }} a las {{ turno.fecha_atencion|time:"H:i" }}</div>
             </div>
         </div>
+        {% endif %}
 
-        <!-- Código QR -->
-        <div class="col-lg-4">
-            {% if turno.qr_code %}
-            <div class="section-container h-100 mb-0">
-                <div class="section-header">
-                    <i class="fa fa-qrcode text-primary me-2"></i>
-                    <h6 class="section-title">Código QR</h6>
-                </div>
-
-                <div class="qr-container h-100 d-flex flex-column justify-content-center align-items-center">
-                    <img src="{{ turno.qr_code.url }}" alt="QR del Turno" class="img-fluid mx-auto d-block">
-                    <p class="text-muted small mt-2 mb-0 text-center">Escanear para verificar turno</p>
-                </div>
-            </div>
-            {% endif %}
-        </div>
-    </div>
-
-    <div class="row">
-        <!-- Columna Izquierda -->
-        <div class="col-lg-8">
-
-            <!-- Datos del Vehículo -->
-            <div class="section-container mb-4">
-                <div class="section-header">
-                    <i class="fa fa-car text-primary me-2"></i>
-                    <h6 class="section-title">Datos del Vehículo</h6>
-                </div>
-
-                <div class="card border-light shadow-sm">
-                    <div class="card-body bg-section p-3">
-                        <div class="row">
-                            <div class="col-md-4">
-                                <div class="info-card">
-                                    <div class="info-label">
-                                        <i class="fa fa-hashtag"></i> Dominio
-                                    </div>
-                                    <div class="info-value">{{ turno.vehiculo.dominio }}</div>
-                                </div>
+        <div class="two-cols">
+            <!-- Columna Principal -->
+            <div class="col-main">
+                <!-- Cliente -->
+                <div class="section">
+                    <div class="section-header">
+                        <i class="fa fa-user"></i> Cliente
+                    </div>
+                    <div class="data-grid">
+                        <div class="data-item">
+                            <div class="data-label">Nombre</div>
+                            <div class="data-value">{{ turno.cliente.nombre }} {{ turno.cliente.apellido }}</div>
+                        </div>
+                        <div class="data-item">
+                            <div class="data-label">DNI</div>
+                            <div class="data-value">{{ turno.cliente.dni }}</div>
+                        </div>
+                        <div class="data-item">
+                            <div class="data-label">Telefono</div>
+                            <div class="data-value {% if not turno.cliente.celular %}muted{% endif %}">
+                                {{ turno.cliente.celular|default:"No registrado" }}
                             </div>
-                            <div class="col-md-4">
-                                <div class="info-card">
-                                    <div class="info-label">
-                                        <i class="fa fa-industry"></i> Marca
-                                    </div>
-                                    <div class="info-value">{{ turno.vehiculo.marca|default:"-" }}</div>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="info-card">
-                                    <div class="info-label">
-                                        <i class="fa fa-car"></i> Modelo
-                                    </div>
-                                    <div class="info-value">{{ turno.vehiculo.modelo|default:"-" }}</div>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="info-card">
-                                    <div class="info-label">
-                                        <i class="fa fa-tag"></i> Tipo de Trámite
-                                    </div>
-                                    <div class="info-value">{{ turno.tipo_vehiculo.nombre_normalizado }}</div>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="info-card">
-                                    <div class="info-label">
-                                        <i class="fa fa-calendar"></i> Año
-                                    </div>
-                                    <div class="info-value {% if not turno.vehiculo.anio %}empty{% endif %}">
-                                        {{ turno.vehiculo.anio|default:"No registrado" }}
-                                    </div>
-                                </div>
+                        </div>
+                        <div class="data-item">
+                            <div class="data-label">Email</div>
+                            <div class="data-value {% if not turno.cliente.email %}muted{% endif %}">
+                                {{ turno.cliente.email|default:"No registrado" }}
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Datos del Turno -->
-            <div class="section-container mb-4">
-                <div class="section-header">
-                    <i class="fa fa-calendar text-primary me-2"></i>
-                    <h6 class="section-title">Información del Turno</h6>
-                </div>
+                <div class="divider"></div>
 
-                <div class="card border-light shadow-sm">
-                    <div class="card-body bg-section p-3">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="info-card">
-                                    <div class="info-label">
-                                        <i class="fa fa-building"></i> Taller
-                                    </div>
-                                    <div class="info-value">{{ turno.taller.get_nombre }}</div>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="info-card">
-                                    <div class="info-label">
-                                        <i class="fa fa-map-marker"></i> Dirección del Taller
-                                    </div>
-                                    <div class="info-value {% if not turno.taller.get_direccion %}empty{% endif %}">
-                                        {{ turno.taller.get_direccion|default:"No especificada" }}
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="info-card">
-                                    <div class="info-label">
-                                        <i class="fa fa-calendar"></i> Fecha
-                                    </div>
-                                    <div class="info-value">{{ turno.fecha|date:"d/m/Y" }}</div>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="info-card">
-                                    <div class="info-label">
-                                        <i class="fa fa-clock-o"></i> Horario
-                                    </div>
-                                    <div class="info-value">{{ turno.hora_inicio|time:"H:i" }} - {{ turno.hora_fin|time:"H:i" }}</div>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="info-card">
-                                    <div class="info-label">
-                                        <i class="fa fa-hourglass-half"></i> Días para el turno
-                                    </div>
-                                    <div class="info-value">
-                                        {% if turno.dias_para_turno > 0 %}
-                                            {{ turno.dias_para_turno }} día(s)
-                                        {% elif turno.dias_para_turno == 0 %}
-                                            <span class="text-warning">Hoy</span>
-                                        {% else %}
-                                            <span class="text-muted">Ya pasó</span>
-                                        {% endif %}
-                                    </div>
-                                </div>
+                <!-- Vehiculo -->
+                <div class="section">
+                    <div class="section-header">
+                        <i class="fa fa-car"></i> Vehiculo
+                    </div>
+                    <div class="data-grid">
+                        <div class="data-item highlight">
+                            <div class="data-label">Dominio</div>
+                            <div class="data-value large">{{ turno.vehiculo.dominio }}</div>
+                        </div>
+                        <div class="data-item">
+                            <div class="data-label">Marca / Modelo</div>
+                            <div class="data-value">{{ turno.vehiculo.marca|default:"-" }} {{ turno.vehiculo.modelo|default:"" }}</div>
+                        </div>
+                        <div class="data-item">
+                            <div class="data-label">GNC</div>
+                            <div class="data-value">
+                                {% if turno.vehiculo.tiene_gnc %}
+                                <span style="color: #f59e0b;"><i class="fa fa-check-circle"></i> Si</span>
+                                {% else %}
+                                <span class="muted">No</span>
+                                {% endif %}
                             </div>
                         </div>
-
-                        {% if turno.observaciones %}
-                        <div class="row mt-3">
-                            <div class="col-12">
-                                <div class="info-card">
-                                    <div class="info-label">
-                                        <i class="fa fa-comment"></i> Observaciones
-                                    </div>
-                                    <div class="info-value">{{ turno.observaciones }}</div>
-                                </div>
-                            </div>
-                        </div>
-                        {% endif %}
                     </div>
                 </div>
-            </div>
 
-            <!-- Historial del Turno -->
-            {% if turno.historial.exists %}
-            <div class="section-container mb-4">
-                <div class="section-header">
-                    <i class="fa fa-history text-primary me-2"></i>
-                    <h6 class="section-title">Historial de Acciones</h6>
+                <div class="divider"></div>
+
+                <!-- Turno -->
+                <div class="section">
+                    <div class="section-header">
+                        <i class="fa fa-calendar"></i> Turno
+                    </div>
+                    <div class="data-grid">
+                        <div class="data-item">
+                            <div class="data-label">Fecha</div>
+                            <div class="data-value">{{ turno.fecha|date:"d/m/Y" }}</div>
+                        </div>
+                        <div class="data-item">
+                            <div class="data-label">Horario</div>
+                            <div class="data-value">{{ turno.hora_inicio|time:"H:i" }} - {{ turno.hora_fin|time:"H:i" }}</div>
+                        </div>
+                        <div class="data-item">
+                            <div class="data-label">Taller</div>
+                            <div class="data-value">{{ turno.taller.get_nombre }}</div>
+                        </div>
+                        <div class="data-item">
+                            <div class="data-label">Tipo Tramite</div>
+                            <div class="data-value">{{ turno.tipo_vehiculo.nombre_normalizado }}</div>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="card border-light shadow-sm">
-                    <div class="card-body bg-section p-3">
+                {% if turno.observaciones %}
+                <div class="divider"></div>
+                <div class="section">
+                    <div class="section-header">
+                        <i class="fa fa-comment"></i> Observaciones
+                    </div>
+                    <div class="data-value">{{ turno.observaciones }}</div>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Columna Lateral -->
+            <div class="col-side">
+                <!-- QR -->
+                {% if turno.qr_code %}
+                <div class="section">
+                    <div class="qr-mini">
+                        <img src="{{ turno.qr_code.url }}" alt="QR">
+                        <div class="qr-mini-text">
+                            <strong>Codigo QR</strong><br>
+                            Escanear para verificar
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Notificaciones -->
+                <div class="section">
+                    <div class="section-header">
+                        <i class="fa fa-bell"></i> Notificaciones
+                    </div>
+                    <div class="info-row-compact">
+                        <span class="label"><i class="fa fa-envelope"></i>Email</span>
+                        <span class="badge {% if turno.email_enviado %}success{% else %}warning{% endif %}">
+                            {% if turno.email_enviado %}Enviado{% else %}Pendiente{% endif %}
+                        </span>
+                    </div>
+                    <div class="info-row-compact">
+                        <span class="label"><i class="fa fa-whatsapp"></i>WhatsApp</span>
+                        <span class="badge {% if turno.whatsapp_enviado %}success{% else %}warning{% endif %}">
+                            {% if turno.whatsapp_enviado %}Enviado{% else %}Pendiente{% endif %}
+                        </span>
+                    </div>
+                    <div class="info-row-compact">
+                        <span class="label"><i class="fa fa-bell-o"></i>Recordatorio</span>
+                        <span class="badge {% if turno.recordatorio_enviado %}success{% else %}warning{% endif %}">
+                            {% if turno.recordatorio_enviado %}Enviado{% else %}Pendiente{% endif %}
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Auditoria -->
+                <div class="section">
+                    <div class="section-header">
+                        <i class="fa fa-info-circle"></i> Auditoria
+                    </div>
+                    <div class="info-row-compact">
+                        <span class="label">Creado</span>
+                        <span class="value">{{ turno.created_at|date:"d/m/Y H:i" }}</span>
+                    </div>
+                    <div class="info-row-compact">
+                        <span class="label">Actualizado</span>
+                        <span class="value">{{ turno.updated_at|date:"d/m/Y H:i" }}</span>
+                    </div>
+                    {% if turno.created_by %}
+                    <div class="info-row-compact">
+                        <span class="label">Creado por</span>
+                        <span class="value">{{ turno.created_by.username }}</span>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Historial -->
+                {% if turno.historial.exists %}
+                <div class="section">
+                    <div class="section-header">
+                        <i class="fa fa-history"></i> Historial
+                    </div>
+                    <div class="historial-compact">
                         {% for h in turno.historial.all %}
-                        <div class="historial-item">
-                            <div class="d-flex justify-content-between align-items-start">
-                                <div>
-                                    <span class="accion">{{ h.accion }}</span>
-                                    <p class="descripcion mb-0">{{ h.descripcion }}</p>
-                                </div>
-                                <span class="fecha">{{ h.fecha|date:"d/m/Y H:i" }}</span>
+                        <div class="historial-entry">
+                            <div class="historial-entry-action">{{ h.accion }}</div>
+                            <div class="historial-entry-desc">{{ h.descripcion }}</div>
+                            <div class="historial-entry-meta">
+                                {{ h.fecha|date:"d/m/Y H:i" }}{% if h.usuario %} - {{ h.usuario.username }}{% endif %}
                             </div>
-                            {% if h.usuario %}
-                            <small class="text-muted"><i class="fa fa-user me-1"></i>{{ h.usuario.username }}</small>
-                            {% endif %}
                         </div>
                         {% endfor %}
                     </div>
                 </div>
-            </div>
-            {% endif %}
-        </div>
-
-        <!-- Columna Derecha -->
-        <div class="col-lg-4">
-            <!-- Estado de Notificaciones -->
-            <div class="section-container mb-4">
-                <div class="section-header">
-                    <i class="fa fa-bell text-primary me-2"></i>
-                    <h6 class="section-title">Notificaciones</h6>
-                </div>
-
-                <div class="card border-light shadow-sm">
-                    <div class="card-body bg-section p-3">
-                        <div class="d-flex flex-column gap-2">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <span><i class="fa fa-envelope me-2"></i>Email</span>
-                                <span class="notificacion-badge {% if turno.email_enviado %}notificacion-enviado{% else %}notificacion-pendiente{% endif %}">
-                                    {% if turno.email_enviado %}
-                                    <i class="fa fa-check"></i> Enviado
-                                    {% else %}
-                                    <i class="fa fa-clock-o"></i> Pendiente
-                                    {% endif %}
-                                </span>
-                            </div>
-                            <div class="d-flex justify-content-between align-items-center">
-                                <span><i class="fa fa-whatsapp me-2"></i>WhatsApp</span>
-                                <span class="notificacion-badge {% if turno.whatsapp_enviado %}notificacion-enviado{% else %}notificacion-pendiente{% endif %}">
-                                    {% if turno.whatsapp_enviado %}
-                                    <i class="fa fa-check"></i> Enviado
-                                    {% else %}
-                                    <i class="fa fa-clock-o"></i> Pendiente
-                                    {% endif %}
-                                </span>
-                            </div>
-                            <div class="d-flex justify-content-between align-items-center">
-                                <span><i class="fa fa-bell me-2"></i>Recordatorio</span>
-                                <span class="notificacion-badge {% if turno.recordatorio_enviado %}notificacion-enviado{% else %}notificacion-pendiente{% endif %}">
-                                    {% if turno.recordatorio_enviado %}
-                                    <i class="fa fa-check"></i> Enviado
-                                    {% else %}
-                                    <i class="fa fa-clock-o"></i> Pendiente
-                                    {% endif %}
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Información de Auditoría -->
-            <div class="section-container mb-4">
-                <div class="section-header">
-                    <i class="fa fa-info-circle text-primary me-2"></i>
-                    <h6 class="section-title">Información Adicional</h6>
-                </div>
-
-                <div class="card border-light shadow-sm">
-                    <div class="card-body bg-section p-3">
-                        <small class="text-muted d-block mb-2">
-                            <i class="fa fa-plus-circle me-1"></i>
-                            <strong>Creado:</strong> {{ turno.created_at|date:"d/m/Y H:i" }}
-                        </small>
-                        <small class="text-muted d-block mb-2">
-                            <i class="fa fa-edit me-1"></i>
-                            <strong>Actualizado:</strong> {{ turno.updated_at|date:"d/m/Y H:i" }}
-                        </small>
-                        {% if turno.created_by %}
-                        <small class="text-muted d-block">
-                            <i class="fa fa-user me-1"></i>
-                            <strong>Creado por:</strong> {{ turno.created_by.username }}
-                        </small>
-                        {% endif %}
-                    </div>
-                </div>
+                {% endif %}
             </div>
         </div>
     </div>
-</div>
 
-<div class="modal-footer">
-    <button type="button" class="btn btn-outline-orange" onclick="gestionTurno({{ turno.id }}); $('#modal-lg').modal('hide');">
-        <i class="fa fa-edit me-1"></i>Editar Turno
-    </button>
-    <button type="button" class="btn btn-outline-dark" onclick="$('#modal-lg').modal('hide');">
-        <i class="fa fa-times me-1"></i>Cerrar
-    </button>
+    <!-- Footer -->
+    <div class="turno-footer">
+        {% if user_origen == 'ADMINISTRACION' and turno.estado != 'COMPLETADO' and turno.estado != 'CANCELADO' and turno.estado != 'NO_ASISTIO' %}
+        <button type="button" class="btn btn-primary" onclick="gestionTurno({{ turno.id }}); $('#modal-lg').modal('hide');">
+            <i class="fa fa-edit me-1"></i> Editar
+        </button>
+        {% endif %}
+        <button type="button" class="btn btn-outline-secondary" onclick="$('#modal-lg').modal('hide');">
+            Cerrar
+        </button>
+    </div>
 </div>

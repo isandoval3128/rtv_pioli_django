@@ -1,90 +1,772 @@
 {% if site_config.contact_section_bg_video %}
-    <video
-        autoplay
-        loop
-        muted
-        playsinline
-        class="contact-bg-video"
-    >
-        <source src="{{ site_config.contact_section_bg_video.url }}" type="video/mp4">
-        Tu navegador no soporta el video de fondo.
-    </video>
+<video autoplay loop muted playsinline class="contact-bg-video">
+    <source src="{{ site_config.contact_section_bg_video.url }}" type="video/mp4">
+</video>
 {% endif %}
 
-<div class="container position-relative">
+<!-- Decoraciones flotantes sutiles -->
+<div class="contact-decoration-left"></div>
+<div class="contact-decoration-right"></div>
+<div class="contact-decoration-particles">
+    <div class="particle particle-1"></div>
+    <div class="particle particle-2"></div>
+    <div class="particle particle-3"></div>
+    <div class="particle particle-4"></div>
+    <div class="particle particle-5"></div>
+</div>
+<div class="contact-glow-effect"></div>
 
-        <div class="text-center">
-            <h2 class="section-heading text-uppercase">Contáctanos</h2>
-            <h3 class="section-subheading text-muted">Envíanos un mensaje</h3>
+<div class="container position-relative">
+    <!-- Header de sección -->
+    <div class="contact-header text-center mb-5">
+        <span class="section-badge section-badge-light" data-aos="fade-down" data-aos-delay="50">Hablemos</span>
+        <h2 class="section-heading text-uppercase" data-aos="fade-up" data-aos-delay="100">Contáctanos</h2>
+        <p class="section-subheading" data-aos="fade-up" data-aos-delay="150">Estamos aquí para ayudarte</p>
+        <div class="divider-dots divider-dots-light" data-aos="fade-up" data-aos-delay="200">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </div>
+
+    <!-- Layout del formulario -->
+    <div class="contact-layout">
+        <!-- Columna de información -->
+        <div class="contact-info-column" data-aos="fade-right" data-aos-delay="100">
+            <div class="contact-info-card">
+                <div class="contact-info-header">
+                    <div class="contact-info-icon">
+                        <i class="fas fa-headset"></i>
+                    </div>
+                    <h4>¿Cómo podemos ayudarte?</h4>
+                    <p>Completa el formulario y nos pondremos en contacto contigo a la brevedad.</p>
+                </div>
+
+                <div class="contact-channels">
+                    {% if site_config.telefono %}
+                    <a href="tel:{{ site_config.telefono }}" class="contact-channel-item">
+                        <div class="channel-icon phone">
+                            <i class="fas fa-phone-alt"></i>
+                        </div>
+                        <div class="channel-info">
+                            <span class="channel-label">Teléfono</span>
+                            <span class="channel-value">{{ site_config.telefono }}</span>
+                        </div>
+                    </a>
+                    {% endif %}
+
+                    {% if site_config.email %}
+                    <a href="mailto:{{ site_config.email }}" class="contact-channel-item">
+                        <div class="channel-icon email">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <div class="channel-info">
+                            <span class="channel-label">Email</span>
+                            <span class="channel-value">{{ site_config.email }}</span>
+                        </div>
+                    </a>
+                    {% endif %}
+
+                    {% if site_config.whatsapp %}
+                    <a href="https://wa.me/{{ site_config.whatsapp }}" target="_blank" class="contact-channel-item">
+                        <div class="channel-icon whatsapp">
+                            <i class="fab fa-whatsapp"></i>
+                        </div>
+                        <div class="channel-info">
+                            <span class="channel-label">WhatsApp</span>
+                            <span class="channel-value">Escríbenos</span>
+                        </div>
+                    </a>
+                    {% endif %}
+                </div>
+
+                <!-- Decoración -->
+                <div class="contact-info-decoration">
+                    <div class="decoration-circle"></div>
+                    <div class="decoration-circle small"></div>
+                </div>
+            </div>
         </div>
 
-        <form id="contactForm" method="post" action="{% url 'contact_submit' %}">
-            {% csrf_token %}
+        <!-- Columna del formulario -->
+        <div class="contact-form-column" data-aos="fade-left" data-aos-delay="200">
+            <div class="contact-form-card">
+                <form id="contactForm" method="post" action="{% url 'contact_submit' %}">
+                    {% csrf_token %}
 
-            <div class="row align-items-stretch mb-5">
-                <div class="col-md-6">
-                    {% for field in form.visible_fields|slice:":3" %}
-                    <div class="form-group mb-3">
-                        {{ field }}
-                        {% if field.errors %}
-                        <div class="invalid-feedback d-block">{{ field.errors.0 }}</div>
-                        {% endif %}
+                    <div class="form-grid">
+                        {% for field in form.visible_fields|slice:":3" %}
+                        <div class="form-field-wrapper {% if forloop.counter == 3 %}full-width{% endif %}">
+                            <div class="form-field-modern">
+                                <div class="field-icon">
+                                    {% if forloop.counter == 1 %}
+                                    <i class="fas fa-user"></i>
+                                    {% elif forloop.counter == 2 %}
+                                    <i class="fas fa-envelope"></i>
+                                    {% else %}
+                                    <i class="fas fa-phone"></i>
+                                    {% endif %}
+                                </div>
+                                <input type="{{ field.field.widget.input_type|default:'text' }}"
+                                       name="{{ field.name }}"
+                                       id="{{ field.id_for_label }}"
+                                       value="{{ field.value|default:'' }}"
+                                       placeholder=" "
+                                       {% if field.field.required %}required{% endif %}
+                                       class="form-control">
+                                <label class="floating-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                                {% if field.errors %}
+                                <div class="field-error">
+                                    <i class="fas fa-exclamation-circle"></i>
+                                    {{ field.errors.0 }}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% endfor %}
+
+                        <div class="form-field-wrapper full-width">
+                            <div class="form-field-modern textarea">
+                                <div class="field-icon">
+                                    <i class="fas fa-comment-alt"></i>
+                                </div>
+                                <textarea name="{{ form.message.name }}"
+                                          id="{{ form.message.id_for_label }}"
+                                          placeholder=" "
+                                          {% if form.message.field.required %}required{% endif %}
+                                          class="form-control">{{ form.message.value|default:'' }}</textarea>
+                                <label class="floating-label" for="{{ form.message.id_for_label }}">Mensaje</label>
+                                {% if form.message.errors %}
+                                <div class="field-error">
+                                    <i class="fas fa-exclamation-circle"></i>
+                                    {{ form.message.errors.0 }}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
                     </div>
-                    {% endfor %}
-                </div>
 
-                <div class="col-md-6">
-                    <div class="form-group form-group-textarea">
-                        {{ form.message }}
-                        {% if form.message.errors %}
-                        <div class="invalid-feedback d-block">{{ form.message.errors.0 }}</div>
-                        {% endif %}
+                    <div class="form-submit-wrapper">
+                        <button type="submit"
+                                class="btn-submit-modern"
+                                data-bg="{{ site_config.contact_btn_bgcolor|default:'#003466' }}"
+                                data-hover="{{ site_config.contact_btn_hover_bgcolor|default:'#0056b3' }}"
+                                style="color: {{ site_config.contact_btn_fgcolor|default:'#ffffff' }};">
+                            <span class="btn-text">{{ site_config.contact_btn_text|default:'Enviar Mensaje' }}</span>
+                            <span class="btn-icon">
+                                <i class="fas fa-paper-plane"></i>
+                            </span>
+                            <div class="btn-shine"></div>
+                        </button>
                     </div>
-                </div>
+                </form>
             </div>
-
-            <div class="text-center">
-                <button
-                    type="submit"
-                    class="btn btn-xl text-uppercase contact-submit-btn"
-                    data-bg="{{ site_config.contact_btn_bgcolor }}"
-                    data-hover="{{ site_config.contact_btn_hover_bgcolor }}"
-                    style="color: {{ site_config.contact_btn_fgcolor }};"
-                >
-                    {{ site_config.contact_btn_text }}
-                </button>
-            </div>
-        </form>
+        </div>
+    </div>
 </div>
 
 <style>
-    .contact-section {
-        position: relative;
-        background-repeat: no-repeat;
-        background-position: center;
-        background-size: cover;
+/* ========================================
+   SECCIÓN CONTACT - DISEÑO PREMIUM
+======================================== */
+
+/* Estilos base de la sección */
+.contact-section {
+    position: relative;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    overflow: hidden;
+}
+
+.contact-bg-video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 0;
+}
+
+.contact-section .container {
+    z-index: 2;
+}
+
+/* Decoraciones flotantes sutiles */
+.contact-decoration-left {
+    position: absolute;
+    top: 10%;
+    left: -150px;
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.08) 0%, transparent 70%);
+    border-radius: 50%;
+    filter: blur(60px);
+    animation: floatContactDecoration 20s ease-in-out infinite;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.contact-decoration-right {
+    position: absolute;
+    bottom: 5%;
+    right: -100px;
+    width: 350px;
+    height: 350px;
+    background: radial-gradient(circle, rgba(0, 119, 204, 0.15) 0%, transparent 70%);
+    border-radius: 50%;
+    filter: blur(50px);
+    animation: floatContactDecoration 15s ease-in-out infinite reverse;
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* Efecto de resplandor central */
+.contact-glow-effect {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80%;
+    height: 60%;
+    background: radial-gradient(ellipse at center, rgba(0, 86, 179, 0.1) 0%, transparent 60%);
+    filter: blur(80px);
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* Partículas flotantes */
+.contact-decoration-particles {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+    overflow: hidden;
+}
+
+.particle {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    animation: floatParticle 8s ease-in-out infinite;
+}
+
+.particle-1 {
+    top: 20%;
+    left: 10%;
+    animation-delay: 0s;
+    animation-duration: 12s;
+}
+
+.particle-2 {
+    top: 60%;
+    left: 20%;
+    width: 4px;
+    height: 4px;
+    animation-delay: -2s;
+    animation-duration: 10s;
+}
+
+.particle-3 {
+    top: 30%;
+    right: 15%;
+    width: 8px;
+    height: 8px;
+    animation-delay: -4s;
+    animation-duration: 14s;
+}
+
+.particle-4 {
+    bottom: 25%;
+    right: 25%;
+    width: 5px;
+    height: 5px;
+    animation-delay: -1s;
+    animation-duration: 11s;
+}
+
+.particle-5 {
+    top: 70%;
+    left: 60%;
+    width: 4px;
+    height: 4px;
+    animation-delay: -3s;
+    animation-duration: 9s;
+}
+
+/* Animaciones de decoraciones */
+@keyframes floatContactDecoration {
+    0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.8; }
+    25% { transform: translate(30px, -40px) scale(1.1); opacity: 1; }
+    50% { transform: translate(-20px, -30px) scale(0.9); opacity: 0.7; }
+    75% { transform: translate(20px, 20px) scale(1.05); opacity: 0.9; }
+}
+
+@keyframes floatParticle {
+    0%, 100% { transform: translateY(0) translateX(0); opacity: 0.3; }
+    25% { transform: translateY(-20px) translateX(10px); opacity: 0.6; }
+    50% { transform: translateY(-10px) translateX(-5px); opacity: 0.4; }
+    75% { transform: translateY(-25px) translateX(15px); opacity: 0.5; }
+}
+
+/* Header de contact */
+.contact-header {
+    padding-top: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.contact-section .section-heading {
+    color: white;
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin-bottom: 0.75rem;
+    letter-spacing: -0.02em;
+    text-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
+}
+
+.contact-section .section-subheading {
+    font-size: 1.1rem;
+    color: rgba(255, 255, 255, 0.85);
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+/* Divider dots para fondos oscuros */
+.divider-dots-light span {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.6));
+}
+
+/* Badge light para fondos oscuros */
+.section-badge-light {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Layout del contacto */
+.contact-layout {
+    display: grid;
+    grid-template-columns: 0.9fr 1.1fr;
+    gap: 3rem;
+    align-items: stretch;
+}
+
+/* Columna de información */
+.contact-info-column {
+    display: flex;
+}
+
+.contact-info-card {
+    position: relative;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 1.5rem;
+    padding: 2.5rem;
+    color: white;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.contact-info-header {
+    margin-bottom: 2rem;
+}
+
+.contact-info-icon {
+    width: 70px;
+    height: 70px;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.1) 100%);
+    border-radius: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.75rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.contact-info-header h4 {
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+}
+
+.contact-info-header p {
+    font-size: 0.95rem;
+    opacity: 0.85;
+    line-height: 1.6;
+    margin: 0;
+}
+
+/* Canales de contacto */
+.contact-channels {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: auto;
+}
+
+.contact-channel-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 0.75rem;
+    text-decoration: none;
+    color: white;
+    transition: all 0.3s ease;
+}
+
+.contact-channel-item:hover {
+    background: rgba(255, 255, 255, 0.15);
+    transform: translateX(5px);
+    color: white;
+}
+
+.channel-icon {
+    width: 45px;
+    height: 45px;
+    min-width: 45px;
+    border-radius: 0.625rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+}
+
+.channel-icon.phone {
+    background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+}
+
+.channel-icon.email {
+    background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
+}
+
+.channel-icon.whatsapp {
+    background: linear-gradient(135deg, #25d366 0%, #128c7e 100%);
+}
+
+.channel-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.channel-label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    opacity: 0.7;
+}
+
+.channel-value {
+    font-size: 0.95rem;
+    font-weight: 600;
+}
+
+/* Decoración */
+.contact-info-decoration {
+    position: absolute;
+    bottom: -50px;
+    right: -50px;
+    pointer-events: none;
+}
+
+.decoration-circle {
+    width: 150px;
+    height: 150px;
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+}
+
+.decoration-circle.small {
+    width: 100px;
+    height: 100px;
+    position: absolute;
+    top: 30px;
+    left: 30px;
+}
+
+/* Columna del formulario */
+.contact-form-column {
+    display: flex;
+}
+
+.contact-form-card {
+    background: white;
+    border-radius: 1.5rem;
+    padding: 2.5rem;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+    flex: 1;
+}
+
+/* Grid del formulario */
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+}
+
+.form-field-wrapper.full-width {
+    grid-column: span 2;
+}
+
+/* Campo de formulario moderno */
+.form-field-modern {
+    position: relative;
+}
+
+.form-field-modern .field-icon {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #94a3b8;
+    font-size: 0.9rem;
+    z-index: 2;
+    transition: color 0.3s ease;
+}
+
+.form-field-modern.textarea .field-icon {
+    top: 1.25rem;
+    transform: none;
+}
+
+.form-field-modern input,
+.form-field-modern textarea {
+    width: 100%;
+    padding: 1rem 1rem 1rem 3rem;
+    border: 2px solid #e2e8f0;
+    border-radius: 0.75rem;
+    font-size: 0.95rem;
+    background: #f8fafc;
+    transition: all 0.3s ease;
+    color: #1e293b;
+}
+
+/* Ocultar placeholders nativos de Django para evitar duplicados */
+.form-field-modern input::placeholder,
+.form-field-modern textarea::placeholder {
+    color: transparent !important;
+    opacity: 0 !important;
+}
+
+/* Ocultar labels de Django que se renderizan automáticamente */
+.form-field-modern label:not(.floating-label) {
+    display: none !important;
+    visibility: hidden !important;
+}
+
+/* Forzar que solo el floating-label sea visible */
+.form-field-modern .floating-label {
+    display: block !important;
+    visibility: visible !important;
+}
+
+.form-field-modern textarea {
+    min-height: 140px;
+    resize: vertical;
+}
+
+.form-field-modern input:focus,
+.form-field-modern textarea:focus {
+    outline: none;
+    border-color: #003466;
+    background: white;
+    box-shadow: 0 0 0 4px rgba(0, 52, 102, 0.1);
+}
+
+.form-field-modern input:focus + .floating-label,
+.form-field-modern textarea:focus + .floating-label,
+.form-field-modern input:not(:placeholder-shown) + .floating-label,
+.form-field-modern textarea:not(:placeholder-shown) + .floating-label {
+    transform: translateY(-2.75rem) scale(0.85);
+    color: #003466;
+    background: white;
+    padding: 0 0.5rem;
+}
+
+.form-field-modern:focus-within .field-icon {
+    color: #003466;
+}
+
+/* Label flotante */
+.floating-label {
+    position: absolute;
+    left: 3rem;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 0.9rem;
+    color: #94a3b8;
+    pointer-events: none;
+    transition: all 0.3s ease;
+    background: transparent;
+}
+
+.form-field-modern.textarea .floating-label {
+    top: 1.25rem;
+    transform: none;
+}
+
+/* Error de campo */
+.field-error {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+    font-size: 0.8rem;
+    color: #dc2626;
+}
+
+/* Wrapper del botón submit */
+.form-submit-wrapper {
+    margin-top: 2rem;
+    display: flex;
+    justify-content: center;
+}
+
+/* Botón submit moderno */
+.btn-submit-modern {
+    display: inline-flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 2.5rem;
+    border: none;
+    border-radius: 50px;
+    font-size: 1rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    /* Mismo gradiente azul que otros botones */
+    background: linear-gradient(135deg, #003466 0%, #0056b3 50%, #0077cc 100%);
+    color: white;
+    box-shadow: 0 8px 25px rgba(0, 52, 102, 0.3);
+}
+
+.btn-submit-modern:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 35px rgba(0, 52, 102, 0.4);
+    background: linear-gradient(135deg, #002850 0%, #003466 50%, #0056b3 100%);
+}
+
+.btn-submit-modern:active {
+    transform: translateY(-1px);
+}
+
+.btn-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 35px;
+    height: 35px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    transition: transform 0.3s ease;
+}
+
+.btn-submit-modern:hover .btn-icon {
+    transform: translateX(5px);
+}
+
+.btn-submit-modern .btn-shine {
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transition: left 0.6s ease;
+}
+
+.btn-submit-modern:hover .btn-shine {
+    left: 100%;
+}
+
+/* SweetAlert personalizado */
+.swal2-elevated {
+    border-radius: 1rem;
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+    .contact-layout {
+        grid-template-columns: 1fr;
+        gap: 2rem;
     }
 
-    .contact-bg-video {
-        position: absolute;
-        inset: 0;
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .form-field-wrapper.full-width {
+        grid-column: span 1;
+    }
+
+    /* Reducir decoraciones en tablet */
+    .contact-decoration-left,
+    .contact-decoration-right {
+        opacity: 0.5;
+    }
+
+    .contact-glow-effect {
+        opacity: 0.6;
+    }
+
+    .particle-3,
+    .particle-5 {
+        display: none;
+    }
+}
+
+@media (max-width: 576px) {
+    .contact-info-card,
+    .contact-form-card {
+        padding: 1.75rem;
+    }
+
+    .contact-info-icon {
+        width: 60px;
+        height: 60px;
+        font-size: 1.5rem;
+    }
+
+    .contact-info-header h4 {
+        font-size: 1.2rem;
+    }
+
+    .btn-submit-modern {
         width: 100%;
-        height: 100%;
-        object-fit: cover;
-        z-index: 0;
+        justify-content: center;
     }
 
-    .contact-section .container {
-        z-index: 2;
+    /* Ocultar decoraciones en móvil */
+    .contact-decoration-left,
+    .contact-decoration-right,
+    .contact-decoration-particles {
+        display: none;
     }
 
-    .contact-submit-btn {
-        transition: background-color 0.2s ease-in-out;
+    .contact-glow-effect {
+        opacity: 0.3;
+        filter: blur(100px);
     }
 
-    .swal2-elevated {
-        border-radius: 10px;
+    .contact-section .section-heading {
+        font-size: 2rem;
     }
+}
 </style>
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
