@@ -4,174 +4,704 @@
 
 {% block extra_css %}
 <style>
+    /* ========== Expandir contenedor para home ========== */
+    .content-wrapper {
+        max-width: 1100px !important;
+    }
+
+    .main-content {
+        justify-content: flex-start !important;
+        padding-top: 3rem !important;
+        background: #f1f5f9 !important;
+    }
+
+    /* ========== Variables locales ========== */
+    :root {
+        --gradient-primary: linear-gradient(135deg, #13304D 0%, #1a4a6e 50%, #2d6a9f 100%);
+        --gradient-accent: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+        --shadow-soft: 0 4px 20px rgba(19, 48, 77, 0.12);
+        --shadow-medium: 0 8px 30px rgba(19, 48, 77, 0.15);
+        --shadow-strong: 0 15px 50px rgba(19, 48, 77, 0.2);
+    }
+
+    /* ========== Hero Section - Rediseñado ========== */
     .hero-section {
-        background: var(--primary-color);
+        background: var(--gradient-primary);
         color: white;
-        padding: 4rem 2rem;
-        border-radius: 15px;
+        padding: 5rem 3rem;
+        border-radius: 24px;
         margin-bottom: 4rem;
         position: relative;
         overflow: hidden;
     }
 
+    /* Patron decorativo de fondo */
+    .hero-section::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -20%;
+        width: 600px;
+        height: 600px;
+        background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%);
+        border-radius: 50%;
+    }
+
+    .hero-section::after {
+        content: '';
+        position: absolute;
+        bottom: -30%;
+        left: -10%;
+        width: 400px;
+        height: 400px;
+        background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 70%);
+        border-radius: 50%;
+    }
+
+    /* Lineas decorativas sutiles */
+    .hero-decoration {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        width: 120px;
+        height: 120px;
+        border: 2px solid rgba(255,255,255,0.1);
+        border-radius: 50%;
+    }
+
+    .hero-decoration::before {
+        content: '';
+        position: absolute;
+        top: 15px;
+        left: 15px;
+        right: 15px;
+        bottom: 15px;
+        border: 2px solid rgba(255,255,255,0.08);
+        border-radius: 50%;
+    }
+
     .hero-content {
         position: relative;
         z-index: 1;
+        max-width: 700px;
+        margin: 0 auto;
+    }
+
+    .hero-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: rgba(255,255,255,0.15);
+        backdrop-filter: blur(10px);
+        padding: 8px 18px;
+        border-radius: 50px;
+        font-size: 0.85rem;
+        font-weight: 500;
+        margin-bottom: 1.5rem;
+        border: 1px solid rgba(255,255,255,0.2);
+    }
+
+    .hero-badge i {
+        color: #34d399;
     }
 
     .hero-title {
-        font-size: 2rem;
+        font-size: 2.5rem;
         font-weight: 700;
-        margin-bottom: 1rem;
-        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        margin-bottom: 1.25rem;
+        line-height: 1.2;
+        letter-spacing: -0.5px;
+    }
+
+    .hero-title-accent {
+        background: linear-gradient(90deg, #fff 0%, rgba(255,255,255,0.8) 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .hero-subtitle {
+        font-size: 1.15rem;
+        font-weight: 400;
+        margin-bottom: 2.5rem;
+        opacity: 0.9;
+        line-height: 1.7;
+    }
+
+    .hero-buttons {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .btn-hero-primary {
+        background: white;
+        color: #13304D;
+        padding: 1rem 2rem;
+        border-radius: 12px;
+        font-weight: 600;
+        font-size: 1rem;
+        border: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+        text-decoration: none;
+    }
+
+    .btn-hero-primary:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        color: #13304D;
+        text-decoration: none;
+    }
+
+    .btn-hero-secondary {
+        background: transparent;
+        color: white;
+        padding: 1rem 2rem;
+        border-radius: 12px;
+        font-weight: 500;
+        font-size: 1rem;
+        border: 2px solid rgba(255,255,255,0.3);
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        transition: all 0.3s ease;
+        text-decoration: none;
+    }
+
+    .btn-hero-secondary:hover {
+        background: rgba(255,255,255,0.1);
+        border-color: rgba(255,255,255,0.5);
+        color: white;
+        text-decoration: none;
     }
 
     @media (min-width: 768px) {
         .hero-title {
-            font-size: 2.5rem;
+            font-size: 3rem;
+        }
+        .hero-section {
+            padding: 6rem 4rem;
         }
     }
 
     @media (min-width: 992px) {
         .hero-title {
-            font-size: 3rem;
+            font-size: 3.5rem;
         }
     }
 
-    .hero-subtitle {
-        font-size: 1.3rem;
-        font-weight: 300;
-        margin-bottom: 2rem;
-        opacity: 0.95;
+    @media (max-width: 576px) {
+        .hero-section {
+            padding: 3rem 1.5rem;
+            border-radius: 16px;
+        }
+        .hero-title {
+            font-size: 1.75rem;
+        }
+        .hero-subtitle {
+            font-size: 1rem;
+        }
+        .hero-buttons {
+            flex-direction: column;
+        }
+        .btn-hero-primary, .btn-hero-secondary {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+
+    /* ========== Stats Section - Minimalista ========== */
+    .stats-section {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem;
+        margin-bottom: 4rem;
+    }
+
+    .stat-card {
+        background: white;
+        border-radius: 16px;
+        padding: 2rem;
+        text-align: center;
+        box-shadow: var(--shadow-soft);
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+        border: 1px solid rgba(19, 48, 77, 0.08);
+    }
+
+    .stat-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: var(--gradient-primary);
+        transform: scaleX(0);
+        transition: transform 0.4s ease;
+    }
+
+    .stat-card:hover::before {
+        transform: scaleX(1);
+    }
+
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--shadow-medium);
+    }
+
+    .stat-icon {
+        width: 56px;
+        height: 56px;
+        background: linear-gradient(135deg, rgba(19, 48, 77, 0.08) 0%, rgba(19, 48, 77, 0.04) 100%);
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1.25rem;
+        font-size: 1.5rem;
+        color: #13304D;
+    }
+
+    .stat-number {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #13304D;
+        margin-bottom: 0.5rem;
+        line-height: 1;
+    }
+
+    .stat-label {
+        color: #64748b;
+        font-weight: 500;
+        font-size: 0.9rem;
+    }
+
+    @media (max-width: 576px) {
+        .stats-section {
+            grid-template-columns: 1fr;
+        }
+        .stat-card {
+            padding: 1.5rem;
+        }
+        .stat-number {
+            font-size: 2rem;
+        }
+    }
+
+    /* ========== Features Section - Elegante ========== */
+    .section-header {
+        text-align: center;
+        margin-bottom: 3rem;
+    }
+
+    .section-label {
+        display: inline-block;
+        background: linear-gradient(135deg, rgba(19, 48, 77, 0.08) 0%, rgba(19, 48, 77, 0.04) 100%);
+        color: #13304D;
+        padding: 6px 16px;
+        border-radius: 50px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 1rem;
+    }
+
+    .section-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #13304D;
+        margin-bottom: 0.75rem;
+    }
+
+    .section-subtitle {
+        color: #64748b;
+        font-size: 1.05rem;
+        max-width: 500px;
+        margin: 0 auto;
+    }
+
+    .features-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1.5rem;
+        margin-bottom: 4rem;
     }
 
     .feature-card {
-        text-align: center;
-        padding: 2rem;
         background: white;
-        border-radius: 15px;
-        box-shadow: var(--card-shadow);
-        transition: all 0.3s ease;
-        height: 100%;
+        border-radius: 20px;
+        padding: 2rem;
+        text-align: center;
+        box-shadow: var(--shadow-soft);
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        border: 1px solid rgba(19, 48, 77, 0.08);
     }
 
     .feature-card:hover {
-        transform: translateY(-10px);
-        box-shadow: var(--card-shadow-hover);
+        transform: translateY(-8px);
+        box-shadow: var(--shadow-medium);
+        border-color: rgba(19, 48, 77, 0.1);
     }
 
-    .feature-icon {
-        width: 80px;
-        height: 80px;
-        background: var(--primary-color);
+    .feature-icon-wrapper {
+        width: 72px;
+        height: 72px;
+        background: var(--gradient-primary);
+        border-radius: 18px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1.5rem;
+        font-size: 1.75rem;
+        color: white;
+        transition: transform 0.3s ease;
+    }
+
+    .feature-card:hover .feature-icon-wrapper {
+        transform: scale(1.1) rotate(5deg);
+    }
+
+    .feature-title {
+        font-size: 1.15rem;
+        font-weight: 600;
+        color: #13304D;
+        margin-bottom: 0.75rem;
+    }
+
+    .feature-description {
+        color: #64748b;
+        font-size: 0.9rem;
+        line-height: 1.6;
+    }
+
+    @media (max-width: 991px) {
+        .features-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @media (max-width: 576px) {
+        .features-grid {
+            grid-template-columns: 1fr;
+        }
+        .section-title {
+            font-size: 1.5rem;
+        }
+    }
+
+    /* ========== Info Section - Timeline Moderno ========== */
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 2rem;
+        margin-bottom: 4rem;
+    }
+
+    .info-card {
+        background: white;
+        border-radius: 20px;
+        padding: 2rem;
+        box-shadow: var(--shadow-soft);
+        border: 1px solid rgba(19, 48, 77, 0.08);
+    }
+
+    .info-card-header {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1.75rem;
+        padding-bottom: 1.25rem;
+        border-bottom: 2px solid #f1f5f9;
+    }
+
+    .info-card-icon {
+        width: 48px;
+        height: 48px;
+        background: var(--gradient-primary);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.25rem;
+        flex-shrink: 0;
+    }
+
+    .info-card-title {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: #13304D;
+        margin: 0;
+    }
+
+    /* Timeline items */
+    .timeline {
+        position: relative;
+        padding-left: 2rem;
+    }
+
+    .timeline::before {
+        content: '';
+        position: absolute;
+        left: 7px;
+        top: 8px;
+        bottom: 8px;
+        width: 2px;
+        background: linear-gradient(180deg, #13304D 0%, #e2e8f0 100%);
+        border-radius: 2px;
+    }
+
+    .timeline-item {
+        position: relative;
+        padding-bottom: 1.25rem;
+        padding-left: 1rem;
+    }
+
+    .timeline-item:last-child {
+        padding-bottom: 0;
+    }
+
+    .timeline-item::before {
+        content: '';
+        position: absolute;
+        left: -2rem;
+        top: 6px;
+        width: 16px;
+        height: 16px;
+        background: white;
+        border: 3px solid #13304D;
         border-radius: 50%;
+        transition: all 0.3s ease;
+    }
+
+    .timeline-item:hover::before {
+        background: #13304D;
+        transform: scale(1.2);
+    }
+
+    .timeline-title {
+        font-weight: 600;
+        color: #13304D;
+        font-size: 0.95rem;
+        margin-bottom: 0.35rem;
+    }
+
+    .timeline-text {
+        color: #64748b;
+        font-size: 0.85rem;
+        line-height: 1.5;
+    }
+
+    /* Requisitos - Lista elegante */
+    .requisitos-list {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .requisito-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 1rem;
+        padding: 1rem;
+        background: #f1f5f9;
+        border-radius: 12px;
+        transition: all 0.3s ease;
+    }
+
+    .requisito-item:hover {
+        background: rgba(19, 48, 77, 0.06);
+        transform: translateX(5px);
+    }
+
+    .requisito-icon {
+        width: 40px;
+        height: 40px;
+        background: white;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #13304D;
+        font-size: 1rem;
+        flex-shrink: 0;
+        box-shadow: 0 2px 8px rgba(19, 48, 77, 0.08);
+    }
+
+    .requisito-content {
+        flex: 1;
+    }
+
+    .requisito-title {
+        font-weight: 600;
+        color: #13304D;
+        font-size: 0.9rem;
+        margin-bottom: 0.25rem;
+    }
+
+    .requisito-text {
+        color: #64748b;
+        font-size: 0.8rem;
+        line-height: 1.4;
+    }
+
+    @media (max-width: 991px) {
+        .info-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    /* ========== CTA Section - Impactante pero limpio ========== */
+    .cta-section {
+        background: var(--gradient-primary);
+        color: white;
+        padding: 4rem 3rem;
+        border-radius: 24px;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .cta-section::before {
+        content: '';
+        position: absolute;
+        top: -100px;
+        right: -100px;
+        width: 300px;
+        height: 300px;
+        background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+        border-radius: 50%;
+    }
+
+    .cta-section::after {
+        content: '';
+        position: absolute;
+        bottom: -80px;
+        left: -80px;
+        width: 250px;
+        height: 250px;
+        background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%);
+        border-radius: 50%;
+    }
+
+    .cta-content {
+        position: relative;
+        z-index: 1;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    .cta-icon {
+        width: 70px;
+        height: 70px;
+        background: rgba(255,255,255,0.15);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
         display: flex;
         align-items: center;
         justify-content: center;
         margin: 0 auto 1.5rem;
         font-size: 2rem;
-        color: white;
-    }
-
-    .feature-title {
-        font-size: 1.3rem;
-        font-weight: 600;
-        color: var(--primary-color);
-        margin-bottom: 1rem;
-    }
-
-    .feature-description {
-        color: #6c757d;
-        line-height: 1.6;
-    }
-
-    .stats-card {
-        background: white;
-        border-radius: 15px;
-        padding: 2rem;
-        text-align: center;
-        box-shadow: var(--card-shadow);
-    }
-
-    .stats-number {
-        font-size: 3rem;
-        font-weight: 700;
-        color: var(--primary-color);
-        margin-bottom: 0.5rem;
-    }
-
-    .stats-label {
-        color: #6c757d;
-        font-weight: 500;
-    }
-
-    .cta-section {
-        background: var(--primary-color);
-        color: white;
-        padding: 3rem;
-        border-radius: 15px;
-        text-align: center;
-        margin-top: 3rem;
     }
 
     .cta-title {
         font-size: 2rem;
         font-weight: 700;
         margin-bottom: 1rem;
+        line-height: 1.2;
     }
 
     .cta-description {
         font-size: 1.1rem;
         margin-bottom: 2rem;
-        font-weight: 500;
+        opacity: 0.9;
     }
 
-    .info-section {
+    .btn-cta {
         background: white;
-        border-radius: 15px;
-        padding: 2rem;
-        box-shadow: var(--card-shadow);
-        margin-top: 2rem;
-    }
-
-    .info-title {
-        color: var(--primary-color);
-        font-weight: 700;
-        font-size: 1.5rem;
-        margin-bottom: 1.5rem;
-    }
-
-    .info-item {
-        display: flex;
-        align-items: flex-start;
-        margin-bottom: 1rem;
-        padding: 1rem;
-        background: #f8f9fa;
-        border-radius: 10px;
+        color: #13304D;
+        padding: 1rem 2.5rem;
+        border-radius: 12px;
+        font-weight: 600;
+        font-size: 1rem;
+        border: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
         transition: all 0.3s ease;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.15);
     }
 
-    .info-item:hover {
-        background: #e9ecef;
+    .btn-cta:hover {
+        transform: translateY(-3px) scale(1.02);
+        box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+        color: #13304D;
+    }
+
+    .btn-cta i {
+        transition: transform 0.3s ease;
+    }
+
+    .btn-cta:hover i {
         transform: translateX(5px);
     }
 
-    .info-icon {
-        color: var(--primary-color);
-        font-size: 1.5rem;
-        margin-right: 1rem;
-        min-width: 30px;
-        flex-shrink: 0;
+    @media (max-width: 576px) {
+        .cta-section {
+            padding: 3rem 1.5rem;
+            border-radius: 16px;
+        }
+        .cta-title {
+            font-size: 1.5rem;
+        }
+        .cta-icon {
+            width: 60px;
+            height: 60px;
+            font-size: 1.5rem;
+        }
     }
 
-    .info-text {
-        flex: 1;
+    /* ========== Consultar turno quick link ========== */
+    .quick-link-section {
+        margin-top: -2rem;
+        margin-bottom: 3rem;
+        text-align: center;
     }
 
-    .info-text strong {
-        color: var(--primary-color);
-        display: block;
-        margin-bottom: 0.5rem;
+    .quick-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 12px 24px;
+        background: white;
+        border-radius: 50px;
+        box-shadow: var(--shadow-soft);
+        color: #475569;
+        font-size: 0.9rem;
+        font-weight: 500;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        border: 1px solid rgba(19, 48, 77, 0.15);
+    }
+
+    .quick-link:hover {
+        color: #13304D;
+        box-shadow: var(--shadow-medium);
+        transform: translateY(-2px);
+        border-color: #13304D;
+    }
+
+    .quick-link i {
+        color: #13304D;
     }
 </style>
 {% endblock %}
@@ -179,199 +709,188 @@
 {% block content %}
 <!-- Hero Section -->
 <div class="hero-section" data-aos="fade-up">
+    <div class="hero-decoration"></div>
     <div class="hero-content text-center">
+        <div class="hero-badge">
+            <i class="fas fa-shield-alt"></i>
+            Sistema Oficial de Turnos
+        </div>
         <h1 class="hero-title">
-            <i class="fas fa-car-side me-2"></i> Turnos para Revisión Técnica Vehicular
+            <span class="hero-title-accent">Revision Tecnica Vehicular</span>
         </h1>
         <p class="hero-subtitle">
-            Reservá tu turno de forma rápida y sencilla. Sin filas, sin esperas.
+            Reserva tu turno de forma rapida y segura. Sin filas, sin esperas innecesarias.
+            Tu tiempo es valioso.
         </p>
-        <a href="{% url 'turnero:step1_cliente' %}" class="btn btn-accent btn-lg">
-            <i class="fas fa-calendar-plus me-2"></i> Solicitar Turno Ahora
-        </a>
+        <div class="hero-buttons">
+            <a href="{% url 'turnero:step1_cliente' %}" class="btn-hero-primary">
+                <i class="fas fa-calendar-plus"></i> Solicitar Turno
+            </a>
+            <a href="{% url 'turnero:consultar_turno' %}" class="btn-hero-secondary">
+                <i class="fas fa-search"></i> Consultar Turno
+            </a>
+        </div>
     </div>
 </div>
 
+<!-- Quick Link - ya tienes turno? -->
+<div class="quick-link-section" data-aos="fade-up" data-aos-delay="100">
+    <a href="{% url 'turnero:consultar_turno' %}" class="quick-link">
+        <i class="fas fa-ticket-alt"></i>
+        ¿Ya tenes un turno? Consulta el estado aqui
+        <i class="fas fa-arrow-right" style="font-size: 0.8rem;"></i>
+    </a>
+</div>
+
 <!-- Stats Section -->
-<div class="row mb-5" data-aos="fade-up" data-aos-delay="100" style="margin-top: 1.5rem;">
-    <div class="col-md-6 mb-4">
-        <div class="stats-card">
-            <div class="stats-number">
-                <i class="fas fa-tools me-2"></i>{{ talleres_count }}
-            </div>
-            <div class="stats-label">
-                Talleres Disponibles
-            </div>
+<div class="stats-section" data-aos="fade-up" data-aos-delay="150">
+    <div class="stat-card">
+        <div class="stat-icon">
+            <i class="fas fa-map-marker-alt"></i>
         </div>
+        <div class="stat-number">{{ talleres_count }}</div>
+        <div class="stat-label">Talleres Habilitados</div>
     </div>
-    <div class="col-md-6 mb-4">
-        <div class="stats-card">
-            <div class="stats-number">
-                <i class="fas fa-clipboard-list me-2"></i>{{ tipos_tramite }}
-            </div>
-            <div class="stats-label">
-                Tipos de Trámites
-            </div>
+    <div class="stat-card">
+        <div class="stat-icon">
+            <i class="fas fa-clipboard-list"></i>
         </div>
+        <div class="stat-number">{{ tipos_tramite }}</div>
+        <div class="stat-label">Tipos de Tramite</div>
     </div>
 </div>
 
 <!-- Features Section -->
-<div class="row mb-5">
-    <div class="col-md-4 mb-4" data-aos="fade-up" data-aos-delay="200">
-        <div class="feature-card">
-            <div class="feature-icon">
-                <i class="fas fa-clock"></i>
-            </div>
-            <h3 class="feature-title">Rápido y Fácil</h3>
-            <p class="feature-description">
-                Completá el proceso en 5 simples pasos. En menos de 3 minutos tenés tu turno confirmado.
-            </p>
+<div class="section-header" data-aos="fade-up">
+    <span class="section-label">Beneficios</span>
+    <h2 class="section-title">¿Por que usar este sistema?</h2>
+    <p class="section-subtitle">Simplificamos el proceso para que vos solo te preocupes por llegar</p>
+</div>
+
+<div class="features-grid">
+    <div class="feature-card" data-aos="fade-up" data-aos-delay="100">
+        <div class="feature-icon-wrapper">
+            <i class="fas fa-bolt"></i>
         </div>
+        <h3 class="feature-title">Rapido y Simple</h3>
+        <p class="feature-description">
+            En solo 5 pasos y menos de 3 minutos tenes tu turno confirmado.
+        </p>
     </div>
-    <div class="col-md-4 mb-4" data-aos="fade-up" data-aos-delay="300">
-        <div class="feature-card">
-            <div class="feature-icon">
-                <i class="fas fa-qrcode"></i>
-            </div>
-            <h3 class="feature-title">Código QR</h3>
-            <p class="feature-description">
-                Recibí tu comprobante con código QR. Mostralo el día del turno y listo.
-            </p>
+    <div class="feature-card" data-aos="fade-up" data-aos-delay="200">
+        <div class="feature-icon-wrapper">
+            <i class="fas fa-qrcode"></i>
         </div>
+        <h3 class="feature-title">Codigo QR</h3>
+        <p class="feature-description">
+            Recibis tu comprobante digital con QR. Sin papeles, sin complicaciones.
+        </p>
     </div>
-    <div class="col-md-4 mb-4" data-aos="fade-up" data-aos-delay="400">
-        <div class="feature-card">
-            <div class="feature-icon">
-                <i class="fas fa-envelope"></i>
-            </div>
-            <h3 class="feature-title">Notificaciones</h3>
-            <p class="feature-description">
-                Te enviamos recordatorios por email. No te olvidés de tu turno.
-            </p>
+    <div class="feature-card" data-aos="fade-up" data-aos-delay="300">
+        <div class="feature-icon-wrapper">
+            <i class="fas fa-bell"></i>
         </div>
+        <h3 class="feature-title">Recordatorios</h3>
+        <p class="feature-description">
+            Te enviamos un recordatorio por email antes de tu turno.
+        </p>
     </div>
 </div>
 
 <!-- Info Section -->
-<div class="row">
-    <div class="col-lg-6 mb-4" data-aos="fade-right">
-        <div class="info-section">
-            <h2 class="info-title">
-                <i class="fas fa-info-circle"></i> ¿Cómo funciona?
-            </h2>
-            <div class="info-item">
-                <div class="info-icon">
-                    <i class="fas fa-user"></i>
-                </div>
-                <div class="info-text">
-                    <strong>Paso 1: Datos del Cliente</strong>
-                    Ingresá tu DNI para buscar tus datos o cargá tu información si es la primera vez.
-                </div>
+<div class="info-grid">
+    <div class="info-card" data-aos="fade-right">
+        <div class="info-card-header">
+            <div class="info-card-icon">
+                <i class="fas fa-route"></i>
             </div>
-            <div class="info-item">
-                <div class="info-icon">
-                    <i class="fas fa-car"></i>
-                </div>
-                <div class="info-text">
-                    <strong>Paso 2: Datos del Vehículo</strong>
-                    Ingresá el dominio de tu vehículo y el tipo de trámite RTO.
-                </div>
+            <h3 class="info-card-title">¿Como funciona?</h3>
+        </div>
+        <div class="timeline">
+            <div class="timeline-item">
+                <div class="timeline-title">1. Ingresa tus datos</div>
+                <div class="timeline-text">Carga tu DNI para buscar o registrar tu informacion.</div>
             </div>
-            <div class="info-item">
-                <div class="info-icon">
-                    <i class="fas fa-map-marker-alt"></i>
-                </div>
-                <div class="info-text">
-                    <strong>Paso 3: Selección de Taller</strong>
-                    Elegí el taller más cercano a tu domicilio. 
-                </div>
+            <div class="timeline-item">
+                <div class="timeline-title">2. Datos del vehiculo</div>
+                <div class="timeline-text">Ingresa el dominio y selecciona el tipo de tramite.</div>
             </div>
-            <div class="info-item">
-                <div class="info-icon">
-                    <i class="fas fa-calendar"></i>
-                </div>
-                <div class="info-text">
-                    <strong>Paso 4: Fecha y Horario</strong>
-                    Seleccioná la fecha y el horario disponibles.
-                </div>
+            <div class="timeline-item">
+                <div class="timeline-title">3. Elige el taller</div>
+                <div class="timeline-text">Selecciona el taller mas conveniente para vos.</div>
             </div>
-            <div class="info-item">
-                <div class="info-icon">
-                    <i class="fas fa-check-circle"></i>
-                </div>
-                <div class="info-text">
-                    <strong>Paso 5: Confirmación</strong>
-                    Revisá los datos y confirmá tu turno. ¡Listo! Recibirás tu comprobante.
-                </div>
+            <div class="timeline-item">
+                <div class="timeline-title">4. Fecha y horario</div>
+                <div class="timeline-text">Elige el dia y hora que mejor te quede.</div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-title">5. Confirma y listo</div>
+                <div class="timeline-text">Revisa los datos y recibe tu comprobante al instante.</div>
             </div>
         </div>
     </div>
 
-    <div class="col-lg-6 mb-4" data-aos="fade-left">
-        <div class="info-section">
-            <h2 class="info-title">
-                <i class="fas fa-clipboard-check"></i> Requisitos
-            </h2>
-            <div class="info-item">
-                <div class="info-icon">
+    <div class="info-card" data-aos="fade-left">
+        <div class="info-card-header">
+            <div class="info-card-icon">
+                <i class="fas fa-clipboard-check"></i>
+            </div>
+            <h3 class="info-card-title">Requisitos</h3>
+        </div>
+        <div class="requisitos-list">
+            <div class="requisito-item">
+                <div class="requisito-icon">
                     <i class="fas fa-id-card"></i>
                 </div>
-                <div class="info-text">
-                    <strong>Documento de Identidad</strong>
-                    DNI del titular del vehículo vigente.
+                <div class="requisito-content">
+                    <div class="requisito-title">DNI del titular</div>
+                    <div class="requisito-text">Documento vigente del propietario</div>
                 </div>
             </div>
-            <div class="info-item">
-                <div class="info-icon">
+            <div class="requisito-item">
+                <div class="requisito-icon">
                     <i class="fas fa-file-alt"></i>
                 </div>
-                <div class="info-text">
-                    <strong>Cédula Verde o Azul</strong>
-                    Título de propiedad del vehículo.
+                <div class="requisito-content">
+                    <div class="requisito-title">Cedula del vehiculo</div>
+                    <div class="requisito-text">Cedula verde o azul original</div>
                 </div>
             </div>
-            <div class="info-item">
-                <div class="info-icon">
-                    <i class="fas fa-receipt"></i>
-                </div>
-                <div class="info-text">
-                    <strong>Comprobante de Pago</strong>
-                    Tasa de RTO abonada (consultá el monto según el tipo de vehículo).
-                </div>
-            </div>
-            <div class="info-item">
-                <div class="info-icon">
+           {% comment %}  <div class="requisito-item">
+                <div class="requisito-icon">
                     <i class="fas fa-shield-alt"></i>
                 </div>
-                <div class="info-text">
-                    <strong>Seguro Vigente</strong>
-                    Póliza de seguro del vehículo al día.
+                <div class="requisito-content">
+                    <div class="requisito-title">Seguro vigente</div>
+                    <div class="requisito-text">Poliza de seguro al dia</div>
                 </div>
-            </div>
-            <div class="info-item">
-                <div class="info-icon">
-                    <i class="fas fa-wrench"></i>
+            </div> {% endcomment %}
+           {% comment %}  <div class="requisito-item">
+                <div class="requisito-icon">
+                    <i class="fas fa-receipt"></i>
                 </div>
-                <div class="info-text">
-                    <strong>Vehículo en Condiciones</strong>
-                    El vehículo debe estar en condiciones técnicas y de seguridad adecuadas.
+                <div class="requisito-content">
+                    <div class="requisito-title">Comprobante de pago</div>
+                    <div class="requisito-text">Tasa de RTO abonada</div>
                 </div>
-            </div>
+            </div> {% endcomment %}
         </div>
     </div>
 </div>
 
 <!-- CTA Section -->
 <div class="cta-section" data-aos="zoom-in">
-    <h2 class="cta-title">
-        <i class="fas fa-rocket me-2"></i> ¿Listo para sacar tu turno?
-    </h2>
-    <p class="cta-description">
-        El proceso es rápido y simple. Comenzá ahora y asegurá tu lugar.
-    </p>
-    <a href="{% url 'turnero:step1_cliente' %}" class="btn btn-primary-custom btn-lg">
-        <i class="fas fa-arrow-right me-2"></i> Comenzar Ahora
-    </a>
+    <div class="cta-content">
+        <div class="cta-icon">
+            <i class="fas fa-calendar-check"></i>
+        </div>
+        <h2 class="cta-title">¿Listo para reservar?</h2>
+        <p class="cta-description">
+            El proceso es simple y solo te llevara unos minutos. Asegura tu lugar ahora.
+        </p>
+        <a href="{% url 'turnero:step1_cliente' %}" class="btn-cta">
+            Comenzar Ahora <i class="fas fa-arrow-right"></i>
+        </a>
+    </div>
 </div>
 {% endblock %}
