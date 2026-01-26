@@ -1,90 +1,773 @@
-<!-- Contenido original oculto -->
+<!-- Decoraciones de fondo -->
+<div class="about-decoration-left"></div>
+<div class="about-decoration-right"></div>
+<div class="about-decoration-geometric"></div>
+<div class="about-decoration-geometric-2"></div>
+<div class="about-lines-decoration"></div>
+
+<!-- Contenido original oculto (timeline) -->
 <div class="container" style="display:none;">
-         <div class="text-center">
-            <h2 class="section-heading text-uppercase">Nosotros</h2>
-            <h3 class="section-subheading text-muted">Nuestra historia</h3>
-        </div>
-        <ul class="timeline">
-            {% for event in timeline_events %}
-            <li {% if event.inverted %}class="timeline-inverted"{% endif %}>
-                {% if event.is_final %}
-                <div class="timeline-image">
-                    <h4>
-                        Se Parte
-                        <br />
-                        De Nuestra
-                        <br />
-                        Historia!
-                    </h4>
-                </div>
-                {% else %}
-                <div class="timeline-image">
-                    {% if event.image %}
-                    <div class="timeline-img-circle timeline-img-elevated timeline-img-bg" style="background-image: url('{{ event.image.url }}');"></div>
-                    {% endif %}
-                </div>
-                <div class="timeline-panel">
-                    <div class="timeline-heading">
-                        <h4>{{ event.date }}</h4>
-                        <h4 class="subheading">{{ event.title }}</h4>
-                    </div>
-                    <div class="timeline-body"><p class="text-muted">{{ event.description }}</p></div>
-                </div>
+    <ul class="timeline">
+        {% for event in timeline_events %}
+        <li {% if event.inverted %}class="timeline-inverted"{% endif %}>
+            {% if event.is_final %}
+            <div class="timeline-image">
+                <h4>Se Parte<br />De Nuestra<br />Historia!</h4>
+            </div>
+            {% else %}
+            <div class="timeline-image">
+                {% if event.image %}
+                <div class="timeline-img-circle timeline-img-elevated timeline-img-bg" style="background-image: url('{{ event.image.url }}');"></div>
                 {% endif %}
-            </li>
-            {% empty %}
-            <p class="text-center text-muted">No hay eventos disponibles.</p>
-            {% endfor %}
-        </ul>
+            </div>
+            <div class="timeline-panel">
+                <div class="timeline-heading">
+                    <h4>{{ event.date }}</h4>
+                    <h4 class="subheading">{{ event.title }}</h4>
+                </div>
+                <div class="timeline-body"><p class="text-muted">{{ event.description }}</p></div>
+            </div>
+            {% endif %}
+        </li>
+        {% empty %}
+        <p class="text-center text-muted">No hay eventos disponibles.</p>
+        {% endfor %}
+    </ul>
 </div>
 
-<!-- Contenido actual -->
+<!-- Contenido About Moderno -->
 <div class="container">
-        <div class="text-center">
-            <h2 class="section-heading text-uppercase">Nosotros</h2>
-            <h3 class="section-subheading text-muted">Nuestra historia</h3>
+    <!-- Header de sección con diseño moderno -->
+    <div class="about-header text-center mb-5">
+        <span class="section-badge" data-aos="fade-down" data-aos-delay="50">Conócenos</span>
+        <h2 class="section-heading text-uppercase" data-aos="fade-up" data-aos-delay="100">Nosotros</h2>
+        <p class="section-subheading" data-aos="fade-up" data-aos-delay="150">Nuestra historia y compromiso</p>
+        <div class="divider-dots" data-aos="fade-up" data-aos-delay="200">
+            <span></span>
+            <span></span>
+            <span></span>
         </div>
-        <div class="row d-flex align-items-stretch justify-content-center">
-            <div class="col-lg-6 col-12 mb-4 mb-lg-0 d-flex flex-column justify-content-center align-items-center h-100">
-                <div class="about-description w-100" style="font-size:1.15rem; color:#003466; text-align:justify; white-space:pre-line; margin-top:0; padding-top:0;">
+    </div>
+
+    <!-- Layout asimétrico moderno -->
+    <div class="about-layout">
+        <!-- Columna de contenido -->
+        <div class="about-content-wrapper" data-aos="fade-right" data-aos-delay="100">
+            <div class="about-content-card">
+                <!-- Decoración superior -->
+                <div class="about-accent-bar"></div>
+
+                <!-- Icono decorativo -->
+                <div class="about-icon-badge">
+                    <i class="fas fa-building"></i>
+                </div>
+
+                <!-- Contenido de texto -->
+                <div class="about-text-content">
                     {{ about_section.description|linebreaksbr }}
                 </div>
+
+                <!-- Features destacados -->
+                <div class="about-features">
+                    <div class="about-feature-item">
+                        <div class="feature-icon">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <div class="feature-text">
+                            <span class="feature-title">Confianza</span>
+                            <span class="feature-desc">Servicio garantizado</span>
+                        </div>
+                    </div>
+                    <div class="about-feature-item">
+                        <div class="feature-icon">
+                            <i class="fas fa-certificate"></i>
+                        </div>
+                        <div class="feature-text">
+                            <span class="feature-title">Certificados</span>
+                            <span class="feature-desc">Habilitación oficial</span>
+                        </div>
+                    </div>
+                    <div class="about-feature-item">
+                        <div class="feature-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="feature-text">
+                            <span class="feature-title">Experiencia</span>
+                            <span class="feature-desc">Equipo profesional</span>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="col-lg-6 col-12 d-flex flex-column justify-content-center align-items-center h-100">
-                <div id="aboutCarousel" class="carousel slide shadow-sm rounded h-100 d-flex flex-column justify-content-center w-100" data-bs-ride="carousel">
-                    <div class="carousel-inner h-100" style="margin-top: 2em;">
-                                    {% for image in about_section.images.all %}
-                                    <div class="carousel-item {% if forloop.first %}active{% endif %} h-100">
-                                        <img src="{{ image.image.url }}" class="d-block w-100 rounded h-100 about-carousel-img" alt="Imagen Nosotros" style="object-fit:cover; cursor:pointer;" data-bs-toggle="modal" data-bs-target="#aboutImageModal" data-img-url="{{ image.image.url }}">
-                                    </div>
-                                    {% endfor %}
+        </div>
+
+        <!-- Columna de galería -->
+        <div class="about-gallery-wrapper" data-aos="fade-left" data-aos-delay="200">
+            <div class="about-gallery-container">
+                <!-- Marco decorativo -->
+                <div class="gallery-frame"></div>
+                <div class="gallery-frame-accent"></div>
+
+                <!-- Carrusel -->
+                <div id="aboutCarousel" class="carousel slide about-carousel" data-bs-ride="carousel">
+                    <div class="carousel-indicators">
+                        {% for image in about_section.images.all %}
+                        <button type="button"
+                                data-bs-target="#aboutCarousel"
+                                data-bs-slide-to="{{ forloop.counter0 }}"
+                                {% if forloop.first %}class="active" aria-current="true"{% endif %}
+                                aria-label="Slide {{ forloop.counter }}"></button>
+                        {% endfor %}
+                    </div>
+                    <div class="carousel-inner">
+                        {% for image in about_section.images.all %}
+                        <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                            <img src="{{ image.image.url }}"
+                                 class="d-block w-100 about-carousel-img"
+                                 alt="Imagen Nosotros"
+                                 data-bs-toggle="modal"
+                                 data-bs-target="#aboutImageModal"
+                                 data-img-url="{{ image.image.url }}">
+                            <div class="carousel-overlay">
+                                <span class="zoom-hint">
+                                    <i class="fas fa-search-plus"></i>
+                                    Click para ampliar
+                                </span>
+                            </div>
+                        </div>
+                        {% endfor %}
                     </div>
                     <button class="carousel-control-prev" type="button" data-bs-target="#aboutCarousel" data-bs-slide="prev">
-                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="carousel-nav-icon">
+                            <i class="fas fa-chevron-left"></i>
+                        </span>
                         <span class="visually-hidden">Anterior</span>
                     </button>
                     <button class="carousel-control-next" type="button" data-bs-target="#aboutCarousel" data-bs-slide="next">
-                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="carousel-nav-icon">
+                            <i class="fas fa-chevron-right"></i>
+                        </span>
                         <span class="visually-hidden">Siguiente</span>
                     </button>
                 </div>
+
+                <!-- Decoración flotante -->
+                <div class="gallery-float-decoration"></div>
             </div>
         </div>
-        <!-- Modal para imagen ampliada del carrusel -->
-        <div class="modal fade" id="aboutImageModal" tabindex="-1" aria-labelledby="aboutImageModalLabel" aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered modal-lg">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="aboutImageModalLabel">Imagen ampliada</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-                            </div>
-                            <div class="modal-body d-flex justify-content-center align-items-center" style="min-height:350px;">
-                                <img id="aboutModalImg" src="" alt="Imagen ampliada" class="img-fluid rounded shadow" style="max-height:70vh; max-width:100%; object-fit:contain;">
-                            </div>
-                        </div>
+    </div>
+
+    <!-- Modal para imagen ampliada -->
+    <div class="modal fade" id="aboutImageModal" tabindex="-1" aria-labelledby="aboutImageModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-xl">
+            <div class="modal-content about-modal-content">
+                <div class="modal-header about-modal-header">
+                    <h5 class="modal-title" id="aboutImageModalLabel">
+                        <i class="fas fa-image me-2"></i>Galería de Imágenes
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body about-modal-body">
+                    <img id="aboutModalImg" src="" alt="Imagen ampliada" class="about-modal-img">
+                    <div class="modal-zoom-hint">
+                        <i class="fas fa-mouse me-1"></i> Usa la rueda del mouse para hacer zoom
+                        <span class="mx-2">|</span>
+                        <i class="fas fa-hand-pointer me-1"></i> Arrastra para mover
                     </div>
+                </div>
+            </div>
         </div>
+    </div>
 </div>
+
+<style>
+/* ========================================
+   SECCIÓN ABOUT - DISEÑO PREMIUM
+======================================== */
+
+/* Fondo de la sección con gradiente y decoraciones */
+#about {
+    position: relative;
+    background: linear-gradient(180deg, #f8fafc 0%, #eef4fb 50%, #e8f0f8 100%);
+    overflow: hidden;
+}
+
+/* Patrón de puntos sutiles */
+#about::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(circle at 1px 1px, rgba(0, 52, 102, 0.03) 1px, transparent 0);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* Degradado superior para transición suave */
+#about::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 150px;
+    background: linear-gradient(180deg, white 0%, transparent 100%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* Container con z-index para estar sobre las decoraciones */
+#about > .container {
+    position: relative;
+    z-index: 1;
+}
+
+/* Decoración flotante izquierda */
+.about-decoration-left {
+    position: absolute;
+    top: 15%;
+    left: -100px;
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, rgba(0, 86, 179, 0.08) 0%, transparent 70%);
+    border-radius: 50%;
+    filter: blur(40px);
+    animation: floatAboutDecoration 15s ease-in-out infinite;
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* Decoración flotante derecha */
+.about-decoration-right {
+    position: absolute;
+    bottom: 10%;
+    right: -80px;
+    width: 350px;
+    height: 350px;
+    background: radial-gradient(circle, rgba(0, 119, 204, 0.06) 0%, transparent 70%);
+    border-radius: 50%;
+    filter: blur(50px);
+    animation: floatAboutDecoration 18s ease-in-out infinite reverse;
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* Decoración geométrica superior derecha */
+.about-decoration-geometric {
+    position: absolute;
+    top: 80px;
+    right: 5%;
+    width: 120px;
+    height: 120px;
+    border: 2px solid rgba(0, 52, 102, 0.06);
+    border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+    animation: morphAboutShape 20s ease-in-out infinite;
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* Decoración geométrica inferior izquierda */
+.about-decoration-geometric-2 {
+    position: absolute;
+    bottom: 15%;
+    left: 8%;
+    width: 80px;
+    height: 80px;
+    border: 2px solid rgba(0, 86, 179, 0.05);
+    border-radius: 50%;
+    animation: pulseAboutDecoration 8s ease-in-out infinite;
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* Líneas decorativas diagonales */
+.about-lines-decoration {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 40%;
+    height: 100%;
+    background: repeating-linear-gradient(
+        -45deg,
+        transparent,
+        transparent 80px,
+        rgba(0, 52, 102, 0.015) 80px,
+        rgba(0, 52, 102, 0.015) 81px
+    );
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* Animaciones para decoraciones */
+@keyframes floatAboutDecoration {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    25% { transform: translate(20px, -30px) scale(1.05); }
+    50% { transform: translate(-10px, -20px) scale(0.95); }
+    75% { transform: translate(15px, 10px) scale(1.02); }
+}
+
+@keyframes morphAboutShape {
+    0%, 100% { border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%; transform: rotate(0deg); }
+    25% { border-radius: 58% 42% 75% 25% / 76% 46% 54% 24%; }
+    50% { border-radius: 50% 50% 33% 67% / 55% 27% 73% 45%; transform: rotate(90deg); }
+    75% { border-radius: 33% 67% 58% 42% / 63% 68% 32% 37%; }
+}
+
+@keyframes pulseAboutDecoration {
+    0%, 100% { transform: scale(1); opacity: 0.5; }
+    50% { transform: scale(1.2); opacity: 0.8; }
+}
+
+/* Header de about */
+.about-header {
+    padding-top: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#about .section-badge {
+    display: block;
+    width: fit-content;
+    margin-left: auto;
+    margin-right: auto;
+    background: linear-gradient(135deg, #cfe2ff 0%, #e7f1ff 100%);
+    color: #003466;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 0.6rem 1.5rem;
+    border-radius: 50px;
+    margin-bottom: 1.25rem;
+    box-shadow: 0 2px 10px rgba(0, 52, 102, 0.08);
+}
+
+#about .section-heading {
+    color: #003466;
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin-bottom: 0.75rem;
+    letter-spacing: -0.02em;
+}
+
+#about .section-subheading {
+    font-size: 1.1rem;
+    color: #64748b;
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+#about .divider-dots {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 1.5rem;
+}
+
+#about .divider-dots span {
+    width: 8px;
+    height: 8px;
+    background: linear-gradient(135deg, #003466, #0056b3);
+    border-radius: 50%;
+    opacity: 0.6;
+}
+
+#about .divider-dots span:nth-child(2) {
+    width: 12px;
+    height: 12px;
+    opacity: 1;
+}
+
+/* Layout principal asimétrico */
+.about-layout {
+    display: grid;
+    grid-template-columns: 1fr 1.1fr;
+    gap: 4rem;
+    align-items: center;
+}
+
+/* Wrapper del contenido */
+.about-content-wrapper {
+    position: relative;
+}
+
+/* Card de contenido */
+.about-content-card {
+    position: relative;
+    background: white;
+    border-radius: 1.5rem;
+    padding: 2.5rem;
+    box-shadow: 0 10px 40px rgba(0, 52, 102, 0.08);
+    border: 1px solid rgba(0, 52, 102, 0.05);
+}
+
+/* Barra de acento superior */
+.about-accent-bar {
+    position: absolute;
+    top: 0;
+    left: 2rem;
+    right: 2rem;
+    height: 4px;
+    background: linear-gradient(90deg, #003466, #0056b3, #0077cc);
+    border-radius: 0 0 4px 4px;
+}
+
+/* Badge de icono */
+.about-icon-badge {
+    position: absolute;
+    top: -25px;
+    left: 2.5rem;
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, #003466 0%, #0056b3 100%);
+    border-radius: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.25rem;
+    box-shadow: 0 8px 25px rgba(0, 52, 102, 0.3);
+}
+
+/* Contenido de texto */
+.about-text-content {
+    font-size: 1.05rem;
+    line-height: 1.8;
+    color: #334155;
+    text-align: justify;
+    margin-top: 1rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+/* Features destacados */
+.about-features {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.about-feature-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    border-radius: 0.75rem;
+    transition: all 0.3s ease;
+}
+
+.about-feature-item:hover {
+    background: linear-gradient(135deg, #e0f2fe 0%, #dbeafe 100%);
+    transform: translateY(-3px);
+}
+
+.feature-icon {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    background: linear-gradient(135deg, #003466 0%, #0056b3 100%);
+    border-radius: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 0.9rem;
+}
+
+.feature-text {
+    display: flex;
+    flex-direction: column;
+}
+
+.feature-title {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #003466;
+}
+
+.feature-desc {
+    font-size: 0.7rem;
+    color: #64748b;
+}
+
+/* Wrapper de galería */
+.about-gallery-wrapper {
+    position: relative;
+}
+
+/* Container de galería */
+.about-gallery-container {
+    position: relative;
+    padding: 1.5rem;
+    overflow: hidden;
+}
+
+/* Marcos decorativos */
+.gallery-frame {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: calc(100% - 2rem);
+    height: calc(100% - 2rem);
+    border: 3px solid rgba(0, 52, 102, 0.1);
+    border-radius: 1.5rem;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.gallery-frame-accent {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: calc(100% - 2rem);
+    height: calc(100% - 2rem);
+    background: linear-gradient(135deg, rgba(0, 86, 179, 0.05) 0%, transparent 50%);
+    border-radius: 1.5rem;
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* Carrusel moderno */
+.about-carousel {
+    position: relative;
+    z-index: 1;
+    border-radius: 1.25rem;
+    overflow: hidden;
+    box-shadow: 0 20px 50px rgba(0, 52, 102, 0.2);
+}
+
+.about-carousel .carousel-inner {
+    border-radius: 1.25rem;
+}
+
+.about-carousel-img {
+    width: 100%;
+    height: 400px;
+    object-fit: cover;
+    cursor: pointer;
+    transition: transform 0.5s ease;
+}
+
+.about-carousel .carousel-item:hover .about-carousel-img {
+    transform: scale(1.03);
+}
+
+/* Overlay con hint de zoom */
+.carousel-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 2rem 1.5rem 1rem;
+    background: linear-gradient(transparent, rgba(0, 0, 0, 0.6));
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.about-carousel .carousel-item:hover .carousel-overlay {
+    opacity: 1;
+}
+
+.zoom-hint {
+    color: white;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* Indicadores del carrusel */
+.about-carousel .carousel-indicators {
+    bottom: 1rem;
+}
+
+.about-carousel .carousel-indicators button {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.5);
+    border: 2px solid transparent;
+    transition: all 0.3s ease;
+}
+
+.about-carousel .carousel-indicators button.active {
+    background: white;
+    transform: scale(1.2);
+}
+
+/* Controles del carrusel */
+.carousel-nav-icon {
+    width: 45px;
+    height: 45px;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #003466;
+    font-size: 1rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s ease;
+}
+
+.carousel-control-prev:hover .carousel-nav-icon,
+.carousel-control-next:hover .carousel-nav-icon {
+    background: #003466;
+    color: white;
+    transform: scale(1.1);
+}
+
+/* Decoración flotante */
+.gallery-float-decoration {
+    position: absolute;
+    top: -20px;
+    right: -20px;
+    width: 100px;
+    height: 100px;
+    background: linear-gradient(135deg, rgba(0, 86, 179, 0.15) 0%, transparent 70%);
+    border-radius: 50%;
+    z-index: 0;
+    animation: floatDecoration 6s ease-in-out infinite;
+}
+
+@keyframes floatDecoration {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-10px) rotate(5deg); }
+}
+
+/* Modal moderno */
+.about-modal-content {
+    border: none;
+    border-radius: 1.5rem;
+    overflow: hidden;
+}
+
+.about-modal-header {
+    background: linear-gradient(135deg, #003466 0%, #0056b3 100%);
+    color: white;
+    border: none;
+    padding: 1rem 1.5rem;
+}
+
+.about-modal-body {
+    background: #0a0a0a;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 60vh;
+}
+
+.about-modal-img {
+    max-height: 70vh;
+    max-width: 100%;
+    object-fit: contain;
+    border-radius: 0.5rem;
+    cursor: grab;
+}
+
+.modal-zoom-hint {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.8rem;
+    margin-top: 1rem;
+    display: flex;
+    align-items: center;
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+    /* Reducir decoraciones en tablet */
+    .about-decoration-left,
+    .about-decoration-right {
+        opacity: 0.5;
+    }
+
+    .about-decoration-geometric,
+    .about-decoration-geometric-2 {
+        display: none;
+    }
+
+    .about-lines-decoration {
+        width: 30%;
+        opacity: 0.5;
+    }
+
+    .about-layout {
+        grid-template-columns: 1fr;
+        gap: 2.5rem;
+    }
+
+    .about-gallery-wrapper {
+        order: -1;
+    }
+
+    .about-carousel-img {
+        height: 350px;
+    }
+
+    .about-features {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 576px) {
+    /* Ocultar decoraciones en móvil */
+    .about-decoration-left,
+    .about-decoration-right,
+    .about-lines-decoration {
+        display: none;
+    }
+
+    /* Simplificar el fondo en móvil */
+    #about {
+        background: linear-gradient(180deg, #f9fafb 0%, #f1f5f9 100%);
+    }
+
+    #about::before {
+        background-size: 30px 30px;
+        opacity: 0.5;
+    }
+
+    #about .section-heading {
+        font-size: 2rem;
+    }
+
+    .about-content-card {
+        padding: 2rem 1.5rem;
+    }
+
+    .about-icon-badge {
+        left: 1.5rem;
+        width: 45px;
+        height: 45px;
+        top: -22px;
+    }
+
+    .about-carousel-img {
+        height: 280px;
+    }
+
+    .about-text-content {
+        font-size: 0.95rem;
+    }
+
+    .about-feature-item {
+        padding: 0.625rem;
+    }
+
+    .gallery-frame,
+    .gallery-frame-accent {
+        display: none;
+    }
+
+    .about-gallery-container {
+        padding: 0;
+    }
+}
+</style>
 
 <script>
                 document.addEventListener('DOMContentLoaded', function() {
