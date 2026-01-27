@@ -835,7 +835,7 @@ def escanear_turno(request):
 
     context = {
         'titulo': 'Escanear Turno',
-        'user_origen': user_sector,  # Mantener nombre para compatibilidad
+        'user_origen': user_sector,
         'es_taller': es_taller,
     }
     return render(request, 'panel/escanear_turno.html', context)
@@ -989,17 +989,20 @@ def verificar_turno_panel(request):
 
             turno_data['estado_clase'] = estado_clase
 
+            # Calcular si puede registrar atencion
+            es_taller = user_sector == Sector.SECTOR_TALLER
+            no_fue_atendido = not turno.ya_fue_atendido
+            estado_valido = turno.estado in ['PENDIENTE', 'CONFIRMADO']
+            es_hoy = turno.fecha == hoy
+
+            puede_registrar = es_taller and no_fue_atendido and estado_valido and es_hoy
+
             return JsonResponse({
                 'success': True,
                 'turno': turno_data,
-                'user_origen': user_sector,  # Mantener nombre para compatibilidad
+                'user_origen': user_sector,
                 'ya_fue_atendido': turno.ya_fue_atendido,
-                'puede_registrar_atencion': (
-                    user_sector == Sector.SECTOR_TALLER and
-                    not turno.ya_fue_atendido and
-                    turno.estado in ['PENDIENTE', 'CONFIRMADO'] and
-                    turno.fecha == hoy
-                )
+                'puede_registrar_atencion': puede_registrar,
             })
 
         except Turno.DoesNotExist:
