@@ -745,6 +745,7 @@ function verificarTurno(busqueda) {
     $.ajax({
         url: '{% url "verificar_turno_panel" %}',
         method: 'POST',
+        dataType: 'json',  // Forzar respuesta JSON, falla si recibe HTML
         data: {
             busqueda: busqueda,
             csrfmiddlewaretoken: '{{ csrf_token }}'
@@ -752,8 +753,16 @@ function verificarTurno(busqueda) {
         success: function(response) {
             $('#loading-overlay').removeClass('visible');
 
-            if (response.error) {
-                mostrarError(response.error);
+            // Verificar que la respuesta tenga la estructura esperada
+            if (!response || typeof response !== 'object') {
+                mostrarError('Respuesta invalida del servidor. Intente recargar la pagina.');
+                reanudarScanner();
+                return;
+            }
+
+            // Verificar si success es false (error del servidor)
+            if (response.success === false || response.error) {
+                mostrarError(response.error || 'Error al verificar el turno');
                 reanudarScanner();
                 return;
             }
@@ -761,17 +770,32 @@ function verificarTurno(busqueda) {
             if (response.multiples) {
                 // Multiples turnos encontrados
                 mostrarTurnosMultiples(response.turnos);
-            } else {
+            } else if (response.turno) {
                 // Turno unico
                 mostrarTurno(response);
+            } else {
+                // Respuesta inesperada
+                mostrarError('No se encontro informacion del turno');
+                reanudarScanner();
             }
         },
-        error: function(xhr) {
+        error: function(xhr, status, error) {
             $('#loading-overlay').removeClass('visible');
             let mensaje = 'Error al verificar el turno';
-            if (xhr.responseJSON && xhr.responseJSON.error) {
+
+            // Detectar si es problema de sesion expirada
+            if (xhr.status === 0 || xhr.status === 302 ||
+                (xhr.responseText && xhr.responseText.includes('login'))) {
+                mensaje = 'Sesion expirada. Por favor recargue la pagina e inicie sesion nuevamente.';
+            } else if (xhr.status === 403) {
+                mensaje = 'No tiene permisos para realizar esta accion.';
+            } else if (xhr.responseJSON && xhr.responseJSON.error) {
                 mensaje = xhr.responseJSON.error;
+            } else if (status === 'parsererror') {
+                // Si dataType: 'json' falla al parsear (probablemente HTML)
+                mensaje = 'Sesion expirada. Por favor recargue la pagina e inicie sesion nuevamente.';
             }
+
             mostrarError(mensaje);
             reanudarScanner();
         }
@@ -817,132 +841,174 @@ function mostrarTurnosMultiples(turnos) {
 
 function mostrarTurno(data) {
     turnoActual = data;
-    $('#turnos-multiples').hide();
-    $('#alerta-atencion').hide();
-
     const turno = data.turno;
 
-    // Codigo y estado
-    $('#turno-codigo').text(turno.codigo);
-    $('#turno-estado').text(turno.estado_display)
-        .removeClass()
-        .addClass('turno-estado estado-' + turno.estado.toLowerCase());
+    // Determinar el estado visual
+    let estadoClase = 'info';
+    let estadoIcono = 'fa-info-circle';
+    let verificacionHtml = '';
 
-    // Clase del card segun estado
-    $('#turno-card').removeClass('turno-valido turno-atendido turno-error');
     if (data.ya_fue_atendido) {
-        $('#turno-card').addClass('turno-atendido');
+        estadoClase = 'warning';
+        estadoIcono = 'fa-exclamation-triangle';
+        verificacionHtml = `
+            <div style="background: #fef3c7; border: 2px solid #f59e0b; border-radius: 10px; padding: 12px; margin-bottom: 15px; text-align: center;">
+                <i class="fa fa-exclamation-triangle" style="color: #d97706; font-size: 1.2rem;"></i>
+                <strong style="color: #92400e; margin-left: 8px;">TURNO YA ATENDIDO</strong>
+            </div>
+        `;
     } else if (['PENDIENTE', 'CONFIRMADO'].includes(turno.estado)) {
-        $('#turno-card').addClass('turno-valido');
+        estadoClase = 'success';
+        estadoIcono = 'fa-check-circle';
+        verificacionHtml = `
+            <div style="background: #d1fae5; border: 2px solid #10b981; border-radius: 10px; padding: 12px; margin-bottom: 15px; text-align: center;">
+                <i class="fa fa-check-circle" style="color: #059669; font-size: 1.2rem;"></i>
+                <strong style="color: #065f46; margin-left: 8px;">TURNO VERIFICADO</strong>
+            </div>
+        `;
+    } else if (turno.estado === 'CANCELADO') {
+        estadoClase = 'error';
+        estadoIcono = 'fa-times-circle';
+        verificacionHtml = `
+            <div style="background: #fee2e2; border: 2px solid #ef4444; border-radius: 10px; padding: 12px; margin-bottom: 15px; text-align: center;">
+                <i class="fa fa-times-circle" style="color: #dc2626; font-size: 1.2rem;"></i>
+                <strong style="color: #991b1b; margin-left: 8px;">TURNO CANCELADO</strong>
+            </div>
+        `;
     }
 
-    // Info del turno
-    let infoHtml = `
-        <div class="info-row">
-            <i class="fa fa-user"></i>
-            <div>
-                <span class="info-label">Cliente</span>
-                <span class="info-value">${turno.cliente.nombre}</span>
+    // Construir HTML del modal
+    let modalHtml = `
+        <div style="text-align: left;">
+            ${verificacionHtml}
+            <div style="background: #f8fafc; border-radius: 10px; padding: 15px; margin-bottom: 15px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                    <span style="font-family: 'Courier New', monospace; font-size: 1.1rem; font-weight: 700; color: #1f2937;">${turno.codigo}</span>
+                    <span style="background: ${turno.estado === 'PENDIENTE' ? '#fef3c7' : turno.estado === 'CONFIRMADO' ? '#d1fae5' : turno.estado === 'COMPLETADO' ? '#10b981' : '#fee2e2'};
+                           color: ${turno.estado === 'PENDIENTE' ? '#92400e' : turno.estado === 'CONFIRMADO' ? '#065f46' : turno.estado === 'COMPLETADO' ? 'white' : '#991b1b'};
+                           padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 600;">
+                        ${turno.estado_display}
+                    </span>
+                </div>
             </div>
-        </div>
-        <div class="info-row">
-            <i class="fa fa-id-card"></i>
-            <div>
-                <span class="info-label">Documento</span>
-                <span class="info-value">${turno.cliente.documento_tipo} ${turno.cliente.documento}</span>
-            </div>
-        </div>
-        <div class="info-row">
-            <i class="fa fa-car"></i>
-            <div>
-                <span class="info-label">Vehiculo</span>
-                <span class="info-value">${turno.vehiculo.dominio} - ${turno.vehiculo.marca} ${turno.vehiculo.modelo}</span>
-            </div>
-        </div>
-        <div class="info-row">
-            <i class="fa fa-calendar"></i>
-            <div>
-                <span class="info-label">Fecha y Hora</span>
-                <span class="info-value">${turno.fecha} - ${turno.hora}</span>
-            </div>
-        </div>
-        <div class="info-row">
-            <i class="fa fa-clipboard-list"></i>
-            <div>
-                <span class="info-label">Tipo de Tramite</span>
-                <span class="info-value">${turno.tipo_tramite}</span>
-            </div>
-        </div>
+
+            <div style="display: grid; gap: 10px;">
+                <div style="display: flex; align-items: center; gap: 10px; padding: 8px; background: white; border-radius: 8px; border: 1px solid #e5e7eb;">
+                    <i class="fa fa-user" style="color: var(--theme-primary); width: 20px;"></i>
+                    <div>
+                        <div style="font-size: 0.75rem; color: #6b7280;">Cliente</div>
+                        <div style="font-weight: 500; color: #1f2937;">${turno.cliente.nombre}</div>
+                    </div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 10px; padding: 8px; background: white; border-radius: 8px; border: 1px solid #e5e7eb;">
+                    <i class="fa fa-id-card" style="color: var(--theme-primary); width: 20px;"></i>
+                    <div>
+                        <div style="font-size: 0.75rem; color: #6b7280;">Documento</div>
+                        <div style="font-weight: 500; color: #1f2937;">${turno.cliente.documento_tipo} ${turno.cliente.documento}</div>
+                    </div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 10px; padding: 8px; background: white; border-radius: 8px; border: 1px solid #e5e7eb;">
+                    <i class="fa fa-car" style="color: var(--theme-primary); width: 20px;"></i>
+                    <div>
+                        <div style="font-size: 0.75rem; color: #6b7280;">Vehiculo</div>
+                        <div style="font-weight: 500; color: #1f2937;">${turno.vehiculo.dominio} - ${turno.vehiculo.marca} ${turno.vehiculo.modelo}</div>
+                    </div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 10px; padding: 8px; background: white; border-radius: 8px; border: 1px solid #e5e7eb;">
+                    <i class="fa fa-calendar" style="color: var(--theme-primary); width: 20px;"></i>
+                    <div>
+                        <div style="font-size: 0.75rem; color: #6b7280;">Fecha y Hora</div>
+                        <div style="font-weight: 500; color: #1f2937;">${turno.fecha} - ${turno.hora}</div>
+                    </div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 10px; padding: 8px; background: white; border-radius: 8px; border: 1px solid #e5e7eb;">
+                    <i class="fa fa-clipboard-list" style="color: var(--theme-primary); width: 20px;"></i>
+                    <div>
+                        <div style="font-size: 0.75rem; color: #6b7280;">Tipo de Tramite</div>
+                        <div style="font-weight: 500; color: #1f2937;">${turno.tipo_tramite}</div>
+                    </div>
+                </div>
     `;
 
     if (turno.taller) {
-        infoHtml += `
-            <div class="info-row">
-                <i class="fa fa-building"></i>
-                <div>
-                    <span class="info-label">Taller</span>
-                    <span class="info-value">${turno.taller}</span>
+        modalHtml += `
+                <div style="display: flex; align-items: center; gap: 10px; padding: 8px; background: white; border-radius: 8px; border: 1px solid #e5e7eb;">
+                    <i class="fa fa-building" style="color: var(--theme-primary); width: 20px;"></i>
+                    <div>
+                        <div style="font-size: 0.75rem; color: #6b7280;">Taller</div>
+                        <div style="font-weight: 500; color: #1f2937;">${turno.taller}</div>
+                    </div>
                 </div>
-            </div>
         `;
     }
 
     if (data.ya_fue_atendido && turno.atendido_por) {
-        infoHtml += `
-            <div class="info-row">
-                <i class="fa fa-user-check"></i>
-                <div>
-                    <span class="info-label">Atendido por</span>
-                    <span class="info-value">${turno.atendido_por}</span>
+        modalHtml += `
+                <div style="display: flex; align-items: center; gap: 10px; padding: 8px; background: #fef3c7; border-radius: 8px; border: 1px solid #f59e0b;">
+                    <i class="fa fa-user-check" style="color: #d97706; width: 20px;"></i>
+                    <div>
+                        <div style="font-size: 0.75rem; color: #92400e;">Atendido por</div>
+                        <div style="font-weight: 500; color: #78350f;">${turno.atendido_por}</div>
+                    </div>
                 </div>
-            </div>
         `;
         if (turno.fecha_atencion) {
-            infoHtml += `
-                <div class="info-row">
-                    <i class="fa fa-clock"></i>
+            modalHtml += `
+                <div style="display: flex; align-items: center; gap: 10px; padding: 8px; background: #fef3c7; border-radius: 8px; border: 1px solid #f59e0b;">
+                    <i class="fa fa-clock" style="color: #d97706; width: 20px;"></i>
                     <div>
-                        <span class="info-label">Fecha de Atencion</span>
-                        <span class="info-value">${turno.fecha_atencion}</span>
+                        <div style="font-size: 0.75rem; color: #92400e;">Fecha de Atencion</div>
+                        <div style="font-weight: 500; color: #78350f;">${turno.fecha_atencion}</div>
                     </div>
                 </div>
             `;
         }
     }
 
-    $('#turno-info').html(infoHtml);
-
-    // Botones de accion
-    let accionesHtml = '';
-
-    if (data.puede_registrar_atencion && !data.ya_fue_atendido) {
-        accionesHtml += `
-            <button class="btn-registrar-atencion" id="btn-registrar-atencion">
-                <i class="fa fa-check-circle"></i> Registrar Atencion
-            </button>
-        `;
-    } else if (data.ya_fue_atendido) {
-        accionesHtml += `
-            <div class="alert alert-warning mb-0 w-100">
-                <i class="fa fa-info-circle me-2"></i>
-                Este turno ya fue atendido
+    modalHtml += `
             </div>
-        `;
-    }
-
-    accionesHtml += `
-        <button class="btn-nuevo-escaneo" id="btn-nuevo-escaneo">
-            <i class="fa fa-redo"></i> Nuevo Escaneo
-        </button>
+        </div>
     `;
 
-    $('#acciones-turno').html(accionesHtml);
+    // Configurar botones segun el tipo de usuario
+    let swalConfig = {
+        title: '<i class="fa fa-qrcode" style="margin-right: 10px;"></i>Turno Escaneado',
+        html: modalHtml,
+        width: '500px',
+        showCloseButton: true,
+        focusConfirm: false,
+        customClass: {
+            popup: 'turno-modal-popup'
+        }
+    };
 
-    // Eventos de botones
-    $('#btn-registrar-atencion').on('click', registrarAtencion);
-    $('#btn-nuevo-escaneo').on('click', nuevoEscaneo);
+    // Si es TALLER y puede registrar atencion
+    if (ES_TALLER && data.puede_registrar_atencion && !data.ya_fue_atendido) {
+        swalConfig.showCancelButton = true;
+        swalConfig.confirmButtonText = '<i class="fa fa-check-circle"></i> Registrar Atencion';
+        swalConfig.cancelButtonText = '<i class="fa fa-redo"></i> Nuevo Escaneo';
+        swalConfig.confirmButtonColor = '#10b981';
+        swalConfig.cancelButtonColor = '#6b7280';
+        swalConfig.reverseButtons = true;
 
-    $('#resultado-container').addClass('visible');
+        Swal.fire(swalConfig).then((result) => {
+            if (result.isConfirmed) {
+                // Registrar atencion
+                registrarAtencionDirecto();
+            } else {
+                // Nuevo escaneo
+                nuevoEscaneo();
+            }
+        });
+    } else {
+        // Solo mostrar info (ADMINISTRACION o turno ya atendido)
+        swalConfig.confirmButtonText = '<i class="fa fa-redo"></i> Nuevo Escaneo';
+        swalConfig.confirmButtonColor = 'var(--theme-primary)';
+
+        Swal.fire(swalConfig).then(() => {
+            nuevoEscaneo();
+        });
+    }
 }
 
 function registrarAtencion() {
@@ -1007,6 +1073,52 @@ function registrarAtencion() {
                     mostrarError(mensaje);
                 }
             });
+        }
+    });
+}
+
+function registrarAtencionDirecto() {
+    // Registra la atencion directamente sin mostrar otro modal de confirmacion
+    if (!turnoActual) return;
+
+    $('#loading-overlay').addClass('visible');
+
+    $.ajax({
+        url: '{% url "registrar_atencion_turno" %}',
+        method: 'POST',
+        data: {
+            turno_id: turnoActual.turno.id,
+            csrfmiddlewaretoken: '{{ csrf_token }}'
+        },
+        success: function(response) {
+            $('#loading-overlay').removeClass('visible');
+
+            if (response.success) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Atencion Registrada',
+                    html: `
+                        <p>El turno <strong>${turnoActual.turno.codigo}</strong> ha sido marcado como atendido.</p>
+                        <p class="text-muted">Cliente: ${turnoActual.turno.cliente.nombre}</p>
+                    `,
+                    confirmButtonText: '<i class="fa fa-qrcode"></i> Escanear Otro Turno',
+                    confirmButtonColor: 'var(--theme-primary)'
+                }).then(() => {
+                    nuevoEscaneo();
+                });
+            } else {
+                mostrarError(response.error || 'Error al registrar la atencion');
+                nuevoEscaneo();
+            }
+        },
+        error: function(xhr) {
+            $('#loading-overlay').removeClass('visible');
+            let mensaje = 'Error al registrar la atencion';
+            if (xhr.responseJSON && xhr.responseJSON.error) {
+                mensaje = xhr.responseJSON.error;
+            }
+            mostrarError(mensaje);
+            nuevoEscaneo();
         }
     });
 }
