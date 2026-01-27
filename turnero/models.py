@@ -173,18 +173,22 @@ class Turno(models.Model):
 
     def save(self, *args, **kwargs):
         """Override para generar código y token automáticamente"""
-        # Generar código único si no existe
-        if not self.codigo:
-            self.codigo = f"TRN-{secrets.token_hex(3).upper()}"
+        update_fields = kwargs.get('update_fields')
 
-        # Generar token de cancelación si no existe
-        if not self.token_cancelacion:
-            self.token_cancelacion = secrets.token_urlsafe(32)
+        # Solo generar código/token si es una creación nueva (sin update_fields)
+        if update_fields is None:
+            # Generar código único si no existe
+            if not self.codigo:
+                self.codigo = f"TRN-{secrets.token_hex(3).upper()}"
+
+            # Generar token de cancelación si no existe
+            if not self.token_cancelacion:
+                self.token_cancelacion = secrets.token_urlsafe(32)
 
         super().save(*args, **kwargs)
 
-        # Generar QR después de guardar (necesita el ID)
-        if not self.qr_code:
+        # Generar QR solo si es nuevo y no estamos haciendo update parcial
+        if update_fields is None and not self.qr_code:
             self.generar_qr()
 
     @staticmethod
@@ -305,21 +309,24 @@ class Turno(models.Model):
     def registrar_atencion(self, usuario, ip_address=None):
         """
         Registra la atencion del turno por un usuario del taller.
-        Cambia el estado a EN_CURSO y guarda quien atendio.
+        Cambia el estado a CONFIRMADO y guarda quien atendio.
         """
         from turnero.models import HistorialTurno
 
         # Guardar datos de atencion
         self.atendido_por = usuario
         self.fecha_atencion = timezone.now()
-        self.estado = 'EN_CURSO'
-        self.save(update_fields=['atendido_por', 'fecha_atencion', 'estado', 'updated_at'])
+        self.estado = 'CONFIRMADO'
+        self.save(update_fields=['atendido_por', 'fecha_atencion', 'estado'])
+
+        # Recargar desde la base de datos para asegurar que tenemos los valores actuales
+        self.refresh_from_db()
 
         # Registrar en historial
         HistorialTurno.objects.create(
             turno=self,
             accion='ATENCION_REGISTRADA',
-            descripcion=f'Turno registrado como atendido por {usuario.get_full_name() or usuario.username}',
+            descripcion=f'Turno confirmado por {usuario.get_full_name() or usuario.username}',
             usuario=usuario,
             ip_address=ip_address
         )
