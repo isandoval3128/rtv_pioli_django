@@ -15,10 +15,13 @@ from .models import UserProfile, Sector, UserPermission, PasswordResetToken
 def get_user_sector(user):
     """
     Obtiene el codigo del sector del usuario.
-    Retorna 'ADMINISTRACION' por defecto si no tiene sector asignado.
+    Retorna 'ADMINISTRACION' por defecto si no tiene sector asignado o si el codigo es NULL.
     """
     if hasattr(user, 'panel_profile') and user.panel_profile and user.panel_profile.sector:
-        return user.panel_profile.sector.codigo
+        # Verificar que el codigo no sea NULL
+        codigo = user.panel_profile.sector.codigo
+        if codigo:
+            return codigo
     return Sector.SECTOR_ADMINISTRACION
 
 
