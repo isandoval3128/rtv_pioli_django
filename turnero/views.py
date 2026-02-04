@@ -5,7 +5,7 @@ from django.views import View
 from django.views.generic import TemplateView
 from django.utils import timezone
 from datetime import datetime, timedelta, time
-from django.db.models import Q, Count
+from django.db.models import Q, Count, Case, When, Value, IntegerField
 from clientes.models import Cliente
 from territorios.models import Localidad
 from talleres.models import Taller, TipoVehiculo, Vehiculo, ConfiguracionTaller
@@ -226,11 +226,19 @@ class Step3TallerView(View):
         vehiculo = Vehiculo.objects.get(id=request.session['vehiculo_id'])
 
         # Obtener todos los talleres activos que tienen configuración de trámites
+        # Ordenar: Palpalá (ID=1) primero, luego Libertador (ID=2)
         talleres = Taller.objects.filter(
             status=True,
             configuraciones__status=True,
             configuraciones__tipo_vehiculo__status=True
-        ).distinct()
+        ).distinct().annotate(
+            orden_personalizado=Case(
+                When(id=1, then=Value(1)),  # Palpalá
+                When(id=2, then=Value(2)),  # Libertador
+                default=Value(3),
+                output_field=IntegerField()
+            )
+        ).order_by('orden_personalizado', 'nombre')
 
         form = Step3TallerForm()
         form.fields['taller'].queryset = talleres
@@ -259,7 +267,14 @@ class Step3TallerView(View):
                 status=True,
                 configuraciones__status=True,
                 configuraciones__tipo_vehiculo__status=True
-            ).distinct()
+            ).distinct().annotate(
+                orden_personalizado=Case(
+                    When(id=1, then=Value(1)),  # Palpalá
+                    When(id=2, then=Value(2)),  # Libertador
+                    default=Value(3),
+                    output_field=IntegerField()
+                )
+            ).order_by('orden_personalizado', 'nombre')
 
             return render(request, self.template_name, {
                 'form': Step3TallerForm(),
@@ -296,7 +311,14 @@ class Step3TallerView(View):
                 status=True,
                 configuraciones__status=True,
                 configuraciones__tipo_vehiculo__status=True
-            ).distinct()
+            ).distinct().annotate(
+                orden_personalizado=Case(
+                    When(id=1, then=Value(1)),  # Palpalá
+                    When(id=2, then=Value(2)),  # Libertador
+                    default=Value(3),
+                    output_field=IntegerField()
+                )
+            ).order_by('orden_personalizado', 'nombre')
 
             return render(request, self.template_name, {
                 'form': Step3TallerForm(),
@@ -704,7 +726,15 @@ def buscar_vehiculo_ajax(request):
 
     try:
         vehiculo = Vehiculo.objects.get(dominio=dominio, status=True)
-        return JsonResponse({
+
+        # Verificar si el vehículo tiene turnos pendientes
+        turno_pendiente = Turno.objects.filter(
+            vehiculo=vehiculo,
+            estado__in=['PENDIENTE', 'CONFIRMADO'],
+            fecha__gte=timezone.localtime(timezone.now()).date()
+        ).order_by('fecha', 'hora_inicio').first()
+
+        response_data = {
             'found': True,
             'data': {
                 'id': vehiculo.id,
@@ -713,7 +743,25 @@ def buscar_vehiculo_ajax(request):
                 'tipo_vehiculo_nombre': vehiculo.tipo_vehiculo.nombre,
                 'tiene_gnc': vehiculo.tiene_gnc
             }
-        })
+        }
+
+        if turno_pendiente:
+            response_data['turno_pendiente'] = {
+                'id': turno_pendiente.id,
+                'codigo': turno_pendiente.codigo,
+                'fecha': turno_pendiente.fecha.strftime('%d/%m/%Y'),
+                'hora': turno_pendiente.hora_inicio.strftime('%H:%M'),
+                'taller_nombre': turno_pendiente.taller.get_nombre(),
+                'taller_direccion': turno_pendiente.taller.get_direccion(),
+                'tipo_tramite': turno_pendiente.tipo_vehiculo.nombre,
+                'estado': turno_pendiente.get_estado_display(),
+                'puede_reprogramar': turno_pendiente.puede_reprogramar,
+                'cliente_nombre': f"{turno_pendiente.cliente.nombre} {turno_pendiente.cliente.apellido}",
+                'cliente_dni': turno_pendiente.cliente.dni,
+                'cliente_email': turno_pendiente.cliente.email
+            }
+
+        return JsonResponse(response_data)
     except Vehiculo.DoesNotExist:
         return JsonResponse({'found': False})
 
@@ -784,6 +832,11 @@ def obtener_horarios_disponibles_ajax(request):
         # Limpiar reservas temporales expiradas
         ReservaTemporal.limpiar_expiradas()
 
+        # Obtener hora actual en zona horaria de Argentina (configurada en settings.py)
+        ahora = timezone.localtime(timezone.now())
+        hoy = ahora.date()
+        hora_actual_sistema = ahora.time()
+
         # Generar horarios disponibles
         horarios = []
         hora_actual = datetime.combine(fecha, taller.horario_apertura)
@@ -791,6 +844,11 @@ def obtener_horarios_disponibles_ajax(request):
 
         while hora_actual < hora_cierre:
             hora_time = hora_actual.time()
+
+            # Si la fecha es hoy, filtrar horarios que ya pasaron
+            if fecha == hoy and hora_time <= hora_actual_sistema:
+                hora_actual += timedelta(minutes=config.intervalo_minutos)
+                continue
 
             # Contar turnos confirmados/pendientes del mismo tipo de vehículo
             turnos_en_hora = Turno.objects.filter(
@@ -928,8 +986,11 @@ def obtener_fechas_disponibles_ajax(request):
         taller = Taller.objects.get(id=taller_id)
         dias_atencion = taller.dias_atencion
 
-        # Fechas deshabilitadas: próximos 60 días donde NO atiende
-        hoy = timezone.now().date()
+        # Obtener hora actual en zona horaria de Argentina
+        ahora = timezone.localtime(timezone.now())
+        hoy = ahora.date()
+        hora_actual = ahora.time()
+
         fechas_deshabilitadas = []
 
         for i in range(60):
@@ -939,6 +1000,43 @@ def obtener_fechas_disponibles_ajax(request):
             # Deshabilitar si no atiende ese día de la semana
             if not dias_atencion.get(dia_nombre, False):
                 fechas_deshabilitadas.append(fecha.isoformat())
+                continue
+
+            # Si es hoy, verificar si aún quedan horarios disponibles
+            if fecha == hoy:
+                # Si ya pasó el horario de cierre, deshabilitar hoy
+                if hora_actual >= taller.horario_cierre:
+                    fechas_deshabilitadas.append(fecha.isoformat())
+                    continue
+
+                # Verificar si queda al menos un horario disponible hoy
+                # (considerando el intervalo de turnos)
+                try:
+                    tipo_vehiculo = TipoVehiculo.objects.get(id=tipo_vehiculo_id)
+                    config = ConfiguracionTaller.objects.get(taller=taller, tipo_vehiculo=tipo_vehiculo)
+
+                    # Buscar el próximo horario disponible
+                    hora_iteracion = datetime.combine(fecha, taller.horario_apertura)
+                    hora_cierre = datetime.combine(fecha, taller.horario_cierre)
+                    hay_horarios_disponibles = False
+
+                    while hora_iteracion < hora_cierre:
+                        hora_time = hora_iteracion.time()
+
+                        # Solo considerar horarios que aún no pasaron
+                        if hora_time > hora_actual:
+                            hay_horarios_disponibles = True
+                            break
+
+                        hora_iteracion += timedelta(minutes=config.intervalo_minutos)
+
+                    if not hay_horarios_disponibles:
+                        fechas_deshabilitadas.append(fecha.isoformat())
+                        continue
+
+                except (TipoVehiculo.DoesNotExist, ConfiguracionTaller.DoesNotExist):
+                    # Si no hay configuración, deshabilitar por seguridad
+                    pass
 
         # Agregar fechas no laborables (feriados, vacaciones, etc.)
         if taller.fechas_no_laborables:

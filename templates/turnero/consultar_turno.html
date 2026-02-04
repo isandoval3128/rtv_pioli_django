@@ -1264,6 +1264,20 @@
             title: '<i class="fas fa-exclamation-triangle text-danger me-2"></i> Cancelar Turno',
             html: `
                 <p>¿Estás seguro de que querés cancelar el turno <strong>${codigo}</strong>?</p>
+
+                <div class="text-start mt-3">
+                    <label for="motivo_cancelacion" class="form-label" style="color: #13304D; font-weight: 600;">
+                        <i class="fas fa-comment-alt me-2"></i>Motivo de cancelación (opcional)
+                    </label>
+                    <textarea
+                        id="motivo_cancelacion"
+                        class="form-control"
+                        rows="3"
+                        placeholder="Ej: No puedo asistir por motivos personales..."
+                        style="border: 2px solid #e2e8f0; border-radius: 10px; resize: none;"
+                    ></textarea>
+                </div>
+
                 <div class="alert alert-danger mt-3 mb-0" style="font-size: 0.9rem;">
                     <i class="fas fa-exclamation-circle me-2"></i>
                     <strong>Esta acción no se puede deshacer</strong>
@@ -1276,12 +1290,15 @@
             cancelButtonText: 'No, mantener turno',
             showLoaderOnConfirm: true,
             preConfirm: () => {
+                const motivo = document.getElementById('motivo_cancelacion').value.trim();
+
                 return fetch(`/turnero/cancelar-definitivo/${turnoId}/`, {
                     method: 'POST',
                     headers: {
                         'X-CSRFToken': getCookie('csrftoken'),
                         'Content-Type': 'application/json',
-                    }
+                    },
+                    body: JSON.stringify({ motivo: motivo })
                 })
                 .then(response => response.json())
                 .then(data => {

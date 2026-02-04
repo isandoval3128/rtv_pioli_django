@@ -18,6 +18,8 @@ def cancelar_turno_definitivo(request, turno_id):
     Cancela un turno de forma definitiva (sin posibilidad de reprogramar)
     """
     if request.method == 'POST':
+        import json
+
         turno = get_object_or_404(Turno, id=turno_id)
 
         # Verificar que el turno puede ser cancelado
@@ -27,12 +29,26 @@ def cancelar_turno_definitivo(request, turno_id):
                 'message': 'Este turno ya no puede ser cancelado'
             }, status=400)
 
-        # Cambiar estado a CANCELADO
+        # Obtener motivo de cancelación del body (si existe)
+        motivo = ''
+        try:
+            body = json.loads(request.body)
+            motivo = body.get('motivo', '').strip()
+        except (json.JSONDecodeError, ValueError):
+            pass
+
+        # Cambiar estado a CANCELADO y guardar motivo en observaciones
         turno.estado = 'CANCELADO'
+        if motivo:
+            # Agregar motivo a observaciones (preservando observaciones anteriores)
+            if turno.observaciones:
+                turno.observaciones = f"{turno.observaciones}\n\nMotivo de cancelación: {motivo}"
+            else:
+                turno.observaciones = f"Motivo de cancelación: {motivo}"
         turno.save()
 
-        # Enviar email de confirmación de cancelación
-        enviar_email_cancelacion(turno)
+        # Enviar email de confirmación de cancelación (con motivo)
+        enviar_email_cancelacion(turno, motivo)
 
         return JsonResponse({
             'success': True,
@@ -182,7 +198,7 @@ class ReprogramarTurnoView(View):
             }, status=500)
 
 
-def enviar_email_cancelacion(turno):
+def enviar_email_cancelacion(turno, motivo=''):
     """
     Envía email de confirmación de cancelación de turno
     """
@@ -201,22 +217,34 @@ def enviar_email_cancelacion(turno):
             use_tls=email_config.email_use_tls,
         )
 
+        # Construir sección de motivo si existe
+        motivo_seccion = ""
+        if motivo:
+            motivo_seccion = f"""
+Motivo de cancelación:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+{motivo}
+"""
+
         subject = f"Turno RTV Cancelado - {turno.codigo}"
         body = f"""
 Estimado/a {turno.cliente.nombre} {turno.cliente.apellido},
 
-Su turno ha sido cancelado exitosamente:
+Su turno ha sido cancelado exitosamente.
 
+Datos del turno cancelado:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Código de Turno: {turno.codigo}
 Vehículo: {turno.vehiculo.dominio}
 Fecha Original: {turno.fecha.strftime('%d/%m/%Y')}
 Horario Original: {turno.hora_inicio.strftime('%H:%M')} hs
 Taller: {turno.taller.get_nombre()}
-
+Dirección: {turno.taller.get_direccion()}, {turno.taller.get_localidad().nombre}
+{motivo_seccion}
 Si desea agendar un nuevo turno, puede hacerlo a través de nuestra página web.
 
 Saludos cordiales,
-RTV Pioli
+RTV Pioli - Revisión Técnica Vehicular
 """
 
         email = EmailMessage(
@@ -240,6 +268,9 @@ def enviar_email_reprogramacion(turno, token):
     Envía email con link para reprogramar el turno
     """
     try:
+        from django.conf import settings
+        import socket
+
         email_config = EmailConfig.objects.first()
 
         if not email_config:
@@ -254,11 +285,16 @@ def enviar_email_reprogramacion(turno, token):
             use_tls=email_config.email_use_tls,
         )
 
-        # Generar URL completa para reprogramar
-        # Usar localhost:8000 por defecto en desarrollo
-        domain = 'localhost:8000'
+        # Generar URL completa para reprogramar (misma lógica que el QR)
+        hostname = socket.gethostname().lower()
+        site_url_local = getattr(settings, 'SITE_URL_LOCAL', None)
+        site_url_prod = getattr(settings, 'SITE_URL', 'https://rtvpioli.com.ar')
 
-        reprogramar_url = f"http://{domain}/turnero/reprogramar/{token}/"
+        # Detecta producción por IP del servidor o nombre del host
+        es_produccion = '167.71.93.198' in hostname or 'rtvpioli' in hostname or site_url_local is None
+        site_url = site_url_prod if es_produccion else site_url_local
+
+        reprogramar_url = f"{site_url}/turnero/reprogramar/{token}/"
 
         subject = f"Reprogramar Turno RTV - {turno.codigo}"
         body = f"""
