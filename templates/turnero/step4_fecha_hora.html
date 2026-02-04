@@ -677,6 +677,14 @@
         if (temporizadorReserva) {
             clearInterval(temporizadorReserva);
         }
+
+        // Scroll hacia la sección de horarios
+        setTimeout(function() {
+            const horariosContainer = document.querySelector('.horarios-container');
+            if (horariosContainer) {
+                horariosContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }, 300);
     }
 
     // Cambiar entre franjas horarias
@@ -828,6 +836,14 @@
 
                 // Mostrar mensaje de reserva temporal
                 mostrarContadorReserva(data.expira_en);
+
+                // Scroll hacia el botón continuar
+                setTimeout(function() {
+                    const btnContinuar = document.getElementById('btn_continuar');
+                    if (btnContinuar) {
+                        btnContinuar.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                }, 300);
             } else {
                 // Horario ya no disponible
                 elemento.classList.remove('selected');

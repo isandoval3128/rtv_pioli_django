@@ -301,6 +301,30 @@
             font-size: 0.8rem;
         }
     }
+
+    /* Estilos para modal de turno pendiente */
+    .swal2-popup-custom {
+        border-radius: 15px !important;
+    }
+
+    .swal2-popup-custom .swal2-footer {
+        border-top: none !important;
+        padding-top: 0 !important;
+    }
+
+    .loading-spinner {
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        border: 3px solid rgba(255,255,255,.3);
+        border-radius: 50%;
+        border-top-color: #fff;
+        animation: spin 1s ease-in-out infinite;
+    }
+
+    @keyframes spin {
+        to { transform: rotate(360deg); }
+    }
 </style>
 {% endblock %}
 
@@ -502,6 +526,9 @@
 
 {% block extra_js %}
 <script>
+    // Variable para guardar datos del turno pendiente
+    let turnoPendienteData = null;
+
     // Cleave.js para formatear patente
     const dominioSearchCleave = new Cleave('#dominio_busqueda_input', {
         uppercase: true,
@@ -518,6 +545,158 @@
         const valor = e.target.value.toUpperCase();
         document.getElementById('patente_preview').textContent = valor || '---';
     });
+
+    // Función para mostrar modal de turno pendiente
+    function mostrarModalTurnoPendiente(turno) {
+        turnoPendienteData = turno;
+
+        const puedeReprogramar = turno.puede_reprogramar;
+        const estadoBadge = turno.estado === 'Confirmado'
+            ? '<span class="badge bg-success">Confirmado</span>'
+            : '<span class="badge bg-warning text-dark">Pendiente</span>';
+
+        let botonesHtml = '';
+        if (puedeReprogramar) {
+            botonesHtml = `
+                <button type="button" class="btn btn-primary-custom" id="btnSolicitarReprogramacion">
+                    <i class="fas fa-calendar-alt me-2"></i>Solicitar Reprogramación
+                </button>
+                <button type="button" class="btn btn-secondary-custom" onclick="Swal.close()">
+                    <i class="fas fa-times me-2"></i>Cerrar
+                </button>
+            `;
+        } else {
+            botonesHtml = `
+                <button type="button" class="btn btn-secondary-custom" onclick="Swal.close()">
+                    <i class="fas fa-times me-2"></i>Cerrar
+                </button>
+            `;
+        }
+
+        Swal.fire({
+            title: '<i class="fas fa-exclamation-triangle text-warning me-2"></i>Turno Pendiente',
+            html: `
+                <div class="text-start">
+                    <p class="mb-3">Este vehículo ya tiene un turno programado:</p>
+
+                    <div class="p-3 rounded" style="background: #f8f9fa; border-left: 4px solid var(--primary-color);">
+                        <div class="mb-2">
+                            <strong><i class="fas fa-ticket-alt me-2"></i>Código:</strong>
+                            <span class="badge bg-dark">${turno.codigo}</span>
+                        </div>
+                        <div class="mb-2">
+                            <strong><i class="fas fa-calendar me-2"></i>Fecha:</strong> ${turno.fecha}
+                        </div>
+                        <div class="mb-2">
+                            <strong><i class="fas fa-clock me-2"></i>Hora:</strong> ${turno.hora} hs
+                        </div>
+                        <div class="mb-2">
+                            <strong><i class="fas fa-building me-2"></i>Taller:</strong> ${turno.taller_nombre}
+                        </div>
+                        <div class="mb-2">
+                            <strong><i class="fas fa-map-marker-alt me-2"></i>Dirección:</strong> ${turno.taller_direccion}
+                        </div>
+                        <div class="mb-2">
+                            <strong><i class="fas fa-clipboard-list me-2"></i>Trámite:</strong> ${turno.tipo_tramite}
+                        </div>
+                        <div class="mb-2">
+                            <strong><i class="fas fa-info-circle me-2"></i>Estado:</strong> ${estadoBadge}
+                        </div>
+                        <hr class="my-2">
+                        <div class="mb-2">
+                            <strong><i class="fas fa-user me-2"></i>Solicitado por:</strong> ${turno.cliente_nombre}
+                        </div>
+                        <div class="mb-0">
+                            <strong><i class="fas fa-id-card me-2"></i>DNI:</strong> ${turno.cliente_dni}
+                        </div>
+                    </div>
+
+                    ${puedeReprogramar ? `
+                    <div class="alert alert-info mt-3 mb-0" style="font-size: 0.9rem;">
+                        <i class="fas fa-info-circle me-2"></i>
+                        Si necesitás cambiar la fecha u hora, podés solicitar una reprogramación.
+                        Te enviaremos un email a <strong>${turno.cliente_email}</strong> con un enlace para elegir un nuevo horario.
+                    </div>
+                    ` : `
+                    <div class="alert alert-warning mt-3 mb-0" style="font-size: 0.9rem;">
+                        <i class="fas fa-exclamation-circle me-2"></i>
+                        Este turno no puede ser reprogramado porque debe faltar al menos 24 horas para poder hacerlo.
+                    </div>
+                    `}
+                </div>
+            `,
+            showConfirmButton: false,
+            showCloseButton: true,
+            width: '550px',
+            customClass: {
+                popup: 'swal2-popup-custom'
+            },
+            footer: `<div class="d-flex gap-2 justify-content-center w-100">${botonesHtml}</div>`,
+            didOpen: () => {
+                // Agregar evento al botón de reprogramación
+                const btnReprogramar = document.getElementById('btnSolicitarReprogramacion');
+                if (btnReprogramar) {
+                    btnReprogramar.addEventListener('click', solicitarReprogramacion);
+                }
+            }
+        });
+    }
+
+    // Función para solicitar reprogramación
+    function solicitarReprogramacion() {
+        if (!turnoPendienteData) return;
+
+        Swal.fire({
+            title: 'Solicitando reprogramación...',
+            html: '<div class="loading-spinner mx-auto my-3"></div><p>Enviando email con enlace de reprogramación...</p>',
+            allowOutsideClick: false,
+            showConfirmButton: false
+        });
+
+        fetch(`/turnero/solicitar-reprogramacion/${turnoPendienteData.id}/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                Swal.fire({
+                    icon: 'success',
+                    title: '¡Email Enviado!',
+                    html: `
+                        <p>${data.message}</p>
+                        <p class="mt-3 text-muted" style="font-size: 0.9rem;">
+                            <i class="fas fa-envelope me-2"></i>
+                            Revisá tu casilla de correo: <strong>${turnoPendienteData.cliente_email}</strong>
+                        </p>
+                    `,
+                    confirmButtonColor: '#13304D',
+                    confirmButtonText: 'Entendido'
+                });
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: data.message || 'No se pudo enviar el email de reprogramación.',
+                    confirmButtonColor: '#13304D',
+                    confirmButtonText: 'Cerrar'
+                });
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error de conexión',
+                text: 'No se pudo conectar con el servidor. Intentá nuevamente.',
+                confirmButtonColor: '#13304D',
+                confirmButtonText: 'Cerrar'
+            });
+        });
+    }
 
     // Buscar vehículo por dominio
     document.getElementById('btn_buscar_vehiculo').addEventListener('click', function() {
@@ -536,20 +715,27 @@
             .then(response => response.json())
             .then(data => {
                 if (data.found) {
-                    document.getElementById('vehiculo_dominio').textContent =
-                        `Dominio: ${data.data.dominio}`;
-                    document.getElementById('vehiculo_tipo').textContent =
-                        `Tipo: ${data.data.tipo_vehiculo_nombre}`;
-                    document.getElementById('result_vehiculo').classList.add('show');
-                    document.getElementById('dominio_busqueda_field').value = dominio;
+                    // Verificar si hay turno pendiente
+                    if (data.turno_pendiente) {
+                        // Mostrar modal de turno pendiente
+                        mostrarModalTurnoPendiente(data.turno_pendiente);
+                    } else {
+                        // No hay turno pendiente, mostrar resultado normal
+                        document.getElementById('vehiculo_dominio').textContent =
+                            `Dominio: ${data.data.dominio}`;
+                        document.getElementById('vehiculo_tipo').textContent =
+                            `Tipo: ${data.data.tipo_vehiculo_nombre}`;
+                        document.getElementById('result_vehiculo').classList.add('show');
+                        document.getElementById('dominio_busqueda_field').value = dominio;
 
-                    // Scroll hacia el resultado encontrado
-                    setTimeout(() => {
-                        document.getElementById('result_vehiculo').scrollIntoView({
-                            behavior: 'smooth',
-                            block: 'center'
-                        });
-                    }, 100);
+                        // Scroll hacia el resultado encontrado
+                        setTimeout(() => {
+                            document.getElementById('result_vehiculo').scrollIntoView({
+                                behavior: 'smooth',
+                                block: 'center'
+                            });
+                        }, 100);
+                    }
                 } else {
                     document.getElementById('result_vehiculo').classList.remove('show');
                     mostrarFormularioVehiculo();

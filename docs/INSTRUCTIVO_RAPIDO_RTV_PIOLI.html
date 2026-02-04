@@ -1,0 +1,1089 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instructivo Rápido - RTV Pioli</title>
+    <style>
+        :root {
+            --primary: #13304D;
+            --primary-light: #1a5a8a;
+            --accent: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --gray: #6b7280;
+            --light-gray: #f3f4f6;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        @page {
+            size: A4;
+            margin: 1.5cm;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            background: white;
+            color: #1f2937;
+            line-height: 1.5;
+        }
+
+        /* PORTADA SIMPLE */
+        .cover {
+            height: 100vh;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            text-align: center;
+            page-break-after: always;
+        }
+
+        .cover-icon {
+            font-size: 5rem;
+            margin-bottom: 2rem;
+        }
+
+        .cover h1 {
+            font-size: 3rem;
+            font-weight: 300;
+            margin-bottom: 0.5rem;
+        }
+
+        .cover h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            opacity: 0.9;
+            margin-bottom: 2rem;
+        }
+
+        .cover-badge {
+            background: rgba(255,255,255,0.2);
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            font-size: 1rem;
+        }
+
+        /* SECCIONES */
+        .page {
+            page-break-before: always;
+            padding: 1rem 0;
+        }
+
+        .page-title {
+            background: var(--primary);
+            color: white;
+            padding: 1rem 1.5rem;
+            font-size: 1.5rem;
+            font-weight: 600;
+            border-radius: 10px;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .page-title-icon {
+            font-size: 1.8rem;
+        }
+
+        /* PASOS VISUALES */
+        .steps {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .step {
+            display: flex;
+            gap: 1rem;
+            align-items: flex-start;
+            background: var(--light-gray);
+            padding: 1rem;
+            border-radius: 12px;
+            border-left: 5px solid var(--primary);
+        }
+
+        .step-number {
+            background: var(--primary);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .step-content {
+            flex: 1;
+        }
+
+        .step-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 0.3rem;
+        }
+
+        .step-desc {
+            color: var(--gray);
+            font-size: 0.95rem;
+        }
+
+        /* FLUJO HORIZONTAL */
+        .flow-horizontal {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 2rem 0;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .flow-step {
+            text-align: center;
+            flex: 1;
+            min-width: 100px;
+        }
+
+        .flow-icon {
+            background: var(--primary);
+            color: white;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin: 0 auto 0.5rem;
+        }
+
+        .flow-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .flow-arrow {
+            font-size: 1.5rem;
+            color: var(--accent);
+            flex-shrink: 0;
+        }
+
+        /* DIAGRAMA VERTICAL */
+        .diagram-vertical {
+            background: var(--light-gray);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+        }
+
+        .diagram-row {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .diagram-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .diagram-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .diagram-icon.blue { background: #dbeafe; color: #1d4ed8; }
+        .diagram-icon.green { background: #d1fae5; color: #059669; }
+        .diagram-icon.yellow { background: #fef3c7; color: #d97706; }
+        .diagram-icon.red { background: #fee2e2; color: #dc2626; }
+        .diagram-icon.purple { background: #ede9fe; color: #7c3aed; }
+
+        .diagram-text {
+            flex: 1;
+        }
+
+        .diagram-title {
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .diagram-subtitle {
+            font-size: 0.85rem;
+            color: var(--gray);
+        }
+
+        .diagram-arrow-down {
+            text-align: center;
+            font-size: 1.5rem;
+            color: var(--gray);
+            margin: 0.5rem 0;
+        }
+
+        /* TARJETAS DE INFORMACIÓN */
+        .info-cards {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        .info-card {
+            background: var(--light-gray);
+            padding: 1rem;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .info-card-icon {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .info-card-title {
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 0.3rem;
+        }
+
+        .info-card-desc {
+            font-size: 0.85rem;
+            color: var(--gray);
+        }
+
+        /* BADGES DE ESTADO */
+        .states-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.8rem;
+            margin: 1rem 0;
+        }
+
+        .state-badge {
+            padding: 0.8rem;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .state-badge-icon {
+            font-size: 1.5rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .state-badge-name {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .state-pending { background: #fef3c7; color: #92400e; }
+        .state-confirmed { background: #d1fae5; color: #065f46; }
+        .state-progress { background: #dbeafe; color: #1e40af; }
+        .state-completed { background: #10b981; color: white; }
+        .state-cancelled { background: #fee2e2; color: #991b1b; }
+        .state-noshow { background: #e5e7eb; color: #4b5563; }
+
+        /* COMPARATIVA DE ROLES */
+        .roles-compare {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin: 1rem 0;
+        }
+
+        .role-card {
+            border-radius: 15px;
+            overflow: hidden;
+        }
+
+        .role-header {
+            padding: 1rem;
+            text-align: center;
+            color: white;
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .role-admin .role-header { background: var(--primary); }
+        .role-taller .role-header { background: var(--accent); }
+
+        .role-body {
+            padding: 1rem;
+            background: var(--light-gray);
+        }
+
+        .role-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.4rem 0;
+            font-size: 0.9rem;
+        }
+
+        .role-check { color: var(--accent); font-weight: bold; }
+        .role-cross { color: var(--danger); font-weight: bold; }
+
+        /* ALERTAS */
+        .alert {
+            padding: 1rem;
+            border-radius: 10px;
+            margin: 1rem 0;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.8rem;
+        }
+
+        .alert-icon {
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .alert-info {
+            background: #dbeafe;
+            border: 2px solid #3b82f6;
+        }
+
+        .alert-warning {
+            background: #fef3c7;
+            border: 2px solid #f59e0b;
+        }
+
+        .alert-success {
+            background: #d1fae5;
+            border: 2px solid #10b981;
+        }
+
+        /* LISTA SIMPLE */
+        .simple-list {
+            list-style: none;
+            margin: 1rem 0;
+        }
+
+        .simple-list li {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 0;
+            border-bottom: 1px dashed #e5e7eb;
+        }
+
+        .simple-list li:last-child {
+            border-bottom: none;
+        }
+
+        .list-icon {
+            font-size: 1.2rem;
+        }
+
+        /* MOCKUP SIMPLE */
+        .mockup {
+            background: var(--light-gray);
+            border: 2px solid #e5e7eb;
+            border-radius: 15px;
+            padding: 1rem;
+            margin: 1rem 0;
+            font-family: 'Consolas', monospace;
+            font-size: 0.8rem;
+            white-space: pre-line;
+        }
+
+        .mockup-header {
+            background: var(--primary);
+            color: white;
+            padding: 0.5rem 1rem;
+            margin: -1rem -1rem 1rem -1rem;
+            border-radius: 13px 13px 0 0;
+            font-family: 'Segoe UI', sans-serif;
+            font-weight: 600;
+        }
+
+        /* PROCESO VISUAL */
+        .process-visual {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 2rem 0;
+            margin: 1rem 0;
+            background: linear-gradient(90deg, var(--light-gray) 0%, white 50%, var(--light-gray) 100%);
+            border-radius: 15px;
+        }
+
+        .process-item {
+            text-align: center;
+        }
+
+        .process-circle {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 0.5rem;
+            font-size: 2rem;
+            border: 3px solid;
+        }
+
+        .process-circle.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+
+        .process-circle.pending {
+            background: white;
+            border-color: var(--gray);
+            color: var(--gray);
+        }
+
+        .process-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .process-connector {
+            font-size: 2rem;
+            color: var(--accent);
+        }
+
+        /* TABLA SIMPLE */
+        .simple-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+            font-size: 0.9rem;
+        }
+
+        .simple-table th {
+            background: var(--primary);
+            color: white;
+            padding: 0.7rem;
+            text-align: left;
+        }
+
+        .simple-table td {
+            padding: 0.6rem 0.7rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .simple-table tr:nth-child(even) {
+            background: var(--light-gray);
+        }
+
+        /* FOOTER */
+        .doc-footer {
+            margin-top: 3rem;
+            padding-top: 1rem;
+            border-top: 2px solid var(--light-gray);
+            text-align: center;
+            color: var(--gray);
+            font-size: 0.85rem;
+        }
+
+        /* PRINT */
+        @media print {
+            .page {
+                page-break-before: always;
+            }
+            body {
+                font-size: 10pt;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ==================== PORTADA ==================== -->
+<div class="cover">
+    <div class="cover-icon">🚗</div>
+    <h1>INSTRUCTIVO RÁPIDO</h1>
+    <h2>Sistema de Turnos RTV Pioli</h2>
+    <div class="cover-badge">Guía Visual de Uso</div>
+</div>
+
+<!-- ==================== PÁGINA 1: TURNERO - CÓMO SACAR TURNO ==================== -->
+<div class="page">
+    <div class="page-title">
+        <span class="page-title-icon">📱</span>
+        TURNERO: Cómo Sacar un Turno
+    </div>
+
+    <p style="margin-bottom: 1rem; color: var(--gray);">El proceso de reserva tiene 5 pasos simples:</p>
+
+    <!-- Flujo visual horizontal -->
+    <div class="flow-horizontal">
+        <div class="flow-step">
+            <div class="flow-icon">👤</div>
+            <div class="flow-label">1. Cliente</div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">
+            <div class="flow-icon">🚗</div>
+            <div class="flow-label">2. Vehículo</div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">
+            <div class="flow-icon">🏢</div>
+            <div class="flow-label">3. Taller</div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">
+            <div class="flow-icon">📅</div>
+            <div class="flow-label">4. Fecha</div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">
+            <div class="flow-icon">✅</div>
+            <div class="flow-label">5. Confirmar</div>
+        </div>
+    </div>
+
+    <!-- Pasos detallados -->
+    <div class="steps">
+        <div class="step">
+            <div class="step-number">1</div>
+            <div class="step-content">
+                <div class="step-title">Ingresá tu DNI</div>
+                <div class="step-desc">Si ya estás registrado, aparecen tus datos. Si no, completás el formulario.</div>
+            </div>
+        </div>
+        <div class="step">
+            <div class="step-number">2</div>
+            <div class="step-content">
+                <div class="step-title">Ingresá la Patente</div>
+                <div class="step-desc">Buscamos el vehículo. Si tiene turno pendiente, te avisamos.</div>
+            </div>
+        </div>
+        <div class="step">
+            <div class="step-number">3</div>
+            <div class="step-content">
+                <div class="step-title">Elegí el Taller</div>
+                <div class="step-desc">Seleccioná taller y tipo de trámite (RTO Autos, Camiones, etc).</div>
+            </div>
+        </div>
+        <div class="step">
+            <div class="step-number">4</div>
+            <div class="step-content">
+                <div class="step-title">Elegí Fecha y Hora</div>
+                <div class="step-desc">Calendario con días disponibles. El horario se reserva 10 minutos.</div>
+            </div>
+        </div>
+        <div class="step">
+            <div class="step-number">5</div>
+            <div class="step-content">
+                <div class="step-title">Confirmá el Turno</div>
+                <div class="step-desc">Revisá los datos, resolvé el captcha y aceptá los términos.</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="alert alert-success">
+        <div class="alert-icon">📧</div>
+        <div>
+            <strong>¡Listo!</strong> Recibís un email con el código QR y todos los datos del turno.
+        </div>
+    </div>
+</div>
+
+<!-- ==================== PÁGINA 2: CONSULTAR Y CANCELAR ==================== -->
+<div class="page">
+    <div class="page-title">
+        <span class="page-title-icon">🔍</span>
+        Consultar, Cancelar y Reprogramar
+    </div>
+
+    <h3 style="margin: 1rem 0 0.5rem; color: var(--primary);">Consultar Turno</h3>
+    <div class="info-cards">
+        <div class="info-card">
+            <div class="info-card-icon">🔢</div>
+            <div class="info-card-title">Por Código</div>
+            <div class="info-card-desc">TRN-ABC123</div>
+        </div>
+        <div class="info-card">
+            <div class="info-card-icon">🚗</div>
+            <div class="info-card-title">Por Patente</div>
+            <div class="info-card-desc">ABC123 o AB123CD</div>
+        </div>
+        <div class="info-card">
+            <div class="info-card-icon">🪪</div>
+            <div class="info-card-title">Por DNI</div>
+            <div class="info-card-desc">12345678</div>
+        </div>
+        <div class="info-card">
+            <div class="info-card-icon">📋</div>
+            <div class="info-card-title">Resultado</div>
+            <div class="info-card-desc">Ver todos los turnos</div>
+        </div>
+    </div>
+
+    <h3 style="margin: 1.5rem 0 0.5rem; color: var(--primary);">Cancelar Turno</h3>
+    <div class="diagram-vertical">
+        <div class="diagram-row">
+            <div class="diagram-icon blue">1️⃣</div>
+            <div class="diagram-text">
+                <div class="diagram-title">Consultá tu turno</div>
+                <div class="diagram-subtitle">Por código, patente o DNI</div>
+            </div>
+        </div>
+        <div class="diagram-arrow-down">↓</div>
+        <div class="diagram-row">
+            <div class="diagram-icon yellow">2️⃣</div>
+            <div class="diagram-text">
+                <div class="diagram-title">Clic en "Cancelar"</div>
+                <div class="diagram-subtitle">Podés agregar un motivo (opcional)</div>
+            </div>
+        </div>
+        <div class="diagram-arrow-down">↓</div>
+        <div class="diagram-row">
+            <div class="diagram-icon green">3️⃣</div>
+            <div class="diagram-text">
+                <div class="diagram-title">Confirmá la cancelación</div>
+                <div class="diagram-subtitle">Recibís email de confirmación</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="alert alert-warning">
+        <div class="alert-icon">⚠️</div>
+        <div>
+            <strong>Importante:</strong> Solo podés cancelar si el turno es para otro día (no el mismo día).
+        </div>
+    </div>
+
+    <h3 style="margin: 1.5rem 0 0.5rem; color: var(--primary);">Reprogramar Turno</h3>
+    <div class="diagram-vertical">
+        <div class="diagram-row">
+            <div class="diagram-icon purple">📧</div>
+            <div class="diagram-text">
+                <div class="diagram-title">Solicitá reprogramación</div>
+                <div class="diagram-subtitle">Te enviamos un email con un link</div>
+            </div>
+        </div>
+        <div class="diagram-arrow-down">↓</div>
+        <div class="diagram-row">
+            <div class="diagram-icon blue">🔗</div>
+            <div class="diagram-text">
+                <div class="diagram-title">Ingresá al link (48hs válido)</div>
+                <div class="diagram-subtitle">Elegí nueva fecha, hora y taller</div>
+            </div>
+        </div>
+        <div class="diagram-arrow-down">↓</div>
+        <div class="diagram-row">
+            <div class="diagram-icon green">✅</div>
+            <div class="diagram-text">
+                <div class="diagram-title">Turno reprogramado</div>
+                <div class="diagram-subtitle">Recibís confirmación por email</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="alert alert-warning">
+        <div class="alert-icon">⏰</div>
+        <div>
+            <strong>Requisito:</strong> Deben faltar más de 24 horas para poder reprogramar.
+        </div>
+    </div>
+</div>
+
+<!-- ==================== PÁGINA 3: ESTADOS DEL TURNO ==================== -->
+<div class="page">
+    <div class="page-title">
+        <span class="page-title-icon">🏷️</span>
+        Estados del Turno
+    </div>
+
+    <p style="margin-bottom: 1rem; color: var(--gray);">Un turno pasa por estos estados:</p>
+
+    <div class="states-grid">
+        <div class="state-badge state-pending">
+            <div class="state-badge-icon">⏳</div>
+            <div class="state-badge-name">PENDIENTE</div>
+        </div>
+        <div class="state-badge state-confirmed">
+            <div class="state-badge-icon">✅</div>
+            <div class="state-badge-name">CONFIRMADO</div>
+        </div>
+        <div class="state-badge state-progress">
+            <div class="state-badge-icon">🔵</div>
+            <div class="state-badge-name">EN CURSO</div>
+        </div>
+        <div class="state-badge state-completed">
+            <div class="state-badge-icon">✔️</div>
+            <div class="state-badge-name">COMPLETADO</div>
+        </div>
+        <div class="state-badge state-cancelled">
+            <div class="state-badge-icon">❌</div>
+            <div class="state-badge-name">CANCELADO</div>
+        </div>
+        <div class="state-badge state-noshow">
+            <div class="state-badge-icon">🚫</div>
+            <div class="state-badge-name">NO ASISTIÓ</div>
+        </div>
+    </div>
+
+    <h3 style="margin: 1.5rem 0 0.5rem; color: var(--primary);">Flujo Normal</h3>
+
+    <div class="mockup">
+        <div class="mockup-header">Ciclo de Vida del Turno</div>
+                         ┌─────────────┐
+                         │  CREACIÓN   │
+                         └──────┬──────┘
+                                │
+                                ▼
+                        ┌───────────────┐
+                        │   PENDIENTE   │  ← Estado inicial
+                        └───────┬───────┘
+                                │
+                    ┌───────────┼───────────┐
+                    ▼           ▼           ▼
+            ┌───────────┐ ┌───────────┐ ┌───────────┐
+            │CONFIRMADO │ │ CANCELADO │ │NO ASISTIÓ │
+            └─────┬─────┘ └───────────┘ └───────────┘
+                  │
+                  ▼
+            ┌───────────┐
+            │ EN CURSO  │  ← Cliente llegó
+            └─────┬─────┘
+                  │
+                  ▼
+            ┌───────────┐
+            │COMPLETADO │  ← Inspección OK
+            └───────────┘
+    </div>
+</div>
+
+<!-- ==================== PÁGINA 4: PANEL - ROLES ==================== -->
+<div class="page">
+    <div class="page-title">
+        <span class="page-title-icon">👥</span>
+        Panel: Roles de Usuario
+    </div>
+
+    <p style="margin-bottom: 1rem; color: var(--gray);">El sistema tiene 2 tipos de usuario con diferentes permisos:</p>
+
+    <div class="roles-compare">
+        <div class="role-card role-admin">
+            <div class="role-header">👔 ADMINISTRACIÓN</div>
+            <div class="role-body">
+                <div class="role-item"><span class="role-check">✓</span> Ver turnos</div>
+                <div class="role-item"><span class="role-check">✓</span> Crear turnos</div>
+                <div class="role-item"><span class="role-check">✓</span> Editar turnos</div>
+                <div class="role-item"><span class="role-check">✓</span> Cancelar turnos</div>
+                <div class="role-item"><span class="role-check">✓</span> Reenviar emails</div>
+                <div class="role-item"><span class="role-check">✓</span> Gestionar usuarios</div>
+                <div class="role-item"><span class="role-cross">✗</span> Registrar atención</div>
+            </div>
+        </div>
+        <div class="role-card role-taller">
+            <div class="role-header">🔧 TALLER</div>
+            <div class="role-body">
+                <div class="role-item"><span class="role-check">✓</span> Ver turnos</div>
+                <div class="role-item"><span class="role-cross">✗</span> Crear turnos</div>
+                <div class="role-item"><span class="role-cross">✗</span> Editar turnos</div>
+                <div class="role-item"><span class="role-cross">✗</span> Cancelar turnos</div>
+                <div class="role-item"><span class="role-cross">✗</span> Reenviar emails</div>
+                <div class="role-item"><span class="role-cross">✗</span> Gestionar usuarios</div>
+                <div class="role-item"><span class="role-check">✓</span> Registrar atención</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="alert alert-info">
+        <div class="alert-icon">💡</div>
+        <div>
+            <strong>Nota:</strong> El rol TALLER es el único que puede marcar un turno como "atendido" cuando el cliente llega.
+        </div>
+    </div>
+</div>
+
+<!-- ==================== PÁGINA 5: PANEL - ESCANEAR TURNO ==================== -->
+<div class="page">
+    <div class="page-title">
+        <span class="page-title-icon">📱</span>
+        Panel: Escanear Turno
+    </div>
+
+    <p style="margin-bottom: 1rem; color: var(--gray);">Cuando el cliente llega al taller:</p>
+
+    <div class="info-cards">
+        <div class="info-card">
+            <div class="info-card-icon">📷</div>
+            <div class="info-card-title">Escanear QR</div>
+            <div class="info-card-desc">Usa la cámara del celular o tablet</div>
+        </div>
+        <div class="info-card">
+            <div class="info-card-icon">⌨️</div>
+            <div class="info-card-title">Ingreso Manual</div>
+            <div class="info-card-desc">Escribí código o DNI</div>
+        </div>
+    </div>
+
+    <h3 style="margin: 1.5rem 0 0.5rem; color: var(--primary);">Flujo de Atención (Rol Taller)</h3>
+
+    <div class="diagram-vertical">
+        <div class="diagram-row">
+            <div class="diagram-icon blue">📱</div>
+            <div class="diagram-text">
+                <div class="diagram-title">Escaneá el QR del cliente</div>
+                <div class="diagram-subtitle">O ingresá código/DNI manualmente</div>
+            </div>
+        </div>
+        <div class="diagram-arrow-down">↓</div>
+        <div class="diagram-row">
+            <div class="diagram-icon yellow">👁️</div>
+            <div class="diagram-text">
+                <div class="diagram-title">Verificá los datos</div>
+                <div class="diagram-subtitle">Cliente, vehículo, fecha y hora</div>
+            </div>
+        </div>
+        <div class="diagram-arrow-down">↓</div>
+        <div class="diagram-row">
+            <div class="diagram-icon green">✅</div>
+            <div class="diagram-text">
+                <div class="diagram-title">Clic en "Registrar Atención"</div>
+                <div class="diagram-subtitle">El turno pasa a EN CURSO</div>
+            </div>
+        </div>
+        <div class="diagram-arrow-down">↓</div>
+        <div class="diagram-row">
+            <div class="diagram-icon purple">🔄</div>
+            <div class="diagram-text">
+                <div class="diagram-title">Listo para el próximo</div>
+                <div class="diagram-subtitle">Clic en "Nuevo Escaneo"</div>
+            </div>
+        </div>
+    </div>
+
+    <h3 style="margin: 1.5rem 0 0.5rem; color: var(--primary);">Situaciones Especiales</h3>
+
+    <table class="simple-table">
+        <thead>
+            <tr>
+                <th>Situación</th>
+                <th>Qué muestra</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Turno de otro día</td>
+                <td>⚠️ "Este turno es para el [fecha]"</td>
+            </tr>
+            <tr>
+                <td>Turno ya atendido</td>
+                <td>⚠️ "Turno ya fue atendido"</td>
+            </tr>
+            <tr>
+                <td>Turno cancelado</td>
+                <td>❌ "Turno cancelado"</td>
+            </tr>
+            <tr>
+                <td>DNI con turnos futuros</td>
+                <td>ℹ️ Lista de turnos pendientes</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- ==================== PÁGINA 6: GESTIÓN DE TURNOS ==================== -->
+<div class="page">
+    <div class="page-title">
+        <span class="page-title-icon">📋</span>
+        Panel: Gestión de Turnos
+    </div>
+
+    <p style="margin-bottom: 1rem; color: var(--gray);">Módulo para ver y administrar todos los turnos (rol Admin):</p>
+
+    <h3 style="margin: 1rem 0 0.5rem; color: var(--primary);">Filtros Disponibles</h3>
+    <div class="info-cards">
+        <div class="info-card">
+            <div class="info-card-icon">🔢</div>
+            <div class="info-card-title">Código</div>
+        </div>
+        <div class="info-card">
+            <div class="info-card-icon">👤</div>
+            <div class="info-card-title">Cliente/DNI</div>
+        </div>
+        <div class="info-card">
+            <div class="info-card-icon">🚗</div>
+            <div class="info-card-title">Patente</div>
+        </div>
+        <div class="info-card">
+            <div class="info-card-icon">🏢</div>
+            <div class="info-card-title">Taller</div>
+        </div>
+        <div class="info-card">
+            <div class="info-card-icon">📅</div>
+            <div class="info-card-title">Fechas</div>
+        </div>
+        <div class="info-card">
+            <div class="info-card-icon">🏷️</div>
+            <div class="info-card-title">Estado</div>
+        </div>
+    </div>
+
+    <h3 style="margin: 1.5rem 0 0.5rem; color: var(--primary);">Acciones por Turno</h3>
+
+    <ul class="simple-list">
+        <li><span class="list-icon">👁️</span> <strong>Ver detalles:</strong> Información completa del turno</li>
+        <li><span class="list-icon">✏️</span> <strong>Editar:</strong> Modificar datos (solo Admin)</li>
+        <li><span class="list-icon">❌</span> <strong>Cancelar:</strong> Cancelar turno pendiente (solo Admin)</li>
+        <li><span class="list-icon">🖨️</span> <strong>Imprimir:</strong> Generar comprobante PDF</li>
+        <li><span class="list-icon">📧</span> <strong>Reenviar email:</strong> Volver a enviar confirmación (solo Admin)</li>
+    </ul>
+</div>
+
+<!-- ==================== PÁGINA 7: GESTIÓN DE USUARIOS ==================== -->
+<div class="page">
+    <div class="page-title">
+        <span class="page-title-icon">👥</span>
+        Panel: Gestión de Usuarios
+    </div>
+
+    <p style="margin-bottom: 1rem; color: var(--gray);">Módulo para administrar usuarios del sistema (solo rol Admin):</p>
+
+    <h3 style="margin: 1rem 0 0.5rem; color: var(--primary);">Crear Usuario</h3>
+
+    <div class="diagram-vertical">
+        <div class="diagram-row">
+            <div class="diagram-icon blue">1️⃣</div>
+            <div class="diagram-text">
+                <div class="diagram-title">Completar datos</div>
+                <div class="diagram-subtitle">Usuario, email, nombre, apellido</div>
+            </div>
+        </div>
+        <div class="diagram-arrow-down">↓</div>
+        <div class="diagram-row">
+            <div class="diagram-icon yellow">2️⃣</div>
+            <div class="diagram-text">
+                <div class="diagram-title">Asignar Sector</div>
+                <div class="diagram-subtitle">ADMINISTRACIÓN o TALLER</div>
+            </div>
+        </div>
+        <div class="diagram-arrow-down">↓</div>
+        <div class="diagram-row">
+            <div class="diagram-icon green">3️⃣</div>
+            <div class="diagram-text">
+                <div class="diagram-title">Guardar</div>
+                <div class="diagram-subtitle">El usuario ya puede ingresar</div>
+            </div>
+        </div>
+    </div>
+
+    <h3 style="margin: 1.5rem 0 0.5rem; color: var(--primary);">Acciones Disponibles</h3>
+
+    <ul class="simple-list">
+        <li><span class="list-icon">👁️</span> <strong>Ver:</strong> Información del usuario</li>
+        <li><span class="list-icon">✏️</span> <strong>Editar:</strong> Modificar datos y permisos</li>
+        <li><span class="list-icon">🔑</span> <strong>Restablecer contraseña:</strong> Envía email con link</li>
+        <li><span class="list-icon">🔄</span> <strong>Activar/Desactivar:</strong> Habilitar o bloquear acceso</li>
+    </ul>
+
+    <div class="alert alert-info">
+        <div class="alert-icon">🔑</div>
+        <div>
+            <strong>Restablecer contraseña:</strong> El usuario recibe un email con un link válido por 24 horas para crear nueva contraseña.
+        </div>
+    </div>
+</div>
+
+<!-- ==================== PÁGINA 8: TIPS RÁPIDOS ==================== -->
+<div class="page">
+    <div class="page-title">
+        <span class="page-title-icon">💡</span>
+        Tips Rápidos
+    </div>
+
+    <h3 style="margin: 1rem 0 0.5rem; color: var(--primary);">Formatos Aceptados</h3>
+
+    <table class="simple-table">
+        <thead>
+            <tr>
+                <th>Campo</th>
+                <th>Formato</th>
+                <th>Ejemplo</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>DNI</td>
+                <td>7-8 dígitos</td>
+                <td>12345678</td>
+            </tr>
+            <tr>
+                <td>Patente vieja</td>
+                <td>3 letras + 3 números</td>
+                <td>ABC123</td>
+            </tr>
+            <tr>
+                <td>Patente Mercosur</td>
+                <td>2 letras + 3 números + 2 letras</td>
+                <td>AB123CD</td>
+            </tr>
+            <tr>
+                <td>Código turno</td>
+                <td>TRN + 6 caracteres</td>
+                <td>TRN-A1B2C3</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h3 style="margin: 1.5rem 0 0.5rem; color: var(--primary);">Preguntas Frecuentes</h3>
+
+    <div class="diagram-vertical">
+        <div class="diagram-row">
+            <div class="diagram-icon blue">❓</div>
+            <div class="diagram-text">
+                <div class="diagram-title">¿El QR no escanea?</div>
+                <div class="diagram-subtitle">→ Usá "Ingreso Manual" con código o DNI</div>
+            </div>
+        </div>
+        <div class="diagram-row">
+            <div class="diagram-icon yellow">❓</div>
+            <div class="diagram-text">
+                <div class="diagram-title">¿Perdí el email con el QR?</div>
+                <div class="diagram-subtitle">→ Consultá por DNI o patente en /turnero/consultar/</div>
+            </div>
+        </div>
+        <div class="diagram-row">
+            <div class="diagram-icon red">❓</div>
+            <div class="diagram-text">
+                <div class="diagram-title">¿No puedo cancelar/reprogramar?</div>
+                <div class="diagram-subtitle">→ Verificá que falten +24hs y sea fecha futura</div>
+            </div>
+        </div>
+        <div class="diagram-row">
+            <div class="diagram-icon green">❓</div>
+            <div class="diagram-text">
+                <div class="diagram-title">¿Cliente llegó sin turno?</div>
+                <div class="diagram-subtitle">→ Admin debe crear turno desde el panel</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="doc-footer">
+        <p><strong>Instructivo Rápido - Sistema RTV Pioli</strong></p>
+        <p>Versión 1.0 • Febrero 2026</p>
+    </div>
+</div>
+
+</body>
+</html>

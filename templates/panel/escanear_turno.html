@@ -962,7 +962,12 @@ function verificarTurno(busqueda) {
 
             // Verificar si success es false (error del servidor)
             if (response.success === false || response.error) {
-                mostrarError(response.error || 'Error al verificar el turno');
+                // Verificar si hay turnos futuros pendientes
+                if (response.tipo_error === 'turnos_futuros' && response.turnos_futuros) {
+                    mostrarTurnosFuturos(response.turnos_futuros, response.dni);
+                } else {
+                    mostrarError(response.error || 'Error al verificar el turno');
+                }
                 reanudarScanner();
                 return;
             }
@@ -1008,6 +1013,64 @@ function mostrarError(mensaje) {
         title: 'Error',
         text: mensaje,
         confirmButtonColor: 'var(--theme-primary)'
+    });
+}
+
+function mostrarTurnosFuturos(turnos, dni) {
+    // Construir HTML con la lista de turnos futuros
+    let turnosHtml = '';
+    turnos.forEach(function(turno) {
+        turnosHtml += `
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px; background: #f8fafc; border-radius: 8px; border: 1px solid #e5e7eb; margin-bottom: 8px;">
+                <div>
+                    <div style="font-weight: 600; font-family: 'Courier New', monospace; color: #1f2937;">${turno.codigo}</div>
+                    <div style="font-size: 0.85rem; color: #6b7280;">
+                        <i class="fa fa-car me-1"></i> ${turno.vehiculo}
+                    </div>
+                    <div style="font-size: 0.85rem; color: #6b7280;">
+                        <i class="fa fa-building me-1"></i> ${turno.taller}
+                    </div>
+                </div>
+                <div style="text-align: right;">
+                    <div style="font-weight: 600; color: var(--theme-primary);">
+                        <i class="fa fa-calendar me-1"></i> ${turno.fecha}
+                    </div>
+                    <div style="color: #6b7280;">
+                        <i class="fa fa-clock me-1"></i> ${turno.hora} hs
+                    </div>
+                    <span style="background: ${turno.estado === 'Pendiente' ? '#fef3c7' : '#d1fae5'};
+                           color: ${turno.estado === 'Pendiente' ? '#92400e' : '#065f46'};
+                           padding: 2px 8px; border-radius: 12px; font-size: 0.75rem; font-weight: 500;">
+                        ${turno.estado}
+                    </span>
+                </div>
+            </div>
+        `;
+    });
+
+    Swal.fire({
+        icon: 'info',
+        title: 'Turnos Pendientes',
+        html: `
+            <div style="text-align: left;">
+                <div style="background: #dbeafe; border: 2px solid #3b82f6; border-radius: 10px; padding: 12px; margin-bottom: 15px; text-align: center;">
+                    <i class="fa fa-info-circle" style="color: #1d4ed8; font-size: 1.2rem;"></i>
+                    <strong style="color: #1e40af; margin-left: 8px;">No hay turnos para hoy</strong>
+                </div>
+                <p style="color: #6b7280; margin-bottom: 15px;">
+                    El cliente con DNI <strong>${dni}</strong> tiene turnos pendientes pero ninguno para el dia de hoy:
+                </p>
+                <div style="max-height: 300px; overflow-y: auto;">
+                    ${turnosHtml}
+                </div>
+            </div>
+        `,
+        width: '500px',
+        confirmButtonText: '<i class="fa fa-redo"></i> Nueva Busqueda',
+        confirmButtonColor: 'var(--theme-primary)',
+        customClass: {
+            popup: 'turno-modal-popup'
+        }
     });
 }
 

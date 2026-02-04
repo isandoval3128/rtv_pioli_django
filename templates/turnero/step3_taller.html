@@ -924,7 +924,13 @@
         tipoTramiteSeleccionadoNombre = tipoNombre;
 
         // Habilitar botón de confirmar
-        document.getElementById('btnConfirmarTramite').disabled = false;
+        const btnConfirmar = document.getElementById('btnConfirmarTramite');
+        btnConfirmar.disabled = false;
+
+        // Scroll hacia el botón confirmar dentro del modal
+        setTimeout(function() {
+            btnConfirmar.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 100);
     }
 
     // Confirmar selección de taller y tipo de trámite
@@ -947,6 +953,14 @@
 
         // Cerrar modal
         tiposTramiteModal.hide();
+
+        // Scroll hacia el botón continuar después de cerrar el modal
+        setTimeout(function() {
+            const btnContinuar = document.querySelector('button[type="submit"].btn-primary-custom');
+            if (btnContinuar) {
+                btnContinuar.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }, 300);
 
         // Mostrar notificación de éxito
         if (typeof showSuccess === 'function') {

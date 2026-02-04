@@ -902,9 +902,38 @@ def verificar_turno_panel(request):
                 ).order_by('hora_inicio')
 
                 if not turnos.exists():
+                    # Buscar turnos pendientes futuros (no de hoy)
+                    turnos_futuros = Turno.objects.select_related(
+                        'cliente', 'vehiculo', 'taller', 'tipo_vehiculo'
+                    ).filter(
+                        cliente__dni=dni,
+                        fecha__gt=hoy,
+                        estado__in=['PENDIENTE', 'CONFIRMADO']
+                    ).order_by('fecha', 'hora_inicio')
+
+                    if turnos_futuros.exists():
+                        # Hay turnos pendientes pero no para hoy
+                        lista_turnos_futuros = []
+                        for t in turnos_futuros:
+                            lista_turnos_futuros.append({
+                                'codigo': t.codigo,
+                                'fecha': t.fecha.strftime('%d/%m/%Y'),
+                                'hora': t.hora_inicio.strftime('%H:%M'),
+                                'vehiculo': t.vehiculo.dominio,
+                                'taller': t.taller.get_nombre(),
+                                'estado': t.get_estado_display()
+                            })
+                        return JsonResponse({
+                            'success': False,
+                            'error': f'Este cliente tiene turnos pendientes pero ninguno para hoy',
+                            'tipo_error': 'turnos_futuros',
+                            'turnos_futuros': lista_turnos_futuros,
+                            'dni': dni
+                        })
+
                     return JsonResponse({
                         'success': False,
-                        'error': f'No se encontraron turnos para hoy con DNI: {dni}',
+                        'error': f'No se encontraron turnos pendientes con DNI: {dni}',
                         'tipo_error': 'no_encontrado'
                     })
 
