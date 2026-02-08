@@ -153,11 +153,11 @@ class MenuGrupoAdmin(admin.ModelAdmin):
             'home': '/panel/asistente/config/',
             'orden': 2,
             'menus': [
-                {'nombre': 'Configuración', 'url': '/panel/asistente/config/', 'orden': 1},
-                {'nombre': 'Preguntas Frecuentes', 'url': '/panel/asistente/faqs/', 'orden': 2},
-                {'nombre': 'Base de Conocimiento', 'url': '/panel/asistente/kb/', 'orden': 3},
-                {'nombre': 'Conversaciones', 'url': '/panel/asistente/conversaciones/', 'orden': 4},
-                {'nombre': 'Dashboard', 'url': '/panel/asistente/dashboard/', 'orden': 5},
+                {'nombre': 'Dashboard', 'url': '/panel/asistente/dashboard/', 'orden': 1},
+                {'nombre': 'Configuración', 'url': '/panel/asistente/config/', 'orden': 2},
+                {'nombre': 'Preguntas Frecuentes', 'url': '/panel/asistente/faqs/', 'orden': 3},
+                {'nombre': 'Base de Conocimiento', 'url': '/panel/asistente/kb/', 'orden': 4},
+                {'nombre': 'Conversaciones', 'url': '/panel/asistente/conversaciones/', 'orden': 5},
                 {'nombre': 'Sugerencias', 'url': '/panel/asistente/sugerencias/', 'orden': 6},
                 {'nombre': 'Uso IA / Costos', 'url': '/panel/asistente/uso-ia/', 'orden': 7, 'permission': 'Acceso Uso IA'},
             ],
@@ -168,8 +168,9 @@ class MenuGrupoAdmin(admin.ModelAdmin):
             'home': '/panel/turnos/',
             'orden': 3,
             'menus': [
-                {'nombre': 'Gestión Turnos', 'url': '/panel/turnos/', 'orden': 1},
-                {'nombre': 'Escanear Turno', 'url': '/panel/turnos/escanear/', 'orden': 2},
+                {'nombre': 'Dashboard', 'url': '/panel/turnos/dashboard/', 'orden': 1},
+                {'nombre': 'Gestión Turnos', 'url': '/panel/turnos/', 'orden': 2},
+                {'nombre': 'Escanear Turno', 'url': '/panel/turnos/escanear/', 'orden': 3},
             ],
         },
     ]

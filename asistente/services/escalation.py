@@ -79,7 +79,7 @@ def generar_link_whatsapp(numero, resumen):
     return f"https://wa.me/{numero}?text={urllib.parse.quote(texto)}"
 
 
-def enviar_email_derivacion(taller, session, resumen, celular_cliente=''):
+def enviar_email_derivacion(taller, session, resumen, celular_cliente='', email_cliente=''):
     """Envía email formal al taller informando la derivación"""
     from django.core.mail import EmailMultiAlternatives
     from turnero.utils import get_email_connection
@@ -113,6 +113,8 @@ def enviar_email_derivacion(taller, session, resumen, celular_cliente=''):
     )
     if celular_cliente:
         texto += f"Celular (para contacto por WhatsApp): {celular_cliente}\n"
+    if email_cliente:
+        texto += f"Email del cliente: {email_cliente}\n"
     texto += (
         f"\n--- RESUMEN DE LA CONVERSACIÓN ---\n"
         f"{resumen}\n\n"
@@ -121,7 +123,22 @@ def enviar_email_derivacion(taller, session, resumen, celular_cliente=''):
         f"Este mensaje fue generado automáticamente por el Asistente Virtual.\n"
     )
 
-    # HTML
+    # HTML - bloques de contacto del cliente
+    contacto_celular_html = ''
+    if celular_cliente:
+        contacto_celular_html = f'<p style="margin: 5px 0; font-size: 13px;"><strong>Celular:</strong> {celular_cliente}</p>'
+
+    contacto_email_html = ''
+    if email_cliente:
+        contacto_email_html = f'<p style="margin: 5px 0; font-size: 13px;"><strong>Email:</strong> <a href="mailto:{email_cliente}">{email_cliente}</a></p>'
+
+    # Bloque destacado de contacto
+    contacto_destacado_html = ''
+    if celular_cliente:
+        contacto_destacado_html = f'<div style="background: #e8f5e9; border-left: 4px solid #4caf50; padding: 15px; margin: 20px 0; border-radius: 0 4px 4px 0;"><p style="margin: 0; font-size: 13px;"><strong>El cliente dejó su celular para ser contactado por WhatsApp:</strong> {celular_cliente}</p></div>'
+    elif email_cliente:
+        contacto_destacado_html = f'<div style="background: #e8f5e9; border-left: 4px solid #4caf50; padding: 15px; margin: 20px 0; border-radius: 0 4px 4px 0;"><p style="margin: 0; font-size: 13px;"><strong>El cliente dejó su email para ser contactado:</strong> <a href="mailto:{email_cliente}">{email_cliente}</a></p></div>'
+
     html = f"""
     <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: 0 auto;">
         <div style="background: linear-gradient(135deg, #003466 0%, #0056b3 100%); padding: 20px 30px; border-radius: 8px 8px 0 0;">
@@ -136,10 +153,11 @@ def enviar_email_derivacion(taller, session, resumen, celular_cliente=''):
                 <h3 style="margin: 0 0 10px; color: #003466; font-size: 14px;">Datos del Cliente</h3>
                 <p style="margin: 5px 0; font-size: 13px;"><strong>IP:</strong> {ip_cliente}</p>
                 <p style="margin: 5px 0; font-size: 13px;"><strong>Sesión:</strong> {fecha_sesion}</p>
-                {'<p style="margin: 5px 0; font-size: 13px;"><strong>Celular:</strong> ' + celular_cliente + '</p>' if celular_cliente else ''}
+                {contacto_celular_html}
+                {contacto_email_html}
             </div>
 
-            {'<div style="background: #e8f5e9; border-left: 4px solid #4caf50; padding: 15px; margin: 20px 0; border-radius: 0 4px 4px 0;"><p style="margin: 0; font-size: 13px;"><strong>El cliente dejó su celular para ser contactado por WhatsApp:</strong> ' + celular_cliente + '</p></div>' if celular_cliente else ''}
+            {contacto_destacado_html}
 
             <div style="background: #f8f9fa; border-left: 4px solid #6c757d; padding: 15px; margin: 20px 0; border-radius: 0 4px 4px 0;">
                 <h3 style="margin: 0 0 10px; color: #333; font-size: 14px;">Resumen de la Conversación</h3>
@@ -283,7 +301,6 @@ def procesar_contexto_pendiente(session, mensaje):
 
         if not celular and not quiere_enviar:
             # Podría ser un celular mal escrito o un texto random
-            # Intentar interpretar como celular limpiando caracteres
             numeros = re.sub(r'[^\d]', '', mensaje)
             if len(numeros) >= 8:
                 celular = numeros
@@ -291,58 +308,69 @@ def procesar_contexto_pendiente(session, mensaje):
                 return {
                     'respuesta': (
                         'No pude identificar un número de celular. '
-                        'Podés escribirlo (ej: 3814123456) o escribí "enviar" para mandar tu consulta por email sin celular.'
+                        'Podés escribirlo (ej: 3814123456) o escribí "enviar" para mandar tu consulta por email.'
                     ),
                     'intent': 'hablar_con_operador',
                     'acciones': [
-                        {'texto': 'Enviar sin celular', 'accion': 'enviar_email_sin_cel'},
+                        {'texto': '📧 Enviar sin celular', 'accion': 'enviar_email_sin_cel'},
                     ],
                     'source': 'hardcoded',
                 }
 
-        # Enviar email
-        resumen = generar_resumen_email(session)
-        email_ok = enviar_email_derivacion(taller, session, resumen, celular or '')
+        if quiere_enviar:
+            # Sin celular → pedir email para que puedan recontactarlo
+            session.contexto = {
+                'esperando': 'email_cliente',
+                'taller_id': taller_id,
+                'celular_cliente': '',
+            }
+            session.save(update_fields=['contexto'])
+            return {
+                'respuesta': (
+                    '📧 Para que el equipo pueda contactarte, necesito al menos '
+                    'un correo electrónico. Por favor, escribí tu email:'
+                ),
+                'intent': 'hablar_con_operador',
+                'acciones': [],
+                'source': 'hardcoded',
+            }
 
-        # Registrar derivación
-        Derivacion.objects.create(
-            session=session,
-            taller=taller,
-            canal='email',
-            motivo=generar_resumen_conversacion(session),
-            celular_cliente=celular or '',
-            en_horario=False,
-            email_enviado=email_ok,
-        )
+        # Tiene celular → enviar derivación con celular
+        return _enviar_derivacion_email(session, taller, Derivacion, celular=celular)
 
-        nombre = taller.get_nombre()
-        if email_ok:
-            # Cerrar sesión - la conversación fue derivada a un humano
-            session.activa = False
-            session.contexto = {}
-            session.save(update_fields=['activa', 'contexto'])
-
-            msg = f'✅ ¡Listo! Le enviamos tu consulta al equipo de {nombre}.'
-            if celular:
-                msg += ' 📱 Incluimos tu celular para que puedan contactarte por WhatsApp.'
-            msg += ' Te van a contactar a la brevedad. Esta conversación se cierra, ¡gracias por comunicarte! 😊'
-        else:
-            # Si falló el email, limpiar contexto pero NO cerrar sesión
+    elif esperando == 'email_cliente':
+        taller_id = contexto.get('taller_id')
+        celular = contexto.get('celular_cliente', '')
+        try:
+            taller = Taller.objects.get(pk=taller_id, status=True)
+        except Taller.DoesNotExist:
             session.contexto = {}
             session.save(update_fields=['contexto'])
+            return {
+                'respuesta': 'Hubo un problema. ¿Podés volver a intentar?',
+                'intent': 'hablar_con_operador',
+                'acciones': [],
+                'source': 'hardcoded',
+            }
 
-            msg = (
-                f'⚠️ No pudimos enviar el email en este momento. '
-                f'Te sugerimos intentar más tarde o comunicarte directamente '
-                f'con {nombre} al {taller.get_telefono() or "teléfono del taller"}.'
-            )
+        # Validar email
+        email_cliente = _extraer_email(mensaje)
+        if not email_cliente:
+            return {
+                'respuesta': (
+                    'No pude identificar un email válido. '
+                    'Por favor escribilo en formato correcto (ej: nombre@email.com):'
+                ),
+                'intent': 'hablar_con_operador',
+                'acciones': [],
+                'source': 'hardcoded',
+            }
 
-        return {
-            'respuesta': msg,
-            'intent': 'hablar_con_operador',
-            'acciones': [],
-            'source': 'hardcoded',
-        }
+        # Email válido → enviar derivación
+        return _enviar_derivacion_email(
+            session, taller, Derivacion,
+            celular=celular, email_cliente=email_cliente
+        )
 
     return None
 
@@ -422,6 +450,65 @@ def _extraer_celular(texto):
     if match:
         return match.group(1)
     return None
+
+
+def _extraer_email(texto):
+    """Extrae un email válido del texto"""
+    match = re.search(r'[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}', texto.strip())
+    if match:
+        return match.group(0).lower()
+    return None
+
+
+def _enviar_derivacion_email(session, taller, Derivacion, celular='', email_cliente=''):
+    """Envía la derivación por email y registra en BD. Retorna dict de respuesta."""
+    resumen = generar_resumen_email(session)
+    email_ok = enviar_email_derivacion(
+        taller, session, resumen,
+        celular_cliente=celular,
+        email_cliente=email_cliente,
+    )
+
+    # Registrar derivación
+    Derivacion.objects.create(
+        session=session,
+        taller=taller,
+        canal='email',
+        motivo=generar_resumen_conversacion(session),
+        celular_cliente=celular,
+        email_cliente=email_cliente,
+        en_horario=False,
+        email_enviado=email_ok,
+    )
+
+    nombre = taller.get_nombre()
+    if email_ok:
+        session.activa = False
+        session.contexto = {}
+        session.save(update_fields=['activa', 'contexto'])
+
+        msg = f'✅ ¡Listo! Le enviamos tu consulta al equipo de {nombre}.'
+        if celular:
+            msg += ' 📱 Incluimos tu celular para que puedan contactarte por WhatsApp.'
+        if email_cliente:
+            msg += f' 📧 Incluimos tu email ({email_cliente}) para que puedan responderte.'
+        msg += ' Te van a contactar a la brevedad. ¡Gracias por comunicarte! 😊'
+    else:
+        session.contexto = {}
+        session.save(update_fields=['contexto'])
+
+        msg = (
+            f'⚠️ No pudimos enviar el email en este momento. '
+            f'Te sugerimos intentar más tarde o comunicarte directamente '
+            f'con {nombre} al {taller.get_telefono() or "teléfono del taller"}.'
+        )
+
+    return {
+        'respuesta': msg,
+        'intent': 'hablar_con_operador',
+        'acciones': [],
+        'source': 'hardcoded',
+    }
 
 
 def enviar_email_sugerencia_revision(sugerencia):

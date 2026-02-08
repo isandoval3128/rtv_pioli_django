@@ -30,6 +30,10 @@ urlpatterns = [
     path('turnos/verificar/', views.verificar_turno_panel, name='verificar_turno_panel'),
     path('turnos/registrar-atencion/', views.registrar_atencion_turno, name='registrar_atencion_turno'),
 
+    # Dashboard de Turnos
+    path('turnos/dashboard/', views.dashboard_turnos, name='dashboard_turnos'),
+    path('turnos/dashboard/ajax/', views.dashboard_turnos_ajax, name='dashboard_turnos_ajax'),
+
     # Gestión de Usuarios
     path('usuarios/', views.gestion_usuarios, name='gestion_usuarios'),
     path('usuarios/ajax/', views.gestion_usuarios_ajax, name='gestion_usuarios_ajax'),

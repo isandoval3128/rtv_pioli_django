@@ -5,7 +5,9 @@ from django.contrib.auth.models import User, Group
 from django.utils import timezone
 from django.http import JsonResponse
 from django.template.loader import render_to_string
-from django.db.models import Q
+from django.db.models import Q, Count
+from datetime import timedelta, datetime
+from collections import Counter
 from turnero.models import Turno, HistorialTurno
 from clientes.models import Cliente
 from talleres.models import Taller, TipoVehiculo, Vehiculo, ConfiguracionTaller
@@ -33,7 +35,7 @@ def home(request):
     from talleres.models import Taller
 
     # Estadísticas básicas
-    hoy = timezone.now().date()
+    hoy = timezone.localtime().date()
 
     context = {
         'turnos_pendientes': Turno.objects.filter(estado='PENDIENTE').count(),
@@ -55,9 +57,38 @@ def logout_view(request):
 # GESTIÓN DE TURNOS
 # ============================================
 
+def _marcar_turnos_vencidos():
+    """Marca turnos vencidos (fecha/hora pasada) como NO_ASISTIO."""
+    ahora = timezone.localtime()
+    hoy = ahora.date()
+    hora_actual = ahora.time()
+
+    vencidos = Turno.objects.filter(
+        estado__in=['PENDIENTE', 'CONFIRMADO'],
+        fecha__lt=hoy,
+    ) | Turno.objects.filter(
+        estado__in=['PENDIENTE', 'CONFIRMADO'],
+        fecha=hoy,
+        hora_fin__lt=hora_actual,
+    )
+
+    for turno in vencidos:
+        estado_anterior = turno.estado
+        turno.estado = 'NO_ASISTIO'
+        turno.save(update_fields=['estado'])
+        HistorialTurno.objects.create(
+            turno=turno,
+            accion='MARCADO_NO_ASISTIO',
+            descripcion=f'Turno marcado automáticamente como No Asistió (anterior: {estado_anterior})',
+        )
+
+
 @login_required(login_url='/panel/login/')
 def gestion_turnos(request):
     """Vista principal de gestión de turnos"""
+    # Marcar turnos vencidos como NO_ASISTIO automáticamente
+    _marcar_turnos_vencidos()
+
     # Obtener el sector del usuario (ADMINISTRACION o TALLER)
     user_sector = get_user_sector(request.user)
 
@@ -157,7 +188,7 @@ def gestion_turnos_form(request):
             'clientes': Cliente.objects.all().order_by('apellido', 'nombre'),
             'talleres': Taller.objects.filter(status=True),
             'tipos_vehiculo': TipoVehiculo.objects.filter(status=True),
-            'fecha_minima': timezone.now().date(),
+            'fecha_minima': timezone.localtime().date(),
         }
 
         html_form = render_to_string('panel/gestion_turnos_form.html', context, request=request)
@@ -892,7 +923,7 @@ def verificar_turno_panel(request):
             # Buscar por DNI (plan B)
             elif dni:
                 # Buscar turnos del dia para este DNI
-                hoy = timezone.now().date()
+                hoy = timezone.localtime().date()
                 turnos = Turno.objects.select_related(
                     'cliente', 'vehiculo', 'taller', 'tipo_vehiculo', 'atendido_por'
                 ).filter(
@@ -1002,8 +1033,8 @@ def verificar_turno_panel(request):
             }
 
             # Determinar estado visual
-            hoy = timezone.now().date()
-            ahora = timezone.now()
+            hoy = timezone.localtime().date()
+            ahora = timezone.localtime()
 
             if turno.estado == 'CANCELADO':
                 estado_clase = 'cancelado'
@@ -1081,7 +1112,7 @@ def registrar_atencion_turno(request):
                 })
 
             # Verificar que el turno pueda ser atendido
-            hoy = timezone.now().date()
+            hoy = timezone.localtime().date()
 
             if turno.ya_fue_atendido:
                 return JsonResponse({
@@ -1607,3 +1638,179 @@ def gestion_usuarios_toggle(request):
             return JsonResponse({'success': False, 'error': str(e)})
 
     return JsonResponse({'error': 'Método no permitido'}, status=405)
+
+
+# ============================================
+# DASHBOARD DE TURNOS
+# ============================================
+
+@login_required(login_url='/panel/login/')
+def dashboard_turnos(request):
+    """Vista principal del dashboard de turnos"""
+    context = {
+        'titulo': 'Dashboard - Turnos',
+    }
+    return render(request, 'panel/turnos_dashboard.html', context)
+
+
+@login_required(login_url='/panel/login/')
+def dashboard_turnos_ajax(request):
+    """Retorna datos para los graficos del dashboard de turnos"""
+    if request.method != 'POST':
+        return JsonResponse({'error': 'Metodo no permitido'}, status=400)
+
+    periodo = request.POST.get('periodo', 'mes')
+    fecha_desde_str = request.POST.get('fecha_desde', '')
+    fecha_hasta_str = request.POST.get('fecha_hasta', '')
+
+    hoy = timezone.localdate()
+
+    if periodo == 'hoy':
+        fecha_desde = hoy
+        fecha_hasta = hoy
+    elif periodo == 'semana':
+        fecha_desde = hoy - timedelta(days=7)
+        fecha_hasta = hoy
+    elif periodo == 'mes':
+        fecha_desde = hoy - timedelta(days=30)
+        fecha_hasta = hoy
+    elif periodo == 'custom' and fecha_desde_str and fecha_hasta_str:
+        fecha_desde = datetime.strptime(fecha_desde_str, '%Y-%m-%d').date()
+        fecha_hasta = datetime.strptime(fecha_hasta_str, '%Y-%m-%d').date()
+    else:
+        fecha_desde = hoy - timedelta(days=30)
+        fecha_hasta = hoy
+
+    # === BASE QUERYSET ===
+    turnos = Turno.objects.filter(
+        fecha__gte=fecha_desde,
+        fecha__lte=fecha_hasta
+    )
+
+    # === CARDS PRINCIPALES (4) ===
+    total_turnos = turnos.count()
+    completados = turnos.filter(estado='COMPLETADO').count()
+    no_asistio = turnos.filter(estado='NO_ASISTIO').count()
+
+    # Tasa cumplimiento: COMPLETADO / (COMPLETADO + NO_ASISTIO) * 100
+    base_cumplimiento = completados + no_asistio
+    tasa_cumplimiento = round(
+        (completados / base_cumplimiento * 100) if base_cumplimiento > 0 else 0, 1
+    )
+
+    # === CARDS SECUNDARIAS (3) ===
+    cancelados = turnos.filter(estado='CANCELADO').count()
+
+    # Pendientes hoy (siempre sobre la fecha de hoy, independiente del periodo)
+    pendientes_hoy = Turno.objects.filter(
+        fecha=hoy,
+        estado__in=['PENDIENTE', 'CONFIRMADO']
+    ).count()
+
+    # Promedio diario
+    dias_range = (fecha_hasta - fecha_desde).days + 1
+    promedio_diario = round(total_turnos / dias_range, 1) if dias_range > 0 else 0
+
+    cards = {
+        'total_turnos': total_turnos,
+        'completados': completados,
+        'tasa_cumplimiento': tasa_cumplimiento,
+        'no_asistio': no_asistio,
+        'cancelados': cancelados,
+        'pendientes_hoy': pendientes_hoy,
+        'promedio_diario': promedio_diario,
+    }
+
+    # === CHART 1: Turnos por dia (bar, full width) ===
+    dias_dict = {}
+    for i in range(min(dias_range, 90)):
+        dia = fecha_desde + timedelta(days=i)
+        dias_dict[dia.strftime('%d/%m')] = 0
+
+    for row in turnos.values('fecha').annotate(c=Count('id')):
+        label = row['fecha'].strftime('%d/%m')
+        if label in dias_dict:
+            dias_dict[label] = row['c']
+
+    chart_turnos_dia = {
+        'labels': list(dias_dict.keys()),
+        'data': list(dias_dict.values()),
+    }
+
+    # === CHART 2: Distribucion por estado (doughnut) ===
+    estado_counts = (
+        turnos.values('estado')
+        .annotate(c=Count('id'))
+        .order_by('-c')
+    )
+    chart_estados = {
+        'labels': [row['estado'] for row in estado_counts],
+        'data': [row['c'] for row in estado_counts],
+    }
+
+    # === CHART 3: Turnos por taller (horizontal bar) ===
+    taller_counts = (
+        turnos.values('taller__nombre')
+        .annotate(c=Count('id'))
+        .order_by('-c')
+    )
+    chart_talleres = {
+        'labels': [row['taller__nombre'] for row in taller_counts],
+        'data': [row['c'] for row in taller_counts],
+    }
+
+    # === CHART 4: Turnos por tipo de tramite (horizontal bar, top 10) ===
+    tipo_counts = (
+        turnos.values('tipo_vehiculo__nombre')
+        .annotate(c=Count('id'))
+        .order_by('-c')[:10]
+    )
+    chart_tipos = {
+        'labels': [row['tipo_vehiculo__nombre'] for row in tipo_counts],
+        'data': [row['c'] for row in tipo_counts],
+    }
+
+    # === CHART 5: Horarios mas solicitados (bar con opacidad gradiente) ===
+    hora_counts = Counter()
+    for hora in turnos.values_list('hora_inicio', flat=True):
+        hora_counts[hora.hour] += 1
+
+    horas_rango = range(7, 20)
+    chart_horarios = {
+        'labels': [f'{h:02d}:00' for h in horas_rango],
+        'data': [hora_counts.get(h, 0) for h in horas_rango],
+    }
+
+    # === CHART 6: Ranking de atencion (lista) ===
+    ranking_atencion = list(
+        turnos.filter(
+            estado='COMPLETADO',
+            atendido_por__isnull=False
+        )
+        .values(
+            'atendido_por__first_name',
+            'atendido_por__last_name',
+            'atendido_por__username'
+        )
+        .annotate(total=Count('id'))
+        .order_by('-total')[:10]
+    )
+    top_atencion = []
+    for row in ranking_atencion:
+        nombre = f"{row['atendido_por__first_name']} {row['atendido_por__last_name']}".strip()
+        if not nombre:
+            nombre = row['atendido_por__username']
+        top_atencion.append({
+            'nombre': nombre,
+            'total': row['total'],
+        })
+
+    return JsonResponse({
+        'cards': cards,
+        'chart_turnos_dia': chart_turnos_dia,
+        'chart_estados': chart_estados,
+        'chart_talleres': chart_talleres,
+        'chart_tipos': chart_tipos,
+        'chart_horarios': chart_horarios,
+        'top_atencion': top_atencion,
+    })

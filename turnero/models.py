@@ -305,7 +305,7 @@ class Turno(models.Model):
             return False
 
         # No se puede cancelar si es para hoy o ya pasó
-        return self.fecha > timezone.now().date()
+        return self.fecha > timezone.localtime().date()
 
     @property
     def puede_reprogramar(self):
@@ -317,7 +317,7 @@ class Turno(models.Model):
         # Debe faltar al menos 24 horas para el turno
         from datetime import datetime, timedelta
         turno_datetime = datetime.combine(self.fecha, self.hora_inicio)
-        ahora = timezone.now()
+        ahora = timezone.localtime()
         diferencia = turno_datetime - ahora.replace(tzinfo=None)
 
         return diferencia.total_seconds() > (24 * 3600)
@@ -325,20 +325,20 @@ class Turno(models.Model):
     @property
     def dias_para_turno(self):
         """Calcula dias faltantes para el turno"""
-        delta = self.fecha - timezone.now().date()
+        delta = self.fecha - timezone.localtime().date()
         return delta.days
 
     def registrar_atencion(self, usuario, ip_address=None):
         """
         Registra la atencion del turno por un usuario del taller.
-        Cambia el estado a CONFIRMADO y guarda quien atendio.
+        Cambia el estado a COMPLETADO y guarda quien atendio.
         """
         from turnero.models import HistorialTurno
 
         # Guardar datos de atencion
         self.atendido_por = usuario
         self.fecha_atencion = timezone.now()
-        self.estado = 'CONFIRMADO'
+        self.estado = 'COMPLETADO'
         self.save(update_fields=['atendido_por', 'fecha_atencion', 'estado'])
 
         # Recargar desde la base de datos para asegurar que tenemos los valores actuales
@@ -348,7 +348,7 @@ class Turno(models.Model):
         HistorialTurno.objects.create(
             turno=self,
             accion='ATENCION_REGISTRADA',
-            descripcion=f'Turno confirmado por {usuario.get_full_name() or usuario.username}',
+            descripcion=f'Turno completado por {usuario.get_full_name() or usuario.username}',
             usuario=usuario,
             ip_address=ip_address
         )

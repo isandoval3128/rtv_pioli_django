@@ -296,6 +296,10 @@ class Derivacion(models.Model):
         max_length=20, blank=True,
         verbose_name='Celular del cliente',
         help_text='Número que dejó el cliente para ser contactado')
+    email_cliente = models.EmailField(
+        blank=True, default='',
+        verbose_name='Email del cliente',
+        help_text='Email que dejó el cliente para ser contactado')
     en_horario = models.BooleanField(
         default=True, verbose_name='Dentro del horario de atención')
     email_enviado = models.BooleanField(

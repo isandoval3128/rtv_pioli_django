@@ -372,7 +372,7 @@ def _info_turno_con_estado(turno):
     """Genera info del turno con detección de vencimiento y acciones relevantes."""
     from django.utils import timezone
 
-    hoy = timezone.now().date()
+    hoy = timezone.localtime().date()
     acciones = []
 
     datos = (
@@ -436,7 +436,7 @@ def resolver_consulta_turno(texto, intent, confidence):
     if dominio_match:
         dominio = dominio_match.group().upper()
         from django.utils import timezone
-        hoy = timezone.now().date()
+        hoy = timezone.localtime().date()
 
         # Buscar turnos pendientes/confirmados (incluir vencidos para avisar)
         turnos = Turno.objects.filter(
@@ -543,7 +543,7 @@ def resolver_cancelar_turno(texto, intent, confidence):
             turno = Turno.objects.select_related(
                 'taller', 'vehiculo', 'cliente', 'tipo_vehiculo'
             ).get(codigo=codigo)
-            hoy = timezone.now().date()
+            hoy = timezone.localtime().date()
 
             if turno.fecha < hoy:
                 datos = (
@@ -641,7 +641,7 @@ def resolver_reprogramar_turno(texto, intent, confidence):
             turno = Turno.objects.select_related(
                 'taller', 'vehiculo', 'cliente', 'tipo_vehiculo'
             ).get(codigo=codigo)
-            hoy = timezone.now().date()
+            hoy = timezone.localtime().date()
 
             if turno.fecha < hoy:
                 datos = (
