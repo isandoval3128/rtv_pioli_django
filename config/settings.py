@@ -55,6 +55,8 @@ INSTALLED_APPS = [
     'turnero',
     # Panel de administración
     'panel_administracion',
+    # Asistente Virtual IA
+    'asistente',
 ]
 
 MIDDLEWARE = [

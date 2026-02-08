@@ -47,7 +47,7 @@
         /* Gradientes premium */
         --gradient-primary: linear-gradient(135deg, var(--primary-700) 0%, var(--primary-500) 50%, var(--primary-400) 100%);
         --gradient-premium: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        --gradient-subtle: linear-gradient(180deg, var(--neutral-50) 0%, var(--primary-50) 100%);
+        --gradient-subtle: linear-gradient(180deg, #f8fafc 0%, #eef4fb 50%, #e8f0f8 100%);
         --gradient-glass: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.7) 100%);
         --gradient-shine: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.4) 50%, transparent 100%);
 
@@ -282,13 +282,13 @@
 
     .masthead-heading {
         font-weight: 800;
-        letter-spacing: -0.02em;
+        letter-spacing: -0.03em;
         text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
     }
 
     .masthead-subheading {
         font-weight: 300;
-        letter-spacing: 0.05em;
+        letter-spacing: 0.02em;
         text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
     }
 
@@ -299,7 +299,7 @@
         position: relative;
         overflow: hidden;
         font-weight: 600;
-        letter-spacing: 0.025em;
+        letter-spacing: 0.06em;
         border: none !important;
         padding: 1rem 2rem;
         border-radius: var(--radius-lg);
@@ -379,8 +379,9 @@
 
     /* Títulos de sección */
     .section-heading {
-        font-weight: 800;
-        letter-spacing: -0.02em;
+        font-weight: 700;
+        font-size: 2.75rem;
+        letter-spacing: -0.01em;
         color: var(--primary-800);
         position: relative;
         display: inline-block;
@@ -400,6 +401,8 @@
 
     .section-subheading {
         font-weight: 400;
+        font-style: italic;
+        letter-spacing: 0.01em;
         color: var(--neutral-500);
         margin-top: var(--space-6);
     }
@@ -641,13 +644,26 @@
         .floating-shape-3 { width: 80px; height: 80px; }
         .floating-shape-4 { display: none; }
     }
+    /* Ocultar botones solo en tablets (entre 576px y 768px) */
+    @media (min-width: 576px) and (max-width: 768px) {
+        .masthead .header-btn {
+            display: none !important;
+        }
+        .hero-btns-block {
+            display: none !important;
+        }
+    }
 
 
     /* Bloque de estilo #1 */
     /* Ajustes para el modal de video tutorial en pantallas pequeñas */
         @media (max-width: 575px) {
                                     /* Eliminada la declaración repetida de .hero-btns-block .d-flex.flex-wrap */
+                            .hero-btns-text {
+                                display: none !important;
+                            }
                             .hero-btns-block {
+                                display: block !important;
                                 width: 100% !important;
                                 max-width: 100% !important;
                                 box-sizing: border-box !important;
@@ -1418,13 +1434,28 @@
             opacity: 1;
         }
 
-        /* Botón scroll to top se mantiene arriba a la derecha - Premium */
-        .scroll-top-float {
-            right: 16px;
-            bottom: 90px; /* Encima de la barra de redes sociales */
-            width: 46px;
-            height: 46px;
-            font-size: 1.25rem;
+        /* Scroll to top - dentro de la barra social en móvil */
+        .social-float-container .scroll-top-float {
+            position: relative !important;
+            bottom: auto !important;
+            right: auto !important;
+            left: auto !important;
+            width: 52px;
+            height: 52px;
+            font-size: 1.4rem;
+            margin: 0 0.6rem;
+            display: flex !important;
+            border: 2px solid rgba(255, 255, 255, 0.25);
+            animation: none !important;
+        }
+        .social-float-container .scroll-top-float:hover,
+        .social-float-container .scroll-top-float:active {
+            background: linear-gradient(135deg, #0056b3 0%, #0077cc 100%);
+            transform: translateY(-3px) scale(1.08);
+            box-shadow:
+                0 8px 20px rgba(0, 52, 102, 0.5),
+                0 12px 35px rgba(0, 52, 102, 0.3),
+                inset 0 1px 1px rgba(255, 255, 255, 0.2);
         }
 
         body {
@@ -1441,10 +1472,81 @@
             margin: 0 0.4rem;
         }
 
-        .scroll-top-float {
-            width: 42px;
-            height: 42px;
+        .social-float-container .scroll-top-float {
+            width: 46px;
+            height: 46px;
+            font-size: 1.15rem;
+            margin: 0 0.4rem;
+        }
+    }
+
+    /* ========================================
+       RESPONSIVE TYPOGRAPHY - POPPINS
+    ======================================== */
+    @media (max-width: 992px) {
+        .section-heading {
+            font-size: 2.25rem !important;
+        }
+        .section-subheading {
+            font-size: 1rem;
+        }
+        .section-badge {
+            font-size: 0.65rem;
+            letter-spacing: 0.15em;
+        }
+        .masthead-heading {
+            letter-spacing: -0.02em;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .section-heading {
+            font-size: 2rem !important;
+            letter-spacing: -0.005em;
+        }
+        .section-subheading {
+            font-size: 0.95rem;
+        }
+        .masthead-heading {
+            font-size: 2.5rem;
+            letter-spacing: -0.01em;
+        }
+        .masthead-subheading {
             font-size: 1.1rem;
+            letter-spacing: 0.01em;
+        }
+        .btn-modern {
+            font-size: 0.9rem;
+            letter-spacing: 0.04em;
+            padding: 0.85rem 1.75rem;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .section-heading {
+            font-size: 1.75rem !important;
+            letter-spacing: 0;
+        }
+        .section-subheading {
+            font-size: 0.9rem;
+        }
+        .section-badge {
+            font-size: 0.6rem;
+            letter-spacing: 0.12em;
+            padding: 0.5rem 1.2rem;
+        }
+        .masthead-heading {
+            font-size: 2rem;
+            letter-spacing: 0;
+        }
+        .masthead-subheading {
+            font-size: 1rem;
+            letter-spacing: 0;
+        }
+        .btn-modern {
+            font-size: 0.85rem;
+            letter-spacing: 0.03em;
+            padding: 0.75rem 1.5rem;
         }
     }
 </style>
@@ -1540,7 +1642,7 @@
                             <a class="btn btn-xl text-uppercase header-btn hero-btn-fixed btn-modern hover-glow" href="{{ site_config.header_btn2_url }}" target="_blank" style="background-color: {{ site_config.header_btn_bgcolor }}; color: #fff; transition: transform 0.3s cubic-bezier(.4,2,.3,1), box-shadow 0.3s; box-shadow: 0 2px 8px rgba(2,25,122,0.08); min-width:220px;">{{ site_config.header_btn2_text }}</a>
                         </div>
                         {% if site_config.header_btns_text %}
-                        <div class="text-center mt-3 px-2" style="font-size:1.15rem; color:{{ site_config.header_btns_text_color|default:'#fff' }}; font-weight:500; max-width:600px; width:100%;">
+                        <div class="text-center mt-3 px-2 hero-btns-text" style="font-size:1.15rem; color:{{ site_config.header_btns_text_color|default:'#fff' }}; font-weight:500; max-width:600px; width:100%;">
                             {% with txt=site_config.header_btns_text %}
                             {% if 'Ver tutorial' in txt %}
                                 {% with parts=txt|cut:'Ver tutorial' %}
@@ -1899,12 +2001,12 @@
             <i class="fab fa-instagram"></i>
         </a>
     {% endif %}
-</div>
 
-<!-- Botón flotante para volver arriba -->
-<a href="#top" id="scrollToTopBtn" class="scroll-top-float" aria-label="Volver arriba" style="display:none;">
-    <i class="fas fa-arrow-up"></i>
-</a>
+    <!-- Botón flotante para volver arriba (dentro de la barra social en móvil) -->
+    <a href="#top" id="scrollToTopBtn" class="scroll-top-float social-float-btn" aria-label="Volver arriba" style="display:none;">
+        <i class="fas fa-arrow-up"></i>
+    </a>
+</div>
 
 <script>
     // Manejo de botones flotantes al hacer scroll

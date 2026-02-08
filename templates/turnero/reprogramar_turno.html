@@ -251,15 +251,18 @@
         display: flex;
         justify-content: center;
         width: 100%;
+        max-width: 420px;
+        margin: 0 auto;
     }
 
-    /* Flatpickr Custom Styles - MÁS GRANDE */
+    /* Flatpickr Custom Styles */
     .flatpickr-calendar.inline {
         box-shadow: 0 8px 30px rgba(19, 48, 77, 0.15) !important;
         border: 2px solid #e2e8f0 !important;
         border-radius: 20px !important;
         overflow: hidden !important;
-        max-width: 380px !important;
+        width: 100% !important;
+        max-width: 420px !important;
         margin: 0 auto !important;
         position: relative !important;
         left: auto !important;
@@ -282,7 +285,7 @@
     .flatpickr-calendar.inline .flatpickr-prev-month,
     .flatpickr-calendar.inline .flatpickr-next-month {
         fill: white !important;
-        padding: 8px !important;
+        padding: 10px !important;
     }
 
     .flatpickr-calendar.inline .flatpickr-prev-month svg,
@@ -307,8 +310,13 @@
         font-size: 0.85rem !important;
     }
 
+    .flatpickr-calendar.inline .flatpickr-innerContainer,
+    .flatpickr-calendar.inline .flatpickr-rContainer {
+        width: 100% !important;
+    }
+
     .flatpickr-calendar.inline .dayContainer {
-        padding: 8px !important;
+        padding: 8px 10px !important;
         min-width: 100% !important;
         max-width: 100% !important;
     }
@@ -318,10 +326,11 @@
         color: #13304D !important;
         font-weight: 600 !important;
         font-size: 0.95rem !important;
-        height: 44px !important;
-        line-height: 44px !important;
-        max-width: 44px !important;
+        height: 46px !important;
+        line-height: 46px !important;
+        max-width: 46px !important;
         margin: 3px !important;
+        flex-basis: calc(14.285% - 6px) !important;
     }
 
     .flatpickr-day.selected {
@@ -571,18 +580,39 @@
         transform: none;
     }
 
-    /* ========== Responsive ========== */
+    /* ========== Responsive - Tablets ========== */
     @media (max-width: 768px) {
         .reprogramar-hero {
-            padding: 2rem 1.5rem;
+            padding: 1.75rem 1.25rem;
+            border-radius: 16px;
+            margin-bottom: 1rem;
+        }
+
+        .reprogramar-hero-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            font-size: 1.25rem;
+            margin-bottom: 0.75rem;
         }
 
         .reprogramar-hero h2 {
-            font-size: 1.5rem;
+            font-size: 1.4rem;
+        }
+
+        .reprogramar-hero p {
+            font-size: 0.9rem;
+        }
+
+        .turno-actual-card {
+            padding: 1rem;
+            border-radius: 14px;
+            margin-bottom: 1rem;
         }
 
         .turno-actual-grid {
             grid-template-columns: 1fr;
+            gap: 0.5rem;
         }
 
         .turno-actual-header {
@@ -598,24 +628,147 @@
 
         .step-section {
             padding: 1.25rem;
+            border-radius: 14px;
+            margin-bottom: 1rem;
+        }
+
+        /* Calendario: centrado y expandido en mobile */
+        #calendar_container {
+            max-width: 100%;
         }
 
         .flatpickr-calendar.inline {
             max-width: 100% !important;
+            border-radius: 16px !important;
+        }
+
+        .flatpickr-day {
+            height: 42px !important;
+            line-height: 42px !important;
+            max-width: 42px !important;
+            font-size: 0.9rem !important;
+            margin: 2.5px !important;
+            flex-basis: calc(14.285% - 5px) !important;
+        }
+
+        .flatpickr-calendar.inline .flatpickr-months {
+            padding: 14px 10px !important;
+        }
+
+        .horarios-tabs {
+            gap: 0.4rem;
+        }
+
+        .horarios-tab {
+            padding: 0.7rem 0.5rem;
+            font-size: 0.85rem;
+            border-radius: 10px;
+        }
+
+        .horarios-grid {
+            gap: 0.4rem;
         }
 
         .horario-btn {
-            min-width: 85px;
+            min-width: 80px;
             padding: 0.6rem 0.75rem;
+            border-radius: 8px;
         }
 
         .btn-actions {
             flex-direction: column;
+            gap: 0.5rem;
         }
 
-        .btn-actions .btn {
+        .btn-cancelar-repro,
+        .btn-confirmar-repro {
             width: 100%;
             justify-content: center;
+            padding: 0.85rem 1.5rem;
+        }
+    }
+
+    /* ========== Responsive - Móviles pequeños ========== */
+    @media (max-width: 480px) {
+        .reprogramar-hero {
+            padding: 1.5rem 1rem;
+            border-radius: 14px;
+        }
+
+        .reprogramar-hero-icon {
+            width: 44px;
+            height: 44px;
+            font-size: 1.1rem;
+        }
+
+        .reprogramar-hero h2 {
+            font-size: 1.25rem;
+        }
+
+        .turno-actual-card {
+            padding: 0.85rem;
+        }
+
+        .turno-actual-item {
+            padding: 0.4rem 0.6rem;
+            font-size: 0.8rem;
+        }
+
+        .turno-actual-item strong {
+            font-size: 0.8rem;
+        }
+
+        .step-section {
+            padding: 1rem;
+        }
+
+        .step-header h5 {
+            font-size: 0.9rem;
+        }
+
+        .step-number {
+            width: 28px;
+            height: 28px;
+            font-size: 0.8rem;
+        }
+
+        .flatpickr-day {
+            height: 38px !important;
+            line-height: 38px !important;
+            max-width: 38px !important;
+            font-size: 0.85rem !important;
+            margin: 2px !important;
+            border-radius: 8px !important;
+            flex-basis: calc(14.285% - 4px) !important;
+        }
+
+        .flatpickr-calendar.inline .dayContainer {
+            padding: 6px 6px !important;
+        }
+
+        .flatpickr-calendar.inline .flatpickr-weekday {
+            font-size: 0.75rem !important;
+        }
+
+        .flatpickr-calendar.inline .flatpickr-current-month {
+            font-size: 1rem !important;
+        }
+
+        .horario-btn {
+            min-width: 70px;
+            padding: 0.5rem 0.5rem;
+        }
+
+        .horario-btn .hora {
+            font-size: 0.9rem;
+        }
+
+        .fecha-seleccionada {
+            padding: 0.6rem 0.75rem;
+        }
+
+        .fecha-seleccionada strong {
+            font-size: 0.85rem;
         }
     }
 </style>
@@ -669,7 +822,7 @@
     {% csrf_token %}
 
     <!-- Paso 1: Selección de Taller -->
-    <div class="step-section" data-aos="fade-up">
+    <div class="step-section" id="step-taller" data-aos="fade-up">
         <div class="step-header">
             <div class="step-number">1</div>
             <h5>Seleccioná el Taller</h5>
@@ -686,7 +839,7 @@
     </div>
 
     <!-- Paso 2: Selección de Fecha -->
-    <div class="step-section" data-aos="fade-up">
+    <div class="step-section" id="step-fecha" data-aos="fade-up">
         <div class="step-header">
             <div class="step-number">2</div>
             <h5>Seleccioná la Fecha</h5>
@@ -703,7 +856,7 @@
     </div>
 
     <!-- Paso 3: Selección de Horario -->
-    <div class="step-section" data-aos="fade-up">
+    <div class="step-section" id="step-horario" data-aos="fade-up">
         <div class="step-header">
             <div class="step-number">3</div>
             <h5>Seleccioná el Horario</h5>
@@ -747,6 +900,16 @@
     let horaSeleccionada = null;
     let picker = null;
 
+    // Scroll suave a un paso
+    function scrollAPaso(elementId) {
+        setTimeout(() => {
+            const el = document.getElementById(elementId);
+            if (el) {
+                el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }, 300);
+    }
+
     // Selección de taller
     document.querySelectorAll('.taller-option').forEach(option => {
         option.addEventListener('click', function() {
@@ -756,6 +919,7 @@
             document.getElementById('taller_selected').value = tallerSeleccionado;
             inicializarCalendario();
             limpiarHorarios();
+            scrollAPaso('step-fecha');
         });
     });
 
@@ -772,11 +936,19 @@
             dateFormat: "Y-m-d",
             minDate: "today",
             maxDate: new Date().fp_incr(60),
+            onReady: function(selectedDates, dateStr, instance) {
+                // Forzar ancho 100% (override del inline style de flatpickr)
+                if (instance.calendarContainer) {
+                    instance.calendarContainer.style.width = '100%';
+                    instance.calendarContainer.style.maxWidth = '420px';
+                }
+            },
             onChange: function(selectedDates, dateStr, instance) {
                 if (selectedDates.length > 0) {
                     fechaSeleccionada = dateStr;
                     mostrarFechaSeleccionada(selectedDates[0]);
                     cargarHorariosDisponibles(dateStr);
+                    scrollAPaso('step-horario');
                 }
             }
         });
@@ -947,6 +1119,13 @@
         elemento.classList.add('selected');
         horaSeleccionada = hora;
         document.getElementById('hora_selected').value = hora;
+        // Scroll al botón de confirmar
+        setTimeout(() => {
+            const btnConfirmar = document.getElementById('btn_confirmar');
+            if (btnConfirmar) {
+                btnConfirmar.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }, 200);
     }
 
     // Validación del formulario

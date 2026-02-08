@@ -29,6 +29,8 @@ urlpatterns = [
     path('ubicacion/', include('ubicacion.urls')),
     # Panel de administración
     path('panel/', include('panel_administracion.urls')),
+    # Asistente Virtual IA - API pública del chat
+    path('asistente/', include('asistente.urls_api')),
 ]
 
 # Servir archivos media en desarrollo

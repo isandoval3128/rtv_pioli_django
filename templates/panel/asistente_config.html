@@ -1,0 +1,357 @@
+{% extends "panel/base.html" %}
+{% block extraCss %}
+<style>
+    /* Prevenir overflow horizontal en la página */
+    html, body {
+        overflow-x: hidden;
+        max-width: 100%;
+    }
+
+    .card-body {
+        overflow-x: hidden;
+    }
+
+    .container-fluid {
+        overflow-x: hidden;
+        max-width: 100%;
+    }
+
+    /* Card contenedora mejorada */
+    .card {
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    .card .card-body {
+        padding: 24px;
+    }
+
+    /* Secciones de configuración */
+    .config-card {
+        border: none;
+        border-radius: 10px;
+        box-shadow: 0 2px 12px rgba(19, 48, 77, 0.08);
+        margin-bottom: 20px;
+    }
+    .config-card .card-header {
+        background: linear-gradient(135deg, #13304D 0%, #1a4066 100%);
+        color: #fff;
+        font-weight: 600;
+        font-size: 14px;
+        padding: 14px 20px;
+        border-radius: 10px 10px 0 0;
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .config-card .card-header i.toggle-icon {
+        transition: transform 0.3s;
+    }
+    .config-card .card-header.collapsed i.toggle-icon {
+        transform: rotate(-90deg);
+    }
+    .config-card .card-body {
+        padding: 20px;
+    }
+    .form-group label {
+        font-weight: 600;
+        font-size: 13px;
+        color: #374151;
+        margin-bottom: 5px;
+    }
+    .form-group .form-text {
+        font-size: 11px;
+        color: #9ca3af;
+    }
+    .form-control:focus {
+        border-color: #13304D;
+        box-shadow: 0 0 0 0.15rem rgba(19, 48, 77, 0.25);
+    }
+    .btn-guardar {
+        background: linear-gradient(135deg, #13304D 0%, #1a4066 100%);
+        color: #fff;
+        border: none;
+        padding: 10px 30px;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 14px;
+    }
+    .btn-guardar:hover {
+        background: linear-gradient(135deg, #1a4066 0%, #13304D 100%);
+        color: #fff;
+    }
+    .btn-test {
+        background: #e8f0fe;
+        color: #13304D;
+        border: 1px solid #c5d8f0;
+        padding: 10px 20px;
+        border-radius: 8px;
+        font-weight: 500;
+    }
+    .btn-test:hover {
+        background: #13304D;
+        color: #fff;
+    }
+    .switch-habilitado {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+</style>
+{% endblock %}
+
+{% block main %}
+{% load static %}
+
+<div id="main-content" class="profilepage_2 blog-page">
+    <div class="container-fluid">
+        <div class="block-header">
+            <div class="row g-3">
+                <div class="col-lg-5 col-md-8 col-sm-12">
+                    <h2><a href="javascript:void(0);" class="btn btn-xs btn-link btn-toggle-fullwidth"><i class="fa fa-arrow-right"></i></a>
+                        {{ titulo }}</h2>
+                    <ul class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{% url 'panel_home' %}"><i class="icon-home text-orange"></i></a></li>
+                        <li class="breadcrumb-item">Asistente IA</li>
+                        <li class="breadcrumb-item active">{{ titulo }}</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="row clearfix">
+            <div class="col-lg-12 col-md-12">
+                <form id="form-config">
+                    {% csrf_token %}
+
+                    <!-- Sección General -->
+                    <div class="config-card card">
+                        <div class="card-header" data-toggle="collapse" data-target="#seccion-general">
+                            <span><i class="fa fa-cog me-2"></i> General</span>
+                            <i class="fa fa-chevron-down toggle-icon"></i>
+                        </div>
+                        <div id="seccion-general" class="collapse show">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>Nombre del Asistente</label>
+                                            <input type="text" name="nombre_asistente" class="form-control" value="{{ config.nombre_asistente }}">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <div class="switch-habilitado mt-4">
+                                                <label class="switch">
+                                                    <input type="checkbox" name="habilitado" {% if config.habilitado %}checked{% endif %}>
+                                                    <span class="slider round"></span>
+                                                </label>
+                                                <span>Asistente habilitado</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>Auto-apertura del chat (ms)</label>
+                                            <input type="number" name="auto_open_delay" class="form-control" value="{{ config.auto_open_delay }}" min="0" step="500">
+                                            <small class="form-text">Tiempo en milisegundos que el chat permanece abierto al cargar la página. 0 = deshabilitado. Recomendado: 3000.</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>Prompt del Sistema (Personalidad)</label>
+                                    <textarea name="system_prompt" class="form-control" rows="4">{{ config.system_prompt }}</textarea>
+                                    <small class="form-text">Define la personalidad y las instrucciones base del asistente.</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sección Proveedor IA (oculta) -->
+                    <div style="display:none;">
+                        <input type="hidden" name="ai_provider" value="{{ config.ai_provider }}">
+                        <input type="hidden" name="ai_model" value="{{ config.ai_model }}">
+                        <input type="hidden" name="max_tokens_per_request" value="{{ config.max_tokens_per_request }}">
+                        <input type="hidden" name="ai_api_key" value="{{ config.ai_api_key }}">
+                        <input type="hidden" name="timeout_seconds" value="{{ config.timeout_seconds }}">
+                    </div>
+
+                    <!-- Sección Límites -->
+                    <div class="config-card card">
+                        <div class="card-header" data-toggle="collapse" data-target="#seccion-limites">
+                            <span><i class="fa fa-shield me-2"></i> Límites de Uso</span>
+                            <i class="fa fa-chevron-down toggle-icon"></i>
+                        </div>
+                        <div id="seccion-limites" class="collapse show">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label>Máx. Llamadas IA por Sesión</label>
+                                            <input type="number" name="max_ai_calls_per_session" class="form-control" value="{{ config.max_ai_calls_per_session }}">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label>Máx. Llamadas IA por Día</label>
+                                            <input type="number" name="max_ai_calls_per_day" class="form-control" value="{{ config.max_ai_calls_per_day }}">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sección Mensajes -->
+                    <div class="config-card card">
+                        <div class="card-header" data-toggle="collapse" data-target="#seccion-mensajes">
+                            <span><i class="fa fa-commenting me-2"></i> Mensajes Predeterminados</span>
+                            <i class="fa fa-chevron-down toggle-icon"></i>
+                        </div>
+                        <div id="seccion-mensajes" class="collapse show">
+                            <div class="card-body">
+                                <div class="form-group">
+                                    <label>Mensaje de Bienvenida</label>
+                                    <textarea name="mensaje_bienvenida" class="form-control" rows="3">{{ config.mensaje_bienvenida }}</textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label>Mensaje Fuera de Dominio</label>
+                                    <textarea name="mensaje_fuera_dominio" class="form-control" rows="3">{{ config.mensaje_fuera_dominio }}</textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label>Mensaje de Error</label>
+                                    <textarea name="mensaje_error" class="form-control" rows="2">{{ config.mensaje_error }}</textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sección Notificaciones -->
+                    <div class="config-card card">
+                        <div class="card-header" data-toggle="collapse" data-target="#seccion-notificaciones">
+                            <span><i class="fa fa-bell me-2"></i> Notificaciones</span>
+                            <i class="fa fa-chevron-down toggle-icon"></i>
+                        </div>
+                        <div id="seccion-notificaciones" class="collapse show">
+                            <div class="card-body">
+                                <div class="form-group">
+                                    <label>Email para Resumen Semanal</label>
+                                    <input type="email" name="email_resumen_semanal" class="form-control" value="{{ config.email_resumen_semanal }}" placeholder="admin@empresa.com">
+                                    <small class="form-text text-muted">Recibe un resumen semanal de sugerencias y consultas no resueltas del asistente.</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sección Plantas (solo lectura) -->
+                    <div class="config-card card">
+                        <div class="card-header" data-toggle="collapse" data-target="#seccion-plantas">
+                            <span><i class="fa fa-building me-2"></i> Plantas - Datos de Contacto para Derivación</span>
+                            <i class="fa fa-chevron-down toggle-icon"></i>
+                        </div>
+                        <div id="seccion-plantas" class="collapse show">
+                            <div class="card-body">
+                                <small class="form-text text-muted d-block mb-3">Datos que utiliza el asistente al derivar conversaciones a operadores. Para modificarlos, edite cada planta desde el módulo de <strong>Ubicaciones</strong>.</small>
+                                {% for taller in talleres %}
+                                <div style="background: #f8f9fa; border-radius: 8px; padding: 14px 18px; margin-bottom: 10px; border: 1px solid #e9ecef;">
+                                    <div style="font-weight: 600; font-size: 14px; color: #13304D; margin-bottom: 8px;">
+                                        <i class="fa fa-map-marker me-1" style="color: #0056b3;"></i> {{ taller.get_nombre }}
+                                    </div>
+                                    <div style="display: flex; flex-wrap: wrap; gap: 8px 24px; font-size: 13px; color: #495057;">
+                                        <span>
+                                            <i class="fa fa-whatsapp" style="color: {% if taller.get_whatsapp_operador %}#25d366{% else %}#ccc{% endif %};"></i>
+                                            <strong>WhatsApp:</strong>
+                                            {% if taller.get_whatsapp_operador %}
+                                                {{ taller.get_whatsapp_operador }}
+                                            {% else %}
+                                                <span class="text-danger">No configurado</span>
+                                            {% endif %}
+                                        </span>
+                                        <span>
+                                            <i class="fa fa-envelope" style="color: {% if taller.get_email_operador %}#0056b3{% else %}#ccc{% endif %};"></i>
+                                            <strong>Email Operador:</strong>
+                                            {% if taller.get_email_operador %}
+                                                {{ taller.get_email_operador }}
+                                            {% else %}
+                                                <span class="text-danger">No configurado</span>
+                                            {% endif %}
+                                        </span>
+                                        <span>
+                                            <i class="fa fa-phone" style="color: {% if taller.get_telefono %}#495057{% else %}#ccc{% endif %};"></i>
+                                            <strong>Teléfono:</strong>
+                                            {% if taller.get_telefono %}
+                                                {{ taller.get_telefono }}
+                                            {% else %}
+                                                <span class="text-muted">-</span>
+                                            {% endif %}
+                                        </span>
+                                        <span>
+                                            <i class="fa fa-clock-o" style="color: #495057;"></i>
+                                            <strong>Horario:</strong>
+                                            {{ taller.horario_apertura|time:"H:i" }} - {{ taller.horario_cierre|time:"H:i" }}
+                                        </span>
+                                    </div>
+                                </div>
+                                {% empty %}
+                                <p class="text-muted text-center mb-0">No hay plantas activas configuradas.</p>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Botón Guardar -->
+                    <div class="text-right mb-4">
+                        <button type="submit" class="btn btn-guardar">
+                            <i class="fa fa-save me-1"></i> Guardar Configuración
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extraJS %}
+<script>
+$('#form-config').on('submit', function(e) {
+    e.preventDefault();
+
+    $.ajax({
+        url: "{% url 'asistente_config_guardar' %}",
+        type: "POST",
+        data: $(this).serialize(),
+        success: function(response) {
+            if (response.success) {
+                Swal.fire({
+                    title: 'Guardado',
+                    text: response.message,
+                    icon: 'success',
+                    timer: 2000,
+                    showConfirmButton: false
+                });
+            } else {
+                Swal.fire({
+                    title: 'Error',
+                    text: response.message,
+                    icon: 'error'
+                });
+            }
+        },
+        error: function() {
+            Swal.fire({
+                title: 'Error',
+                text: 'No se pudo guardar la configuración',
+                icon: 'error'
+            });
+        }
+    });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,653 @@
+{% if asistente_habilitado %}
+<style>
+/* ============================================
+   CHAT WIDGET - ASISTENTE VIRTUAL RTV PIOLI
+   ============================================ */
+#asistente-widget {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 99999;
+    font-family: 'Poppins', 'Segoe UI', sans-serif;
+}
+
+/* Botón flotante */
+#asistente-btn {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #003466 0%, #0056b3 100%);
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(0, 52, 102, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    position: relative;
+}
+#asistente-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 28px rgba(0, 52, 102, 0.5);
+}
+#asistente-btn svg {
+    width: 28px;
+    height: 28px;
+    fill: #fff;
+    transition: all 0.3s ease;
+}
+#asistente-btn .icon-close {
+    display: none;
+}
+#asistente-btn.active .icon-chat { display: none; }
+#asistente-btn.active .icon-close { display: block; }
+
+/* Indicador de pulso */
+#asistente-btn::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: 2px solid #003466;
+    animation: asistente-pulse 2s ease-out infinite;
+}
+#asistente-btn.active::after { display: none; }
+
+@keyframes asistente-pulse {
+    0% { transform: scale(1); opacity: 0.6; }
+    100% { transform: scale(1.5); opacity: 0; }
+}
+
+/* Panel de chat */
+#asistente-panel {
+    position: absolute;
+    bottom: 75px;
+    right: 0;
+    width: 380px;
+    max-height: 520px;
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+    display: none;
+    flex-direction: column;
+    overflow: hidden;
+    animation: asistente-slideUp 0.3s ease;
+}
+#asistente-panel.open {
+    display: flex;
+}
+
+@keyframes asistente-slideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+@keyframes asistente-slideDown {
+    from { opacity: 1; transform: translateY(0); }
+    to { opacity: 0; transform: translateY(20px); }
+}
+#asistente-panel.closing {
+    animation: asistente-slideDown 0.4s ease forwards;
+}
+
+/* Header del chat */
+#asistente-header {
+    background: linear-gradient(135deg, #003466 0%, #0056b3 100%);
+    color: #fff;
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+}
+#asistente-header .avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+#asistente-header .avatar svg {
+    width: 22px;
+    height: 22px;
+    fill: #fff;
+}
+#asistente-header .info h4 {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 600;
+}
+#asistente-header .info p {
+    margin: 2px 0 0;
+    font-size: 12px;
+    opacity: 0.85;
+}
+
+/* Área de mensajes */
+#asistente-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    min-height: 280px;
+    max-height: 340px;
+    background: #f8f9fa;
+}
+
+/* Mensajes */
+.asistente-msg {
+    max-width: 85%;
+    padding: 10px 14px;
+    border-radius: 16px;
+    font-size: 13.5px;
+    line-height: 1.5;
+    word-wrap: break-word;
+    animation: asistente-fadeIn 0.3s ease;
+}
+@keyframes asistente-fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+.asistente-msg.user {
+    align-self: flex-end;
+    background: #003466;
+    color: #fff;
+    border-bottom-right-radius: 4px;
+}
+.asistente-msg.assistant {
+    align-self: flex-start;
+    background: #fff;
+    color: #333;
+    border-bottom-left-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+
+/* Botones de acción en respuestas */
+.asistente-acciones {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 8px;
+}
+.asistente-acciones a {
+    display: inline-block;
+    padding: 5px 12px;
+    background: #e8f0fe;
+    color: #003466;
+    border-radius: 20px;
+    font-size: 12px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s;
+    border: 1px solid #c5d8f0;
+}
+.asistente-acciones a:hover {
+    background: #003466;
+    color: #fff;
+    border-color: #003466;
+}
+
+/* Indicador "escribiendo..." */
+.asistente-typing {
+    align-self: flex-start;
+    background: #fff;
+    padding: 12px 18px;
+    border-radius: 16px;
+    border-bottom-left-radius: 4px;
+    display: none;
+    gap: 5px;
+    align-items: center;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+.asistente-typing.visible { display: flex; }
+.asistente-typing span {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #999;
+    animation: asistente-dot 1.4s ease-in-out infinite;
+}
+.asistente-typing span:nth-child(2) { animation-delay: 0.2s; }
+.asistente-typing span:nth-child(3) { animation-delay: 0.4s; }
+@keyframes asistente-dot {
+    0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; }
+    40% { transform: scale(1); opacity: 1; }
+}
+
+/* Input area */
+#asistente-input-area {
+    padding: 12px 16px;
+    border-top: 1px solid #e9ecef;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    background: #fff;
+    flex-shrink: 0;
+}
+#asistente-input {
+    flex: 1;
+    border: 1px solid #dee2e6;
+    border-radius: 24px;
+    padding: 10px 16px;
+    font-size: 13.5px;
+    outline: none;
+    font-family: inherit;
+    transition: border-color 0.2s;
+}
+#asistente-input:focus {
+    border-color: #003466;
+}
+#asistente-input::placeholder {
+    color: #adb5bd;
+}
+#asistente-send {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #003466;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+    flex-shrink: 0;
+}
+#asistente-send:hover {
+    background: #0056b3;
+}
+#asistente-send svg {
+    width: 18px;
+    height: 18px;
+    fill: #fff;
+}
+
+/* Estado sesión cerrada */
+#asistente-input-area.cerrada #asistente-input {
+    background: #e9ecef;
+    color: #6c757d;
+}
+#asistente-input-area.cerrada #asistente-send {
+    display: none;
+}
+
+/* Botón nueva conversación */
+#asistente-nueva-conv {
+    display: none;
+    width: 100%;
+    padding: 10px 16px;
+    background: linear-gradient(135deg, #003466 0%, #0056b3 100%);
+    color: #fff;
+    border: none;
+    border-radius: 24px;
+    font-size: 13.5px;
+    font-weight: 500;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+#asistente-nueva-conv:hover {
+    opacity: 0.9;
+    transform: scale(1.02);
+}
+#asistente-input-area.cerrada #asistente-nueva-conv {
+    display: block;
+}
+
+/* Responsive mobile - posicionar encima de barra social */
+@media (max-width: 767px) {
+    #asistente-widget {
+        bottom: 48px;
+        right: 16px;
+    }
+    #asistente-btn {
+        width: 58px;
+        height: 58px;
+    }
+    #asistente-btn svg {
+        width: 27px;
+        height: 27px;
+    }
+}
+@media (max-width: 480px) {
+    #asistente-panel {
+        width: calc(100vw - 20px);
+        max-height: calc(100vh - 160px);
+        right: -6px;
+        bottom: 65px;
+        border-radius: 12px;
+    }
+    #asistente-messages {
+        max-height: calc(100vh - 280px);
+    }
+}
+/* Landscape / pantallas cortas - evitar que el panel se salga */
+@media (max-height: 500px) {
+    #asistente-widget {
+        bottom: 8px;
+    }
+    #asistente-panel {
+        max-height: calc(100vh - 75px);
+        bottom: 55px;
+        width: 340px;
+    }
+    #asistente-messages {
+        min-height: 80px;
+        max-height: calc(100vh - 195px);
+        padding: 10px 12px;
+        gap: 8px;
+    }
+    #asistente-header {
+        padding: 8px 14px;
+        gap: 8px;
+    }
+    #asistente-header .avatar {
+        width: 28px;
+        height: 28px;
+    }
+    #asistente-header .avatar svg {
+        width: 16px;
+        height: 16px;
+    }
+    #asistente-header .info h4 {
+        font-size: 13px;
+    }
+    #asistente-header .info p {
+        display: none;
+    }
+    #asistente-input-area {
+        padding: 8px 12px;
+        gap: 6px;
+    }
+    #asistente-input {
+        padding: 7px 14px;
+        font-size: 12.5px;
+    }
+    #asistente-send {
+        width: 34px;
+        height: 34px;
+    }
+    #asistente-send svg {
+        width: 15px;
+        height: 15px;
+    }
+    .asistente-msg {
+        padding: 8px 12px;
+        font-size: 12.5px;
+    }
+}
+</style>
+
+<div id="asistente-widget" data-auto-open-delay="{{ auto_open_delay }}">
+    <!-- Panel de chat -->
+    <div id="asistente-panel">
+        <div id="asistente-header">
+            <div class="avatar">
+                <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+            </div>
+            <div class="info">
+                <h4>{{ nombre_asistente }}</h4>
+                <p>En línea</p>
+            </div>
+        </div>
+        <div id="asistente-messages"></div>
+        <div id="asistente-input-area">
+            <input type="text" id="asistente-input" placeholder="Escribí tu consulta..." autocomplete="off">
+            <button id="asistente-send" title="Enviar">
+                <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+            </button>
+            <button id="asistente-nueva-conv">Iniciar nueva conversación</button>
+        </div>
+    </div>
+
+    <!-- Botón flotante -->
+    <button id="asistente-btn" title="Asistente Virtual">
+        <svg class="icon-chat" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z"/></svg>
+        <svg class="icon-close" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+    </button>
+</div>
+
+<script>
+(function() {
+    'use strict';
+
+    const API_BASE = '/asistente/api';
+    let sessionKey = null;
+    let isOpen = false;
+    let isLoading = false;
+
+    const widget = document.getElementById('asistente-widget');
+    const btn = document.getElementById('asistente-btn');
+    const panel = document.getElementById('asistente-panel');
+    const messagesContainer = document.getElementById('asistente-messages');
+    const input = document.getElementById('asistente-input');
+    const sendBtn = document.getElementById('asistente-send');
+    const nuevaConvBtn = document.getElementById('asistente-nueva-conv');
+
+    // Toggle panel
+    btn.addEventListener('click', function() {
+        if (isOpen) {
+            cerrarPanelAnimado();
+        } else {
+            isOpen = true;
+            btn.classList.add('active');
+            panel.classList.add('open');
+            if (!sessionKey) {
+                iniciarSesion();
+            }
+            setTimeout(() => input.focus(), 300);
+        }
+    });
+
+    // Enviar mensaje
+    sendBtn.addEventListener('click', enviarMensaje);
+    input.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            enviarMensaje();
+        }
+    });
+
+    // Nueva conversación
+    nuevaConvBtn.addEventListener('click', reiniciarChat);
+
+    function iniciarSesion() {
+        fetch(API_BASE + '/session/', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({})
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (data.session_key) {
+                sessionKey = data.session_key;
+                agregarMensaje(data.mensaje, 'assistant');
+            }
+        })
+        .catch(err => {
+            console.error('Error iniciando sesión:', err);
+            agregarMensaje('⚠️ No se pudo conectar con el asistente. Intentá más tarde.', 'assistant');
+        });
+    }
+
+    function enviarMensaje() {
+        const texto = input.value.trim();
+        if (!texto || isLoading || !sessionKey) return;
+
+        agregarMensaje(texto, 'user');
+        input.value = '';
+        isLoading = true;
+        mostrarTyping(true);
+
+        fetch(API_BASE + '/mensaje/', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                session_key: sessionKey,
+                mensaje: texto
+            })
+        })
+        .then(r => r.json())
+        .then(data => {
+            mostrarTyping(false);
+            isLoading = false;
+
+            if (data.respuesta) {
+                agregarMensaje(data.respuesta, 'assistant', data.acciones);
+                // Cerrar input si la sesión fue cerrada (derivación a operador)
+                if (data.session_cerrada) {
+                    cerrarSesionChat();
+                }
+            } else if (data.error) {
+                if (data.expirada) {
+                    cerrarSesionChat();
+                }
+                agregarMensaje('😕 Disculpá, hubo un problema. Intentá de nuevo.', 'assistant');
+            }
+        })
+        .catch(err => {
+            mostrarTyping(false);
+            isLoading = false;
+            console.error('Error enviando mensaje:', err);
+            agregarMensaje('⚠️ No se pudo enviar el mensaje. Verificá tu conexión.', 'assistant');
+        });
+    }
+
+    function agregarMensaje(texto, rol, acciones) {
+        const msgDiv = document.createElement('div');
+        msgDiv.className = 'asistente-msg ' + rol;
+        msgDiv.textContent = texto;
+
+        // Agregar botones de acción
+        if (acciones && acciones.length > 0) {
+            const accionesDiv = document.createElement('div');
+            accionesDiv.className = 'asistente-acciones';
+            acciones.forEach(function(accion) {
+                const link = document.createElement('a');
+                link.textContent = accion.texto;
+                link.href = '#';
+                if (accion.url) {
+                    link.href = accion.url;
+                    link.target = '_blank';
+                } else if (accion.scroll_to) {
+                    link.href = accion.scroll_to;
+                    link.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        const target = document.querySelector(accion.scroll_to);
+                        if (target) {
+                            isOpen = false;
+                            btn.classList.remove('active');
+                            panel.classList.remove('open');
+                            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        }
+                    });
+                } else if (accion.accion) {
+                    link.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        // Enviar la acción como mensaje automático
+                        input.value = accion.accion;
+                        enviarMensaje();
+                    });
+                }
+                accionesDiv.appendChild(link);
+            });
+            msgDiv.appendChild(accionesDiv);
+        }
+
+        messagesContainer.appendChild(msgDiv);
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
+
+    function mostrarTyping(show) {
+        let typing = messagesContainer.querySelector('.asistente-typing');
+        if (!typing) {
+            typing = document.createElement('div');
+            typing.className = 'asistente-typing';
+            typing.innerHTML = '<span></span><span></span><span></span>';
+        }
+        if (show) {
+            // Mover siempre al final para que quede debajo de los mensajes
+            messagesContainer.appendChild(typing);
+            typing.classList.add('visible');
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        } else {
+            typing.classList.remove('visible');
+        }
+    }
+
+    function cerrarSesionChat() {
+        sessionKey = null;
+        const inputArea = document.getElementById('asistente-input-area');
+        inputArea.classList.add('cerrada');
+        input.placeholder = 'Conversación finalizada';
+        input.value = '';
+        input.disabled = true;
+        sendBtn.disabled = true;
+    }
+
+    function reiniciarChat() {
+        // Limpiar estado
+        sessionKey = null;
+        isLoading = false;
+
+        // Limpiar mensajes
+        messagesContainer.innerHTML = '';
+
+        // Restaurar input area
+        const inputArea = document.getElementById('asistente-input-area');
+        inputArea.classList.remove('cerrada');
+        input.disabled = false;
+        input.placeholder = 'Escribí tu consulta...';
+        input.value = '';
+        sendBtn.disabled = false;
+
+        // Iniciar nueva sesión
+        iniciarSesion();
+    }
+
+    function cerrarPanelAnimado() {
+        panel.classList.add('closing');
+        panel.addEventListener('animationend', function handler() {
+            panel.classList.remove('closing', 'open');
+            btn.classList.remove('active');
+            isOpen = false;
+            panel.removeEventListener('animationend', handler);
+        });
+    }
+
+    // Auto-open al cargar la página
+    const autoOpenDelay = parseInt(widget.dataset.autoOpenDelay) || 0;
+    let autoOpenActivo = false;
+
+    // Cancelar auto-cierre si el usuario interactúa
+    input.addEventListener('focus', function() { autoOpenActivo = false; });
+    input.addEventListener('input', function() { autoOpenActivo = false; });
+
+    if (autoOpenDelay > 0) {
+        setTimeout(function() {
+            if (!isOpen) {
+                autoOpenActivo = true;
+                isOpen = true;
+                btn.classList.add('active');
+                panel.classList.add('open');
+                if (!sessionKey) {
+                    iniciarSesion();
+                }
+                // Auto-cerrar después del delay configurado
+                setTimeout(function() {
+                    if (autoOpenActivo && isOpen) {
+                        cerrarPanelAnimado();
+                    }
+                }, autoOpenDelay);
+            }
+        }, 800);
+    }
+
+})();
+</script>
+{% endif %}

@@ -4,6 +4,15 @@ from core.models import SiteConfiguration
 register = template.Library()
 
 
+@register.filter
+def sort_by_orden(groups):
+    """Ordena grupos por el campo 'orden' de su GroupProfile"""
+    return sorted(
+        groups,
+        key=lambda g: getattr(getattr(g, 'panel_profile', None), 'orden', 999)
+    )
+
+
 @register.simple_tag
 def get_site_config():
     """

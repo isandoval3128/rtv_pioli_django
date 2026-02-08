@@ -103,6 +103,12 @@ class Turno(models.Model):
         verbose_name="Token de Cancelación",
         help_text="Token único para cancelar el turno"
     )
+    token_cancelacion_expiracion = models.DateTimeField(
+        blank=True,
+        null=True,
+        verbose_name="Expiración del Token de Cancelación",
+        help_text="Fecha y hora de expiración del token de cancelación"
+    )
 
     # Token para reprogramación segura
     token_reprogramacion = models.CharField(
@@ -275,6 +281,22 @@ class Turno(models.Model):
 
         return timezone.now() < self.token_expiracion
 
+    def generar_token_cancelacion(self):
+        """Regenera el token de cancelación con expiración de 48 horas"""
+        from datetime import timedelta
+
+        self.token_cancelacion = secrets.token_urlsafe(32)
+        self.token_cancelacion_expiracion = timezone.now() + timedelta(hours=48)
+        self.save(update_fields=['token_cancelacion', 'token_cancelacion_expiracion'])
+        return self.token_cancelacion
+
+    def token_cancelacion_valido(self):
+        """Verifica si el token de cancelación es válido (no expirado)"""
+        if not self.token_cancelacion or not self.token_cancelacion_expiracion:
+            return False
+
+        return timezone.now() < self.token_cancelacion_expiracion
+
     @property
     def puede_cancelar(self):
         """Verifica si el turno aún puede ser cancelado"""
@@ -283,7 +305,7 @@ class Turno(models.Model):
             return False
 
         # No se puede cancelar si es para hoy o ya pasó
-        return self.fecha > timezone.now().date()
+        return self.fecha > timezone.localtime().date()
 
     @property
     def puede_reprogramar(self):
@@ -295,7 +317,7 @@ class Turno(models.Model):
         # Debe faltar al menos 24 horas para el turno
         from datetime import datetime, timedelta
         turno_datetime = datetime.combine(self.fecha, self.hora_inicio)
-        ahora = timezone.now()
+        ahora = timezone.localtime()
         diferencia = turno_datetime - ahora.replace(tzinfo=None)
 
         return diferencia.total_seconds() > (24 * 3600)
@@ -303,20 +325,20 @@ class Turno(models.Model):
     @property
     def dias_para_turno(self):
         """Calcula dias faltantes para el turno"""
-        delta = self.fecha - timezone.now().date()
+        delta = self.fecha - timezone.localtime().date()
         return delta.days
 
     def registrar_atencion(self, usuario, ip_address=None):
         """
         Registra la atencion del turno por un usuario del taller.
-        Cambia el estado a CONFIRMADO y guarda quien atendio.
+        Cambia el estado a COMPLETADO y guarda quien atendio.
         """
         from turnero.models import HistorialTurno
 
         # Guardar datos de atencion
         self.atendido_por = usuario
         self.fecha_atencion = timezone.now()
-        self.estado = 'CONFIRMADO'
+        self.estado = 'COMPLETADO'
         self.save(update_fields=['atendido_por', 'fecha_atencion', 'estado'])
 
         # Recargar desde la base de datos para asegurar que tenemos los valores actuales
@@ -326,7 +348,7 @@ class Turno(models.Model):
         HistorialTurno.objects.create(
             turno=self,
             accion='ATENCION_REGISTRADA',
-            descripcion=f'Turno confirmado por {usuario.get_full_name() or usuario.username}',
+            descripcion=f'Turno completado por {usuario.get_full_name() or usuario.username}',
             usuario=usuario,
             ip_address=ip_address
         )

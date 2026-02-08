@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 430 160" width="430" height="160">
+  <defs>
+    <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#13304D;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1a4a6e;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="grad2" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a4a6e;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#13304D;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="checkGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#28a745;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#20c997;stop-opacity:1" />
+    </linearGradient>
+    <filter id="shadow" x="-5%" y="-5%" width="115%" height="115%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#13304D" flood-opacity="0.2"/>
+    </filter>
+  </defs>
+
+  <!-- Escudo / Shield icon -->
+  <g transform="translate(28, 18)" filter="url(#shadow)">
+    <!-- Shield body -->
+    <path d="M45,4 L82,16 C82,16 84,60 72,86 C62,106 45,120 45,120 C45,120 28,106 18,86 C6,60 8,16 8,16 Z"
+          fill="url(#grad1)" stroke="none"/>
+    <!-- Inner shield highlight -->
+    <path d="M45,12 L76,22 C76,22 78,58 68,80 C60,96 45,108 45,108 C45,108 30,96 22,80 C12,58 14,22 14,22 Z"
+          fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+    <!-- Car silhouette -->
+    <g transform="translate(22, 36)" fill="rgba(255,255,255,0.92)">
+      <path d="M6,20 L8,12 C9,9 11,7 14,6 L32,6 C35,7 37,9 38,12 L40,20
+               L42,22 C43,23 44,24 44,26 L44,34 C44,36 42,37 40,37 L38,37 L38,34
+               C38,32 36,30 34,30 C32,30 30,32 30,34 L30,37 L16,37 L16,34
+               C16,32 14,30 12,30 C10,30 8,32 8,34 L8,37 L6,37 C4,37 2,36 2,34
+               L2,26 C2,24 3,23 4,22 Z"
+            fill="rgba(255,255,255,0.9)"/>
+      <circle cx="12" cy="34" r="3.5" fill="rgba(255,255,255,0.95)" stroke="#13304D" stroke-width="1.5"/>
+      <circle cx="34" cy="34" r="3.5" fill="rgba(255,255,255,0.95)" stroke="#13304D" stroke-width="1.5"/>
+      <path d="M10,14 L14,9 L32,9 L36,14 Z" fill="rgba(19,48,77,0.4)"/>
+    </g>
+    <!-- Checkmark badge -->
+    <g transform="translate(58, 78)">
+      <circle cx="12" cy="12" r="14" fill="white"/>
+      <circle cx="12" cy="12" r="12" fill="url(#checkGrad)"/>
+      <path d="M6,12 L10,16 L18,8" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </g>
+  </g>
+
+  <!-- Company name -->
+  <g transform="translate(126, 0)">
+    <!-- RTV PIOLI -->
+    <text x="0" y="58" font-family="'Segoe UI', Arial, sans-serif" font-size="42" font-weight="800" letter-spacing="2" fill="url(#grad1)">
+      RTV PIOLI
+    </text>
+    <!-- S.R.L -->
+    <text x="248" y="58" font-family="'Segoe UI', Arial, sans-serif" font-size="16" font-weight="600" fill="#1a4a6e" opacity="0.7">
+      S.R.L
+    </text>
+    <!-- Divider line -->
+    <rect x="0" y="68" width="180" height="2.5" rx="1.25" fill="url(#grad1)" opacity="0.8"/>
+    <rect x="184" y="69" width="6" height="1" rx="0.5" fill="#1a4a6e" opacity="0.4"/>
+    <rect x="194" y="69" width="6" height="1" rx="0.5" fill="#1a4a6e" opacity="0.3"/>
+    <rect x="204" y="69" width="6" height="1" rx="0.5" fill="#1a4a6e" opacity="0.2"/>
+    <!-- Subtitle -->
+    <text x="0" y="92" font-family="'Segoe UI', Arial, sans-serif" font-size="14.5" font-weight="500" letter-spacing="3.5" fill="#495057">
+      REVISIÓN TÉCNICA
+    </text>
+    <text x="0" y="112" font-family="'Segoe UI', Arial, sans-serif" font-size="14.5" font-weight="500" letter-spacing="3.5" fill="#495057">
+      OBLIGATORIA
+    </text>
+    <!-- Panel badge -->
+    <rect x="0" y="124" width="120" height="22" rx="11" fill="#13304D" opacity="0.08"/>
+    <text x="60" y="139" font-family="'Segoe UI', Arial, sans-serif" font-size="10" font-weight="600" letter-spacing="2" fill="#13304D" text-anchor="middle" opacity="0.6">
+      PANEL ADMIN
+    </text>
+  </g>
+</svg>

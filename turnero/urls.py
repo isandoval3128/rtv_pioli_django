@@ -3,7 +3,8 @@ from . import views
 from .views_cancelacion import (
     cancelar_turno_definitivo,
     solicitar_reprogramacion,
-    ReprogramarTurnoView
+    ReprogramarTurnoView,
+    CancelarTurnoView,
 )
 
 app_name = 'turnero'
@@ -35,6 +36,7 @@ urlpatterns = [
     path('cancelar-definitivo/<int:turno_id>/', cancelar_turno_definitivo, name='cancelar_definitivo'),
     path('solicitar-reprogramacion/<int:turno_id>/', solicitar_reprogramacion, name='solicitar_reprogramacion'),
     path('reprogramar/<str:token>/', ReprogramarTurnoView.as_view(), name='reprogramar_turno'),
+    path('cancelar/<str:token>/', CancelarTurnoView.as_view(), name='cancelar_turno_token'),
 
     # AJAX endpoints
     path('ajax/buscar-persona/', views.buscar_persona_ajax, name='buscar_persona_ajax'),

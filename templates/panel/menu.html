@@ -1,6 +1,7 @@
+{% load site_tags %}
 <nav id="left-sidebar-nav" class="sidebar-nav">
     <ul id="main-menu" class="metismenu">
-        {% for grupo in user.groups.all %}
+        {% for grupo in user.groups.all|sort_by_orden %}
         <li>
             <a href="javascript:;" class="has-arrow">
                 <i class="{% if grupo.panel_profile %}{{ grupo.panel_profile.icon }}{% else %}icon-folder{% endif %}"></i> <span>{{ grupo }}</span>

@@ -1,0 +1,613 @@
+{% extends "panel/base.html" %}
+{% block extraCss %}
+<style>
+    html, body { overflow-x: hidden; max-width: 100%; }
+    .card-body { overflow-x: hidden; }
+    .container-fluid { overflow-x: hidden; max-width: 100%; }
+
+    /* DataTable */
+    #data_table_ajax { border-collapse: separate; border-spacing: 0; width: 100%; font-size: 13px; }
+    #data_table_ajax thead th {
+        background: linear-gradient(135deg, #13304D 0%, #1a4066 100%);
+        color: #fff; font-weight: 600; font-size: 12px; text-transform: uppercase;
+        letter-spacing: 0.5px; padding: 14px 12px; border: none;
+    }
+    #data_table_ajax thead th:first-child { border-radius: 8px 0 0 0; }
+    #data_table_ajax thead th:last-child { border-radius: 0 8px 0 0; }
+    #data_table_ajax tbody tr { transition: all 0.2s ease; border-bottom: 1px solid #eef2f7; }
+    #data_table_ajax tbody tr:hover { background-color: #f8fafc; transform: scale(1.002); box-shadow: 0 2px 8px rgba(19, 48, 77, 0.08); }
+    #data_table_ajax tbody td { padding: 12px; vertical-align: middle; border-bottom: 1px solid #eef2f7; color: #374151; }
+    #data_table_ajax tbody tr:last-child td { border-bottom: none; }
+    #data_table_ajax tbody tr:nth-child(even) { background-color: #fafbfc; }
+    #data_table_ajax tbody tr:nth-child(odd) { background-color: #ffffff; }
+
+    .dataTables_wrapper { padding-top: 10px; }
+    .dataTables_wrapper .dataTables_filter input {
+        border: 1px solid #e5e7eb; border-radius: 6px; padding: 8px 12px; font-size: 13px; transition: all 0.2s ease;
+    }
+    .dataTables_wrapper .dataTables_filter input:focus { border-color: var(--theme-primary); box-shadow: 0 0 0 3px rgba(19, 48, 77, 0.1); outline: none; }
+    .dataTables_wrapper .dataTables_info { color: #6b7280; font-size: 13px; padding-top: 15px; }
+    .dataTables_wrapper .dataTables_paginate { padding-top: 15px; }
+    .dataTables_wrapper .dataTables_paginate .paginate_button {
+        border-radius: 6px !important; margin: 0 2px; padding: 6px 12px !important;
+        border: 1px solid #e5e7eb !important; background: #fff !important; color: #374151 !important; transition: all 0.2s ease;
+    }
+    .dataTables_wrapper .dataTables_paginate .paginate_button:hover { background: #f3f4f6 !important; border-color: #d1d5db !important; }
+    .dataTables_wrapper .dataTables_paginate .paginate_button.current { background: var(--theme-primary) !important; border-color: var(--theme-primary) !important; color: #fff !important; }
+
+    .card { border: none; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.05), 0 4px 12px rgba(0,0,0,0.05); }
+    .card .card-body { padding: 24px; }
+    .table-responsive { border-radius: 8px; overflow: hidden; border: 1px solid #eef2f7; }
+
+    .dt-btn-orange {
+        background: linear-gradient(135deg, var(--theme-primary) 0%, #1a4066 100%) !important;
+        border: none !important; border-radius: 8px !important; padding: 10px 18px !important;
+        font-weight: 500 !important; font-size: 13px !important; transition: all 0.25s ease !important;
+        box-shadow: 0 2px 6px rgba(19, 48, 77, 0.2) !important;
+    }
+    .dt-btn-orange:hover { transform: translateY(-2px) !important; box-shadow: 0 4px 12px rgba(19, 48, 77, 0.35) !important; }
+
+    /* Badges */
+    .badge-estado {
+        display: inline-flex; align-items: center; gap: 5px; padding: 6px 12px; font-size: 11px;
+        font-weight: 600; border-radius: 20px; line-height: 1; text-align: center; white-space: nowrap;
+        text-transform: uppercase; letter-spacing: 0.3px;
+    }
+    .badge-activo { background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%); color: #065f46; box-shadow: 0 2px 4px rgba(16, 185, 129, 0.2); }
+    .badge-inactivo { background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%); color: #991b1b; box-shadow: 0 2px 4px rgba(239, 68, 68, 0.2); }
+    .badge-categoria { background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); color: #1e40af; box-shadow: 0 2px 4px rgba(59, 130, 246, 0.2); }
+
+    .badge-keyword {
+        display: inline-block; padding: 3px 8px; margin: 2px; font-size: 10px; font-weight: 500;
+        border-radius: 12px; background: #f1f5f9; color: #475569; border: 1px solid #e2e8f0;
+    }
+
+    /* Filtros */
+    .filtros-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; }
+    .btn-toggle-filtros {
+        display: inline-flex; align-items: center; gap: 8px; padding: 8px 16px;
+        background-color: var(--theme-primary); border: 1px solid var(--theme-primary);
+        color: white; border-radius: 6px; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.2s ease;
+    }
+    .btn-toggle-filtros:hover { background-color: var(--theme-primary-dark); }
+    .btn-toggle-filtros i { transition: transform 0.3s ease; }
+    .btn-toggle-filtros.collapsed i.fa-chevron-down { transform: rotate(0deg); }
+    .btn-toggle-filtros:not(.collapsed) i.fa-chevron-down { transform: rotate(180deg); }
+    .filtros-badge { display: inline-flex; align-items: center; justify-content: center; min-width: 20px; height: 20px; padding: 0 6px; background-color: #e6603a; color: white; border-radius: 10px; font-size: 11px; font-weight: 600; margin-left: 4px; }
+    .filtros-badge.hidden { display: none; }
+    .filtros-container { background-color: #f8f9fa; border: 1px solid #e9ecef; border-radius: 8px; padding: 15px; margin-bottom: 15px; overflow: hidden; transition: all 0.3s ease; }
+    .filtros-container.collapsed { display: none; }
+    .filtros-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; width: 100%; }
+    .filtro-item label { display: block; font-size: 13px; font-weight: 600; color: #495057; margin-bottom: 5px; }
+    .filtro-item .form-control { width: 100% !important; font-size: 14px; height: 38px; border-radius: 4px; }
+    .filtros-acciones { display: flex; gap: 8px; align-items: flex-end; padding-bottom: 2px; }
+    .btn-filtrar { background-color: var(--theme-primary); border-color: var(--theme-primary); color: white; width: 38px; height: 38px; padding: 0; font-size: 15px; border-radius: 4px; display: flex; align-items: center; justify-content: center; }
+    .btn-limpiar { background-color: #6c757d; border-color: #6c757d; color: white; width: 38px; height: 38px; padding: 0; font-size: 15px; border-radius: 4px; display: flex; align-items: center; justify-content: center; }
+
+    /* Botones acción */
+    .acciones-container { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; min-width: 120px; }
+    .btn-accion {
+        width: 36px; height: 36px; padding: 0; margin: 0; font-size: 14px; border-radius: 8px;
+        transition: all 0.2s ease; display: inline-flex; align-items: center; justify-content: center;
+        border: 1px solid; position: relative; overflow: hidden;
+    }
+    .btn-accion i { font-size: 15px; position: relative; z-index: 1; }
+    .btn-accion.btn-editar { background: #fffbeb; border-color: #fcd34d; color: #b45309; }
+    .btn-accion.btn-toggle { background: #ecfdf5; border-color: #6ee7b7; color: #059669; }
+    .btn-accion.btn-eliminar { background: #fef2f2; border-color: #fca5a5; color: #dc2626; }
+    .btn-accion:hover { transform: translateY(-1px); box-shadow: 0 2px 6px rgba(100, 116, 139, 0.12); }
+
+    .btn-accion::before {
+        content: attr(title); position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%) translateY(5px);
+        padding: 4px 8px; background: #1f2937; color: white; font-size: 10px; border-radius: 4px;
+        white-space: nowrap; opacity: 0; visibility: hidden; transition: all 0.2s ease; z-index: 100;
+    }
+    .btn-accion:hover::before { opacity: 1; visibility: visible; transform: translateX(-50%) translateY(-4px); }
+
+    /* Desktop/Mobile */
+    .vista-desktop { display: block; }
+    .vista-mobile { display: none; }
+    .mobile-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px; }
+    .mobile-header .btn-nuevo {
+        background-color: var(--theme-primary); border-color: var(--theme-primary); color: white;
+        padding: 10px 18px; font-size: 14px; font-weight: 500; border-radius: 6px; display: inline-flex; align-items: center; gap: 8px;
+    }
+
+    .kb-cards-container { display: flex; flex-direction: column; gap: 14px; }
+    .kb-card {
+        background: #fff; border: none; border-radius: 12px; padding: 0;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.04);
+        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); overflow: visible; position: relative;
+    }
+    .kb-card::before {
+        content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px;
+        background: linear-gradient(180deg, var(--theme-primary) 0%, #1a4066 100%); border-radius: 12px 0 0 12px;
+    }
+    .kb-card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+    .kb-card-header { display: flex; justify-content: space-between; align-items: center; padding: 14px 16px; background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%); border-bottom: 1px solid #eef2f7; border-radius: 12px 12px 0 0; }
+    .kb-card-titulo { font-size: 14px; font-weight: 600; color: #13304D; }
+    .kb-card-body { padding: 16px; }
+    .kb-card-info { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 16px; }
+    .kb-card-info-item { display: flex; flex-direction: column; }
+    .kb-card-info-item .label { font-size: 10px; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 3px; font-weight: 600; }
+    .kb-card-info-item .value { font-size: 13px; color: #374151; font-weight: 500; }
+    .kb-card-footer { display: flex; justify-content: flex-end; gap: 10px; padding: 14px 16px; background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%); border-top: 1px solid #eef2f7; border-radius: 0 0 12px 12px; }
+    .kb-card-footer .btn { padding: 10px 16px; font-size: 13px; border-radius: 8px; display: inline-flex; align-items: center; gap: 6px; font-weight: 500; border: none; }
+    .kb-card-footer .btn-ver { background: var(--theme-primary); color: white; box-shadow: 0 1px 3px rgba(19, 48, 77, 0.15); }
+
+    .kb-cards-empty { text-align: center; padding: 50px 20px; color: #9ca3af; background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%); border-radius: 12px; border: 1px dashed #e5e7eb; }
+    .kb-cards-empty i { font-size: 52px; margin-bottom: 16px; color: #d1d5db; }
+
+    /* Info del archivo en modal */
+    .archivo-info {
+        background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px; margin-top: 8px;
+        display: flex; align-items: center; gap: 10px; font-size: 13px; color: #475569;
+    }
+    .archivo-info i { font-size: 20px; color: var(--theme-primary); }
+
+    /* Responsive */
+    @media (max-width: 992px) { .filtros-row { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 768px) {
+        .vista-desktop { display: none !important; }
+        .vista-mobile { display: block !important; }
+        .dt-buttons { display: none !important; }
+    }
+    @media (max-width: 576px) {
+        .filtros-row { grid-template-columns: 1fr; }
+        .kb-card-info { grid-template-columns: 1fr; }
+        .kb-card-footer { flex-direction: column; }
+        .kb-card-footer .btn { width: 100%; justify-content: center; }
+    }
+</style>
+{% endblock %}
+
+{% block main %}
+{% load static %}
+
+<div id="main-content" class="profilepage_2 blog-page">
+    <div class="container-fluid">
+        <div class="block-header">
+            <div class="row g-3">
+                <div class="col-lg-5 col-md-8 col-sm-12">
+                    <h2><a href="javascript:void(0);" class="btn btn-xs btn-link btn-toggle-fullwidth"><i class="fa fa-arrow-right"></i></a>
+                        {{ titulo }}</h2>
+                    <ul class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{% url 'panel_home' %}"><i class="icon-home text-orange"></i></a></li>
+                        <li class="breadcrumb-item">Asistente IA</li>
+                        <li class="breadcrumb-item active">{{ titulo }}</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="row clearfix">
+            <div class="col-lg-12 col-md-12">
+                <div class="card">
+                    <div class="card-body">
+                        <!-- Filtros -->
+                        <div class="filtros-header">
+                            <button type="button" class="btn-toggle-filtros collapsed" id="btn-toggle-filtros">
+                                <i class="fa fa-filter"></i>
+                                <span>Filtros</span>
+                                <span class="filtros-badge hidden" id="filtros-badge">0</span>
+                                <i class="fa fa-chevron-down"></i>
+                            </button>
+                        </div>
+
+                        <div class="filtros-container collapsed" id="filtros-container">
+                            <div class="filtros-row">
+                                <div class="filtro-item">
+                                    <label for="filtro-categoria">Categoria</label>
+                                    <select class="form-control" id="filtro-categoria">
+                                        <option value="">Todas</option>
+                                        {% for key, label in categorias %}
+                                        <option value="{{ key }}">{{ label }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="filtro-item">
+                                    <label for="filtro-estado">Estado</label>
+                                    <select class="form-control" id="filtro-estado">
+                                        <option value="">Todos</option>
+                                        <option value="true">Activos</option>
+                                        <option value="false">Inactivos</option>
+                                    </select>
+                                </div>
+                                <div class="filtros-acciones">
+                                    <button type="button" class="btn btn-filtrar" id="btn-aplicar-filtros" title="Filtrar">
+                                        <i class="fa fa-search"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-limpiar" id="btn-limpiar-filtros" title="Limpiar">
+                                        <i class="fa fa-eraser"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Vista Desktop -->
+                        <div class="vista-desktop">
+                            <div class="row clearfix">
+                                <div class="col-lg-12 col-md-12">
+                                    <table id="data_table_ajax" class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>Titulo</th>
+                                                <th>Categoria</th>
+                                                <th>Keywords</th>
+                                                <th>Usos</th>
+                                                <th>Estado</th>
+                                                <th>Acciones</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Vista Mobile -->
+                        <div class="vista-mobile">
+                            <div class="mobile-header">
+                                <button type="button" class="btn btn-nuevo" onclick="abrirModalNuevo()">
+                                    <i class="fa fa-plus"></i> Nuevo Documento
+                                </button>
+                                <span class="kb-count" id="kb-count"></span>
+                            </div>
+                            <div id="kb-cards-container" class="kb-cards-container">
+                                <div class="kb-cards-empty">
+                                    <i class="fa fa-spinner fa-spin"></i>
+                                    <p>Cargando documentos...</p>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Documento KB -->
+<div class="modal fade" id="modal-kb" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header" style="background: linear-gradient(135deg, #13304D 0%, #1a4066 100%); color: #fff; border-radius: 0;">
+                <h5 class="modal-title" id="modal-kb-title">Nuevo Documento</h5>
+                <button type="button" class="close" data-dismiss="modal" style="color: #fff; opacity: 0.8;">
+                    <span>&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" style="padding: 24px;">
+                <form id="form-kb" enctype="multipart/form-data">
+                    <input type="hidden" id="kb-pk" name="pk" value="">
+
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="form-group">
+                                <label for="kb-titulo" style="font-weight: 600;">Titulo <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="kb-titulo" name="titulo" required maxlength="200" placeholder="Ej: Manual de procedimientos RTV">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="kb-categoria" style="font-weight: 600;">Categoria</label>
+                                <select class="form-control" id="kb-categoria" name="categoria">
+                                    {% for key, label in categorias %}
+                                    <option value="{{ key }}">{{ label }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="kb-descripcion" style="font-weight: 600;">Descripcion</label>
+                        <input type="text" class="form-control" id="kb-descripcion" name="descripcion" maxlength="500" placeholder="Breve descripcion del documento (opcional)">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="kb-archivo" style="font-weight: 600;">Archivo (PDF, Word, TXT)</label>
+                        <input type="file" class="form-control" id="kb-archivo" name="archivo" accept=".pdf,.docx,.txt,.md,.csv">
+                        <small class="text-muted">Al subir un archivo se extrae el texto automaticamente. Formatos: PDF, DOCX, TXT, MD, CSV</small>
+                        <div id="archivo-info-actual" style="display: none;"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="kb-contenido" style="font-weight: 600;">Contenido de texto</label>
+                        <textarea class="form-control" id="kb-contenido" name="contenido_texto" rows="8" placeholder="Si no subis archivo, podes escribir o pegar el contenido directamente aca..."></textarea>
+                        <small class="text-muted">Se llena automaticamente al subir archivo. Tambien se puede editar manualmente.</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="kb-keywords" style="font-weight: 600;">Palabras clave</label>
+                        <textarea class="form-control" id="kb-keywords" name="palabras_clave" rows="2" placeholder="Se generan automaticamente. Podes agregar o editar separando con comas."></textarea>
+                        <small class="text-muted">Separadas por comas. Se generan automaticamente al procesar el documento.</small>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" onclick="guardarDocumento()" style="background: var(--theme-primary); border-color: var(--theme-primary);">
+                    <i class="fa fa-save me-1"></i> Guardar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extraJS %}
+<script>
+$(document).ready(function(){
+    cargarTabla();
+
+    $('#btn-toggle-filtros').on('click', function(){
+        $(this).toggleClass('collapsed');
+        $('#filtros-container').toggleClass('collapsed');
+        var $span = $(this).find('span').first();
+        $span.text($(this).hasClass('collapsed') ? 'Filtros' : 'Ocultar Filtros');
+    });
+
+    $('#btn-aplicar-filtros').on('click', function(){ cargarTabla(); actualizarBadgeFiltros(); });
+    $('#btn-limpiar-filtros').on('click', function(){ limpiarFiltros(); });
+});
+
+function actualizarBadgeFiltros() {
+    var count = 0;
+    if ($('#filtro-categoria').val()) count++;
+    if ($('#filtro-estado').val()) count++;
+    var $badge = $('#filtros-badge');
+    count > 0 ? $badge.text(count).removeClass('hidden') : $badge.addClass('hidden');
+}
+
+function limpiarFiltros() {
+    $('#filtro-categoria').val('');
+    $('#filtro-estado').val('');
+    $('#filtros-badge').addClass('hidden');
+    cargarTabla();
+}
+
+var table;
+
+function cargarTabla(){
+    $('#data_table_ajax').dataTable().fnClearTable();
+    $('#data_table_ajax').dataTable().fnDestroy();
+
+    var valores = {
+        "csrfmiddlewaretoken": '{{ csrf_token }}',
+        "filtro_categoria": $("#filtro-categoria").val() || '',
+        "filtro_activo": $("#filtro-estado").val() || ''
+    };
+
+    table = $('#data_table_ajax').DataTable({
+        autoWidth: false, processing: true, searching: true, paging: true, pageLength: 15,
+        order: [[3, 'desc']],
+        language: { url: "https://cdn.datatables.net/plug-ins/1.11.3/i18n/es_es.json" },
+        dom: '<"row"<"col-sm-6"B><"col-sm-6"f>>rtip',
+        buttons: [{
+            text: '<i class="fa fa-plus me-1"></i> Nuevo Documento',
+            className: 'btn dt-btn-orange',
+            action: function() { abrirModalNuevo(); }
+        }],
+        ajax: {
+            "url": "{% url 'asistente_kb_ajax' %}",
+            "data": valores,
+            "type": "POST",
+            "dataSrc": ""
+        },
+        columns: [
+            { data: "titulo", render: function(data, type, row) {
+                var html = '<span style="font-weight:600; color:#13304D;">' + data + '</span>';
+                if (row.descripcion) html += '<br><small class="text-muted">' + row.descripcion + '</small>';
+                if (row.tiene_archivo) html += ' <i class="fa fa-file-o text-muted" title="Tiene archivo"></i>';
+                return html;
+            }},
+            { data: "categoria", render: function(data) {
+                return '<span class="badge-estado badge-categoria">' + data + '</span>';
+            }},
+            { data: "keywords_preview", render: function(data) {
+                if (!data || data.length === 0) return '<span class="text-muted">-</span>';
+                var html = '';
+                var max = Math.min(data.length, 5);
+                for (var i = 0; i < max; i++) {
+                    html += '<span class="badge-keyword">' + data[i] + '</span>';
+                }
+                if (data.length > 5) html += '<span class="badge-keyword">+' + (data.length - 5) + '</span>';
+                return html;
+            }},
+            { data: "veces_usado", render: function(data) {
+                return '<span style="font-weight:600;">' + data + '</span>';
+            }},
+            { data: "activo", render: function(data) {
+                return data
+                    ? '<span class="badge-estado badge-activo"><i class="fa fa-check"></i> Activo</span>'
+                    : '<span class="badge-estado badge-inactivo"><i class="fa fa-ban"></i> Inactivo</span>';
+            }},
+            { data: null, orderable: false, render: function(data, type, row) {
+                var btns = '<div class="acciones-container">';
+                btns += '<button class="btn btn-accion btn-editar" onclick="editarDocumento(' + row.id + ')" title="Editar"><i class="fa fa-edit"></i></button>';
+                btns += '<button class="btn btn-accion btn-toggle" onclick="toggleDocumento(' + row.id + ')" title="' + (row.activo ? 'Desactivar' : 'Activar') + '"><i class="fa fa-' + (row.activo ? 'eye-slash' : 'eye') + '"></i></button>';
+                btns += '<button class="btn btn-accion btn-eliminar" onclick="eliminarDocumento(' + row.id + ')" title="Eliminar"><i class="fa fa-trash"></i></button>';
+                btns += '</div>';
+                return btns;
+            }}
+        ],
+        drawCallback: function() {
+            renderMobileCards(this.api().data().toArray());
+        }
+    });
+}
+
+function renderMobileCards(data) {
+    var container = $('#kb-cards-container');
+    if (data.length === 0) {
+        container.html('<div class="kb-cards-empty"><i class="fa fa-book"></i><p>No hay documentos en la Base de Conocimiento</p></div>');
+        $('#kb-count').text('0 documentos');
+        return;
+    }
+    $('#kb-count').text(data.length + ' documento' + (data.length !== 1 ? 's' : ''));
+
+    var html = '';
+    data.forEach(function(row) {
+        var estadoBadge = row.activo
+            ? '<span class="badge-estado badge-activo"><i class="fa fa-check"></i> Activo</span>'
+            : '<span class="badge-estado badge-inactivo"><i class="fa fa-ban"></i> Inactivo</span>';
+
+        html += '<div class="kb-card">';
+        html += '<div class="kb-card-header"><span class="kb-card-titulo">' + row.titulo + '</span>' + estadoBadge + '</div>';
+        html += '<div class="kb-card-body"><div class="kb-card-info">';
+        html += '<div class="kb-card-info-item"><span class="label">Categoria</span><span class="value"><span class="badge-estado badge-categoria">' + row.categoria + '</span></span></div>';
+        html += '<div class="kb-card-info-item"><span class="label">Usos</span><span class="value" style="font-weight:600;">' + row.veces_usado + '</span></div>';
+        if (row.descripcion) {
+            html += '<div class="kb-card-info-item" style="grid-column: 1/-1;"><span class="label">Descripcion</span><span class="value">' + row.descripcion + '</span></div>';
+        }
+        html += '</div></div>';
+        html += '<div class="kb-card-footer">';
+        html += '<button class="btn btn-ver" onclick="editarDocumento(' + row.id + ')"><i class="fa fa-edit"></i> Editar</button>';
+        html += '<button class="btn" style="background:#fef2f2; color:#dc2626; border:1px solid #fca5a5;" onclick="eliminarDocumento(' + row.id + ')"><i class="fa fa-trash"></i></button>';
+        html += '</div></div>';
+    });
+    container.html(html);
+}
+
+function abrirModalNuevo() {
+    $('#kb-pk').val('');
+    $('#kb-titulo').val('');
+    $('#kb-descripcion').val('');
+    $('#kb-categoria').val('general');
+    $('#kb-archivo').val('');
+    $('#kb-contenido').val('');
+    $('#kb-keywords').val('');
+    $('#archivo-info-actual').hide().html('');
+    $('#modal-kb-title').text('Nuevo Documento');
+    $('#modal-kb').modal('show');
+}
+
+function editarDocumento(id) {
+    $.ajax({
+        url: "{% url 'asistente_kb_ajax' %}",
+        type: "POST",
+        data: { 'csrfmiddlewaretoken': '{{ csrf_token }}', 'pk': id },
+        success: function(response) {
+            if (response.length > 0) {
+                var doc = response[0];
+                $('#kb-pk').val(doc.id);
+                $('#kb-titulo').val(doc.titulo);
+                $('#kb-descripcion').val(doc.descripcion);
+                $('#kb-categoria').val(doc.categoria_key);
+                $('#kb-archivo').val('');
+                $('#kb-contenido').val(doc.contenido_texto || '');
+                $('#kb-keywords').val((doc.palabras_clave || []).join(', '));
+
+                if (doc.archivo_nombre) {
+                    $('#archivo-info-actual').show().html(
+                        '<div class="archivo-info"><i class="fa fa-file-pdf-o"></i><span>Archivo actual: <strong>' + doc.archivo_nombre + '</strong></span></div>'
+                    );
+                } else {
+                    $('#archivo-info-actual').hide().html('');
+                }
+
+                $('#modal-kb-title').text('Editar Documento');
+                $('#modal-kb').modal('show');
+            }
+        }
+    });
+}
+
+function guardarDocumento() {
+    var formData = new FormData();
+    formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+    formData.append('pk', $('#kb-pk').val());
+    formData.append('titulo', $('#kb-titulo').val());
+    formData.append('descripcion', $('#kb-descripcion').val());
+    formData.append('categoria', $('#kb-categoria').val());
+    formData.append('contenido_texto', $('#kb-contenido').val());
+    formData.append('palabras_clave', $('#kb-keywords').val());
+
+    var archivo = $('#kb-archivo')[0].files[0];
+    if (archivo) {
+        formData.append('archivo', archivo);
+    }
+
+    $.ajax({
+        url: "{% url 'asistente_kb_guardar' %}",
+        type: "POST",
+        data: formData,
+        processData: false,
+        contentType: false,
+        beforeSend: function() {
+            Swal.fire({
+                title: 'Procesando...',
+                html: '<i class="fa fa-spinner fa-spin fa-2x"></i><p class="mt-2">Guardando y procesando documento...</p>',
+                showConfirmButton: false,
+                allowOutsideClick: false
+            });
+        },
+        success: function(response) {
+            if (response.success) {
+                $('#modal-kb').modal('hide');
+                Swal.fire({
+                    title: 'Guardado',
+                    text: response.message,
+                    icon: 'success',
+                    timer: 2000,
+                    showConfirmButton: false
+                });
+                cargarTabla();
+            } else {
+                Swal.fire('Error', response.message, 'error');
+            }
+        },
+        error: function() {
+            Swal.fire('Error', 'No se pudo guardar el documento', 'error');
+        }
+    });
+}
+
+function toggleDocumento(id) {
+    $.ajax({
+        url: "{% url 'asistente_kb_toggle' %}",
+        type: "POST",
+        data: { 'pk': id, 'csrfmiddlewaretoken': '{{ csrf_token }}' },
+        success: function(response) {
+            if (response.success) {
+                Swal.fire({ title: response.message, icon: 'success', timer: 1500, showConfirmButton: false });
+                cargarTabla();
+            } else {
+                Swal.fire('Error', response.message, 'error');
+            }
+        }
+    });
+}
+
+function eliminarDocumento(id) {
+    Swal.fire({
+        title: 'Eliminar documento?',
+        text: 'Esta accion no se puede deshacer. Se eliminara el documento y su archivo asociado.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#dc3545',
+        confirmButtonText: 'Si, eliminar',
+        cancelButtonText: 'Cancelar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: "{% url 'asistente_kb_eliminar' %}",
+                type: "POST",
+                data: { 'pk': id, 'csrfmiddlewaretoken': '{{ csrf_token }}' },
+                success: function(response) {
+                    if (response.success) {
+                        Swal.fire({ title: 'Eliminado', icon: 'success', timer: 1500, showConfirmButton: false });
+                        cargarTabla();
+                    } else {
+                        Swal.fire('Error', response.message, 'error');
+                    }
+                }
+            });
+        }
+    });
+}
+</script>
+{% endblock %}
