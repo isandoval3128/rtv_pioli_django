@@ -83,7 +83,7 @@ def resolver_mensaje(texto, session=None):
 
     # 3. Intents prioritarios: van DIRECTO al handler (sin pasar por FAQ)
     #    Esto evita que FAQs genéricas intercepten flujos con lógica especial
-    INTENTS_PRIORITARIOS = {'hablar_con_operador', 'reprogramar_turno', 'cancelar_turno'}
+    INTENTS_PRIORITARIOS = {'hablar_con_operador', 'reprogramar_turno', 'cancelar_turno', 'gestion_post_tramite'}
     if intent in INTENTS_PRIORITARIOS and INTENTS.get(intent, {}).get('handler'):
         # Si la confianza es baja (posible typo), confirmar antes de ejecutar
         if confidence < 0.6:
@@ -498,18 +498,28 @@ def resolver_consulta_turno(texto, intent, confidence):
                 ],
             )
 
-    # No se encontró referencia específica → guiar al usuario con formatos claros
+    # No se encontró referencia específica → preguntar qué necesita
+    # Detectar si la pregunta parece ser sobre disponibilidad/sacar turno nuevo
+    texto_lower = texto.lower()
+    palabras_disponibilidad = ['disponib', 'hay turno', 'sacar turno', 'nuevo turno',
+                               'reservar', 'agendar', 'pedir turno']
+    es_disponibilidad = any(p in texto_lower for p in palabras_disponibilidad)
+
+    if es_disponibilidad:
+        # Redirigir al handler de disponibilidad
+        return resolver_disponibilidad(texto, 'disponibilidad', confidence)
+
     return ResolverResult(
         intent=intent,
-        datos=(
-            'Para consultar un turno necesito uno de estos datos:\n'
-            '- Código de turno (formato: TRN-A1B2C3) — lo recibiste por email al reservar\n'
-            '- Patente del vehículo (formato: ABC123 o AB123CD)\n\n'
-            'Podés escribirlo directamente acá y lo busco.'
+        respuesta_fija=(
+            '¿Qué necesitás hacer con tu turno? 🚗\n\n'
+            '📅 Si querés **sacar un turno nuevo**, podés hacerlo desde nuestro sistema online.\n'
+            '🔍 Si ya tenés un turno y querés **consultarlo**, pasame el código (TRN-A1B2C3) o la patente del vehículo.'
         ),
-        source='db', necesita_humanizar=True, confidence=confidence,
+        source='hardcoded', confidence=confidence,
         acciones=[
-            {'texto': '📋 Consultar en la web', 'url': '/turnero/consultar/'},
+            {'texto': '📅 Sacar turno nuevo', 'url': '/turnero/paso1/'},
+            {'texto': '📋 Consultar turno existente', 'url': '/turnero/consultar/'},
         ],
     )
 
@@ -817,6 +827,44 @@ def resolver_servicios(texto, intent, confidence):
     )
 
 
+def resolver_gestion_post_tramite(texto, intent, confidence):
+    """Gestiones post-trámite: copia de RTV, certificado, etc. Requiere contacto con la planta."""
+    from talleres.models import Taller
+
+    talleres = list(Taller.objects.filter(status=True))
+    if not talleres:
+        return ResolverResult(
+            intent=intent,
+            datos='Actualmente no hay talleres configurados para atención.',
+            source='db', necesita_humanizar=True, confidence=confidence,
+        )
+
+    # Si hay un solo taller, derivar directo
+    if len(talleres) == 1:
+        from .escalation import procesar_derivacion_inicial
+        return procesar_derivacion_inicial(talleres[0], intent, confidence)
+
+    # Si hay varios, preguntar en cuál hizo el trámite
+    acciones = []
+    for taller in talleres:
+        acciones.append({
+            'texto': taller.get_nombre(),
+            'accion': f'seleccionar_planta_{taller.pk}',
+        })
+
+    return ResolverResult(
+        intent=intent,
+        respuesta_fija=(
+            'Para gestionar una copia o consulta sobre tu trámite, necesito saber '
+            'en cuál de nuestras plantas realizaste la revisión. '
+            '¿En cuál fue? 🏭'
+        ),
+        source='hardcoded',
+        confidence=confidence,
+        acciones=acciones,
+    )
+
+
 def resolver_disponibilidad(texto, intent, confidence):
     """Resuelve disponibilidad de turnos"""
     from talleres.models import Taller
@@ -881,6 +929,7 @@ HANDLERS = {
     'resolver_ubicacion': resolver_ubicacion,
     'resolver_horarios': resolver_horarios,
     'resolver_servicios': resolver_servicios,
+    'resolver_gestion_post_tramite': resolver_gestion_post_tramite,
     'resolver_disponibilidad': resolver_disponibilidad,
     'resolver_hablar_con_operador': resolver_hablar_con_operador,
 }

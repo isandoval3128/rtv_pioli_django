@@ -251,6 +251,31 @@ def procesar_contexto_pendiente(session, mensaje):
                 'source': 'hardcoded',
             }
 
+        intent_origen = contexto.get('intent_origen', 'hablar_con_operador')
+
+        # Gestión post-trámite: paso intermedio antes de derivar
+        if intent_origen == 'gestion_post_tramite':
+            nombre = taller.get_nombre()
+            session.contexto = {
+                'esperando': 'confirmacion_derivacion',
+                'taller_id': taller.pk,
+            }
+            session.save(update_fields=['contexto'])
+            return {
+                'respuesta': (
+                    f'Ese tipo de gestión (copias, certificados, resultados) '
+                    f'no la puedo resolver directamente, pero puedo ponerte en contacto '
+                    f'con un operador de **{nombre}** para que te ayude. '
+                    f'¿Te parece bien? 🤝'
+                ),
+                'intent': 'gestion_post_tramite',
+                'acciones': [
+                    {'texto': '✅ Sí, conectame', 'accion': 'confirmar_derivacion'},
+                    {'texto': '❌ No, gracias', 'accion': 'cancelar_derivacion'},
+                ],
+                'source': 'hardcoded',
+            }
+
         # Limpiar contexto de selección
         session.contexto = {}
         session.save(update_fields=['contexto'])
@@ -260,6 +285,64 @@ def procesar_contexto_pendiente(session, mensaje):
             return _procesar_whatsapp(session, taller)
         else:
             # Guardar taller y pedir celular
+            session.contexto = {
+                'esperando': 'celular_cliente',
+                'taller_id': taller.pk,
+            }
+            session.save(update_fields=['contexto'])
+            nombre = taller.get_nombre()
+            return {
+                'respuesta': (
+                    f'🕐 En este momento {nombre} está fuera del horario de atención. '
+                    f'Si querés, dejame tu número de celular así te contactan por WhatsApp, '
+                    f'o escribí "enviar" y le mando tu consulta por email al equipo.'
+                ),
+                'intent': 'hablar_con_operador',
+                'acciones': [
+                    {'texto': '📧 Enviar sin celular', 'accion': 'enviar_email_sin_cel'},
+                ],
+                'source': 'hardcoded',
+            }
+
+    elif esperando == 'confirmacion_derivacion':
+        taller_id = contexto.get('taller_id')
+        try:
+            taller = Taller.objects.get(pk=taller_id, status=True)
+        except Taller.DoesNotExist:
+            session.contexto = {}
+            session.save(update_fields=['contexto'])
+            return {
+                'respuesta': 'Hubo un problema. ¿Podés volver a intentar?',
+                'intent': 'gestion_post_tramite',
+                'acciones': [],
+                'source': 'hardcoded',
+            }
+
+        # Detectar si confirma o cancela
+        msg = mensaje.lower().strip()
+        cancela = msg in ['no', 'no gracias', 'cancelar'] or 'cancelar_derivacion' in msg
+        confirma = (msg in ['si', 'sí', 'dale', 'ok', 'bueno', 'conectame', 'quiero']
+                    or 'confirmar_derivacion' in msg or not cancela)
+
+        if cancela:
+            session.contexto = {}
+            session.save(update_fields=['contexto'])
+            return {
+                'respuesta': (
+                    '¡Perfecto! Si necesitás algo más, estoy acá para ayudarte. 😊'
+                ),
+                'intent': 'gestion_post_tramite',
+                'acciones': [],
+                'source': 'hardcoded',
+            }
+
+        # Confirma → derivar al operador (misma lógica de horario)
+        session.contexto = {}
+        session.save(update_fields=['contexto'])
+
+        if esta_en_horario(taller):
+            return _procesar_whatsapp(session, taller)
+        else:
             session.contexto = {
                 'esperando': 'celular_cliente',
                 'taller_id': taller.pk,

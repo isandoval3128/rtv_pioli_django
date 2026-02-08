@@ -84,6 +84,16 @@ INTENTS = {
         'tipo': 'db',
         'handler': 'resolver_servicios',
     },
+    'gestion_post_tramite': {
+        'keywords': ['copia de mi rtv', 'copia rtv', 'copia del rtv',
+                     'copia de mi rto', 'copia certificado', 'duplicado oblea',
+                     'duplicado rtv', 'copia aprobado', 'rtv aprobado',
+                     'certificado aprobado', 'constancia aprobado',
+                     'resultado de mi revision', 'resultado revision',
+                     'me aprobaron', 'me rechazaron'],
+        'tipo': 'db',
+        'handler': 'resolver_gestion_post_tramite',
+    },
     'disponibilidad': {
         'keywords': ['disponibilidad', 'hay turno', 'turnos disponibles',
                      'proximos turnos', 'hay lugar', 'cuando hay turno'],
