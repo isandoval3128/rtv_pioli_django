@@ -75,7 +75,9 @@ def _humanizar_datos(resolver_result, config, session=None):
             f"INSTRUCCIONES:\n"
             f"- Si la información responde lo que el usuario preguntó, "
             f"reformulala de manera natural, amable y concisa en español argentino. "
-            f"Máximo 2-3 oraciones. NO inventes datos.\n"
+            f"Usá máximo 2-3 oraciones de texto introductorio. NO inventes datos.\n"
+            f"- Si los datos contienen una lista (tarifas, horarios, ubicaciones, etc.), "
+            f"incluí TODOS los items de la lista. No resumas ni omitas elementos.\n"
             f"- Usá emojis relevantes (1-2 máximo) para hacer la respuesta más amigable "
             f"(ej: 🚗 para vehículos, 📋 para turnos, 💰 para tarifas, 📍 para ubicación, ✅ para confirmaciones).\n"
             f"- Si la información NO es relevante para lo que el usuario pidió, "
@@ -103,17 +105,14 @@ def _humanizar_datos(resolver_result, config, session=None):
 
             # Detectar si la IA determinó que los datos no son relevantes
             if 'NO_RELEVANTE' in respuesta:
-                # En _humanizar_datos tenemos datos de DB/FAQ pero la IA dice que
-                # no son relevantes para lo que pidió el usuario → ofrecer operador
+                # La IA (con system prompt de RTV) determinó que la pregunta
+                # no es relevante → fuera de dominio (falso positivo de keywords)
                 result['respuesta'] = (
-                    '😕 En este momento no cuento con esa información para ayudarte. '
-                    'Si querés, puedo derivarte con un operador para que te asista personalmente.'
+                    'Disculpá, solo puedo ayudarte con temas relacionados '
+                    'a la Revisión Técnica Vehicular: turnos, tarifas, '
+                    'ubicación y servicios. ¿Tenés alguna consulta sobre estos temas?'
                 )
                 result['source'] = 'hardcoded'
-                result['acciones'] = [
-                    {'texto': '👤 Hablar con un operador', 'accion': 'quiero hablar con un operador'},
-                ]
-                _registrar_sugerencia(resolver_result.pregunta_original, session)
             else:
                 result['respuesta'] = respuesta
                 # Cachear respuesta
@@ -202,8 +201,8 @@ def _respuesta_ia_completa(resolver_result, config, session=None):
             if 'NO_RELEVANTE' in respuesta:
                 # Diferenciar: fuera de dominio vs tema RTV sin info
                 es_fuera_de_dominio = resolver_result.intent in (
-                    'desconocido', '', None
-                ) and resolver_result.source in ('needs_ai',)
+                    'desconocido', 'kb', '', None
+                ) and resolver_result.source in ('needs_ai', 'kb+ai')
 
                 if es_fuera_de_dominio:
                     # Fuera de dominio total: NO ofrecer operador

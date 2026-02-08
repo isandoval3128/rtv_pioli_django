@@ -180,12 +180,12 @@ def api_mensaje(request):
         })
 
     # Guardar contexto si el resolver pide selección de planta
-    if (resolver_result.intent == 'hablar_con_operador'
-            and resolver_result.acciones
+    if (resolver_result.acciones
             and any(a.get('accion', '').startswith('seleccionar_planta_') for a in resolver_result.acciones)):
         session.contexto = {
             'esperando': 'seleccion_planta',
             'acciones_previas': resolver_result.acciones,
+            'intent_origen': resolver_result.intent,
         }
         session.save(update_fields=['contexto'])
 
