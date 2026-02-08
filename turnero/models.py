@@ -103,6 +103,12 @@ class Turno(models.Model):
         verbose_name="Token de Cancelación",
         help_text="Token único para cancelar el turno"
     )
+    token_cancelacion_expiracion = models.DateTimeField(
+        blank=True,
+        null=True,
+        verbose_name="Expiración del Token de Cancelación",
+        help_text="Fecha y hora de expiración del token de cancelación"
+    )
 
     # Token para reprogramación segura
     token_reprogramacion = models.CharField(
@@ -274,6 +280,22 @@ class Turno(models.Model):
             return False
 
         return timezone.now() < self.token_expiracion
+
+    def generar_token_cancelacion(self):
+        """Regenera el token de cancelación con expiración de 48 horas"""
+        from datetime import timedelta
+
+        self.token_cancelacion = secrets.token_urlsafe(32)
+        self.token_cancelacion_expiracion = timezone.now() + timedelta(hours=48)
+        self.save(update_fields=['token_cancelacion', 'token_cancelacion_expiracion'])
+        return self.token_cancelacion
+
+    def token_cancelacion_valido(self):
+        """Verifica si el token de cancelación es válido (no expirado)"""
+        if not self.token_cancelacion or not self.token_cancelacion_expiracion:
+            return False
+
+        return timezone.now() < self.token_cancelacion_expiracion
 
     @property
     def puede_cancelar(self):

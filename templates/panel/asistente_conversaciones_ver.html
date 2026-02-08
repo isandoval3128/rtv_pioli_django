@@ -1,0 +1,59 @@
+<div class="modal-header" style="background: linear-gradient(135deg, #13304D 0%, #1a4066 100%); color: #fff;">
+    <h5 class="modal-title">
+        <i class="fa fa-comments me-2"></i>
+        Conversación - {{ session.inicio|date:"d/m/Y H:i" }}
+    </h5>
+    <button type="button" class="close text-white" onclick="$('#modal-lg').modal('hide');">&times;</button>
+</div>
+<div class="modal-body" style="background: #f8f9fa; max-height: 500px; overflow-y: auto;">
+    <div class="mb-3 d-flex justify-content-between">
+        <small class="text-muted">IP: {{ session.ip_address|default:"-" }}</small>
+        <small class="text-muted">Llamadas IA: {{ session.ai_calls_count }}</small>
+    </div>
+
+    {% for deriv in derivaciones %}
+    <div style="background: {% if deriv.canal == 'whatsapp' %}linear-gradient(135deg, #dcfce7, #bbf7d0){% else %}linear-gradient(135deg, #dbeafe, #bfdbfe){% endif %}; border-radius: 10px; padding: 12px 16px; margin-bottom: 14px; border: 1px solid {% if deriv.canal == 'whatsapp' %}#86efac{% else %}#93c5fd{% endif %};">
+        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+            <i class="fa {% if deriv.canal == 'whatsapp' %}fa-whatsapp{% else %}fa-envelope{% endif %}" style="font-size: 16px; color: {% if deriv.canal == 'whatsapp' %}#166534{% else %}#1e40af{% endif %};"></i>
+            <strong style="font-size: 13px; color: {% if deriv.canal == 'whatsapp' %}#166534{% else %}#1e40af{% endif %};">Derivada a operador via {{ deriv.get_canal_display }}</strong>
+        </div>
+        <div style="font-size: 12px; color: #374151; display: flex; flex-wrap: wrap; gap: 6px 16px;">
+            {% if deriv.taller %}<span><strong>Planta:</strong> {{ deriv.taller.get_nombre }}</span>{% endif %}
+            <span><strong>Horario:</strong> {% if deriv.en_horario %}Dentro del horario{% else %}Fuera del horario{% endif %}</span>
+            {% if deriv.celular_cliente %}<span><strong>Celular:</strong> {{ deriv.celular_cliente }}</span>{% endif %}
+            {% if deriv.email_enviado %}<span><strong>Email enviado:</strong> Si</span>{% endif %}
+            <span><strong>Fecha:</strong> {{ deriv.created_at|date:"d/m/Y H:i" }}</span>
+        </div>
+        {% if deriv.motivo %}
+        <div style="font-size: 12px; color: #6b7280; margin-top: 6px; font-style: italic;">{{ deriv.motivo|truncatewords:30 }}</div>
+        {% endif %}
+    </div>
+    {% endfor %}
+
+    {% for msg in mensajes %}
+    <div class="d-flex mb-3 {% if msg.rol == 'user' %}justify-content-end{% else %}justify-content-start{% endif %}">
+        <div style="max-width: 80%; padding: 10px 14px; border-radius: 16px; font-size: 13.5px; line-height: 1.5;
+            {% if msg.rol == 'user' %}
+                background: #13304D; color: #fff; border-bottom-right-radius: 4px;
+            {% else %}
+                background: #fff; color: #333; border-bottom-left-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            {% endif %}">
+            {{ msg.contenido }}
+            <div class="mt-1" style="font-size: 10px; opacity: 0.7;">
+                {{ msg.created_at|date:"H:i:s" }}
+                {% if msg.rol == 'assistant' %}
+                    {% if msg.source %} | {{ msg.source }}{% endif %}
+                    {% if msg.intent %} | {{ msg.intent }}{% endif %}
+                    {% if msg.tokens_usados %} | {{ msg.tokens_usados }} tokens{% endif %}
+                    {% if msg.tiempo_respuesta_ms %} | {{ msg.tiempo_respuesta_ms }}ms{% endif %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <p class="text-center text-muted">No hay mensajes en esta conversación.</p>
+    {% endfor %}
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-secondary" onclick="$('#modal-lg').modal('hide');">Cerrar</button>
+</div>

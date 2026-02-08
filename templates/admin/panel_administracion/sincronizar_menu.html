@@ -1,0 +1,136 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+    <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+    &rsaquo; <a href="{% url 'admin:panel_administracion_menugrupo_changelist' %}">Menús de Grupo</a>
+    &rsaquo; Sincronizar Menú
+</div>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <h1>Sincronizar Menú del Panel</h1>
+
+    {% if resultado %}
+    {# ===== POST: Mostrar resultado de la sincronización ===== #}
+    <div style="background: #d4edda; padding: 20px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #28a745;">
+        <h2 style="margin-top: 0; color: #155724;">Sincronización Completada</h2>
+    </div>
+
+    {% for seccion in resultado %}
+    <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+        <h3 style="margin-top: 0; color: #417690;">{{ seccion.titulo }}</h3>
+        <ul style="margin: 0; padding-left: 20px;">
+            {% for msg in seccion.mensajes %}
+            <li style="padding: 3px 0; {% if 'creado' in msg or 'Creado' in msg %}color: #28a745; font-weight: bold;{% elif 'actualizado' in msg or 'Actualizado' in msg %}color: #fd7e14;{% endif %}">
+                {{ msg }}
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endfor %}
+
+    <div style="background: #e7f3ff; padding: 15px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #417690;">
+        <p style="margin: 0;">
+            <strong>Resumen Final:</strong>
+            {{ grupos_count }} grupos, {{ perfiles_count }} perfiles, {{ menus_count }} menús activos
+        </p>
+    </div>
+
+    <div class="submit-row">
+        <a href="{% url 'admin:panel_administracion_menugrupo_changelist' %}" class="button" style="background: #417690; color: white;">Volver al listado</a>
+    </div>
+
+    {% else %}
+    {# ===== GET: Mostrar estado actual y botón de sincronización ===== #}
+    <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+        <h2 style="margin-top: 0; color: #417690;">Estado Actual</h2>
+        <table style="width: 100%; border-collapse: collapse;">
+            <tr>
+                <td style="padding: 10px; border-bottom: 1px solid #ddd;">
+                    <strong>Grupos existentes:</strong>
+                </td>
+                <td style="padding: 10px; border-bottom: 1px solid #ddd; text-align: right;">
+                    <span style="font-size: 1.2em; font-weight: bold; color: #417690;">{{ grupos_count }}</span>
+                </td>
+            </tr>
+            <tr>
+                <td style="padding: 10px; border-bottom: 1px solid #ddd;">
+                    <strong>Perfiles de grupo:</strong>
+                </td>
+                <td style="padding: 10px; border-bottom: 1px solid #ddd; text-align: right;">
+                    <span style="font-size: 1.2em; font-weight: bold; color: #417690;">{{ perfiles_count }}</span>
+                </td>
+            </tr>
+            <tr>
+                <td style="padding: 10px; border-bottom: 1px solid #ddd;">
+                    <strong>Menús activos:</strong>
+                </td>
+                <td style="padding: 10px; border-bottom: 1px solid #ddd; text-align: right;">
+                    <span style="font-size: 1.2em; font-weight: bold; color: #28a745;">{{ menus_count }}</span>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+        <h2 style="margin-top: 0; color: #417690;">Configuración que se aplicará</h2>
+        {% for grupo in config_preview %}
+        <div style="background: white; padding: 15px; border-radius: 6px; margin-bottom: 10px; border: 1px solid #dee2e6;">
+            <h3 style="margin-top: 0; color: #333;">
+                <span style="margin-right: 8px;">📁</span>
+                {{ grupo.name }}
+                <small style="color: #888; font-weight: normal;">
+                    ({{ grupo.icon }} | home: {{ grupo.home }} | orden: {{ grupo.orden }})
+                </small>
+            </h3>
+            <table style="width: 100%; border-collapse: collapse; font-size: 0.9em;">
+                <thead>
+                    <tr style="background: #e9ecef;">
+                        <th style="padding: 6px 10px; text-align: left;">Menú</th>
+                        <th style="padding: 6px 10px; text-align: left;">URL</th>
+                        <th style="padding: 6px 10px; text-align: center;">Orden</th>
+                        <th style="padding: 6px 10px; text-align: left;">Permiso</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for menu in grupo.menus %}
+                    <tr>
+                        <td style="padding: 6px 10px; border-bottom: 1px solid #eee;">{{ menu.nombre }}</td>
+                        <td style="padding: 6px 10px; border-bottom: 1px solid #eee; font-family: monospace; font-size: 0.85em;">{{ menu.url }}</td>
+                        <td style="padding: 6px 10px; border-bottom: 1px solid #eee; text-align: center;">{{ menu.orden }}</td>
+                        <td style="padding: 6px 10px; border-bottom: 1px solid #eee;">
+                            {% if menu.permission %}
+                            <span style="background: #fff3cd; padding: 2px 8px; border-radius: 4px; font-size: 0.85em;">{{ menu.permission }}</span>
+                            {% else %}
+                            <span style="color: #ccc;">-</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div style="background: #e7f3ff; padding: 15px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #417690;">
+        <p style="margin: 0;">
+            <strong>¿Qué hará esta acción?</strong><br>
+            Creará los grupos, perfiles y menús que falten. Actualizará los existentes con la configuración definida.
+            Los menús que no estén en la configuración no se eliminarán.
+        </p>
+    </div>
+
+    <form method="post">
+        {% csrf_token %}
+        <div class="submit-row">
+            <input type="submit" value="Sincronizar Ahora" class="default" style="background: #28a745;">
+            <a href="{% url 'admin:panel_administracion_menugrupo_changelist' %}" class="button cancel-link">Cancelar</a>
+        </div>
+    </form>
+    {% endif %}
+</div>
+{% endblock %}

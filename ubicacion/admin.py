@@ -16,6 +16,6 @@ class UbicacionAdmin(admin.ModelAdmin):
             "fields": ("provincia", "localidad", "direccion", "latitud", "longitud")
         }),
         ("Datos de Contacto", {
-            "fields": ("telefono", "email", "horario")
+            "fields": ("telefono", "email", "email_operador", "whatsapp_operador", "horario")
         }),
     )

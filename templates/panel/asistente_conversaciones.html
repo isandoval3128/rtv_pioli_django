@@ -1,0 +1,979 @@
+{% extends "panel/base.html" %}
+{% block extraCss %}
+<style>
+    /* Prevenir overflow horizontal en la página */
+    html, body {
+        overflow-x: hidden;
+        max-width: 100%;
+    }
+
+    .card-body {
+        overflow-x: hidden;
+    }
+
+    .container-fluid {
+        overflow-x: hidden;
+        max-width: 100%;
+    }
+
+    /* ============================================= */
+    /* Estilos profesionales para DataTable         */
+    /* ============================================= */
+    #data_table_ajax {
+        border-collapse: separate;
+        border-spacing: 0;
+        width: 100%;
+        font-size: 13px;
+    }
+
+    #data_table_ajax thead th {
+        background: linear-gradient(135deg, #13304D 0%, #1a4066 100%);
+        color: #fff;
+        font-weight: 600;
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        padding: 14px 12px;
+        border: none;
+        position: relative;
+    }
+
+    #data_table_ajax thead th:first-child {
+        border-radius: 8px 0 0 0;
+    }
+
+    #data_table_ajax thead th:last-child {
+        border-radius: 0 8px 0 0;
+    }
+
+    #data_table_ajax tbody tr {
+        transition: all 0.2s ease;
+        border-bottom: 1px solid #eef2f7;
+    }
+
+    #data_table_ajax tbody tr:hover {
+        background-color: #f8fafc;
+        transform: scale(1.002);
+        box-shadow: 0 2px 8px rgba(19, 48, 77, 0.08);
+    }
+
+    #data_table_ajax tbody td {
+        padding: 12px;
+        vertical-align: middle;
+        border-bottom: 1px solid #eef2f7;
+        color: #374151;
+    }
+
+    #data_table_ajax tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+    #data_table_ajax tbody tr:nth-child(even) {
+        background-color: #fafbfc;
+    }
+
+    #data_table_ajax tbody tr:nth-child(odd) {
+        background-color: #ffffff;
+    }
+
+    #data_table_ajax .text-muted {
+        color: #9ca3af !important;
+        font-size: 11px;
+    }
+
+    /* DataTables wrapper styling */
+    .dataTables_wrapper {
+        padding-top: 10px;
+    }
+
+    .dataTables_wrapper .dataTables_filter input {
+        border: 1px solid #e5e7eb;
+        border-radius: 6px;
+        padding: 8px 12px;
+        font-size: 13px;
+        transition: all 0.2s ease;
+    }
+
+    .dataTables_wrapper .dataTables_filter input:focus {
+        border-color: var(--theme-primary);
+        box-shadow: 0 0 0 3px rgba(19, 48, 77, 0.1);
+        outline: none;
+    }
+
+    .dataTables_wrapper .dataTables_info {
+        color: #6b7280;
+        font-size: 13px;
+        padding-top: 15px;
+    }
+
+    .dataTables_wrapper .dataTables_paginate {
+        padding-top: 15px;
+    }
+
+    .dataTables_wrapper .dataTables_paginate .paginate_button {
+        border-radius: 6px !important;
+        margin: 0 2px;
+        padding: 6px 12px !important;
+        border: 1px solid #e5e7eb !important;
+        background: #fff !important;
+        color: #374151 !important;
+        transition: all 0.2s ease;
+    }
+
+    .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+        background: #f3f4f6 !important;
+        border-color: #d1d5db !important;
+        color: var(--theme-primary) !important;
+    }
+
+    .dataTables_wrapper .dataTables_paginate .paginate_button.current {
+        background: var(--theme-primary) !important;
+        border-color: var(--theme-primary) !important;
+        color: #fff !important;
+    }
+
+    .dataTables_wrapper .dataTables_paginate .paginate_button.disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    /* Card contenedora mejorada */
+    .card {
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    .card .card-body {
+        padding: 24px;
+    }
+
+    .table-responsive {
+        border-radius: 8px;
+        overflow: hidden;
+        border: 1px solid #eef2f7;
+    }
+
+    /* Estilos para la sección de filtros colapsable */
+    .filtros-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 15px;
+    }
+
+    .btn-toggle-filtros {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 16px;
+        background-color: var(--theme-primary);
+        border: 1px solid var(--theme-primary);
+        color: white;
+        border-radius: 6px;
+        font-size: 13px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .btn-toggle-filtros:hover {
+        background-color: var(--theme-primary-dark);
+        border-color: var(--theme-primary-dark);
+    }
+
+    .btn-toggle-filtros i {
+        transition: transform 0.3s ease;
+    }
+
+    .btn-toggle-filtros.collapsed i.fa-chevron-down {
+        transform: rotate(0deg);
+    }
+
+    .btn-toggle-filtros:not(.collapsed) i.fa-chevron-down {
+        transform: rotate(180deg);
+    }
+
+    .filtros-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 20px;
+        height: 20px;
+        padding: 0 6px;
+        background-color: #e6603a;
+        color: white;
+        border-radius: 10px;
+        font-size: 11px;
+        font-weight: 600;
+        margin-left: 4px;
+    }
+
+    .filtros-badge.hidden {
+        display: none;
+    }
+
+    .filtros-container {
+        background-color: #f8f9fa;
+        border: 1px solid #e9ecef;
+        border-radius: 8px;
+        padding: 15px;
+        margin-bottom: 15px;
+        overflow: hidden;
+        transition: all 0.3s ease;
+    }
+
+    .filtros-container.collapsed {
+        display: none;
+    }
+
+    .filtros-row {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 15px;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .filtro-item {
+        box-sizing: border-box;
+    }
+
+    .filtro-item label {
+        display: block;
+        font-size: 13px;
+        font-weight: 600;
+        color: #495057;
+        margin-bottom: 5px;
+    }
+
+    .filtro-item .form-control {
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box;
+        font-size: 14px;
+        height: 38px;
+        border-radius: 4px;
+    }
+
+    .filtros-acciones {
+        display: flex;
+        gap: 8px;
+        align-items: flex-end;
+        padding-bottom: 2px;
+        flex-shrink: 0;
+    }
+
+    .btn-filtrar {
+        background-color: var(--theme-primary);
+        border-color: var(--theme-primary);
+        color: white;
+        width: 38px;
+        height: 38px;
+        padding: 0;
+        font-size: 15px;
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .btn-filtrar:hover {
+        background-color: var(--theme-primary-dark);
+        border-color: var(--theme-primary-dark);
+        color: white;
+    }
+
+    .btn-limpiar {
+        background-color: #6c757d;
+        border-color: #6c757d;
+        color: white;
+        width: 38px;
+        height: 38px;
+        padding: 0;
+        font-size: 15px;
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .btn-limpiar:hover {
+        background-color: #5a6268;
+        border-color: #5a6268;
+        color: white;
+    }
+
+    /* Estilos para Badges */
+    .badge-estado {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 6px 12px;
+        font-size: 11px;
+        font-weight: 600;
+        border-radius: 20px;
+        line-height: 1;
+        text-align: center;
+        white-space: nowrap;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+    }
+
+    .badge-activa {
+        background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+        color: #065f46;
+        box-shadow: 0 2px 4px rgba(16, 185, 129, 0.2);
+    }
+
+    .badge-cerrada {
+        background: linear-gradient(135deg, #e5e7eb 0%, #d1d5db 100%);
+        color: #6b7280;
+        box-shadow: 0 2px 4px rgba(107, 114, 128, 0.2);
+    }
+
+    .badge-derivacion {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 4px 10px;
+        font-size: 11px;
+        font-weight: 600;
+        border-radius: 20px;
+        line-height: 1;
+        white-space: nowrap;
+    }
+
+    .badge-derivacion-whatsapp {
+        background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+        color: #166534;
+        box-shadow: 0 2px 4px rgba(37, 211, 102, 0.15);
+    }
+
+    .badge-derivacion-email {
+        background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+        color: #1e40af;
+        box-shadow: 0 2px 4px rgba(59, 130, 246, 0.15);
+    }
+
+    /* Botones de acción en tabla */
+    .acciones-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        justify-content: center;
+        min-width: 80px;
+    }
+
+    .btn-accion {
+        width: 36px;
+        height: 36px;
+        padding: 0;
+        margin: 0;
+        font-size: 14px;
+        border-radius: 8px;
+        transition: all 0.2s ease;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .btn-accion i {
+        font-size: 15px;
+        position: relative;
+        z-index: 1;
+    }
+
+    .btn-accion.btn-ver-conversacion {
+        background: #f1f5f9;
+        border-color: #94a3b8;
+        color: #334155;
+    }
+
+    .btn-accion.btn-ver-conversacion:hover {
+        background: #f8fafc;
+        border-color: #cbd5e1;
+        color: #64748b;
+        transform: translateY(-1px);
+        box-shadow: 0 2px 6px rgba(100, 116, 139, 0.12);
+    }
+
+    /* Tooltip visual en hover */
+    .btn-accion::before {
+        content: attr(title);
+        position: absolute;
+        bottom: 100%;
+        left: 50%;
+        transform: translateX(-50%) translateY(5px);
+        padding: 4px 8px;
+        background: #1f2937;
+        color: white;
+        font-size: 10px;
+        border-radius: 4px;
+        white-space: nowrap;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.2s ease;
+        z-index: 100;
+    }
+
+    .btn-accion:hover::before {
+        opacity: 1;
+        visibility: visible;
+        transform: translateX(-50%) translateY(-4px);
+    }
+
+    /* ============================================= */
+    /* Vista Desktop (tabla)                         */
+    /* ============================================= */
+    .vista-desktop {
+        display: block;
+    }
+
+    /* ============================================= */
+    /* Vista Móvil (cards)                           */
+    /* ============================================= */
+    .vista-mobile {
+        display: none;
+    }
+
+    .mobile-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .conv-cards-container {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+    }
+
+    .conv-card {
+        background: #fff;
+        border: none;
+        border-radius: 12px;
+        padding: 0;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(0, 0, 0, 0.04);
+        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        overflow: visible;
+        position: relative;
+    }
+
+    .conv-card::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 4px;
+        background: linear-gradient(180deg, var(--theme-primary) 0%, #1a4066 100%);
+        border-radius: 12px 0 0 12px;
+    }
+
+    .conv-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08), 0 8px 24px rgba(0, 0, 0, 0.06);
+    }
+
+    .conv-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 14px 16px;
+        background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        border-bottom: 1px solid #eef2f7;
+        border-radius: 12px 12px 0 0;
+    }
+
+    .conv-card-body {
+        padding: 16px;
+    }
+
+    .conv-card-info {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px 16px;
+    }
+
+    .conv-card-info-item {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .conv-card-info-item .label {
+        font-size: 10px;
+        color: #9ca3af;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 3px;
+        font-weight: 600;
+    }
+
+    .conv-card-info-item .value {
+        font-size: 13px;
+        color: #374151;
+        font-weight: 500;
+    }
+
+    .conv-card-footer {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        padding: 14px 16px;
+        background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        border-top: 1px solid #eef2f7;
+        border-radius: 0 0 12px 12px;
+    }
+
+    .conv-card-footer .btn-ver {
+        background: var(--theme-primary);
+        color: white;
+        padding: 10px 16px;
+        font-size: 13px;
+        border-radius: 8px;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-weight: 500;
+        border: none;
+        box-shadow: 0 1px 3px rgba(19, 48, 77, 0.15);
+    }
+
+    .conv-card-footer .btn-ver:hover {
+        background: #0d2236;
+        transform: translateY(-1px);
+    }
+
+    .conv-cards-loading {
+        text-align: center;
+        padding: 50px 20px;
+        color: #9ca3af;
+    }
+
+    .conv-cards-loading i {
+        font-size: 36px;
+        margin-bottom: 12px;
+        color: var(--theme-primary);
+        opacity: 0.8;
+    }
+
+    .conv-cards-empty {
+        text-align: center;
+        padding: 50px 20px;
+        color: #9ca3af;
+        background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
+        border-radius: 12px;
+        border: 1px dashed #e5e7eb;
+    }
+
+    .conv-cards-empty i {
+        font-size: 52px;
+        margin-bottom: 16px;
+        color: #d1d5db;
+    }
+
+    /* Responsive */
+    @media (max-width: 1200px) {
+        .filtros-row {
+            grid-template-columns: repeat(3, 1fr);
+        }
+    }
+
+    @media (max-width: 992px) {
+        .filtros-row {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @media (max-width: 768px) {
+        .vista-desktop {
+            display: none !important;
+        }
+
+        .vista-mobile {
+            display: block !important;
+        }
+
+        .dt-buttons {
+            display: none !important;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .filtros-row {
+            grid-template-columns: 1fr;
+            gap: 12px;
+        }
+
+        .filtros-container {
+            padding: 12px;
+        }
+
+        .btn-toggle-filtros {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .conv-card-info {
+            grid-template-columns: 1fr;
+            gap: 8px;
+        }
+
+        .conv-card-footer {
+            flex-direction: column;
+        }
+
+        .conv-card-footer .btn-ver {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+
+    /* Botón flotante volver arriba */
+    .btn-volver-arriba {
+        position: fixed;
+        right: 20px;
+        bottom: 90px;
+        width: 45px;
+        height: 45px;
+        background-color: var(--theme-primary);
+        border: none;
+        border-radius: 50%;
+        color: white;
+        font-size: 18px;
+        cursor: pointer;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(20px);
+        transition: all 0.3s ease;
+        z-index: 999;
+    }
+
+    .btn-volver-arriba.visible {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+    }
+
+    .btn-volver-arriba:hover {
+        background-color: var(--theme-primary-dark);
+        transform: translateY(-3px);
+        box-shadow: 0 6px 16px rgba(0,0,0,0.3);
+    }
+
+    @media (max-width: 768px) {
+        .btn-volver-arriba {
+            right: 15px;
+            bottom: 85px;
+            width: 42px;
+            height: 42px;
+            font-size: 16px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block main %}
+{% load static %}
+
+<div id="main-content" class="profilepage_2 blog-page">
+    <div class="container-fluid">
+        <div class="block-header">
+            <div class="row g-3">
+                <div class="col-lg-5 col-md-8 col-sm-12">
+                    <h2><a href="javascript:void(0);" class="btn btn-xs btn-link btn-toggle-fullwidth"><i class="fa fa-arrow-right"></i></a>
+                        {{ titulo }}</h2>
+                    <ul class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{% url 'panel_home' %}"><i class="icon-home text-orange"></i></a></li>
+                        <li class="breadcrumb-item">Asistente IA</li>
+                        <li class="breadcrumb-item active">{{ titulo }}</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="row clearfix">
+            <div class="col-lg-12 col-md-12">
+                <div class="card">
+                    <div class="card-body">
+                        <!-- Botón para mostrar/ocultar filtros -->
+                        <div class="filtros-header">
+                            <button type="button" class="btn-toggle-filtros collapsed" id="btn-toggle-filtros">
+                                <i class="fa fa-filter"></i>
+                                <span>Filtros</span>
+                                <span class="filtros-badge hidden" id="filtros-badge">0</span>
+                                <i class="fa fa-chevron-down"></i>
+                            </button>
+                        </div>
+
+                        <!-- Filtros Avanzados (colapsable) -->
+                        <div class="filtros-container collapsed" id="filtros-container">
+                            <div class="filtros-row">
+                                <div class="filtro-item">
+                                    <label for="filtro-fecha-desde">Fecha Desde</label>
+                                    <input type="date" class="form-control" id="filtro-fecha-desde">
+                                </div>
+
+                                <div class="filtro-item">
+                                    <label for="filtro-fecha-hasta">Fecha Hasta</label>
+                                    <input type="date" class="form-control" id="filtro-fecha-hasta">
+                                </div>
+
+                                <div class="filtros-acciones">
+                                    <button type="button" class="btn btn-filtrar" id="btn-aplicar-filtros" title="Filtrar">
+                                        <i class="fa fa-search"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-limpiar" id="btn-limpiar-filtros" title="Limpiar">
+                                        <i class="fa fa-eraser"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Vista Desktop (Tabla) -->
+                        <div class="vista-desktop">
+                            <div class="row clearfix">
+                                <div class="col-lg-12 col-md-12">
+                                    <table id="data_table_ajax" class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>Fecha</th>
+                                                <th>IP</th>
+                                                <th>Mensajes</th>
+                                                <th>Llamadas IA</th>
+                                                <th>Duración</th>
+                                                <th>Estado</th>
+                                                <th>Derivación</th>
+                                                <th>Acciones</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Vista Móvil (Cards) -->
+                        <div class="vista-mobile">
+                            <div class="mobile-header">
+                                <span class="conv-count" id="conv-count"></span>
+                            </div>
+
+                            <div id="conv-cards-container" class="conv-cards-container">
+                                <div class="conv-cards-loading">
+                                    <i class="fa fa-spinner fa-spin"></i>
+                                    <p>Cargando conversaciones...</p>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- Botón flotante volver arriba -->
+<button type="button" class="btn-volver-arriba" id="btn-volver-arriba" title="Volver arriba">
+    <i class="fa fa-chevron-up"></i>
+</button>
+
+{% endblock %}
+
+{% block extraJS %}
+<script>
+$(document).ready(function(){
+    cargarTabla();
+
+    // Toggle para mostrar/ocultar filtros
+    $('#btn-toggle-filtros').on('click', function(){
+        var $btn = $(this);
+        var $container = $('#filtros-container');
+
+        $btn.toggleClass('collapsed');
+        $container.toggleClass('collapsed');
+
+        var $span = $btn.find('span').first();
+        if ($btn.hasClass('collapsed')) {
+            $span.text('Filtros');
+        } else {
+            $span.text('Ocultar Filtros');
+        }
+    });
+
+    // Evento para el botón Filtrar
+    $('#btn-aplicar-filtros').on('click', function(){
+        cargarTabla();
+        actualizarBadgeFiltros();
+    });
+
+    // Evento para el botón Limpiar
+    $('#btn-limpiar-filtros').on('click', function(){
+        limpiarFiltros();
+    });
+
+    // Botón volver arriba
+    var $btnVolverArriba = $('#btn-volver-arriba');
+    $(window).on('scroll', function() {
+        if ($(this).scrollTop() > 300) {
+            $btnVolverArriba.addClass('visible');
+        } else {
+            $btnVolverArriba.removeClass('visible');
+        }
+    });
+
+    $btnVolverArriba.on('click', function() {
+        $('html, body').animate({ scrollTop: 0 }, 400);
+    });
+});
+
+function actualizarBadgeFiltros() {
+    var count = 0;
+    if ($('#filtro-fecha-desde').val()) count++;
+    if ($('#filtro-fecha-hasta').val()) count++;
+
+    var $badge = $('#filtros-badge');
+    if (count > 0) {
+        $badge.text(count).removeClass('hidden');
+    } else {
+        $badge.addClass('hidden');
+    }
+}
+
+function limpiarFiltros() {
+    $('#filtro-fecha-desde').val('');
+    $('#filtro-fecha-hasta').val('');
+    $('#filtros-badge').addClass('hidden');
+    cargarTabla();
+}
+
+var table;
+
+function cargarTabla(){
+    $('#data_table_ajax').dataTable().fnClearTable();
+    $('#data_table_ajax').dataTable().fnDestroy();
+
+    var valores = {
+        "csrfmiddlewaretoken": '{{ csrf_token }}',
+        "filtro_fecha_desde": $("#filtro-fecha-desde").val() || '',
+        "filtro_fecha_hasta": $("#filtro-fecha-hasta").val() || ''
+    };
+
+    table = $('#data_table_ajax').DataTable({
+        autoWidth: false,
+        processing: true,
+        searching: true,
+        paging: true,
+        pageLength: 20,
+        order: [[0, 'desc']],
+        language: {
+            url: "https://cdn.datatables.net/plug-ins/1.11.3/i18n/es_es.json"
+        },
+        ajax: {
+            "url": "{% url 'asistente_conversaciones_ajax' %}",
+            "data": valores,
+            "type": "POST",
+            "dataSrc": ""
+        },
+        columns: [
+            { data: "inicio" },
+            { data: "ip_address" },
+            { data: "mensajes_count", render: function(data) {
+                return '<span style="font-weight:600;">' + data + '</span>';
+            }},
+            { data: "ai_calls", render: function(data) {
+                return data > 0 ? '<span class="text-info font-weight-bold">' + data + '</span>' : '<span class="text-muted">0</span>';
+            }},
+            { data: "duracion" },
+            { data: "activa", render: function(data) {
+                return data
+                    ? '<span class="badge-estado badge-activa"><i class="fa fa-circle" style="font-size:8px;"></i> Activa</span>'
+                    : '<span class="badge-estado badge-cerrada">Cerrada</span>';
+            }},
+            { data: "derivacion", render: function(data) {
+                if (!data) return '<span class="text-muted" style="font-size:11px;">No</span>';
+                var icon = data.canal_key === 'whatsapp' ? 'fa-whatsapp' : 'fa-envelope';
+                var cls = 'badge-derivacion-' + data.canal_key;
+                return '<span class="badge-derivacion ' + cls + '"><i class="fa ' + icon + '"></i> ' + data.canal + '</span>'
+                    + '<div style="font-size:11px; color:#6b7280; margin-top:3px;">' + data.taller + '</div>';
+            }},
+            { data: null, orderable: false, render: function(data, type, row) {
+                return '<div class="acciones-container"><button class="btn btn-accion btn-ver-conversacion" onclick="verConversacion(' + row.id + ')" title="Ver conversación"><i class="fa fa-eye"></i></button></div>';
+            }}
+        ],
+        drawCallback: function() {
+            renderMobileCards(this.api().data().toArray());
+        }
+    });
+}
+
+function renderMobileCards(data) {
+    var container = $('#conv-cards-container');
+
+    if (data.length === 0) {
+        container.html('<div class="conv-cards-empty"><i class="fa fa-comments"></i><p>No se encontraron conversaciones</p></div>');
+        $('#conv-count').text('0 conversaciones');
+        return;
+    }
+
+    $('#conv-count').text(data.length + ' conversacion' + (data.length !== 1 ? 'es' : ''));
+
+    var html = '';
+    data.forEach(function(row) {
+        var estadoBadge = row.activa
+            ? '<span class="badge-estado badge-activa"><i class="fa fa-circle" style="font-size:8px;"></i> Activa</span>'
+            : '<span class="badge-estado badge-cerrada">Cerrada</span>';
+
+        html += '<div class="conv-card">';
+        html += '<div class="conv-card-header"><span style="font-weight:600; color:#13304D;">' + row.inicio + '</span>' + estadoBadge + '</div>';
+        html += '<div class="conv-card-body"><div class="conv-card-info">';
+        html += '<div class="conv-card-info-item"><span class="label">IP</span><span class="value">' + row.ip_address + '</span></div>';
+        html += '<div class="conv-card-info-item"><span class="label">Mensajes</span><span class="value" style="font-weight:600;">' + row.mensajes_count + '</span></div>';
+        html += '<div class="conv-card-info-item"><span class="label">Llamadas IA</span><span class="value">' + row.ai_calls + '</span></div>';
+        html += '<div class="conv-card-info-item"><span class="label">Duración</span><span class="value">' + row.duracion + '</span></div>';
+        if (row.derivacion) {
+            var dIcon = row.derivacion.canal_key === 'whatsapp' ? 'fa-whatsapp' : 'fa-envelope';
+            var dCls = 'badge-derivacion-' + row.derivacion.canal_key;
+            html += '<div class="conv-card-info-item"><span class="label">Derivación</span><span class="value"><span class="badge-derivacion ' + dCls + '"><i class="fa ' + dIcon + '"></i> ' + row.derivacion.canal + ' - ' + row.derivacion.taller + '</span></span></div>';
+        }
+        html += '</div></div>';
+        html += '<div class="conv-card-footer">';
+        html += '<button class="btn btn-ver" onclick="verConversacion(' + row.id + ')"><i class="fa fa-eye"></i> Ver</button>';
+        html += '</div></div>';
+    });
+    container.html(html);
+}
+
+function verConversacion(id) {
+    var url = "{% url 'asistente_conversaciones_ver' %}?pk=" + id;
+
+    $('#modal-lg .modal-content').html('<div class="text-center p-5"><i class="fa fa-spinner fa-spin fa-3x" style="color: var(--theme-primary);"></i><p class="mt-3">Cargando conversación...</p></div>');
+    $('#modal-lg').modal('show');
+
+    $.ajax({
+        url: url,
+        type: "GET",
+        success: function(response) {
+            $('#modal-lg .modal-content').html(response.html_form);
+        },
+        error: function() {
+            $('#modal-lg .modal-content').html('<div class="modal-body"><div class="alert alert-danger">Error al cargar la conversación</div></div>');
+        }
+    });
+}
+</script>
+{% endblock %}

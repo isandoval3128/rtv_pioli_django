@@ -28,9 +28,8 @@
                     {% include 'panel/messages.html' %}
 
                     <div class="card">
-                        <div class="header text-center">
-                            <img class="img-fluid img-register" src="{% static 'panel/assets/images/logo-azul.png' %}" alt="RTV Pioli" style="max-width: 250px; border-radius: 12px; transition: transform 0.3s ease, box-shadow 0.3s ease; cursor: pointer;" onmouseover="this.style.transform='translateY(-5px)'; this.style.filter='drop-shadow(0 8px 15px rgba(0,0,0,0.2))';" onmouseout="this.style.transform='translateY(0)'; this.style.filter='none';">
-                            {% comment %} <h4 class="mt-3">Panel de Administración</h4> {% endcomment %}
+                        <div class="header text-center" style="padding: 30px 20px 10px;">
+                            <img class="img-fluid" src="{% static 'panel/assets/images/logo-login.svg' %}" alt="RTV Pioli" style="max-width: 320px; transition: transform 0.3s ease;" onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform='translateY(0)'">
                         </div>
                         <div class="body">
                             {% if form.errors %}

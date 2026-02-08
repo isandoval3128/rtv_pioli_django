@@ -7,6 +7,14 @@ class Ubicacion(models.Model):
     direccion = models.CharField(max_length=255, verbose_name="Dirección")
     telefono = models.CharField(max_length=50, blank=True, verbose_name="Teléfono")
     email = models.EmailField(blank=True, verbose_name="Email")
+    email_operador = models.EmailField(
+        blank=True,
+        verbose_name='Email operador',
+        help_text='Email específico para recibir derivaciones del asistente virtual')
+    whatsapp_operador = models.CharField(
+        max_length=20, blank=True,
+        verbose_name='WhatsApp operador',
+        help_text='Número con código de país sin +. Ej: 5493814123456')
     provincia = models.CharField(max_length=100, default="Jujuy", verbose_name="Provincia")
     localidad = models.ForeignKey(
         Localidad,

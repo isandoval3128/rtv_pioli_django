@@ -1,6 +1,9 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin, GroupAdmin
 from django.contrib.auth.models import User, Group
+from django.urls import path
+from django.shortcuts import render
+from django.contrib import messages
 from .models import UserPermission, MenuGrupo, Sector, UserProfile, GroupProfile
 
 
@@ -128,6 +131,172 @@ class MenuGrupoAdmin(admin.ModelAdmin):
     list_filter = ('grupo', 'status', 'userPermission')
     search_fields = ('nombre', 'url')
     ordering = ('grupo', 'orden')
+    change_list_template = 'admin/panel_administracion/menugrupo_change_list.html'
+
+    # =====================================================
+    # CONFIGURACIÓN CANÓNICA DEL MENÚ
+    # Modificar aquí para agregar/cambiar menús del panel
+    # =====================================================
+    MENU_CONFIG = [
+        {
+            'grupo_name': 'Administración',
+            'icon': 'icon-settings',
+            'home': '/panel/',
+            'orden': 1,
+            'menus': [
+                {'nombre': 'Gestión Usuarios', 'url': '/panel/usuarios/', 'orden': 1},
+            ],
+        },
+        {
+            'grupo_name': 'Asistente IA',
+            'icon': 'icon-bubbles',
+            'home': '/panel/asistente/config/',
+            'orden': 2,
+            'menus': [
+                {'nombre': 'Configuración', 'url': '/panel/asistente/config/', 'orden': 1},
+                {'nombre': 'Preguntas Frecuentes', 'url': '/panel/asistente/faqs/', 'orden': 2},
+                {'nombre': 'Base de Conocimiento', 'url': '/panel/asistente/kb/', 'orden': 3},
+                {'nombre': 'Conversaciones', 'url': '/panel/asistente/conversaciones/', 'orden': 4},
+                {'nombre': 'Dashboard', 'url': '/panel/asistente/dashboard/', 'orden': 5},
+                {'nombre': 'Sugerencias', 'url': '/panel/asistente/sugerencias/', 'orden': 6},
+                {'nombre': 'Uso IA / Costos', 'url': '/panel/asistente/uso-ia/', 'orden': 7, 'permission': 'Acceso Uso IA'},
+            ],
+        },
+        {
+            'grupo_name': 'Turnos',
+            'icon': 'icon-calendar',
+            'home': '/panel/turnos/',
+            'orden': 3,
+            'menus': [
+                {'nombre': 'Gestión Turnos', 'url': '/panel/turnos/', 'orden': 1},
+                {'nombre': 'Escanear Turno', 'url': '/panel/turnos/escanear/', 'orden': 2},
+            ],
+        },
+    ]
+
+    def get_urls(self):
+        urls = super().get_urls()
+        custom_urls = [
+            path(
+                'sincronizar/',
+                self.admin_site.admin_view(self.sincronizar_menu),
+                name='panel_administracion_menugrupo_sincronizar'
+            ),
+        ]
+        return custom_urls + urls
+
+    def sincronizar_menu(self, request):
+        """Sincroniza el menú del panel con la configuración canónica."""
+        if request.method == 'POST':
+            resultado = self._ejecutar_sincronizacion()
+            context = {
+                **self.admin_site.each_context(request),
+                'title': 'Sincronizar Menú del Panel',
+                'resultado': resultado,
+                'grupos_count': Group.objects.count(),
+                'perfiles_count': GroupProfile.objects.count(),
+                'menus_count': MenuGrupo.objects.filter(status=True).count(),
+            }
+            messages.success(request, 'Menú del panel sincronizado correctamente.')
+            return render(request, 'admin/panel_administracion/sincronizar_menu.html', context)
+
+        # GET: mostrar preview
+        config_preview = []
+        for grupo_cfg in self.MENU_CONFIG:
+            preview = {
+                'name': grupo_cfg['grupo_name'],
+                'icon': grupo_cfg['icon'],
+                'home': grupo_cfg['home'],
+                'orden': grupo_cfg['orden'],
+                'menus': [
+                    {
+                        'nombre': m['nombre'],
+                        'url': m['url'],
+                        'orden': m['orden'],
+                        'permission': m.get('permission', ''),
+                    }
+                    for m in grupo_cfg['menus']
+                ],
+            }
+            config_preview.append(preview)
+
+        context = {
+            **self.admin_site.each_context(request),
+            'title': 'Sincronizar Menú del Panel',
+            'config_preview': config_preview,
+            'grupos_count': Group.objects.count(),
+            'perfiles_count': GroupProfile.objects.count(),
+            'menus_count': MenuGrupo.objects.filter(status=True).count(),
+        }
+        return render(request, 'admin/panel_administracion/sincronizar_menu.html', context)
+
+    def _ejecutar_sincronizacion(self):
+        """Ejecuta la sincronización del menú y retorna el log de cambios."""
+        resultado = []
+
+        for grupo_cfg in self.MENU_CONFIG:
+            seccion = {'titulo': f"Grupo: {grupo_cfg['grupo_name']}", 'mensajes': []}
+
+            # 1. Crear/obtener grupo
+            grupo, created = Group.objects.get_or_create(name=grupo_cfg['grupo_name'])
+            if created:
+                seccion['mensajes'].append(f'Grupo "{grupo.name}" creado')
+            else:
+                seccion['mensajes'].append(f'Grupo "{grupo.name}" ya existe')
+
+            # 2. Crear/actualizar perfil de grupo
+            profile, p_created = GroupProfile.objects.get_or_create(group=grupo)
+            profile.icon = grupo_cfg['icon']
+            profile.home = grupo_cfg['home']
+            profile.orden = grupo_cfg['orden']
+            profile.save()
+            if p_created:
+                seccion['mensajes'].append(
+                    f'Perfil creado (icon: {profile.icon}, home: {profile.home}, orden: {profile.orden})'
+                )
+            else:
+                seccion['mensajes'].append(
+                    f'Perfil actualizado (icon: {profile.icon}, home: {profile.home}, orden: {profile.orden})'
+                )
+
+            # 3. Crear/actualizar menús
+            for menu_cfg in grupo_cfg['menus']:
+                # Buscar permiso si aplica
+                permission = None
+                if menu_cfg.get('permission'):
+                    permission, _ = UserPermission.objects.get_or_create(
+                        nombre=menu_cfg['permission'],
+                        defaults={'status': True}
+                    )
+
+                menu, m_created = MenuGrupo.objects.get_or_create(
+                    grupo=grupo,
+                    nombre=menu_cfg['nombre'],
+                    defaults={
+                        'url': menu_cfg['url'],
+                        'orden': menu_cfg['orden'],
+                        'userPermission': permission,
+                        'status': True,
+                    }
+                )
+                if not m_created:
+                    # Actualizar datos existentes
+                    menu.url = menu_cfg['url']
+                    menu.orden = menu_cfg['orden']
+                    menu.userPermission = permission
+                    menu.status = True
+                    menu.save()
+                    seccion['mensajes'].append(
+                        f'Menú "{menu_cfg["nombre"]}" actualizado (url: {menu_cfg["url"]}, orden: {menu_cfg["orden"]})'
+                    )
+                else:
+                    seccion['mensajes'].append(
+                        f'Menú "{menu_cfg["nombre"]}" creado (url: {menu_cfg["url"]}, orden: {menu_cfg["orden"]})'
+                    )
+
+            resultado.append(seccion)
+
+        return resultado
 
 
 @admin.register(Sector)

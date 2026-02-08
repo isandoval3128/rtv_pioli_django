@@ -120,11 +120,6 @@
     </div>
 </div>
 
-<!-- Botón flotante para volver arriba -->
-<a href="#top" id="scrollToTopBtn" class="scroll-top-float" aria-label="Volver arriba" style="display:none;">
-    <i class="fas fa-arrow-up"></i>
-</a>
-
 <style>
 /* ========================================
    SECCIÓN TARIFAS - DISEÑO PREMIUM
@@ -133,7 +128,7 @@
 /* Fondo de la sección con gradiente y decoraciones */
 #tarifas {
     position: relative;
-    background: linear-gradient(180deg, #f1f5f9 0%, #e8f0f8 50%, #dbeafe 100%) !important;
+    background: linear-gradient(180deg, #f8fafc 0%, #eef4fb 50%, #e8f0f8 100%) !important;
     overflow: hidden;
 }
 
@@ -272,14 +267,16 @@
 
 #tarifas .section-heading {
     color: #003466;
-    font-size: 2.5rem;
-    font-weight: 800;
+    font-size: 2.75rem;
+    font-weight: 700;
     margin-bottom: 0.75rem;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.01em;
 }
 
 #tarifas .section-subheading {
     font-size: 1.1rem;
+    font-style: italic;
+    letter-spacing: 0.01em;
     color: #64748b;
     max-width: 500px;
     margin: 0 auto;
@@ -292,9 +289,9 @@
     margin-right: auto;
     background: linear-gradient(135deg, #cfe2ff 0%, #e7f1ff 100%);
     color: #003466;
-    font-size: 0.75rem;
-    font-weight: 700;
-    letter-spacing: 0.15em;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
     text-transform: uppercase;
     padding: 0.6rem 1.5rem;
     border-radius: 50px;
@@ -356,7 +353,7 @@
 
 .tarifa-description-content {
     font-size: 1.02rem;
-    line-height: 1.7;
+    line-height: 1.75;
     color: #334155;
     text-align: justify;
 }
@@ -635,7 +632,7 @@
     font-size: 0.95rem;
     font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.06em;
     text-decoration: none;
     position: relative;
     overflow: hidden;
@@ -695,36 +692,6 @@
 
 .btn-tarifa-action:hover .btn-shine {
     left: 100%;
-}
-
-/* Botón scroll to top */
-.scroll-top-float {
-    position: fixed;
-    right: 20px;
-    bottom: 90px;
-    z-index: 9999;
-    background: linear-gradient(135deg, #003466 0%, #0056b3 100%);
-    color: #fff;
-    border-radius: 50%;
-    width: 50px;
-    height: 50px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 6px 20px rgba(0, 52, 102, 0.35);
-    font-size: 1.2rem;
-    transition: all 0.3s ease;
-    text-decoration: none;
-}
-
-.scroll-top-float:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 10px 30px rgba(0, 52, 102, 0.45);
-    background: linear-gradient(135deg, #0056b3 0%, #0077cc 100%);
-}
-
-.scroll-top-float i {
-    color: #fff;
 }
 
 /* Responsive */
@@ -797,14 +764,6 @@
         border-radius: 1rem;
     }
 
-    .scroll-top-float {
-        right: 16px;
-        bottom: 70px;
-        width: 44px;
-        height: 44px;
-        font-size: 1rem;
-    }
-
     /* Paginación móvil responsiva */
     .tarifas-mobile-pagination {
         padding: 0.75rem;
@@ -831,24 +790,6 @@
 </style>
 
 <script>
-    // Mostrar/ocultar el botón al hacer scroll
-    window.addEventListener('scroll', function() {
-        var btn = document.getElementById('scrollToTopBtn');
-        if (window.scrollY > 250) {
-            btn.style.display = 'flex';
-        } else {
-            btn.style.display = 'none';
-        }
-    });
-
-    // Animación de scroll suave al hacer click
-    if (document.getElementById('scrollToTopBtn')) {
-        document.getElementById('scrollToTopBtn').addEventListener('click', function(e) {
-            e.preventDefault();
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        });
-    }
-
     // ========================================
     // PAGINACIÓN DE CARDS MÓVILES
     // ========================================

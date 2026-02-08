@@ -30,6 +30,14 @@ class Taller(models.Model):
     )
     telefono = models.CharField(max_length=50, blank=True, verbose_name="Teléfono")
     email = models.EmailField(blank=True, verbose_name="Email")
+    email_operador = models.EmailField(
+        blank=True,
+        verbose_name='Email operador',
+        help_text='Email específico para recibir derivaciones del asistente virtual')
+    whatsapp_operador = models.CharField(
+        max_length=20, blank=True,
+        verbose_name='WhatsApp operador',
+        help_text='Número con código de país sin +. Ej: 5493814123456')
 
     # Ubicación GPS para el mapa (se usan si NO hay planta asignada)
     latitud = models.DecimalField(
@@ -97,6 +105,20 @@ class Taller(models.Model):
     def get_email(self):
         """Retorna el email, priorizando el de la planta si existe"""
         return self.planta.email if self.planta else self.email
+
+    def get_email_operador(self):
+        """Retorna el email del operador para derivaciones, con fallback al email general"""
+        if self.planta and self.planta.email_operador:
+            return self.planta.email_operador
+        if self.email_operador:
+            return self.email_operador
+        return self.get_email()
+
+    def get_whatsapp_operador(self):
+        """Retorna el WhatsApp del operador, priorizando el de la planta si existe"""
+        if self.planta and self.planta.whatsapp_operador:
+            return self.planta.whatsapp_operador
+        return self.whatsapp_operador
 
     def get_latitud(self):
         """Retorna la latitud, priorizando la de la planta si existe"""

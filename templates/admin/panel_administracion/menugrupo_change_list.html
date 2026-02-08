@@ -1,0 +1,11 @@
+{% extends "admin/change_list.html" %}
+{% load i18n static %}
+
+{% block object-tools-items %}
+{{ block.super }}
+<li>
+    <a href="{% url 'admin:panel_administracion_menugrupo_sincronizar' %}" class="addlink" style="background: #28a745; padding-left: 10px;">
+        <span style="margin-right: 5px;">🔄</span> Sincronizar Menú del Panel
+    </a>
+</li>
+{% endblock %}

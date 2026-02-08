@@ -150,10 +150,16 @@ class GroupProfile(models.Model):
         verbose_name="Icono",
         help_text="Clase de icono (ej: icon-home, fa fa-users)"
     )
+    orden = models.IntegerField(
+        default=0,
+        verbose_name="Orden",
+        help_text="Orden de aparición en el menú sidebar (menor = primero)"
+    )
 
     class Meta:
         verbose_name = "Perfil de Grupo"
         verbose_name_plural = "Perfiles de Grupo"
+        ordering = ['orden']
 
     def __str__(self):
         return f"Perfil de {self.group.name}"

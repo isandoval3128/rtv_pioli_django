@@ -1,0 +1,1189 @@
+{% extends "panel/base.html" %}
+{% block extraCss %}
+<style>
+    /* Prevenir overflow horizontal en la página */
+    html, body {
+        overflow-x: hidden;
+        max-width: 100%;
+    }
+
+    .card-body {
+        overflow-x: hidden;
+    }
+
+    .container-fluid {
+        overflow-x: hidden;
+        max-width: 100%;
+    }
+
+    /* ============================================= */
+    /* Estilos profesionales para DataTable         */
+    /* ============================================= */
+    #data_table_ajax {
+        border-collapse: separate;
+        border-spacing: 0;
+        width: 100%;
+        font-size: 13px;
+    }
+
+    #data_table_ajax thead th {
+        background: linear-gradient(135deg, #13304D 0%, #1a4066 100%);
+        color: #fff;
+        font-weight: 600;
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        padding: 14px 12px;
+        border: none;
+        position: relative;
+    }
+
+    #data_table_ajax thead th:first-child {
+        border-radius: 8px 0 0 0;
+    }
+
+    #data_table_ajax thead th:last-child {
+        border-radius: 0 8px 0 0;
+    }
+
+    #data_table_ajax tbody tr {
+        transition: all 0.2s ease;
+        border-bottom: 1px solid #eef2f7;
+    }
+
+    #data_table_ajax tbody tr:hover {
+        background-color: #f8fafc;
+        transform: scale(1.002);
+        box-shadow: 0 2px 8px rgba(19, 48, 77, 0.08);
+    }
+
+    #data_table_ajax tbody td {
+        padding: 12px;
+        vertical-align: middle;
+        border-bottom: 1px solid #eef2f7;
+        color: #374151;
+    }
+
+    #data_table_ajax tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+    #data_table_ajax tbody tr:nth-child(even) {
+        background-color: #fafbfc;
+    }
+
+    #data_table_ajax tbody tr:nth-child(odd) {
+        background-color: #ffffff;
+    }
+
+    #data_table_ajax .text-muted {
+        color: #9ca3af !important;
+        font-size: 11px;
+    }
+
+    /* DataTables wrapper styling */
+    .dataTables_wrapper {
+        padding-top: 10px;
+    }
+
+    .dataTables_wrapper .dataTables_filter input {
+        border: 1px solid #e5e7eb;
+        border-radius: 6px;
+        padding: 8px 12px;
+        font-size: 13px;
+        transition: all 0.2s ease;
+    }
+
+    .dataTables_wrapper .dataTables_filter input:focus {
+        border-color: var(--theme-primary);
+        box-shadow: 0 0 0 3px rgba(19, 48, 77, 0.1);
+        outline: none;
+    }
+
+    .dataTables_wrapper .dataTables_info {
+        color: #6b7280;
+        font-size: 13px;
+        padding-top: 15px;
+    }
+
+    .dataTables_wrapper .dataTables_paginate {
+        padding-top: 15px;
+    }
+
+    .dataTables_wrapper .dataTables_paginate .paginate_button {
+        border-radius: 6px !important;
+        margin: 0 2px;
+        padding: 6px 12px !important;
+        border: 1px solid #e5e7eb !important;
+        background: #fff !important;
+        color: #374151 !important;
+        transition: all 0.2s ease;
+    }
+
+    .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+        background: #f3f4f6 !important;
+        border-color: #d1d5db !important;
+        color: var(--theme-primary) !important;
+    }
+
+    .dataTables_wrapper .dataTables_paginate .paginate_button.current {
+        background: var(--theme-primary) !important;
+        border-color: var(--theme-primary) !important;
+        color: #fff !important;
+    }
+
+    .dataTables_wrapper .dataTables_paginate .paginate_button.disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    /* Card contenedora mejorada */
+    .card {
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    .card .card-body {
+        padding: 24px;
+    }
+
+    .table-responsive {
+        border-radius: 8px;
+        overflow: hidden;
+        border: 1px solid #eef2f7;
+    }
+
+    /* Botón Nueva FAQ mejorado */
+    .dt-btn-orange {
+        background: linear-gradient(135deg, var(--theme-primary) 0%, #1a4066 100%) !important;
+        border: none !important;
+        border-radius: 8px !important;
+        padding: 10px 18px !important;
+        font-weight: 500 !important;
+        font-size: 13px !important;
+        transition: all 0.25s ease !important;
+        box-shadow: 0 2px 6px rgba(19, 48, 77, 0.2) !important;
+    }
+
+    .dt-btn-orange:hover {
+        transform: translateY(-2px) !important;
+        box-shadow: 0 4px 12px rgba(19, 48, 77, 0.35) !important;
+    }
+
+    /* Estilos para la sección de filtros colapsable */
+    .filtros-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 15px;
+    }
+
+    .btn-toggle-filtros {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 16px;
+        background-color: var(--theme-primary);
+        border: 1px solid var(--theme-primary);
+        color: white;
+        border-radius: 6px;
+        font-size: 13px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .btn-toggle-filtros:hover {
+        background-color: var(--theme-primary-dark);
+        border-color: var(--theme-primary-dark);
+    }
+
+    .btn-toggle-filtros i {
+        transition: transform 0.3s ease;
+    }
+
+    .btn-toggle-filtros.collapsed i.fa-chevron-down {
+        transform: rotate(0deg);
+    }
+
+    .btn-toggle-filtros:not(.collapsed) i.fa-chevron-down {
+        transform: rotate(180deg);
+    }
+
+    .filtros-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 20px;
+        height: 20px;
+        padding: 0 6px;
+        background-color: #e6603a;
+        color: white;
+        border-radius: 10px;
+        font-size: 11px;
+        font-weight: 600;
+        margin-left: 4px;
+    }
+
+    .filtros-badge.hidden {
+        display: none;
+    }
+
+    .filtros-container {
+        background-color: #f8f9fa;
+        border: 1px solid #e9ecef;
+        border-radius: 8px;
+        padding: 15px;
+        margin-bottom: 15px;
+        overflow: hidden;
+        transition: all 0.3s ease;
+    }
+
+    .filtros-container.collapsed {
+        display: none;
+    }
+
+    .filtros-row {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 15px;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .filtro-item {
+        box-sizing: border-box;
+    }
+
+    .filtro-item label {
+        display: block;
+        font-size: 13px;
+        font-weight: 600;
+        color: #495057;
+        margin-bottom: 5px;
+    }
+
+    .filtro-item .form-control {
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box;
+        font-size: 14px;
+        height: 38px;
+        border-radius: 4px;
+    }
+
+    .filtros-acciones {
+        display: flex;
+        gap: 8px;
+        align-items: flex-end;
+        padding-bottom: 2px;
+        flex-shrink: 0;
+    }
+
+    .btn-filtrar {
+        background-color: var(--theme-primary);
+        border-color: var(--theme-primary);
+        color: white;
+        width: 38px;
+        height: 38px;
+        padding: 0;
+        font-size: 15px;
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .btn-filtrar:hover {
+        background-color: var(--theme-primary-dark);
+        border-color: var(--theme-primary-dark);
+        color: white;
+    }
+
+    .btn-limpiar {
+        background-color: #6c757d;
+        border-color: #6c757d;
+        color: white;
+        width: 38px;
+        height: 38px;
+        padding: 0;
+        font-size: 15px;
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .btn-limpiar:hover {
+        background-color: #5a6268;
+        border-color: #5a6268;
+        color: white;
+    }
+
+    /* Estilos para Badges */
+    .badge-estado {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 6px 12px;
+        font-size: 11px;
+        font-weight: 600;
+        border-radius: 20px;
+        line-height: 1;
+        text-align: center;
+        white-space: nowrap;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+    }
+
+    .badge-manual {
+        background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+        color: #1e40af;
+        box-shadow: 0 2px 4px rgba(59, 130, 246, 0.2);
+    }
+
+    .badge-sugerida {
+        background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+        color: #92400e;
+        box-shadow: 0 2px 4px rgba(251, 191, 36, 0.2);
+    }
+
+    .badge-aprobada {
+        background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+        color: #065f46;
+        box-shadow: 0 2px 4px rgba(16, 185, 129, 0.2);
+    }
+
+    .badge-pendiente {
+        background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+        color: #991b1b;
+        box-shadow: 0 2px 4px rgba(239, 68, 68, 0.2);
+    }
+
+    /* Botones de acción en tabla */
+    .acciones-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        justify-content: center;
+        min-width: 120px;
+    }
+
+    .btn-accion {
+        width: 36px;
+        height: 36px;
+        padding: 0;
+        margin: 0;
+        font-size: 14px;
+        border-radius: 8px;
+        transition: all 0.2s ease;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .btn-accion i {
+        font-size: 15px;
+        position: relative;
+        z-index: 1;
+    }
+
+    .btn-accion.btn-editar-faq {
+        background: #fffbeb;
+        border-color: #fcd34d;
+        color: #b45309;
+    }
+
+    .btn-accion.btn-aprobar-faq {
+        background: #ecfdf5;
+        border-color: #6ee7b7;
+        color: #059669;
+    }
+
+    .btn-accion.btn-eliminar-faq {
+        background: #fef2f2;
+        border-color: #fca5a5;
+        color: #dc2626;
+    }
+
+    .btn-accion.btn-editar-faq:hover,
+    .btn-accion.btn-aprobar-faq:hover,
+    .btn-accion.btn-eliminar-faq:hover {
+        background: #f8fafc;
+        border-color: #cbd5e1;
+        color: #64748b;
+        transform: translateY(-1px);
+        box-shadow: 0 2px 6px rgba(100, 116, 139, 0.12);
+    }
+
+    /* Tooltip visual en hover */
+    .btn-accion::before {
+        content: attr(title);
+        position: absolute;
+        bottom: 100%;
+        left: 50%;
+        transform: translateX(-50%) translateY(5px);
+        padding: 4px 8px;
+        background: #1f2937;
+        color: white;
+        font-size: 10px;
+        border-radius: 4px;
+        white-space: nowrap;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.2s ease;
+        z-index: 100;
+    }
+
+    .btn-accion:hover::before {
+        opacity: 1;
+        visibility: visible;
+        transform: translateX(-50%) translateY(-4px);
+    }
+
+    /* ============================================= */
+    /* Vista Desktop (tabla)                         */
+    /* ============================================= */
+    .vista-desktop {
+        display: block;
+    }
+
+    /* ============================================= */
+    /* Vista Móvil (cards)                           */
+    /* ============================================= */
+    .vista-mobile {
+        display: none;
+    }
+
+    .mobile-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .mobile-header .btn-nuevo {
+        background-color: var(--theme-primary);
+        border-color: var(--theme-primary);
+        color: white;
+        padding: 10px 18px;
+        font-size: 14px;
+        font-weight: 500;
+        border-radius: 6px;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .mobile-header .btn-nuevo:hover {
+        background-color: var(--theme-primary-dark);
+        border-color: var(--theme-primary-dark);
+    }
+
+    .faqs-cards-container {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+    }
+
+    .faq-card {
+        background: #fff;
+        border: none;
+        border-radius: 12px;
+        padding: 0;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(0, 0, 0, 0.04);
+        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        overflow: visible;
+        position: relative;
+    }
+
+    .faq-card::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 4px;
+        background: linear-gradient(180deg, var(--theme-primary) 0%, #1a4066 100%);
+        border-radius: 12px 0 0 12px;
+    }
+
+    .faq-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08), 0 8px 24px rgba(0, 0, 0, 0.06);
+    }
+
+    .faq-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 14px 16px;
+        background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        border-bottom: 1px solid #eef2f7;
+        border-radius: 12px 12px 0 0;
+    }
+
+    .faq-card-pregunta {
+        font-size: 14px;
+        font-weight: 600;
+        color: #13304D;
+    }
+
+    .faq-card-body {
+        padding: 16px;
+    }
+
+    .faq-card-info {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px 16px;
+    }
+
+    .faq-card-info-item {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .faq-card-info-item .label {
+        font-size: 10px;
+        color: #9ca3af;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 3px;
+        font-weight: 600;
+    }
+
+    .faq-card-info-item .value {
+        font-size: 13px;
+        color: #374151;
+        font-weight: 500;
+    }
+
+    .faq-card-footer {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        padding: 14px 16px;
+        background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        border-top: 1px solid #eef2f7;
+        overflow: visible;
+        position: relative;
+        border-radius: 0 0 12px 12px;
+    }
+
+    .faq-card-footer .btn {
+        padding: 10px 16px;
+        font-size: 13px;
+        border-radius: 8px;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-weight: 500;
+        transition: all 0.25s ease;
+        border: none;
+    }
+
+    .faq-card-footer .btn-ver {
+        background: var(--theme-primary);
+        color: white;
+        box-shadow: 0 1px 3px rgba(19, 48, 77, 0.15);
+    }
+
+    .faq-card-footer .btn-ver:hover {
+        background: #0d2236;
+        transform: translateY(-1px);
+    }
+
+    .faqs-cards-loading {
+        text-align: center;
+        padding: 50px 20px;
+        color: #9ca3af;
+    }
+
+    .faqs-cards-loading i {
+        font-size: 36px;
+        margin-bottom: 12px;
+        color: var(--theme-primary);
+        opacity: 0.8;
+    }
+
+    .faqs-cards-empty {
+        text-align: center;
+        padding: 50px 20px;
+        color: #9ca3af;
+        background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
+        border-radius: 12px;
+        border: 1px dashed #e5e7eb;
+    }
+
+    .faqs-cards-empty i {
+        font-size: 52px;
+        margin-bottom: 16px;
+        color: #d1d5db;
+    }
+
+    /* Responsive */
+    @media (max-width: 1200px) {
+        .filtros-row {
+            grid-template-columns: repeat(3, 1fr);
+        }
+    }
+
+    @media (max-width: 992px) {
+        .filtros-row {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @media (max-width: 768px) {
+        .vista-desktop {
+            display: none !important;
+        }
+
+        .vista-mobile {
+            display: block !important;
+        }
+
+        .dt-buttons {
+            display: none !important;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .filtros-row {
+            grid-template-columns: 1fr;
+            gap: 12px;
+        }
+
+        .filtros-container {
+            padding: 12px;
+        }
+
+        .btn-toggle-filtros {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .faq-card-info {
+            grid-template-columns: 1fr;
+            gap: 8px;
+        }
+
+        .faq-card-footer {
+            flex-direction: column;
+        }
+
+        .faq-card-footer .btn {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+
+    /* Botón flotante volver arriba */
+    .btn-volver-arriba {
+        position: fixed;
+        right: 20px;
+        bottom: 90px;
+        width: 45px;
+        height: 45px;
+        background-color: var(--theme-primary);
+        border: none;
+        border-radius: 50%;
+        color: white;
+        font-size: 18px;
+        cursor: pointer;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(20px);
+        transition: all 0.3s ease;
+        z-index: 999;
+    }
+
+    .btn-volver-arriba.visible {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+    }
+
+    .btn-volver-arriba:hover {
+        background-color: var(--theme-primary-dark);
+        transform: translateY(-3px);
+        box-shadow: 0 6px 16px rgba(0,0,0,0.3);
+    }
+
+    @media (max-width: 768px) {
+        .btn-volver-arriba {
+            right: 15px;
+            bottom: 85px;
+            width: 42px;
+            height: 42px;
+            font-size: 16px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block main %}
+{% load static %}
+
+<div id="main-content" class="profilepage_2 blog-page">
+    <div class="container-fluid">
+        <div class="block-header">
+            <div class="row g-3">
+                <div class="col-lg-5 col-md-8 col-sm-12">
+                    <h2><a href="javascript:void(0);" class="btn btn-xs btn-link btn-toggle-fullwidth"><i class="fa fa-arrow-right"></i></a>
+                        {{ titulo }}</h2>
+                    <ul class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{% url 'panel_home' %}"><i class="icon-home text-orange"></i></a></li>
+                        <li class="breadcrumb-item">Asistente IA</li>
+                        <li class="breadcrumb-item active">{{ titulo }}</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="row clearfix">
+            <div class="col-lg-12 col-md-12">
+                <div class="card">
+                    <div class="card-body">
+                        <!-- Botón para mostrar/ocultar filtros -->
+                        <div class="filtros-header">
+                            <button type="button" class="btn-toggle-filtros collapsed" id="btn-toggle-filtros">
+                                <i class="fa fa-filter"></i>
+                                <span>Filtros</span>
+                                <span class="filtros-badge hidden" id="filtros-badge">0</span>
+                                <i class="fa fa-chevron-down"></i>
+                            </button>
+                        </div>
+
+                        <!-- Filtros Avanzados (colapsable) -->
+                        <div class="filtros-container collapsed" id="filtros-container">
+                            <div class="filtros-row">
+                                <div class="filtro-item">
+                                    <label for="filtro-categoria">Categoría</label>
+                                    <select class="form-control" id="filtro-categoria">
+                                        <option value="">Todas</option>
+                                        {% for key, label in categorias %}
+                                        <option value="{{ key }}">{{ label }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+
+                                <div class="filtro-item">
+                                    <label for="filtro-origen">Origen</label>
+                                    <select class="form-control" id="filtro-origen">
+                                        <option value="">Todos</option>
+                                        <option value="manual">Manual</option>
+                                        <option value="sugerida_ia">Sugerida por IA</option>
+                                    </select>
+                                </div>
+
+                                <div class="filtro-item">
+                                    <label for="filtro-aprobada">Estado</label>
+                                    <select class="form-control" id="filtro-aprobada">
+                                        <option value="">Todas</option>
+                                        <option value="true">Aprobadas</option>
+                                        <option value="false">Pendientes</option>
+                                    </select>
+                                </div>
+
+                                <div class="filtros-acciones">
+                                    <button type="button" class="btn btn-filtrar" id="btn-aplicar-filtros" title="Filtrar">
+                                        <i class="fa fa-search"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-limpiar" id="btn-limpiar-filtros" title="Limpiar">
+                                        <i class="fa fa-eraser"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Vista Desktop (Tabla) -->
+                        <div class="vista-desktop">
+                            <div class="row clearfix">
+                                <div class="col-lg-12 col-md-12">
+                                    <table id="data_table_ajax" class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>Pregunta</th>
+                                                <th>Categoría</th>
+                                                <th>Origen</th>
+                                                <th>Usos</th>
+                                                <th>Estado</th>
+                                                <th>Acciones</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Vista Móvil (Cards) -->
+                        <div class="vista-mobile">
+                            <div class="mobile-header">
+                                <button type="button" class="btn btn-nuevo" onclick="gestionFaq()">
+                                    <i class="fa fa-plus"></i> Nueva FAQ
+                                </button>
+                                <button type="button" class="btn btn-nuevo" onclick="crearFaqsDefault()" style="background: linear-gradient(135deg, #059669 0%, #047857 100%); margin-left: 6px;">
+                                    <i class="fa fa-magic"></i> FAQs por defecto
+                                </button>
+                                <span class="faqs-count" id="faqs-count"></span>
+                            </div>
+
+                            <div id="faqs-cards-container" class="faqs-cards-container">
+                                <div class="faqs-cards-loading">
+                                    <i class="fa fa-spinner fa-spin"></i>
+                                    <p>Cargando FAQs...</p>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- Botón flotante volver arriba -->
+<button type="button" class="btn-volver-arriba" id="btn-volver-arriba" title="Volver arriba">
+    <i class="fa fa-chevron-up"></i>
+</button>
+
+{% endblock %}
+
+{% block extraJS %}
+<script>
+$(document).ready(function(){
+    cargarTabla();
+
+    // Toggle para mostrar/ocultar filtros
+    $('#btn-toggle-filtros').on('click', function(){
+        var $btn = $(this);
+        var $container = $('#filtros-container');
+
+        $btn.toggleClass('collapsed');
+        $container.toggleClass('collapsed');
+
+        var $span = $btn.find('span').first();
+        if ($btn.hasClass('collapsed')) {
+            $span.text('Filtros');
+        } else {
+            $span.text('Ocultar Filtros');
+        }
+    });
+
+    // Evento para el botón Filtrar
+    $('#btn-aplicar-filtros').on('click', function(){
+        cargarTabla();
+        actualizarBadgeFiltros();
+    });
+
+    // Evento para el botón Limpiar
+    $('#btn-limpiar-filtros').on('click', function(){
+        limpiarFiltros();
+    });
+
+    // Botón volver arriba
+    var $btnVolverArriba = $('#btn-volver-arriba');
+    $(window).on('scroll', function() {
+        if ($(this).scrollTop() > 300) {
+            $btnVolverArriba.addClass('visible');
+        } else {
+            $btnVolverArriba.removeClass('visible');
+        }
+    });
+
+    $btnVolverArriba.on('click', function() {
+        $('html, body').animate({ scrollTop: 0 }, 400);
+    });
+});
+
+function actualizarBadgeFiltros() {
+    var count = 0;
+    if ($('#filtro-categoria').val()) count++;
+    if ($('#filtro-origen').val()) count++;
+    if ($('#filtro-aprobada').val()) count++;
+
+    var $badge = $('#filtros-badge');
+    if (count > 0) {
+        $badge.text(count).removeClass('hidden');
+    } else {
+        $badge.addClass('hidden');
+    }
+}
+
+function limpiarFiltros() {
+    $('#filtro-categoria').val('');
+    $('#filtro-origen').val('');
+    $('#filtro-aprobada').val('');
+    $('#filtros-badge').addClass('hidden');
+    cargarTabla();
+}
+
+var table;
+
+function cargarTabla(){
+    $('#data_table_ajax').dataTable().fnClearTable();
+    $('#data_table_ajax').dataTable().fnDestroy();
+
+    var valores = {
+        "csrfmiddlewaretoken": '{{ csrf_token }}',
+        "filtro_categoria": $("#filtro-categoria").val() || '',
+        "filtro_origen": $("#filtro-origen").val() || '',
+        "filtro_aprobada": $("#filtro-aprobada").val() || ''
+    };
+
+    table = $('#data_table_ajax').DataTable({
+        autoWidth: false,
+        processing: true,
+        searching: true,
+        paging: true,
+        pageLength: 15,
+        order: [[3, 'desc']],
+        language: {
+            url: "https://cdn.datatables.net/plug-ins/1.11.3/i18n/es_es.json"
+        },
+        dom: '<"row"<"col-sm-6"B><"col-sm-6"f>>rtip',
+        buttons: [
+            {
+                text: '<i class="fa fa-plus me-1"></i> Nueva FAQ',
+                className: 'btn dt-btn-orange',
+                action: function() { gestionFaq(); }
+            },
+            {
+                text: '<i class="fa fa-magic me-1"></i> Crear FAQs por defecto',
+                className: 'btn dt-btn-orange',
+                attr: { style: 'margin-left: 6px; background: linear-gradient(135deg, #059669 0%, #047857 100%) !important;' },
+                action: function() { crearFaqsDefault(); }
+            }
+        ],
+        ajax: {
+            "url": "{% url 'asistente_faqs_ajax' %}",
+            "data": valores,
+            "type": "POST",
+            "dataSrc": ""
+        },
+        columns: [
+            { data: "pregunta", render: function(data) {
+                return '<span style="font-weight:600; color:#13304D;">' + (data.length > 60 ? data.substring(0, 60) + '...' : data) + '</span>';
+            }},
+            { data: "categoria", render: function(data) {
+                return '<span class="badge-estado badge-manual">' + data + '</span>';
+            }},
+            { data: "origen", render: function(data, type, row) {
+                var cls = row.origen_key === 'manual' ? 'badge-manual' : 'badge-sugerida';
+                return '<span class="badge-estado ' + cls + '">' + data + '</span>';
+            }},
+            { data: "veces_usada", render: function(data) {
+                return '<span style="font-weight:600;">' + data + '</span>';
+            }},
+            { data: "aprobada", render: function(data) {
+                return data
+                    ? '<span class="badge-estado badge-aprobada"><i class="fa fa-check"></i> Aprobada</span>'
+                    : '<span class="badge-estado badge-pendiente"><i class="fa fa-clock-o"></i> Pendiente</span>';
+            }},
+            { data: null, orderable: false, render: function(data, type, row) {
+                var btns = '<div class="acciones-container">';
+                btns += '<button class="btn btn-accion btn-editar-faq" onclick="gestionFaq(' + row.id + ')" title="Editar"><i class="fa fa-edit"></i></button>';
+                if (!row.aprobada) {
+                    btns += '<button class="btn btn-accion btn-aprobar-faq" onclick="aprobarFaq(' + row.id + ')" title="Aprobar"><i class="fa fa-check"></i></button>';
+                }
+                btns += '<button class="btn btn-accion btn-eliminar-faq" onclick="eliminarFaq(' + row.id + ')" title="Eliminar"><i class="fa fa-trash"></i></button>';
+                btns += '</div>';
+                return btns;
+            }}
+        ],
+        drawCallback: function() {
+            renderMobileCards(this.api().data().toArray());
+        }
+    });
+}
+
+function renderMobileCards(data) {
+    var container = $('#faqs-cards-container');
+
+    if (data.length === 0) {
+        container.html('<div class="faqs-cards-empty"><i class="fa fa-question-circle"></i><p>No se encontraron FAQs</p></div>');
+        $('#faqs-count').text('0 FAQs');
+        return;
+    }
+
+    $('#faqs-count').text(data.length + ' FAQ' + (data.length !== 1 ? 's' : ''));
+
+    var html = '';
+    data.forEach(function(row) {
+        var estadoBadge = row.aprobada
+            ? '<span class="badge-estado badge-aprobada"><i class="fa fa-check"></i> Aprobada</span>'
+            : '<span class="badge-estado badge-pendiente"><i class="fa fa-clock-o"></i> Pendiente</span>';
+        var origenBadge = row.origen_key === 'manual'
+            ? '<span class="badge-estado badge-manual">Manual</span>'
+            : '<span class="badge-estado badge-sugerida">Sugerida IA</span>';
+
+        html += '<div class="faq-card">';
+        html += '<div class="faq-card-header"><span class="faq-card-pregunta">' + row.pregunta + '</span>' + estadoBadge + '</div>';
+        html += '<div class="faq-card-body"><div class="faq-card-info">';
+        html += '<div class="faq-card-info-item"><span class="label">Categoría</span><span class="value">' + row.categoria + '</span></div>';
+        html += '<div class="faq-card-info-item"><span class="label">Origen</span><span class="value">' + origenBadge + '</span></div>';
+        html += '<div class="faq-card-info-item"><span class="label">Usos</span><span class="value" style="font-weight:600;">' + row.veces_usada + '</span></div>';
+        html += '</div></div>';
+        html += '<div class="faq-card-footer">';
+        html += '<button class="btn btn-ver" onclick="gestionFaq(' + row.id + ')"><i class="fa fa-edit"></i> Editar</button>';
+        if (!row.aprobada) {
+            html += '<button class="btn" style="background:#ecfdf5; color:#059669; border:1px solid #6ee7b7;" onclick="aprobarFaq(' + row.id + ')"><i class="fa fa-check"></i> Aprobar</button>';
+        }
+        html += '<button class="btn" style="background:#fef2f2; color:#dc2626; border:1px solid #fca5a5;" onclick="eliminarFaq(' + row.id + ')"><i class="fa fa-trash"></i></button>';
+        html += '</div></div>';
+    });
+    container.html(html);
+}
+
+function crearFaqsDefault() {
+    Swal.fire({
+        title: 'Crear FAQs por defecto',
+        text: 'Se generarán preguntas frecuentes automáticas basadas en los datos del sistema (tarifas, ubicación, horarios, turnos, etc.). Las FAQs que ya existan no se duplicarán.',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Crear FAQs',
+        cancelButtonText: 'Cancelar',
+        confirmButtonColor: '#059669',
+    }).then(function(result) {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: "{% url 'asistente_faqs_default' %}",
+                type: "POST",
+                data: { 'csrfmiddlewaretoken': '{{ csrf_token }}' },
+                beforeSend: function() {
+                    Swal.fire({
+                        title: 'Generando FAQs...',
+                        html: '<i class="fa fa-spinner fa-spin fa-2x"></i><p class="mt-2">Leyendo datos del sistema...</p>',
+                        showConfirmButton: false,
+                        allowOutsideClick: false
+                    });
+                },
+                success: function(response) {
+                    if (response.success) {
+                        Swal.fire({
+                            title: 'FAQs creadas',
+                            text: response.message,
+                            icon: 'success'
+                        }).then(function() {
+                            cargarTabla();
+                        });
+                    } else {
+                        Swal.fire('Error', response.message, 'error');
+                    }
+                },
+                error: function() {
+                    Swal.fire('Error', 'Error al crear las FAQs por defecto', 'error');
+                }
+            });
+        }
+    });
+}
+
+function gestionFaq(id) {
+    var url = "{% url 'asistente_faqs_form' %}";
+    if (id) url += '?pk=' + id;
+
+    $('#modal-lg .modal-content').html('<div class="text-center p-5"><i class="fa fa-spinner fa-spin fa-3x" style="color: var(--theme-primary);"></i><p class="mt-3">Cargando...</p></div>');
+    $('#modal-lg').modal('show');
+
+    $.ajax({
+        url: url,
+        type: "GET",
+        success: function(response) {
+            $('#modal-lg .modal-content').html(response.html_form);
+        },
+        error: function() {
+            $('#modal-lg .modal-content').html('<div class="modal-body"><div class="alert alert-danger">Error al cargar el formulario</div></div>');
+        }
+    });
+}
+
+function guardarFaq() {
+    var formData = $('#form-faq').serialize();
+
+    $.ajax({
+        url: "{% url 'asistente_faqs_guardar' %}",
+        type: "POST",
+        data: formData + '&csrfmiddlewaretoken={{ csrf_token }}',
+        success: function(response) {
+            if (response.success) {
+                $('#modal-lg').modal('hide');
+                Swal.fire({
+                    title: 'Guardado',
+                    text: response.message,
+                    icon: 'success',
+                    timer: 1500,
+                    showConfirmButton: false
+                });
+                cargarTabla();
+            } else {
+                Swal.fire('Error', response.message, 'error');
+            }
+        },
+        error: function() {
+            Swal.fire('Error', 'No se pudo guardar', 'error');
+        }
+    });
+}
+
+function eliminarFaq(id) {
+    Swal.fire({
+        title: '¿Eliminar FAQ?',
+        text: 'Esta acción no se puede deshacer.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#dc3545',
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: "{% url 'asistente_faqs_eliminar' %}",
+                type: "POST",
+                data: { 'pk': id, 'csrfmiddlewaretoken': '{{ csrf_token }}' },
+                success: function(response) {
+                    if (response.success) {
+                        Swal.fire({ title: 'Eliminada', icon: 'success', timer: 1500, showConfirmButton: false });
+                        cargarTabla();
+                    } else {
+                        Swal.fire('Error', response.message, 'error');
+                    }
+                }
+            });
+        }
+    });
+}
+
+function aprobarFaq(id) {
+    $.ajax({
+        url: "{% url 'asistente_faqs_aprobar' %}",
+        type: "POST",
+        data: { 'pk': id, 'csrfmiddlewaretoken': '{{ csrf_token }}' },
+        success: function(response) {
+            if (response.success) {
+                Swal.fire({ title: 'Aprobada', icon: 'success', timer: 1500, showConfirmButton: false });
+                cargarTabla();
+            } else {
+                Swal.fire('Error', response.message, 'error');
+            }
+        }
+    });
+}
+</script>
+{% endblock %}

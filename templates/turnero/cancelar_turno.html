@@ -1,0 +1,444 @@
+{% extends 'turnero/base.html' %}
+
+{% block title %}Cancelar Turno - Turnos RTV{% endblock %}
+
+{% block extra_css %}
+<style>
+    .main-content {
+        justify-content: flex-start !important;
+        padding-top: 2rem !important;
+        background: #f1f5f9 !important;
+    }
+
+    /* ========== Hero Section ========== */
+    .cancelar-hero {
+        background: linear-gradient(135deg, #ef4444 0%, #f87171 50%, #fca5a5 100%);
+        color: white;
+        padding: 2.5rem 2rem;
+        border-radius: 20px;
+        text-align: center;
+        margin-bottom: 1.5rem;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .cancelar-hero::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -20%;
+        width: 300px;
+        height: 300px;
+        background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 70%);
+        border-radius: 50%;
+    }
+
+    .cancelar-hero-icon {
+        width: 60px;
+        height: 60px;
+        background: rgba(255,255,255,0.2);
+        border-radius: 16px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .cancelar-hero h2 {
+        font-size: 1.6rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        position: relative;
+    }
+
+    .cancelar-hero p {
+        font-size: 0.95rem;
+        opacity: 0.9;
+        margin: 0;
+        position: relative;
+    }
+
+    /* ========== Card Turno ========== */
+    .turno-card {
+        background: white;
+        border-radius: 18px;
+        box-shadow: 0 4px 20px rgba(19, 48, 77, 0.08);
+        padding: 2rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .turno-card-header {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid #f1f5f9;
+    }
+
+    .turno-card-header .codigo {
+        background: #13304D;
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        font-weight: 700;
+        font-size: 1.1rem;
+        letter-spacing: 1px;
+    }
+
+    .turno-card-header .estado {
+        background: linear-gradient(135deg, #10b981, #34d399);
+        color: white;
+        padding: 0.35rem 0.85rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+    }
+
+    .turno-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+    }
+
+    .turno-item {
+        background: #f8fafc;
+        padding: 0.85rem 1rem;
+        border-radius: 10px;
+        border-left: 3px solid #e2e8f0;
+    }
+
+    .turno-item label {
+        display: block;
+        color: #64748b;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 0.25rem;
+    }
+
+    .turno-item strong {
+        color: #1e293b;
+        font-size: 0.95rem;
+    }
+
+    /* ========== Warning ========== */
+    .warning-box {
+        background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+        border: 1px solid #fecaca;
+        border-radius: 14px;
+        padding: 1.25rem 1.5rem;
+        margin-bottom: 1.5rem;
+        display: flex;
+        gap: 0.75rem;
+        align-items: flex-start;
+    }
+
+    .warning-box i {
+        color: #ef4444;
+        font-size: 1.25rem;
+        margin-top: 2px;
+    }
+
+    .warning-box p {
+        margin: 0;
+        color: #991b1b;
+        font-size: 0.9rem;
+        line-height: 1.5;
+    }
+
+    /* ========== Buttons ========== */
+    .btn-actions {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+    }
+
+    .btn-cancelar-turno {
+        background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        color: white;
+        border: none;
+        padding: 1rem 2rem;
+        border-radius: 12px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .btn-cancelar-turno:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(239, 68, 68, 0.4);
+    }
+
+    .btn-cancelar-turno:disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
+        transform: none;
+    }
+
+    .btn-volver {
+        background: white;
+        color: #64748b;
+        border: 2px solid #e2e8f0;
+        padding: 1rem 2rem;
+        border-radius: 12px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .btn-volver:hover {
+        background: #f1f5f9;
+        border-color: #13304D;
+        color: #13304D;
+        transform: translateY(-2px);
+    }
+
+    /* ========== Success state ========== */
+    .success-message {
+        display: none;
+        text-align: center;
+        padding: 2rem;
+    }
+
+    .success-message .icon {
+        width: 80px;
+        height: 80px;
+        background: linear-gradient(135deg, #10b981, #34d399);
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        color: white;
+        margin-bottom: 1.5rem;
+    }
+
+    .success-message h3 {
+        color: #1e293b;
+        font-size: 1.3rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .success-message p {
+        color: #64748b;
+        font-size: 0.95rem;
+        margin-bottom: 1.5rem;
+    }
+
+    /* ========== Responsive ========== */
+    @media (max-width: 768px) {
+        .cancelar-hero {
+            padding: 1.75rem 1.25rem;
+            border-radius: 16px;
+        }
+
+        .cancelar-hero-icon {
+            width: 50px;
+            height: 50px;
+            font-size: 1.25rem;
+        }
+
+        .cancelar-hero h2 {
+            font-size: 1.4rem;
+        }
+
+        .turno-card {
+            padding: 1.25rem;
+        }
+
+        .turno-grid {
+            grid-template-columns: 1fr;
+            gap: 0.5rem;
+        }
+
+        .turno-card-header {
+            flex-wrap: wrap;
+        }
+
+        .btn-actions {
+            flex-direction: column;
+        }
+
+        .btn-cancelar-turno,
+        .btn-volver {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .cancelar-hero {
+            padding: 1.5rem 1rem;
+        }
+
+        .cancelar-hero h2 {
+            font-size: 1.25rem;
+        }
+
+        .turno-card {
+            padding: 1rem;
+        }
+
+        .turno-item {
+            padding: 0.6rem 0.8rem;
+        }
+
+        .turno-item strong {
+            font-size: 0.85rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="cancelar-hero" data-aos="fade-down">
+    <div class="cancelar-hero-icon">
+        <i class="fas fa-times-circle"></i>
+    </div>
+    <h2>Cancelar Turno</h2>
+    <p>Confirmá la cancelación de tu turno</p>
+</div>
+
+<!-- Datos del turno -->
+<div class="turno-card" data-aos="fade-up" id="turno-info">
+    <div class="turno-card-header">
+        <span class="codigo">{{ turno.codigo }}</span>
+        <span class="estado">{{ turno.get_estado_display }}</span>
+    </div>
+
+    <div class="turno-grid">
+        <div class="turno-item">
+            <label><i class="fas fa-car me-1"></i> Vehículo</label>
+            <strong>{{ turno.vehiculo.dominio }}</strong>
+        </div>
+        <div class="turno-item">
+            <label><i class="fas fa-calendar me-1"></i> Fecha</label>
+            <strong>{{ turno.fecha|date:"d/m/Y" }}</strong>
+        </div>
+        <div class="turno-item">
+            <label><i class="fas fa-clock me-1"></i> Horario</label>
+            <strong>{{ turno.hora_inicio|time:"H:i" }} hs</strong>
+        </div>
+        <div class="turno-item">
+            <label><i class="fas fa-building me-1"></i> Taller</label>
+            <strong>{{ turno.taller.get_nombre }}</strong>
+        </div>
+        <div class="turno-item" style="grid-column: 1 / -1;">
+            <label><i class="fas fa-map-marker-alt me-1"></i> Dirección</label>
+            <strong>{{ turno.taller.get_direccion }}, {{ turno.taller.get_localidad.nombre }}</strong>
+        </div>
+    </div>
+</div>
+
+<!-- Warning -->
+<div class="warning-box" data-aos="fade-up" data-aos-delay="100" id="warning-box">
+    <i class="fas fa-exclamation-triangle"></i>
+    <div>
+        <p><strong>Esta acción no se puede deshacer.</strong> Una vez cancelado, deberás sacar un nuevo turno si necesitás realizar la revisión técnica.</p>
+    </div>
+</div>
+
+<!-- Botones -->
+<div class="btn-actions" data-aos="fade-up" data-aos-delay="200" id="btn-actions">
+    <a href="{% url 'turnero:home' %}" class="btn-volver">
+        <i class="fas fa-arrow-left"></i>No, mantener turno
+    </a>
+    <button type="button" class="btn-cancelar-turno" id="btn_confirmar_cancelacion">
+        <i class="fas fa-times-circle"></i>Sí, cancelar turno
+    </button>
+</div>
+
+<!-- Success message (hidden) -->
+<div class="turno-card success-message" id="success-message">
+    <div class="icon">
+        <i class="fas fa-check"></i>
+    </div>
+    <h3>Turno cancelado exitosamente</h3>
+    <p>Te enviamos un email de confirmación. Si necesitás, podés sacar un nuevo turno.</p>
+    <a href="{% url 'turnero:home' %}" class="btn-volver" style="display: inline-flex;">
+        <i class="fas fa-home"></i>Volver al inicio
+    </a>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.getElementById('btn_confirmar_cancelacion').addEventListener('click', function() {
+        const btn = this;
+
+        Swal.fire({
+            title: '¿Estás seguro?',
+            text: 'Esta acción cancelará tu turno de forma definitiva.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#ef4444',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Sí, cancelar turno',
+            cancelButtonText: 'No, volver'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                btn.disabled = true;
+                btn.innerHTML = '<span class="loading-spinner"></span> Cancelando...';
+
+                fetch(window.location.href, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': csrftoken,
+                        'Content-Type': 'application/json',
+                    },
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Mostrar success
+                        document.getElementById('turno-info').style.display = 'none';
+                        document.getElementById('warning-box').style.display = 'none';
+                        document.getElementById('btn-actions').style.display = 'none';
+                        document.getElementById('success-message').style.display = 'block';
+
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Turno cancelado',
+                            text: data.message,
+                            confirmButtonColor: '#13304D',
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: data.message,
+                            confirmButtonColor: '#13304D',
+                        });
+                        btn.disabled = false;
+                        btn.innerHTML = '<i class="fas fa-times-circle"></i>Sí, cancelar turno';
+                    }
+                })
+                .catch(error => {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Ocurrió un error al procesar la cancelación.',
+                        confirmButtonColor: '#13304D',
+                    });
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fas fa-times-circle"></i>Sí, cancelar turno';
+                });
+            }
+        });
+    });
+</script>
+{% endblock %}

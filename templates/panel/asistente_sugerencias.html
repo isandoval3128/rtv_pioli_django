@@ -1,0 +1,711 @@
+{% extends "panel/base.html" %}
+{% block extraCss %}
+<style>
+    html, body { overflow-x: hidden; max-width: 100%; }
+    .card-body { overflow-x: hidden; }
+    .container-fluid { overflow-x: hidden; max-width: 100%; }
+
+    /* DataTable */
+    #data_table_ajax { border-collapse: separate; border-spacing: 0; width: 100%; font-size: 13px; }
+    #data_table_ajax thead th {
+        background: linear-gradient(135deg, #13304D 0%, #1a4066 100%);
+        color: #fff; font-weight: 600; font-size: 12px; text-transform: uppercase;
+        letter-spacing: 0.5px; padding: 14px 12px; border: none;
+    }
+    #data_table_ajax thead th:first-child { border-radius: 8px 0 0 0; }
+    #data_table_ajax thead th:last-child { border-radius: 0 8px 0 0; }
+    #data_table_ajax tbody tr { transition: all 0.2s ease; }
+    #data_table_ajax tbody tr:hover { background-color: #f0f4f8 !important; }
+    #data_table_ajax tbody td { padding: 12px; vertical-align: middle; border-bottom: 1px solid #eef2f7; }
+
+    /* Badges estado */
+    .badge-estado {
+        display: inline-flex; align-items: center; gap: 5px;
+        padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 600;
+    }
+    .badge-nueva { background: #fff3cd; color: #856404; }
+    .badge-revisada { background: #cce5ff; color: #004085; }
+    .badge-planificada { background: #d4edda; color: #155724; }
+    .badge-implementada { background: #d1ecf1; color: #0c5460; }
+    .badge-descartada { background: #f5f5f5; color: #6c757d; }
+
+    /* Badge categoria */
+    .badge-categoria {
+        display: inline-flex; align-items: center; gap: 4px;
+        padding: 3px 9px; border-radius: 12px; font-size: 11px; font-weight: 500;
+        background: #f0f4f8; color: #495057; border: 1px solid #e2e8f0;
+    }
+
+    /* Barra de frecuencia */
+    .freq-bar {
+        display: flex; align-items: center; gap: 8px;
+    }
+    .freq-bar-fill {
+        height: 8px; border-radius: 4px;
+        background: linear-gradient(135deg, #003466, #0056b3);
+        min-width: 4px; max-width: 80px;
+    }
+    .freq-bar-count { font-weight: 700; font-size: 13px; color: #13304D; }
+
+    /* Botones de accion */
+    .acciones-container { display: flex; gap: 4px; justify-content: center; }
+    .btn-accion {
+        width: 32px; height: 32px; border-radius: 6px; border: none;
+        display: inline-flex; align-items: center; justify-content: center;
+        cursor: pointer; transition: all 0.2s; font-size: 13px;
+    }
+    .btn-accion-editar { background: #e8f0fe; color: #003466; }
+    .btn-accion-editar:hover { background: #003466; color: #fff; }
+    .btn-accion-estado { background: #e8f0fe; color: #003466; }
+    .btn-accion-estado:hover { background: #003466; color: #fff; }
+    .btn-accion-eliminar { background: #fde8e8; color: #c0392b; }
+    .btn-accion-eliminar:hover { background: #c0392b; color: #fff; }
+
+    /* Filtros */
+    .filtros-header { margin-bottom: 15px; }
+    .btn-toggle-filtros {
+        display: inline-flex; align-items: center; gap: 8px;
+        padding: 8px 16px; border-radius: 8px; border: 1px solid #dee2e6;
+        background: #fff; cursor: pointer; font-size: 13px; font-weight: 500;
+        color: #495057; transition: all 0.2s;
+    }
+    .btn-toggle-filtros:hover { border-color: #003466; color: #003466; }
+    .filtros-container { padding: 15px; background: #f8f9fa; border-radius: 8px; margin-bottom: 15px; }
+    .filtros-container.collapsed { display: none; }
+    .filtros-row { display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end; }
+    .filtro-item { flex: 1; min-width: 150px; }
+    .filtro-item label { font-size: 12px; font-weight: 600; color: #495057; margin-bottom: 4px; display: block; }
+    .filtros-acciones { display: flex; gap: 6px; }
+    .btn-filtrar { background: #003466; color: #fff; border: none; border-radius: 6px; padding: 8px 14px; cursor: pointer; }
+    .btn-filtrar:hover { background: #0056b3; }
+    .btn-limpiar { background: #e9ecef; color: #495057; border: none; border-radius: 6px; padding: 8px 14px; cursor: pointer; }
+    .btn-limpiar:hover { background: #dee2e6; }
+    .filtros-badge { background: #003466; color: #fff; border-radius: 50%; font-size: 10px; width: 18px; height: 18px; display: inline-flex; align-items: center; justify-content: center; }
+    .filtros-badge.hidden { display: none; }
+
+    /* Tooltip ejemplo */
+    .ejemplo-tooltip {
+        display: inline-block; max-width: 180px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        font-size: 12px; color: #6c757d; cursor: help; vertical-align: middle;
+    }
+
+    /* Mobile cards */
+    .vista-mobile { display: none; }
+    .sug-card {
+        background: #fff; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        margin-bottom: 12px; overflow: hidden; border: 1px solid #eef2f7;
+    }
+    .sug-card-header { padding: 12px 14px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f0f0f0; }
+    .sug-card-body { padding: 12px 14px; }
+    .sug-card-info-item { display: flex; justify-content: space-between; padding: 4px 0; font-size: 13px; }
+    .sug-card-info-item .label { color: #6c757d; }
+    .sug-card-info-item .value { font-weight: 500; }
+    .sug-card-footer { padding: 10px 14px; border-top: 1px solid #f0f0f0; display: flex; gap: 8px; justify-content: flex-end; }
+    .sug-card-footer .btn-ver { font-size: 12px; padding: 5px 12px; border-radius: 6px; border: none; cursor: pointer; background: #003466; color: #fff; }
+
+    .sug-cards-loading, .sug-cards-empty { text-align: center; padding: 40px 20px; color: #6c757d; }
+    .sug-cards-loading i, .sug-cards-empty i { font-size: 32px; margin-bottom: 10px; display: block; }
+
+    /* Btn volver arriba */
+    .btn-volver-arriba {
+        position: fixed; bottom: 20px; right: 20px; width: 44px; height: 44px;
+        border-radius: 50%; background: #13304D; color: #fff; border: none;
+        box-shadow: 0 3px 12px rgba(0,0,0,0.2); cursor: pointer;
+        display: none; align-items: center; justify-content: center;
+        z-index: 9999; transition: all 0.3s;
+    }
+    .btn-volver-arriba.visible { display: flex; }
+    .btn-volver-arriba:hover { background: #1a4066; transform: translateY(-2px); }
+
+    @media (max-width: 768px) {
+        .vista-desktop { display: none !important; }
+        .vista-mobile { display: block !important; }
+        .filtros-row { flex-direction: column; gap: 10px; }
+        .filtro-item { min-width: 100%; }
+        .filtros-acciones { justify-content: flex-start; }
+        .sug-card-header { flex-wrap: wrap; gap: 6px; }
+        .sug-card-info-item { font-size: 12px; }
+    }
+    @media (max-width: 480px) {
+        .sug-card-footer { justify-content: center; }
+        .sug-card-footer .btn-ver { flex: 1; text-align: center; }
+        .btn-toggle-filtros { width: 100%; justify-content: center; }
+    }
+</style>
+{% endblock %}
+
+{% block main %}
+{% load static %}
+
+<div id="main-content" class="profilepage_2 blog-page">
+    <div class="container-fluid">
+        <div class="block-header">
+            <div class="row g-3">
+                <div class="col-lg-5 col-md-8 col-sm-12">
+                    <h2><a href="javascript:void(0);" class="btn btn-xs btn-link btn-toggle-fullwidth"><i class="fa fa-arrow-right"></i></a>
+                        {{ titulo }}</h2>
+                    <ul class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{% url 'panel_home' %}"><i class="icon-home text-orange"></i></a></li>
+                        <li class="breadcrumb-item">Asistente IA</li>
+                        <li class="breadcrumb-item active">{{ titulo }}</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="row clearfix">
+            <div class="col-lg-12 col-md-12">
+                <div class="card">
+                    <div class="card-body">
+                        <!-- Filtros -->
+                        <div class="filtros-header">
+                            <button type="button" class="btn-toggle-filtros collapsed" id="btn-toggle-filtros">
+                                <i class="fa fa-filter"></i>
+                                <span>Filtros</span>
+                                <span class="filtros-badge hidden" id="filtros-badge">0</span>
+                                <i class="fa fa-chevron-down"></i>
+                            </button>
+                        </div>
+
+                        <div class="filtros-container collapsed" id="filtros-container">
+                            <div class="filtros-row">
+                                <div class="filtro-item">
+                                    <label for="filtro-estado">Estado</label>
+                                    <select class="form-control" id="filtro-estado">
+                                        <option value="">Todos</option>
+                                        {% for key, label in estados %}
+                                        <option value="{{ key }}">{{ label }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="filtro-item">
+                                    <label for="filtro-categoria">Categoria</label>
+                                    <select class="form-control" id="filtro-categoria">
+                                        <option value="">Todas</option>
+                                        {% for key, label in categorias %}
+                                        <option value="{{ key }}">{{ label }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="filtros-acciones">
+                                    <button type="button" class="btn btn-filtrar" id="btn-aplicar-filtros" title="Filtrar"><i class="fa fa-search"></i></button>
+                                    <button type="button" class="btn btn-limpiar" id="btn-limpiar-filtros" title="Limpiar"><i class="fa fa-eraser"></i></button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Vista Desktop -->
+                        <div class="vista-desktop">
+                            <div class="row clearfix">
+                                <div class="col-lg-12 col-md-12">
+                                    <table id="data_table_ajax" class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>Tema</th>
+                                                <th>Frecuencia</th>
+                                                <th>Categoria</th>
+                                                <th>Estado</th>
+                                                <th>Ejemplo</th>
+                                                <th>Fecha</th>
+                                                <th>Acciones</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Vista Mobile -->
+                        <div class="vista-mobile">
+                            <div class="mobile-header">
+                                <span class="sug-count" id="sug-count"></span>
+                            </div>
+                            <div id="sug-cards-container" class="sug-cards-container">
+                                <div class="sug-cards-loading">
+                                    <i class="fa fa-spinner fa-spin"></i>
+                                    <p>Cargando sugerencias...</p>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<button type="button" class="btn-volver-arriba" id="btn-volver-arriba" title="Volver arriba">
+    <i class="fa fa-chevron-up"></i>
+</button>
+
+{% endblock %}
+
+{% block extraJS %}
+<script>
+var tableData = [];
+
+$(document).ready(function(){
+    cargarTabla();
+
+    $('#btn-toggle-filtros').on('click', function(){
+        $(this).toggleClass('collapsed');
+        $('#filtros-container').toggleClass('collapsed');
+        var $span = $(this).find('span').first();
+        $span.text($(this).hasClass('collapsed') ? 'Filtros' : 'Ocultar Filtros');
+    });
+
+    $('#btn-aplicar-filtros').on('click', function(){
+        cargarTabla();
+        actualizarBadgeFiltros();
+    });
+
+    $('#btn-limpiar-filtros').on('click', function(){
+        $('#filtro-estado').val('');
+        $('#filtro-categoria').val('');
+        $('#filtros-badge').addClass('hidden');
+        cargarTabla();
+    });
+
+    var $btnVolverArriba = $('#btn-volver-arriba');
+    $(window).on('scroll', function() {
+        $btnVolverArriba.toggleClass('visible', $(this).scrollTop() > 300);
+    });
+    $btnVolverArriba.on('click', function() {
+        $('html, body').animate({ scrollTop: 0 }, 400);
+    });
+});
+
+var maxFreq = 1;
+
+function actualizarBadgeFiltros() {
+    var count = 0;
+    if ($('#filtro-estado').val()) count++;
+    if ($('#filtro-categoria').val()) count++;
+    var $badge = $('#filtros-badge');
+    count > 0 ? $badge.text(count).removeClass('hidden') : $badge.addClass('hidden');
+}
+
+var table;
+
+function cargarTabla(){
+    $('#data_table_ajax').dataTable().fnClearTable();
+    $('#data_table_ajax').dataTable().fnDestroy();
+
+    var valores = {
+        "csrfmiddlewaretoken": '{{ csrf_token }}',
+        "filtro_estado": $("#filtro-estado").val() || '',
+        "filtro_categoria": $("#filtro-categoria").val() || ''
+    };
+
+    table = $('#data_table_ajax').DataTable({
+        autoWidth: false,
+        processing: true,
+        searching: true,
+        paging: true,
+        pageLength: 20,
+        order: [[1, 'desc']],
+        language: {
+            url: "https://cdn.datatables.net/plug-ins/1.11.3/i18n/es_es.json"
+        },
+        ajax: {
+            "url": "{% url 'asistente_sugerencias_ajax' %}",
+            "data": valores,
+            "type": "POST",
+            "dataSrc": function(json) {
+                maxFreq = 1;
+                tableData = json;
+                json.forEach(function(r) { if (r.veces_detectada > maxFreq) maxFreq = r.veces_detectada; });
+                return json;
+            }
+        },
+        columns: [
+            { data: "tema", render: function(data) {
+                return '<span style="font-weight:500;">' + data + '</span>';
+            }},
+            { data: "veces_detectada", render: function(data) {
+                var pct = Math.max((data / maxFreq) * 80, 4);
+                return '<div class="freq-bar"><div class="freq-bar-fill" style="width:' + pct + 'px;"></div><span class="freq-bar-count">' + data + '</span></div>';
+            }},
+            { data: "categoria", render: function(data) {
+                return '<span class="badge-categoria">' + data + '</span>';
+            }},
+            { data: "estado", render: function(data, type, row) {
+                return '<span class="badge-estado badge-' + row.estado_key + '">' + data + '</span>';
+            }},
+            { data: "ultimo_ejemplo", render: function(data) {
+                var corto = data.length > 50 ? data.substring(0, 50) + '...' : data;
+                return '<span class="ejemplo-tooltip" title="' + data.replace(/"/g, '&quot;') + '">' + corto + '</span>';
+            }},
+            { data: "created_at" },
+            { data: null, orderable: false, render: function(data, type, row) {
+                var btns = '<div class="acciones-container">';
+                btns += '<button class="btn btn-accion btn-accion-editar" onclick="editarSugerencia(' + row.id + ')" title="Editar"><i class="fa fa-pencil"></i></button>';
+                if (row.session_id) {
+                    btns += '<button class="btn btn-accion btn-accion-estado" onclick="verConversacion(' + row.session_id + ')" title="Ver conversacion"><i class="fa fa-eye"></i></button>';
+                }
+                btns += '<button class="btn btn-accion btn-accion-eliminar" onclick="eliminarSugerencia(' + row.id + ')" title="Eliminar"><i class="fa fa-trash"></i></button>';
+                btns += '</div>';
+                return btns;
+            }}
+        ],
+        drawCallback: function() {
+            renderMobileCards(this.api().data().toArray());
+        }
+    });
+}
+
+function getRowById(id) {
+    for (var i = 0; i < tableData.length; i++) {
+        if (tableData[i].id === id) return tableData[i];
+    }
+    return null;
+}
+
+function renderMobileCards(data) {
+    var container = $('#sug-cards-container');
+    if (data.length === 0) {
+        container.html('<div class="sug-cards-empty"><i class="fa fa-lightbulb-o"></i><p>No se encontraron sugerencias</p></div>');
+        $('#sug-count').text('0 sugerencias');
+        return;
+    }
+    $('#sug-count').text(data.length + ' sugerencia' + (data.length !== 1 ? 's' : ''));
+
+    var html = '';
+    data.forEach(function(row) {
+        var badgeClass = 'badge-' + row.estado_key;
+        html += '<div class="sug-card">';
+        html += '<div class="sug-card-header"><span style="font-weight:600; color:#13304D;">' + row.tema + '</span><span class="badge-estado ' + badgeClass + '">' + row.estado + '</span></div>';
+        html += '<div class="sug-card-body"><div class="sug-card-info">';
+        html += '<div class="sug-card-info-item"><span class="label">Frecuencia</span><span class="value" style="font-weight:700; color:#13304D;">' + row.veces_detectada + ' veces</span></div>';
+        html += '<div class="sug-card-info-item"><span class="label">Categoria</span><span class="value"><span class="badge-categoria">' + row.categoria + '</span></span></div>';
+        html += '<div class="sug-card-info-item"><span class="label">Ejemplo</span><span class="value" style="font-size:12px;">' + row.ultimo_ejemplo + '</span></div>';
+        html += '<div class="sug-card-info-item"><span class="label">Fecha</span><span class="value">' + row.created_at + '</span></div>';
+        if (row.notas_admin) html += '<div class="sug-card-info-item"><span class="label">Notas</span><span class="value">' + row.notas_admin + '</span></div>';
+        html += '</div></div>';
+        html += '<div class="sug-card-footer">';
+        html += '<button class="btn-ver" onclick="editarSugerencia(' + row.id + ')"><i class="fa fa-pencil"></i> Editar</button>';
+        if (row.session_id) html += '<button class="btn-ver" onclick="verConversacion(' + row.session_id + ')"><i class="fa fa-eye"></i> Conv.</button>';
+        html += '</div></div>';
+    });
+    container.html(html);
+}
+
+// Transiciones válidas de estado (cadena progresiva)
+var ESTADO_TRANSICIONES = {
+    'nueva': ['revisada'],
+    'revisada': ['planificada', 'descartada'],
+    'planificada': ['implementada'],
+    'implementada': [],
+    'descartada': []
+};
+
+var ESTADO_LABELS = {
+    'nueva': 'Nueva',
+    'revisada': 'Revisada',
+    'planificada': 'Planificada',
+    'implementada': 'Implementada',
+    'descartada': 'Descartada'
+};
+
+// Mensajes de ayuda por transición
+var ESTADO_AYUDA = {
+    'nueva': 'Marcar como <strong>Revisada</strong> enviará un email al gerente para que decida.',
+    'revisada': 'El gerente puede decidir desde el email recibido, o podés hacerlo manualmente.',
+    'planificada': 'Marcar como <strong>Implementada</strong> permitirá crear una FAQ.',
+    'implementada': 'Esta sugerencia ya fue implementada. No se puede cambiar el estado.',
+    'descartada': 'Esta sugerencia fue descartada. No se puede cambiar el estado.'
+};
+
+function editarSugerencia(id) {
+    var row = getRowById(id);
+    if (!row) return;
+
+    var estadoActual = row.estado_key;
+    var transiciones = ESTADO_TRANSICIONES[estadoActual] || [];
+    var esTerminal = transiciones.length === 0;
+
+    // Construir opciones de estado (actual + transiciones válidas)
+    var estadosHtml = '<option value="' + estadoActual + '" selected>' + ESTADO_LABELS[estadoActual] + ' (actual)</option>';
+    transiciones.forEach(function(key) {
+        estadosHtml += '<option value="' + key + '">' + ESTADO_LABELS[key] + '</option>';
+    });
+
+    // Opciones de categoría FAQ (para cuando se selecciona implementada)
+    var faqCategoriasHtml = '<option value="">-- Seleccionar categoría --</option>';
+    {% for key, label in faq_categorias %}
+    faqCategoriasHtml += '<option value="{{ key }}">{{ label }}</option>';
+    {% endfor %}
+
+    // Info de ayuda sobre la transición
+    var ayudaHtml = '<div id="swal-ayuda" style="background:#e8f4fd; border-left:3px solid #003466; padding:8px 12px; margin-bottom:14px; border-radius:0 6px 6px 0; font-size:12px; color:#004085;">' +
+        '<i class="fa fa-info-circle"></i> ' + (ESTADO_AYUDA[estadoActual] || '') + '</div>';
+
+    // Si es terminal, no mostrar select de estado
+    var estadoFieldHtml = '';
+    if (esTerminal) {
+        estadoFieldHtml =
+            '<label style="font-weight:600; margin-bottom:4px; display:block;">Estado</label>' +
+            '<div style="margin:0 0 12px 0; padding:8px 12px; background:#f5f5f5; border-radius:6px; font-size:13px; color:#6c757d;">' +
+            '<span class="badge-estado badge-' + estadoActual + '" style="font-size:12px;">' + ESTADO_LABELS[estadoActual] + '</span>' +
+            ' <span style="font-size:11px;">(estado final)</span></div>';
+    } else {
+        estadoFieldHtml =
+            '<label style="font-weight:600; margin-bottom:4px; display:block;">Estado</label>' +
+            '<select id="swal-edit-estado" class="swal2-select" style="margin:0 0 12px 0; width:100%; font-size:13px;">' + estadosHtml + '</select>';
+    }
+
+    // Campo categoría FAQ (oculto, se muestra solo al elegir implementada)
+    var categoriaFaqHtml =
+        '<div id="swal-categoria-faq-wrapper" style="display:none; margin-bottom:12px;">' +
+        '<label style="font-weight:600; margin-bottom:4px; display:block;">Categoría para la FAQ</label>' +
+        '<select id="swal-edit-faq-categoria" class="swal2-select" style="margin:0; width:100%; font-size:13px;">' + faqCategoriasHtml + '</select>' +
+        '<small style="color:#6c757d; font-size:11px;">Se usará al crear la FAQ de esta sugerencia.</small>' +
+        '</div>';
+
+    Swal.fire({
+        title: 'Editar sugerencia',
+        html:
+            '<div style="text-align:left; font-size:13px;">' +
+            '<div style="background:#f8f9fa; border-radius:8px; padding:10px 14px; margin-bottom:14px; border:1px solid #e9ecef;">' +
+            '<div style="font-weight:600; color:#13304D; margin-bottom:4px;">' + row.tema + '</div>' +
+            '<div style="font-size:12px; color:#6c757d;">Detectada ' + row.veces_detectada + ' vez/veces - Desde ' + row.created_at + '</div>' +
+            '<div style="font-size:12px; color:#6c757d; margin-top:4px;"><strong>Ejemplo:</strong> ' + row.ultimo_ejemplo + '</div>' +
+            '</div>' +
+            ayudaHtml +
+            estadoFieldHtml +
+            categoriaFaqHtml +
+            '<label style="font-weight:600; margin-bottom:4px; display:block;">Notas</label>' +
+            '<textarea id="swal-edit-notas" class="swal2-textarea" style="margin:0; width:100%; min-height:60px; font-size:13px;" placeholder="Notas internas sobre esta sugerencia...">' + (row.notas_admin || '') + '</textarea>' +
+            '</div>',
+        showCancelButton: true,
+        confirmButtonColor: '#003466',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: 'Guardar',
+        cancelButtonText: 'Cancelar',
+        focusConfirm: false,
+        didOpen: function() {
+            var estadoEl = document.getElementById('swal-edit-estado');
+            if (estadoEl) {
+                estadoEl.addEventListener('change', function() {
+                    var wrapper = document.getElementById('swal-categoria-faq-wrapper');
+                    var ayuda = document.getElementById('swal-ayuda');
+                    if (this.value === 'implementada') {
+                        wrapper.style.display = 'block';
+                        ayuda.innerHTML = '<i class="fa fa-info-circle"></i> Al guardar como <strong>Implementada</strong> se creará una FAQ. Seleccioná la categoría.';
+                    } else {
+                        wrapper.style.display = 'none';
+                        ayuda.innerHTML = '<i class="fa fa-info-circle"></i> ' + (ESTADO_AYUDA[this.value] || ESTADO_AYUDA[estadoActual] || '');
+                    }
+                });
+            }
+        },
+        preConfirm: function() {
+            var estadoEl = document.getElementById('swal-edit-estado');
+            var nuevoEstado = estadoEl ? estadoEl.value : estadoActual;
+            var faqCategoria = '';
+
+            if (nuevoEstado === 'implementada') {
+                var catEl = document.getElementById('swal-edit-faq-categoria');
+                faqCategoria = catEl ? catEl.value : '';
+                if (!faqCategoria) {
+                    Swal.showValidationMessage('Seleccioná una categoría para la FAQ');
+                    return false;
+                }
+            }
+
+            return {
+                estado: nuevoEstado,
+                notas: document.getElementById('swal-edit-notas').value,
+                faq_categoria: faqCategoria
+            };
+        }
+    }).then(function(result) {
+        if (!result.isConfirmed) return;
+        var cambios = result.value;
+        var pendientes = 0;
+        var esImplementada = false;
+        var emailRevisada = false;
+        var faqCategoria = cambios.faq_categoria || '';
+
+        if (cambios.estado !== row.estado_key) pendientes++;
+        if (cambios.notas !== (row.notas_admin || '')) pendientes++;
+
+        if (pendientes === 0) return;
+
+        var completados = 0;
+        var errores = [];
+        function verificarCompleto(res) {
+            completados++;
+            if (!res.success) errores.push(res.message);
+            if (res.crear_faq && res.sugerencia) esImplementada = res.sugerencia;
+            if (res.email_enviado !== undefined) emailRevisada = res;
+
+            if (completados >= pendientes) {
+                cargarTabla();
+                if (errores.length > 0) {
+                    Swal.fire({ title: 'Error', text: errores.join(', '), icon: 'error', confirmButtonColor: '#003466' });
+                } else if (esImplementada) {
+                    esImplementada.faq_categoria = faqCategoria;
+                    ofrecerCrearFaq(esImplementada);
+                } else if (emailRevisada) {
+                    if (emailRevisada.email_enviado) {
+                        Swal.fire({
+                            title: 'Email enviado',
+                            html: 'Se envió un email al gerente con las opciones para <strong>implementar</strong> o <strong>declinar</strong> esta sugerencia.',
+                            icon: 'success',
+                            confirmButtonColor: '#003466',
+                            timer: 4000,
+                            showConfirmButton: true
+                        });
+                    } else {
+                        Swal.fire({
+                            title: 'Estado actualizado',
+                            html: 'La sugerencia se marcó como revisada pero <strong>no se pudo enviar el email</strong>: ' + (emailRevisada.email_mensaje || 'Error desconocido'),
+                            icon: 'warning',
+                            confirmButtonColor: '#003466'
+                        });
+                    }
+                }
+            }
+        }
+
+        if (cambios.estado !== row.estado_key) {
+            $.ajax({
+                url: "{% url 'asistente_sugerencias_actualizar' %}",
+                type: "POST",
+                data: { csrfmiddlewaretoken: '{{ csrf_token }}', pk: id, campo: 'estado', valor: cambios.estado },
+                success: verificarCompleto
+            });
+        }
+        if (cambios.notas !== (row.notas_admin || '')) {
+            $.ajax({
+                url: "{% url 'asistente_sugerencias_actualizar' %}",
+                type: "POST",
+                data: { csrfmiddlewaretoken: '{{ csrf_token }}', pk: id, campo: 'notas_admin', valor: cambios.notas },
+                success: verificarCompleto
+            });
+        }
+    });
+}
+
+function ofrecerCrearFaq(sug) {
+    Swal.fire({
+        title: 'Crear FAQ',
+        text: 'La sugerencia fue marcada como implementada. ¿Queres crear una FAQ para que el asistente responda esta consulta?',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#003466',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: 'Si, crear FAQ',
+        cancelButtonText: 'No, solo marcar'
+    }).then(function(result) {
+        if (!result.isConfirmed) return;
+        mostrarFormFaq(sug);
+    });
+}
+
+function mostrarFormFaq(sug) {
+    var catPreseleccionada = sug.faq_categoria || '';
+    var faqCategoriasHtml = '';
+    {% for key, label in faq_categorias %}
+    faqCategoriasHtml += '<option value="{{ key }}"' + (catPreseleccionada === '{{ key }}' ? ' selected' : '') + '>{{ label }}</option>';
+    {% endfor %}
+
+    Swal.fire({
+        title: 'Nueva FAQ desde sugerencia',
+        html:
+            '<div style="text-align:left; font-size:13px;">' +
+            '<label style="font-weight:600; margin-bottom:4px; display:block;">Pregunta</label>' +
+            '<input id="swal-faq-pregunta" class="swal2-input" style="margin:0 0 12px 0; width:100%;" value="' + sug.tema.replace(/"/g, '&quot;') + '">' +
+            '<label style="font-weight:600; margin-bottom:4px; display:block;">Respuesta</label>' +
+            '<textarea id="swal-faq-respuesta" class="swal2-textarea" style="margin:0 0 12px 0; width:100%; min-height:80px;" placeholder="Escribi la respuesta que dara el asistente..."></textarea>' +
+            '<label style="font-weight:600; margin-bottom:4px; display:block;">Categoria</label>' +
+            '<select id="swal-faq-categoria" class="swal2-select" style="margin:0; width:100%;">' + faqCategoriasHtml + '</select>' +
+            '</div>',
+        showCancelButton: true,
+        confirmButtonColor: '#003466',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: 'Crear FAQ',
+        cancelButtonText: 'Cancelar',
+        focusConfirm: false,
+        preConfirm: function() {
+            var pregunta = document.getElementById('swal-faq-pregunta').value.trim();
+            var respuesta = document.getElementById('swal-faq-respuesta').value.trim();
+            if (!pregunta || !respuesta) {
+                Swal.showValidationMessage('Pregunta y respuesta son obligatorias');
+                return false;
+            }
+            return {
+                pregunta: pregunta,
+                respuesta: respuesta,
+                categoria: document.getElementById('swal-faq-categoria').value
+            };
+        }
+    }).then(function(result) {
+        if (!result.isConfirmed) return;
+        $.ajax({
+            url: "{% url 'asistente_sugerencias_crear_faq' %}",
+            type: "POST",
+            data: {
+                csrfmiddlewaretoken: '{{ csrf_token }}',
+                pregunta: result.value.pregunta,
+                respuesta: result.value.respuesta,
+                categoria: result.value.categoria
+            },
+            success: function(res) {
+                if (res.success) {
+                    Swal.fire({ title: 'FAQ creada', text: res.message, icon: 'success', confirmButtonColor: '#003466', timer: 2000, showConfirmButton: false });
+                } else {
+                    Swal.fire({ title: 'Error', text: res.message, icon: 'error', confirmButtonColor: '#003466' });
+                }
+            }
+        });
+    });
+}
+
+function eliminarSugerencia(id) {
+    Swal.fire({
+        title: 'Eliminar sugerencia',
+        text: '¿Estas seguro de eliminar esta sugerencia?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#c0392b',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: 'Si, eliminar',
+        cancelButtonText: 'Cancelar'
+    }).then(function(result) {
+        if (!result.isConfirmed) return;
+        $.ajax({
+            url: "{% url 'asistente_sugerencias_eliminar' %}",
+            type: "POST",
+            data: { csrfmiddlewaretoken: '{{ csrf_token }}', pk: id },
+            success: function(res) {
+                if (res.success) {
+                    Swal.fire({ title: 'Eliminada', text: 'Sugerencia eliminada correctamente', icon: 'success', confirmButtonColor: '#003466', timer: 1500, showConfirmButton: false });
+                    cargarTabla();
+                }
+                else Swal.fire({ title: 'Error', text: res.message, icon: 'error', confirmButtonColor: '#003466' });
+            }
+        });
+    });
+}
+
+function verConversacion(sessionId) {
+    var url = "{% url 'asistente_conversaciones_ver' %}?pk=" + sessionId;
+    $('#modal-lg .modal-content').html('<div class="text-center p-5"><i class="fa fa-spinner fa-spin fa-3x" style="color: var(--theme-primary);"></i><p class="mt-3">Cargando conversacion...</p></div>');
+    $('#modal-lg').modal('show');
+    $.ajax({
+        url: url,
+        type: "GET",
+        success: function(response) {
+            $('#modal-lg .modal-content').html(response.html_form);
+        },
+        error: function() {
+            $('#modal-lg .modal-content').html('<div class="modal-body"><div class="alert alert-danger">Error al cargar la conversacion</div></div>');
+        }
+    });
+}
+</script>
+{% endblock %}
