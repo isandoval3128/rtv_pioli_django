@@ -234,18 +234,7 @@ class Turno(models.Model):
         token = self.generar_token_verificacion(self.codigo)
 
         # URL de verificación del turno (página profesional al escanear)
-        # Usa SITE_URL_LOCAL si está definido (para desarrollo), sino usa SITE_URL (producción)
-        import socket
-        hostname = socket.gethostname().lower()
-
-        # Si hay SITE_URL_LOCAL configurado y no estamos en el servidor de producción
-        site_url_local = getattr(settings, 'SITE_URL_LOCAL', None)
-        site_url_prod = getattr(settings, 'SITE_URL', 'https://rtvpioli.com.ar')
-
-        # Detecta producción por IP del servidor o nombre del host
-        es_produccion = '167.71.93.198' in hostname or 'rtvpioli' in hostname or site_url_local is None
-
-        site_url = site_url_prod if es_produccion else site_url_local
+        site_url = settings.SITE_URL
         qr_url = f"{site_url}/turnero/verificar/{self.codigo}/?t={token}"
 
         qr.add_data(qr_url)

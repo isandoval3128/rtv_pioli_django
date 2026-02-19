@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
+import platform
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -29,10 +30,12 @@ DEBUG = True
 
 ALLOWED_HOSTS = ["rtvpioli.com.ar", "www.rtvpioli.com.ar", '167.71.93.198', 'localhost', '127.0.0.1']
 
-# URL base del sitio para generacion de QR y enlaces
-SITE_URL = "https://rtvpioli.com.ar"
-# URL local para desarrollo (descomentar para probar QR en local)
-SITE_URL_LOCAL = "http://127.0.0.1:8000"  # Cambiar a tu IP local si queres escanear desde el celular (ej: "http://192.168.1.X:8000")
+# URL base del sitio para generacion de QR y enlaces en emails
+# Detecta automáticamente: Windows = desarrollo local, Linux = producción
+if platform.system() == 'Windows':
+    SITE_URL = "http://127.0.0.1:8000"  # Cambiar a tu IP local si queres escanear desde el celular (ej: "http://192.168.1.X:8000")
+else:
+    SITE_URL = "https://rtvpioli.com.ar"
 
 
 # Application definition
