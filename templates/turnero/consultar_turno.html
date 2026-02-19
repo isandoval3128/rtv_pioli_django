@@ -1251,12 +1251,15 @@
         });
     }
 
-    // Confirmar cancelación
+    // Confirmar cancelación (envía email con link tokenizado)
     function confirmarCancelacion(turnoId, codigo) {
         Swal.fire({
             title: '<i class="fas fa-exclamation-triangle text-danger me-2"></i> Cancelar Turno',
             html: `
-                <p>¿Estás seguro de que querés cancelar el turno <strong>${codigo}</strong>?</p>
+                <p>¿Querés solicitar la cancelación del turno <strong>${codigo}</strong>?</p>
+                <p style="font-size: 0.9rem; color: #6c757d;">
+                    Se enviará un email al correo registrado con un link para confirmar la cancelación.
+                </p>
 
                 <div class="text-start mt-3">
                     <label for="motivo_cancelacion" class="form-label" style="color: #13304D; font-weight: 600;">
@@ -1271,15 +1274,15 @@
                     ></textarea>
                 </div>
 
-                <div class="alert alert-danger mt-3 mb-0" style="font-size: 0.9rem;">
-                    <i class="fas fa-exclamation-circle me-2"></i>
-                    <strong>Esta acción no se puede deshacer</strong>
+                <div class="alert alert-info mt-3 mb-0" style="font-size: 0.9rem;">
+                    <i class="fas fa-envelope me-2"></i>
+                    <strong>Recibirás un email para confirmar la cancelación</strong>
                 </div>
             `,
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#ef4444',
-            confirmButtonText: '<i class="fas fa-times-circle me-2"></i>Sí, cancelar turno',
+            confirmButtonText: '<i class="fas fa-envelope me-2"></i>Enviar solicitud',
             cancelButtonText: 'No, mantener turno',
             showLoaderOnConfirm: true,
             preConfirm: () => {
@@ -1308,12 +1311,11 @@
         }).then((result) => {
             if (result.isConfirmed) {
                 Swal.fire({
-                    title: '¡Turno cancelado!',
-                    text: result.value.message,
-                    icon: 'success',
-                    confirmButtonText: 'Entendido'
-                }).then(() => {
-                    location.reload();
+                    title: '<i class="fas fa-envelope-open-text text-success me-2"></i> Email enviado',
+                    html: result.value.message,
+                    icon: 'info',
+                    confirmButtonText: 'Entendido',
+                    confirmButtonColor: '#13304D'
                 });
             }
         });

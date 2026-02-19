@@ -15,7 +15,8 @@ from core.models import EmailConfig
 
 def cancelar_turno_definitivo(request, turno_id):
     """
-    Cancela un turno de forma definitiva (sin posibilidad de reprogramar)
+    Solicita la cancelación de un turno enviando un email con link tokenizado.
+    El turno NO se cancela directamente; el cliente debe confirmar desde el email.
     """
     if request.method == 'POST':
         import json
@@ -37,23 +38,29 @@ def cancelar_turno_definitivo(request, turno_id):
         except (json.JSONDecodeError, ValueError):
             pass
 
-        # Cambiar estado a CANCELADO y guardar motivo en observaciones
-        turno.estado = 'CANCELADO'
+        # Guardar motivo en observaciones (se preserva al confirmar cancelación)
         if motivo:
-            # Agregar motivo a observaciones (preservando observaciones anteriores)
+            obs_motivo = f"Motivo de cancelación: {motivo}"
             if turno.observaciones:
-                turno.observaciones = f"{turno.observaciones}\n\nMotivo de cancelación: {motivo}"
+                turno.observaciones = f"{turno.observaciones}\n\n{obs_motivo}"
             else:
-                turno.observaciones = f"Motivo de cancelación: {motivo}"
-        turno.save()
+                turno.observaciones = obs_motivo
+            turno.save(update_fields=['observaciones'])
 
-        # Enviar email de confirmación de cancelación (con motivo)
-        enviar_email_cancelacion(turno, motivo)
+        # Generar token de cancelación y enviar email con link seguro
+        token = turno.generar_token_cancelacion()
+        exito = enviar_email_solicitud_cancelacion(turno, token)
 
-        return JsonResponse({
-            'success': True,
-            'message': 'Tu turno ha sido cancelado exitosamente'
-        })
+        if exito:
+            return JsonResponse({
+                'success': True,
+                'message': f'Te enviamos un email a {turno.cliente.email} con el link para confirmar la cancelación. El link es válido por 48 horas.'
+            })
+        else:
+            return JsonResponse({
+                'success': False,
+                'message': 'Hubo un error al enviar el email. Por favor, intentá nuevamente más tarde.'
+            }, status=500)
 
     return JsonResponse({'success': False, 'message': 'Método no permitido'}, status=405)
 
@@ -241,18 +248,27 @@ class CancelarTurnoView(View):
 
         # Ejecutar cancelación
         turno.estado = 'CANCELADO'
-        obs = 'Cancelado desde enlace de email (asistente virtual)'
+        obs = 'Cancelación confirmada por el cliente desde enlace de email'
         if turno.observaciones:
             turno.observaciones = f"{turno.observaciones}\n\n{obs}"
         else:
             turno.observaciones = obs
 
         # Invalidar token
+        turno.token_cancelacion = None
         turno.token_cancelacion_expiracion = None
         turno.save()
 
-        # Enviar email de confirmación
-        enviar_email_cancelacion(turno)
+        # Extraer motivo de las observaciones (si existe)
+        motivo = ''
+        if turno.observaciones and 'Motivo de cancelación:' in turno.observaciones:
+            for linea in turno.observaciones.split('\n'):
+                if linea.strip().startswith('Motivo de cancelación:'):
+                    motivo = linea.strip().replace('Motivo de cancelación:', '').strip()
+                    break
+
+        # Enviar email de confirmación (con motivo si existe)
+        enviar_email_cancelacion(turno, motivo)
 
         return JsonResponse({
             'success': True,
