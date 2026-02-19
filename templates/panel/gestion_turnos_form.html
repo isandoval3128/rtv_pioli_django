@@ -857,10 +857,8 @@
                             <select id="estado" name="estado" class="form-control">
                                 <option value="PENDIENTE" {% if turno.estado == 'PENDIENTE' %}selected{% endif %}>Pendiente</option>
                                 <option value="CONFIRMADO" {% if turno.estado == 'CONFIRMADO' %}selected{% endif %}>Confirmado</option>
-                                <option value="EN_CURSO" {% if turno.estado == 'EN_CURSO' %}selected{% endif %}>En Curso</option>
-                                <option value="COMPLETADO" {% if turno.estado == 'COMPLETADO' %}selected{% endif %}>Completado</option>
                                 <option value="CANCELADO" {% if turno.estado == 'CANCELADO' %}selected{% endif %}>Cancelado</option>
-                                <option value="NO_ASISTIO" {% if turno.estado == 'NO_ASISTIO' %}selected{% endif %}>No Asistio</option>
+                                <option value="VENCIDO" {% if turno.estado == 'VENCIDO' %}selected{% endif %}>Vencido</option>
                             </select>
                         </div>
                     </div>

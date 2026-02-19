@@ -488,7 +488,7 @@ def resolver_consulta_turno(texto, intent, confidence):
                 intent=intent,
                 datos=(
                     f'No se encontraron turnos activos para el vehículo {dominio}.\n\n'
-                    'Si tenés un turno, puede que ya haya sido completado o cancelado.\n'
+                    'Si tenés un turno, puede que ya haya sido confirmado, cancelado o vencido.\n'
                     'Podés sacar un nuevo turno online.'
                 ),
                 source='db', necesita_humanizar=True, confidence=0.9,
@@ -601,7 +601,7 @@ def resolver_cancelar_turno(texto, intent, confidence):
                         acciones=[{'texto': '📋 Consultar mi turno', 'url': '/turnero/consultar/'}],
                     )
             else:
-                if turno.estado in ('COMPLETADO', 'CANCELADO', 'EN_CURSO', 'NO_ASISTIO'):
+                if turno.estado in ('CONFIRMADO', 'CANCELADO', 'VENCIDO'):
                     datos = (
                         f"El turno {turno.codigo} no puede cancelarse "
                         f"porque está en estado: {turno.get_estado_display()}."
@@ -700,7 +700,7 @@ def resolver_reprogramar_turno(texto, intent, confidence):
                         acciones=[{'texto': '📋 Consultar mi turno', 'url': '/turnero/consultar/'}],
                     )
             else:
-                if turno.estado in ('COMPLETADO', 'CANCELADO', 'EN_CURSO', 'NO_ASISTIO'):
+                if turno.estado in ('CONFIRMADO', 'CANCELADO', 'VENCIDO'):
                     datos = (
                         f"El turno {turno.codigo} no puede reprogramarse "
                         f"porque está en estado: {turno.get_estado_display()}."

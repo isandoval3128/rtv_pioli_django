@@ -58,35 +58,34 @@ def logout_view(request):
 # ============================================
 
 def _marcar_turnos_vencidos():
-    """Marca turnos vencidos (fecha/hora pasada) como NO_ASISTIO."""
+    """Marca turnos vencidos (fecha/hora pasada) como VENCIDO."""
     ahora = timezone.localtime()
     hoy = ahora.date()
     hora_actual = ahora.time()
 
     vencidos = Turno.objects.filter(
-        estado__in=['PENDIENTE', 'CONFIRMADO'],
+        estado='PENDIENTE',
         fecha__lt=hoy,
     ) | Turno.objects.filter(
-        estado__in=['PENDIENTE', 'CONFIRMADO'],
+        estado='PENDIENTE',
         fecha=hoy,
         hora_fin__lt=hora_actual,
     )
 
     for turno in vencidos:
-        estado_anterior = turno.estado
-        turno.estado = 'NO_ASISTIO'
+        turno.estado = 'VENCIDO'
         turno.save(update_fields=['estado'])
         HistorialTurno.objects.create(
             turno=turno,
-            accion='MARCADO_NO_ASISTIO',
-            descripcion=f'Turno marcado automáticamente como No Asistió (anterior: {estado_anterior})',
+            accion='MARCADO_VENCIDO',
+            descripcion='Turno marcado automáticamente como Vencido',
         )
 
 
 @login_required(login_url='/panel/login/')
 def gestion_turnos(request):
     """Vista principal de gestión de turnos"""
-    # Marcar turnos vencidos como NO_ASISTIO automáticamente
+    # Marcar turnos vencidos como VENCIDO automáticamente
     _marcar_turnos_vencidos()
 
     # Obtener el sector del usuario (ADMINISTRACION o TALLER)
@@ -806,7 +805,7 @@ def obtener_horarios_disponibles(request):
             turnos_query = Turno.objects.filter(
                 taller_id=taller_id,
                 fecha=fecha,
-                estado__in=['PENDIENTE', 'CONFIRMADO', 'EN_CURSO']
+                estado__in=['PENDIENTE', 'CONFIRMADO']
             )
             if turno_id:
                 turnos_query = turnos_query.exclude(pk=turno_id)
@@ -1038,9 +1037,9 @@ def verificar_turno_panel(request):
 
             if turno.estado == 'CANCELADO':
                 estado_clase = 'cancelado'
-            elif turno.estado in ['COMPLETADO', 'EN_CURSO']:
-                estado_clase = 'realizado' if turno.estado == 'COMPLETADO' else 'activo'
-            elif turno.fecha < hoy:
+            elif turno.estado == 'CONFIRMADO':
+                estado_clase = 'confirmado'
+            elif turno.estado == 'VENCIDO':
                 estado_clase = 'vencido'
             elif turno.fecha == hoy:
                 estado_clase = 'pendiente-hoy'
@@ -1689,13 +1688,13 @@ def dashboard_turnos_ajax(request):
 
     # === CARDS PRINCIPALES (4) ===
     total_turnos = turnos.count()
-    completados = turnos.filter(estado='COMPLETADO').count()
-    no_asistio = turnos.filter(estado='NO_ASISTIO').count()
+    confirmados = turnos.filter(estado='CONFIRMADO').count()
+    vencidos = turnos.filter(estado='VENCIDO').count()
 
-    # Tasa cumplimiento: COMPLETADO / (COMPLETADO + NO_ASISTIO) * 100
-    base_cumplimiento = completados + no_asistio
+    # Tasa cumplimiento: CONFIRMADO / (CONFIRMADO + VENCIDO) * 100
+    base_cumplimiento = confirmados + vencidos
     tasa_cumplimiento = round(
-        (completados / base_cumplimiento * 100) if base_cumplimiento > 0 else 0, 1
+        (confirmados / base_cumplimiento * 100) if base_cumplimiento > 0 else 0, 1
     )
 
     # === CARDS SECUNDARIAS (3) ===
@@ -1713,9 +1712,9 @@ def dashboard_turnos_ajax(request):
 
     cards = {
         'total_turnos': total_turnos,
-        'completados': completados,
+        'confirmados': confirmados,
         'tasa_cumplimiento': tasa_cumplimiento,
-        'no_asistio': no_asistio,
+        'vencidos': vencidos,
         'cancelados': cancelados,
         'pendientes_hoy': pendientes_hoy,
         'promedio_diario': promedio_diario,
@@ -1784,7 +1783,7 @@ def dashboard_turnos_ajax(request):
     # === CHART 6: Ranking de atencion (lista) ===
     ranking_atencion = list(
         turnos.filter(
-            estado='COMPLETADO',
+            estado='CONFIRMADO',
             atendido_por__isnull=False
         )
         .values(

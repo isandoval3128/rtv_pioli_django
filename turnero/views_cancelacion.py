@@ -268,8 +268,6 @@ def enviar_email_solicitud_cancelacion(turno, token):
     """
     try:
         from django.conf import settings
-        import socket
-
         email_config = EmailConfig.objects.first()
 
         if not email_config:
@@ -284,11 +282,7 @@ def enviar_email_solicitud_cancelacion(turno, token):
             use_tls=email_config.email_use_tls,
         )
 
-        hostname = socket.gethostname().lower()
-        site_url_local = getattr(settings, 'SITE_URL_LOCAL', None)
-        site_url_prod = getattr(settings, 'SITE_URL', 'https://rtvpioli.com.ar')
-        es_produccion = '167.71.93.198' in hostname or 'rtvpioli' in hostname or site_url_local is None
-        site_url = site_url_prod if es_produccion else site_url_local
+        site_url = settings.SITE_URL
 
         cancelar_url = f"{site_url}/turnero/cancelar/{token}/"
 
@@ -496,8 +490,6 @@ def enviar_email_cancelacion(turno, motivo=''):
     """
     try:
         from django.conf import settings
-        import socket
-
         email_config = EmailConfig.objects.first()
 
         if not email_config:
@@ -512,11 +504,7 @@ def enviar_email_cancelacion(turno, motivo=''):
             use_tls=email_config.email_use_tls,
         )
 
-        hostname = socket.gethostname().lower()
-        site_url_local = getattr(settings, 'SITE_URL_LOCAL', None)
-        site_url_prod = getattr(settings, 'SITE_URL', 'https://rtvpioli.com.ar')
-        es_produccion = '167.71.93.198' in hostname or 'rtvpioli' in hostname or site_url_local is None
-        site_url = site_url_prod if es_produccion else site_url_local
+        site_url = settings.SITE_URL
 
         nuevo_turno_url = f"{site_url}/turnero/paso1/"
 
@@ -710,8 +698,6 @@ def enviar_email_reprogramacion(turno, token):
     """
     try:
         from django.conf import settings
-        import socket
-
         email_config = EmailConfig.objects.first()
 
         if not email_config:
@@ -726,14 +712,7 @@ def enviar_email_reprogramacion(turno, token):
             use_tls=email_config.email_use_tls,
         )
 
-        # Generar URL completa para reprogramar (misma lógica que el QR)
-        hostname = socket.gethostname().lower()
-        site_url_local = getattr(settings, 'SITE_URL_LOCAL', None)
-        site_url_prod = getattr(settings, 'SITE_URL', 'https://rtvpioli.com.ar')
-
-        # Detecta producción por IP del servidor o nombre del host
-        es_produccion = '167.71.93.198' in hostname or 'rtvpioli' in hostname or site_url_local is None
-        site_url = site_url_prod if es_produccion else site_url_local
+        site_url = settings.SITE_URL
 
         reprogramar_url = f"{site_url}/turnero/reprogramar/{token}/"
 
@@ -938,9 +917,10 @@ def enviar_email_reprogramacion(turno, token):
 
 def enviar_email_confirmacion_reprogramacion(turno):
     """
-    Envía email de confirmación después de reprogramar exitosamente
+    Envía email HTML profesional de confirmación después de reprogramar exitosamente.
     """
     try:
+        from django.conf import settings
         email_config = EmailConfig.objects.first()
 
         if not email_config:
@@ -955,47 +935,217 @@ def enviar_email_confirmacion_reprogramacion(turno):
             use_tls=email_config.email_use_tls,
         )
 
+        site_url = settings.SITE_URL
+
+        consultar_url = f"{site_url}/turnero/consultar/"
+
         subject = f"Turno Reprogramado - {turno.codigo}"
-        body = f"""
-Estimado/a {turno.cliente.nombre} {turno.cliente.apellido},
 
-Su turno ha sido reprogramado exitosamente.
+        body_text = (
+            f"Estimado/a {turno.cliente.nombre} {turno.cliente.apellido},\n\n"
+            f"Su turno ha sido reprogramado exitosamente.\n\n"
+            f"Código de Turno: {turno.codigo}\n"
+            f"Vehículo: {turno.vehiculo.dominio}\n"
+            f"Trámite: {turno.tipo_vehiculo.nombre}\n"
+            f"Nueva Fecha: {turno.fecha.strftime('%d/%m/%Y')}\n"
+            f"Nuevo Horario: {turno.hora_inicio.strftime('%H:%M')} hs\n"
+            f"Taller: {turno.taller.get_nombre()}\n"
+            f"Dirección: {turno.taller.get_direccion()}, {turno.taller.get_localidad().nombre}\n"
+            f"Teléfono: {turno.taller.get_telefono()}\n\n"
+            f"Recordatorios:\n"
+            f"- Presentese 10 minutos antes del horario asignado\n"
+            f"- Traiga DNI, cédula del vehículo y comprobante de pago\n"
+            f"- El vehículo debe estar en condiciones técnicas adecuadas\n\n"
+            f"Si necesita cancelar este turno, puede hacerlo hasta 24 horas antes.\n\n"
+            f"Consultar su turno: {consultar_url}\n\n"
+            f"Saludos cordiales,\nRTV Pioli - Revisión Técnica Vehicular"
+        )
 
-Nuevos datos del turno:
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Código de Turno: {turno.codigo}
-Vehículo: {turno.vehiculo.dominio}
-Trámite: {turno.tipo_vehiculo.nombre}
+        color_primario = "#13304D"
+        color_fondo = "#f8f9fa"
+        color_borde = "#e9ecef"
+        color_success = "#10b981"
 
-📅 Nueva Fecha: {turno.fecha.strftime('%d/%m/%Y')}
-🕐 Nuevo Horario: {turno.hora_inicio.strftime('%H:%M')} hs
+        body_html = f"""
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Turno Reprogramado - {turno.codigo}</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: {color_fondo};">
+    <table role="presentation" style="width: 100%; border-collapse: collapse;">
+        <tr>
+            <td style="padding: 20px 0;">
+                <table role="presentation" style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
 
-📍 Taller: {turno.taller.get_nombre()}
-📍 Dirección: {turno.taller.get_direccion()}, {turno.taller.get_localidad().nombre}
-📞 Teléfono: {turno.taller.get_telefono()}
+                    <!-- Header -->
+                    <tr>
+                        <td style="background: linear-gradient(135deg, {color_success} 0%, #34d399 100%); padding: 30px 40px; text-align: center;">
+                            <h1 style="margin: 0; color: #ffffff; font-size: 26px; font-weight: 600;">
+                                Turno Reprogramado
+                            </h1>
+                            <p style="margin: 10px 0 0 0; color: rgba(255,255,255,0.9); font-size: 16px;">
+                                Revisión Técnica Vehicular
+                            </p>
+                        </td>
+                    </tr>
 
-RECORDATORIOS IMPORTANTES:
-✓ Presentese 10 minutos antes del horario asignado
-✓ Traiga DNI, cédula del vehículo y comprobante de pago
-✓ El vehículo debe estar en condiciones técnicas adecuadas
+                    <!-- Código de turno destacado -->
+                    <tr>
+                        <td style="padding: 30px 40px 20px 40px; text-align: center;">
+                            <div style="display: inline-block; background-color: {color_primario}; color: #ffffff; padding: 15px 30px; border-radius: 8px; font-size: 24px; font-weight: bold; letter-spacing: 2px;">
+                                {turno.codigo}
+                            </div>
+                            <p style="margin: 15px 0 0 0; color: {color_success}; font-size: 14px; font-weight: bold;">
+                                REPROGRAMADO EXITOSAMENTE
+                            </p>
+                        </td>
+                    </tr>
 
-Si necesita cancelar este turno, puede hacerlo hasta 24 horas antes.
+                    <!-- Saludo -->
+                    <tr>
+                        <td style="padding: 0 40px 20px 40px;">
+                            <p style="margin: 0; color: #333333; font-size: 16px; line-height: 1.6;">
+                                Estimado/a <strong>{turno.cliente.nombre} {turno.cliente.apellido}</strong>,
+                            </p>
+                            <p style="margin: 15px 0 0 0; color: #333333; font-size: 16px; line-height: 1.6;">
+                                Su turno ha sido reprogramado exitosamente. A continuación encontrará los nuevos datos:
+                            </p>
+                        </td>
+                    </tr>
 
-Saludos cordiales,
-RTV Pioli - Revisión Técnica Vehicular
+                    <!-- Nuevos datos del turno -->
+                    <tr>
+                        <td style="padding: 0 40px 20px 40px;">
+                            <table role="presentation" style="width: 100%; border-collapse: collapse;">
+                                <tr>
+                                    <td style="padding: 15px; background-color: {color_fondo}; border-left: 4px solid {color_success}; border-radius: 0 8px 8px 0;">
+                                        <p style="margin: 0 0 5px 0; color: {color_success}; font-size: 14px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px;">
+                                            Nuevos Datos del Turno
+                                        </p>
+                                        <table role="presentation" style="width: 100%; margin-top: 10px;">
+                                            <tr>
+                                                <td style="padding: 5px 0; color: #6c757d; font-size: 14px; width: 120px;">Vehículo:</td>
+                                                <td style="padding: 5px 0; color: #333333; font-size: 14px; font-weight: bold;">{turno.vehiculo.dominio}</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="padding: 5px 0; color: #6c757d; font-size: 14px;">Trámite:</td>
+                                                <td style="padding: 5px 0; color: #333333; font-size: 14px;">{turno.tipo_vehiculo.nombre}</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="padding: 5px 0; color: #6c757d; font-size: 14px;">Nueva Fecha:</td>
+                                                <td style="padding: 5px 0; color: #333333; font-size: 14px; font-weight: bold;">{turno.fecha.strftime('%d/%m/%Y')}</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="padding: 5px 0; color: #6c757d; font-size: 14px;">Nuevo Horario:</td>
+                                                <td style="padding: 5px 0; color: #333333; font-size: 14px; font-weight: bold;">{turno.hora_inicio.strftime('%H:%M')} hs</td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+
+                    <!-- Datos del taller -->
+                    <tr>
+                        <td style="padding: 0 40px 20px 40px;">
+                            <table role="presentation" style="width: 100%; border-collapse: collapse;">
+                                <tr>
+                                    <td style="padding: 15px; background-color: {color_fondo}; border-left: 4px solid {color_primario}; border-radius: 0 8px 8px 0;">
+                                        <p style="margin: 0 0 5px 0; color: {color_primario}; font-size: 14px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px;">
+                                            Taller Asignado
+                                        </p>
+                                        <table role="presentation" style="width: 100%; margin-top: 10px;">
+                                            <tr>
+                                                <td style="padding: 5px 0; color: #6c757d; font-size: 14px; width: 120px;">Taller:</td>
+                                                <td style="padding: 5px 0; color: #333333; font-size: 14px; font-weight: bold;">{turno.taller.get_nombre()}</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="padding: 5px 0; color: #6c757d; font-size: 14px;">Dirección:</td>
+                                                <td style="padding: 5px 0; color: #333333; font-size: 14px;">{turno.taller.get_direccion()}, {turno.taller.get_localidad().nombre}</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="padding: 5px 0; color: #6c757d; font-size: 14px;">Teléfono:</td>
+                                                <td style="padding: 5px 0; color: #333333; font-size: 14px;">{turno.taller.get_telefono()}</td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+
+                    <!-- Recordatorios -->
+                    <tr>
+                        <td style="padding: 0 40px 30px 40px;">
+                            <table role="presentation" style="width: 100%; background-color: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px;">
+                                <tr>
+                                    <td style="padding: 20px;">
+                                        <p style="margin: 0 0 15px 0; color: #1e40af; font-size: 16px; font-weight: bold;">
+                                            Recordatorios Importantes
+                                        </p>
+                                        <ul style="margin: 0; padding-left: 20px; color: #1e40af; font-size: 14px; line-height: 1.8;">
+                                            <li>Presentese <strong>10 minutos antes</strong> del horario asignado.</li>
+                                            <li>Traiga <strong>DNI, cédula del vehículo</strong> y comprobante de pago.</li>
+                                            <li>El vehículo debe estar en <strong>condiciones técnicas adecuadas</strong>.</li>
+                                            <li>Si necesita cancelar, puede hacerlo hasta <strong>24 horas antes</strong>.</li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+
+                    <!-- Botón consultar turno -->
+                    <tr>
+                        <td style="padding: 0 40px 30px 40px; text-align: center;">
+                            <table role="presentation" style="margin: 0 auto;">
+                                <tr>
+                                    <td style="background: linear-gradient(135deg, {color_primario} 0%, #1a4a73 100%); border-radius: 10px;">
+                                        <a href="{consultar_url}" target="_blank" style="display: inline-block; padding: 16px 40px; color: #ffffff; text-decoration: none; font-size: 18px; font-weight: bold; letter-spacing: 0.5px;">
+                                            Consultar mi Turno
+                                        </a>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+
+                    <!-- Footer -->
+                    <tr>
+                        <td style="background-color: {color_fondo}; padding: 25px 40px; text-align: center; border-top: 1px solid {color_borde};">
+                            <p style="margin: 0; color: #6c757d; font-size: 12px;">
+                                Este es un mensaje automático. Por favor no responda a este correo.
+                            </p>
+                            <p style="margin: 15px 0 0 0; color: #adb5bd; font-size: 11px;">
+                                RTV Pioli - Revisión Técnica Vehicular
+                            </p>
+                        </td>
+                    </tr>
+
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>
 """
 
-        email = EmailMessage(
+        email = EmailMultiAlternatives(
             subject,
-            body,
+            body_text,
             email_config.default_from_email or email_config.email_host_user,
             [turno.cliente.email],
             connection=connection
         )
+        email.attach_alternative(body_html, "text/html")
 
         email.send(fail_silently=False)
         return True
 
     except Exception as e:
-        print(f"Error al enviar email de confirmación: {e}")
+        print(f"Error al enviar email de confirmación de reprogramación: {e}")
         return False

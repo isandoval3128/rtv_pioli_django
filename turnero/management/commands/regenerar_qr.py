@@ -80,12 +80,7 @@ class Command(BaseCommand):
 
                 # Obtener URL que se generará
                 from django.conf import settings
-                import socket
-                hostname = socket.gethostname().lower()
-                site_url_local = getattr(settings, 'SITE_URL_LOCAL', None)
-                site_url_prod = getattr(settings, 'SITE_URL', 'https://rtvpioli.com.ar')
-                es_produccion = '167.71.93.198' in hostname or 'rtvpioli' in hostname or site_url_local is None
-                site_url = site_url_prod if es_produccion else site_url_local
+                site_url = settings.SITE_URL
                 qr_url = f"{site_url}/turnero/verificar/{turno.codigo}/?t={token}"
 
                 self.stdout.write(f'[{i}/{total}] {turno.codigo} - {turno.vehiculo.dominio} - {turno.estado}')

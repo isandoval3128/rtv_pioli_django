@@ -16,10 +16,8 @@ class Turno(models.Model):
     ESTADO_CHOICES = [
         ('PENDIENTE', 'Pendiente'),
         ('CONFIRMADO', 'Confirmado'),
-        ('EN_CURSO', 'En Curso'),
-        ('COMPLETADO', 'Completado'),
         ('CANCELADO', 'Cancelado'),
-        ('NO_ASISTIO', 'No Asistió'),
+        ('VENCIDO', 'Vencido'),
     ]
 
     # Identificación única
@@ -236,18 +234,7 @@ class Turno(models.Model):
         token = self.generar_token_verificacion(self.codigo)
 
         # URL de verificación del turno (página profesional al escanear)
-        # Usa SITE_URL_LOCAL si está definido (para desarrollo), sino usa SITE_URL (producción)
-        import socket
-        hostname = socket.gethostname().lower()
-
-        # Si hay SITE_URL_LOCAL configurado y no estamos en el servidor de producción
-        site_url_local = getattr(settings, 'SITE_URL_LOCAL', None)
-        site_url_prod = getattr(settings, 'SITE_URL', 'https://rtvpioli.com.ar')
-
-        # Detecta producción por IP del servidor o nombre del host
-        es_produccion = '167.71.93.198' in hostname or 'rtvpioli' in hostname or site_url_local is None
-
-        site_url = site_url_prod if es_produccion else site_url_local
+        site_url = settings.SITE_URL
         qr_url = f"{site_url}/turnero/verificar/{self.codigo}/?t={token}"
 
         qr.add_data(qr_url)
@@ -300,8 +287,8 @@ class Turno(models.Model):
     @property
     def puede_cancelar(self):
         """Verifica si el turno aún puede ser cancelado"""
-        # No se puede cancelar si ya pasó o está en curso/completado
-        if self.estado in ['COMPLETADO', 'CANCELADO', 'EN_CURSO']:
+        # No se puede cancelar si ya fue confirmado, cancelado o vencido
+        if self.estado in ['CONFIRMADO', 'CANCELADO', 'VENCIDO']:
             return False
 
         # No se puede cancelar si es para hoy o ya pasó
@@ -310,8 +297,8 @@ class Turno(models.Model):
     @property
     def puede_reprogramar(self):
         """Verifica si el turno puede ser reprogramado"""
-        # Solo se puede reprogramar si está PENDIENTE o CONFIRMADO
-        if self.estado not in ['PENDIENTE', 'CONFIRMADO']:
+        # Solo se puede reprogramar si está PENDIENTE
+        if self.estado != 'PENDIENTE':
             return False
 
         # Debe faltar al menos 24 horas para el turno
@@ -331,14 +318,14 @@ class Turno(models.Model):
     def registrar_atencion(self, usuario, ip_address=None):
         """
         Registra la atencion del turno por un usuario del taller.
-        Cambia el estado a COMPLETADO y guarda quien atendio.
+        Cambia el estado a CONFIRMADO y guarda quien atendio.
         """
         from turnero.models import HistorialTurno
 
         # Guardar datos de atencion
         self.atendido_por = usuario
         self.fecha_atencion = timezone.now()
-        self.estado = 'COMPLETADO'
+        self.estado = 'CONFIRMADO'
         self.save(update_fields=['atendido_por', 'fecha_atencion', 'estado'])
 
         # Recargar desde la base de datos para asegurar que tenemos los valores actuales
@@ -348,7 +335,7 @@ class Turno(models.Model):
         HistorialTurno.objects.create(
             turno=self,
             accion='ATENCION_REGISTRADA',
-            descripcion=f'Turno completado por {usuario.get_full_name() or usuario.username}',
+            descripcion=f'Turno confirmado por {usuario.get_full_name() or usuario.username}',
             usuario=usuario,
             ip_address=ip_address
         )
@@ -358,7 +345,7 @@ class Turno(models.Model):
     @property
     def ya_fue_atendido(self):
         """Verifica si el turno ya fue atendido"""
-        return self.atendido_por is not None or self.estado in ['EN_CURSO', 'COMPLETADO']
+        return self.atendido_por is not None or self.estado == 'CONFIRMADO'
 
 
 class HistorialTurno(models.Model):
