@@ -221,20 +221,20 @@
                                 <i class="fa fa-calendar-check-o stat-card-icon"></i>
                             </div>
                             <div class="stat-card">
-                                <div class="stat-card-label">Completados</div>
-                                <div class="stat-card-value" id="card-completados">-</div>
+                                <div class="stat-card-label">Confirmados</div>
+                                <div class="stat-card-value" id="card-confirmados">-</div>
                                 <div class="stat-card-desc">Turnos atendidos exitosamente</div>
                                 <i class="fa fa-check-circle stat-card-icon"></i>
                             </div>
                             <div class="stat-card">
                                 <div class="stat-card-label">Tasa Cumplimiento</div>
                                 <div class="stat-card-value" id="card-tasa-cumplimiento">-</div>
-                                <div class="stat-card-desc">Completados vs No asistio</div>
+                                <div class="stat-card-desc">Confirmados vs Vencidos</div>
                                 <i class="fa fa-line-chart stat-card-icon"></i>
                             </div>
                             <div class="stat-card">
-                                <div class="stat-card-label">No Asistio</div>
-                                <div class="stat-card-value" id="card-no-asistio">-</div>
+                                <div class="stat-card-label">Vencidos</div>
+                                <div class="stat-card-value" id="card-vencidos">-</div>
                                 <div class="stat-card-desc">Clientes que no se presentaron</div>
                                 <i class="fa fa-times-circle stat-card-icon"></i>
                             </div>
@@ -360,9 +360,9 @@ function cargarDashboard(periodo) {
 
 function renderCards(cards) {
     $('#card-total-turnos').text(cards.total_turnos);
-    $('#card-completados').text(cards.completados);
+    $('#card-confirmados').text(cards.confirmados);
     $('#card-tasa-cumplimiento').text(cards.tasa_cumplimiento + '%');
-    $('#card-no-asistio').text(cards.no_asistio);
+    $('#card-vencidos').text(cards.vencidos);
     $('#card-cancelados').text(cards.cancelados);
     $('#card-pendientes-hoy').text(cards.pendientes_hoy);
     $('#card-promedio-diario').text(cards.promedio_diario);
@@ -402,19 +402,15 @@ function renderChartEstados(data) {
     var ctx = document.getElementById('chart-estados').getContext('2d');
     var colorMap = {
         'PENDIENTE': '#ffc107',
-        'CONFIRMADO': '#17a2b8',
-        'EN_CURSO': '#0056b3',
-        'COMPLETADO': '#28a745',
+        'CONFIRMADO': '#28a745',
         'CANCELADO': '#dc3545',
-        'NO_ASISTIO': '#6c757d'
+        'VENCIDO': '#6c757d'
     };
     var labelMap = {
         'PENDIENTE': 'Pendiente',
         'CONFIRMADO': 'Confirmado',
-        'EN_CURSO': 'En Curso',
-        'COMPLETADO': 'Completado',
         'CANCELADO': 'Cancelado',
-        'NO_ASISTIO': 'No Asistio'
+        'VENCIDO': 'Vencido'
     };
     charts['estados'] = new Chart(ctx, {
         type: 'doughnut',

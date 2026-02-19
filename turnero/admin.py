@@ -92,11 +92,9 @@ class TurnoAdmin(admin.ModelAdmin):
     def estado_badge(self, obj):
         colors = {
             'PENDIENTE': '#6c757d',
-            'CONFIRMADO': '#0d6efd',
-            'EN_CURSO': '#ffc107',
-            'COMPLETADO': '#198754',
+            'CONFIRMADO': '#198754',
             'CANCELADO': '#dc3545',
-            'NO_ASISTIO': '#fd7e14',
+            'VENCIDO': '#fd7e14',
         }
         color = colors.get(obj.estado, '#6c757d')
         return format_html(
@@ -130,22 +128,12 @@ class TurnoAdmin(admin.ModelAdmin):
         return format_html('<span style="color: {}; font-weight: bold;">{}</span>', 'red', '✗ NO')
     puede_cancelar_display.short_description = '¿Puede cancelar?'
 
-    actions = ['marcar_confirmado', 'marcar_en_curso', 'marcar_completado', 'marcar_cancelado']
+    actions = ['marcar_confirmado', 'marcar_cancelado']
 
     def marcar_confirmado(self, request, queryset):
         updated = queryset.update(estado='CONFIRMADO')
         self.message_user(request, f'{updated} turno(s) marcado(s) como CONFIRMADO.')
     marcar_confirmado.short_description = "Marcar como CONFIRMADO"
-
-    def marcar_en_curso(self, request, queryset):
-        updated = queryset.update(estado='EN_CURSO')
-        self.message_user(request, f'{updated} turno(s) marcado(s) como EN CURSO.')
-    marcar_en_curso.short_description = "Marcar como EN CURSO"
-
-    def marcar_completado(self, request, queryset):
-        updated = queryset.update(estado='COMPLETADO')
-        self.message_user(request, f'{updated} turno(s) marcado(s) como COMPLETADO.')
-    marcar_completado.short_description = "Marcar como COMPLETADO"
 
     def marcar_cancelado(self, request, queryset):
         updated = queryset.update(estado='CANCELADO')

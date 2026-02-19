@@ -323,18 +323,13 @@
         color: white;
     }
 
-    .estado-completado {
-        background: #06b6d4;
-        color: white;
-    }
-
-    .estado-en_curso {
-        background: #f97316;
-        color: white;
-    }
-
     .estado-cancelado {
         background: #ef4444;
+        color: white;
+    }
+
+    .estado-vencido {
+        background: #6b7280;
         color: white;
     }
 
@@ -895,13 +890,11 @@
                             {% if turno.estado == 'PENDIENTE' %}
                                 <i class="fas fa-clock"></i>Pendiente
                             {% elif turno.estado == 'CONFIRMADO' %}
-                                <i class="fas fa-check-circle"></i>Confirmado
-                            {% elif turno.estado == 'EN_CURSO' %}
-                                <i class="fas fa-spinner"></i>En Curso
-                            {% elif turno.estado == 'COMPLETADO' %}
-                                <i class="fas fa-check-double"></i>Completado
+                                <i class="fas fa-check-double"></i>Confirmado
                             {% elif turno.estado == 'CANCELADO' %}
                                 <i class="fas fa-times-circle"></i>Cancelado
+                            {% elif turno.estado == 'VENCIDO' %}
+                                <i class="fas fa-calendar-times"></i>Vencido
                             {% endif %}
                         </span>
                     </div>
@@ -997,11 +990,11 @@
                         {% if turno.estado == 'PENDIENTE' %}
                             <i class="fas fa-clock me-1"></i>Pendiente
                         {% elif turno.estado == 'CONFIRMADO' %}
-                            <i class="fas fa-check-circle me-1"></i>Confirmado
-                        {% elif turno.estado == 'EN_CURSO' %}
-                            <i class="fas fa-spinner me-1"></i>En Curso
-                        {% elif turno.estado == 'COMPLETADO' %}
-                            <i class="fas fa-check-double me-1"></i>Completado
+                            <i class="fas fa-check-double me-1"></i>Confirmado
+                        {% elif turno.estado == 'CANCELADO' %}
+                            <i class="fas fa-times-circle me-1"></i>Cancelado
+                        {% elif turno.estado == 'VENCIDO' %}
+                            <i class="fas fa-calendar-times me-1"></i>Vencido
                         {% endif %}
                     </span>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close" style="position: absolute; top: 1rem; right: 1rem;"></button>

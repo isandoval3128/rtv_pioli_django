@@ -39,11 +39,9 @@
     }
 
     .turno-estado.pendiente { background: #fef3c7; color: #92400e; }
-    .turno-estado.confirmado { background: #d1fae5; color: #065f46; }
-    .turno-estado.en_curso { background: #dbeafe; color: #1e40af; }
-    .turno-estado.completado { background: #059669; color: white; }
+    .turno-estado.confirmado { background: #059669; color: white; }
     .turno-estado.cancelado { background: #fee2e2; color: #991b1b; }
-    .turno-estado.no_asistio { background: #6b7280; color: white; }
+    .turno-estado.vencido { background: #fd7e14; color: white; }
 
     .turno-header .close-btn {
         background: rgba(255,255,255,0.15);
@@ -640,7 +638,7 @@
 
     <!-- Footer -->
     <div class="turno-footer">
-        {% if user_origen == 'ADMINISTRACION' and turno.estado != 'COMPLETADO' and turno.estado != 'CANCELADO' and turno.estado != 'NO_ASISTIO' %}
+        {% if user_origen == 'ADMINISTRACION' and turno.estado != 'CONFIRMADO' and turno.estado != 'CANCELADO' and turno.estado != 'VENCIDO' %}
         <button type="button" class="btn btn-primary" onclick="gestionTurno({{ turno.id }}); $('#modal-lg').modal('hide');">
             <i class="fa fa-edit me-1"></i> Editar
         </button>

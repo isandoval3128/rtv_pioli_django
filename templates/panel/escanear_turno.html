@@ -308,10 +308,9 @@
     }
 
     .estado-pendiente { background: #fef3c7; color: #92400e; }
-    .estado-confirmado { background: #d1fae5; color: #065f46; }
-    .estado-en_curso { background: #dbeafe; color: #1e40af; }
-    .estado-completado { background: #10b981; color: white; }
+    .estado-confirmado { background: #059669; color: white; }
     .estado-cancelado { background: #fee2e2; color: #991b1b; }
+    .estado-vencido { background: #fd7e14; color: white; }
 
     .turno-info {
         display: grid;
@@ -1120,13 +1119,31 @@ function mostrarTurno(data) {
                 <strong style="color: #92400e; margin-left: 8px;">TURNO YA ATENDIDO</strong>
             </div>
         `;
-    } else if (['PENDIENTE', 'CONFIRMADO'].includes(turno.estado)) {
+    } else if (turno.estado === 'PENDIENTE') {
         estadoClase = 'success';
         estadoIcono = 'fa-check-circle';
         verificacionHtml = `
             <div style="background: #d1fae5; border: 2px solid #10b981; border-radius: 10px; padding: 12px; margin-bottom: 15px; text-align: center;">
                 <i class="fa fa-check-circle" style="color: #059669; font-size: 1.2rem;"></i>
                 <strong style="color: #065f46; margin-left: 8px;">TURNO VERIFICADO</strong>
+            </div>
+        `;
+    } else if (turno.estado === 'CONFIRMADO') {
+        estadoClase = 'success';
+        estadoIcono = 'fa-check-double';
+        verificacionHtml = `
+            <div style="background: #d1fae5; border: 2px solid #10b981; border-radius: 10px; padding: 12px; margin-bottom: 15px; text-align: center;">
+                <i class="fa fa-check-circle" style="color: #059669; font-size: 1.2rem;"></i>
+                <strong style="color: #065f46; margin-left: 8px;">TURNO CONFIRMADO</strong>
+            </div>
+        `;
+    } else if (turno.estado === 'VENCIDO') {
+        estadoClase = 'error';
+        estadoIcono = 'fa-calendar-times-o';
+        verificacionHtml = `
+            <div style="background: #f3f4f6; border: 2px solid #6b7280; border-radius: 10px; padding: 12px; margin-bottom: 15px; text-align: center;">
+                <i class="fa fa-calendar-times-o" style="color: #4b5563; font-size: 1.2rem;"></i>
+                <strong style="color: #374151; margin-left: 8px;">TURNO VENCIDO</strong>
             </div>
         `;
     } else if (turno.estado === 'CANCELADO') {
@@ -1147,8 +1164,8 @@ function mostrarTurno(data) {
             <div style="background: #f8fafc; border-radius: 10px; padding: 15px; margin-bottom: 15px;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
                     <span style="font-family: 'Courier New', monospace; font-size: 1.1rem; font-weight: 700; color: #1f2937;">${turno.codigo}</span>
-                    <span style="background: ${turno.estado === 'PENDIENTE' ? '#fef3c7' : turno.estado === 'CONFIRMADO' ? '#d1fae5' : turno.estado === 'COMPLETADO' ? '#10b981' : '#fee2e2'};
-                           color: ${turno.estado === 'PENDIENTE' ? '#92400e' : turno.estado === 'CONFIRMADO' ? '#065f46' : turno.estado === 'COMPLETADO' ? 'white' : '#991b1b'};
+                    <span style="background: ${turno.estado === 'PENDIENTE' ? '#fef3c7' : turno.estado === 'CONFIRMADO' ? '#10b981' : turno.estado === 'VENCIDO' ? '#6b7280' : '#fee2e2'};
+                           color: ${turno.estado === 'PENDIENTE' ? '#92400e' : turno.estado === 'CONFIRMADO' ? 'white' : turno.estado === 'VENCIDO' ? 'white' : '#991b1b'};
                            padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 600;">
                         ${turno.estado_display}
                     </span>
@@ -1312,9 +1329,9 @@ function registrarAtencion() {
                         $('#turno-card').removeClass('turno-valido').addClass('turno-atendido');
 
                         // Actualizar estado
-                        $('#turno-estado').text('En Curso')
+                        $('#turno-estado').text('Confirmado')
                             .removeClass()
-                            .addClass('turno-estado estado-en_curso');
+                            .addClass('turno-estado estado-confirmado');
 
                         Swal.fire({
                             icon: 'success',

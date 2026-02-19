@@ -118,18 +118,6 @@
     }
 
     .badge-confirmado {
-        background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
-        color: #065f46;
-        box-shadow: 0 2px 4px rgba(16, 185, 129, 0.2);
-    }
-
-    .badge-en-curso {
-        background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
-        color: #1e40af;
-        box-shadow: 0 2px 4px rgba(59, 130, 246, 0.2);
-    }
-
-    .badge-completado {
         background: linear-gradient(135deg, #10b981 0%, #059669 100%);
         color: white;
         box-shadow: 0 2px 4px rgba(16, 185, 129, 0.3);
@@ -141,7 +129,7 @@
         box-shadow: 0 2px 4px rgba(239, 68, 68, 0.2);
     }
 
-    .badge-no-asistio {
+    .badge-vencido {
         background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
         color: white;
         box-shadow: 0 2px 4px rgba(107, 114, 128, 0.3);
@@ -633,11 +621,11 @@
 
     /* Estados especiales de cards */
     .turno-card.card-cancelado::before,
-    .turno-card.card-no-asistio::before {
+    .turno-card.card-vencido::before {
         background: linear-gradient(180deg, #6b7280 0%, #4b5563 100%);
     }
 
-    .turno-card.card-completado::before {
+    .turno-card.card-confirmado::before {
         background: linear-gradient(180deg, #10b981 0%, #059669 100%);
     }
 
@@ -1119,10 +1107,8 @@
                                         <option value="">Todos</option>
                                         <option value="PENDIENTE">Pendiente</option>
                                         <option value="CONFIRMADO">Confirmado</option>
-                                        <option value="EN_CURSO">En Curso</option>
-                                        <option value="COMPLETADO">Completado</option>
                                         <option value="CANCELADO">Cancelado</option>
-                                        <option value="NO_ASISTIO">No Asistió</option>
+                                        <option value="VENCIDO">Vencido</option>
                                     </select>
                                 </div>
 
@@ -1439,8 +1425,8 @@ function cargarTabla(){
                     // Botón Ver - Siempre disponible
                     html += '<button type="button" class="btn btn-accion btn-ver-turno" title="Ver Turno" value="' + data.id + '"><i class="fa fa-eye"></i></button>';
 
-                    // Botón Editar - Solo ADMINISTRACION y si no está completado/cancelado/no asistió
-                    if (!esTaller && data.estado !== 'COMPLETADO' && data.estado !== 'CANCELADO' && data.estado !== 'NO_ASISTIO') {
+                    // Botón Editar - Solo ADMINISTRACION y si está pendiente
+                    if (!esTaller && data.estado === 'PENDIENTE') {
                         html += '<button type="button" class="btn btn-accion btn-editar-turno" title="Editar" value="' + data.id + '"><i class="fa fa-edit"></i></button>';
                     }
 
@@ -1453,13 +1439,13 @@ function cargarTabla(){
                     // Botón Imprimir - Siempre disponible
                     html += '<button type="button" class="btn btn-accion btn-imprimir" title="Imprimir" value="' + data.id + '"><i class="fa fa-print"></i></button>';
 
-                    // Botón Reenviar Email - Solo ADMINISTRACION y si NO está cancelado o no asistió
-                    if (!esTaller && data.estado !== 'CANCELADO' && data.estado !== 'NO_ASISTIO') {
+                    // Botón Reenviar Email - Solo ADMINISTRACION y si está pendiente
+                    if (!esTaller && data.estado === 'PENDIENTE') {
                         html += '<button type="button" class="btn btn-accion btn-reenviar-email" title="Reenviar Email" value="' + data.id + '"><i class="fa fa-envelope"></i></button>';
                     }
 
-                    // Botón Reenviar WhatsApp - Solo ADMINISTRACION y si NO está cancelado o no asistió (desactivado temporalmente)
-                    if (!esTaller && data.estado !== 'CANCELADO' && data.estado !== 'NO_ASISTIO') {
+                    // Botón Reenviar WhatsApp - Solo ADMINISTRACION y si está pendiente (desactivado temporalmente)
+                    if (!esTaller && data.estado === 'PENDIENTE') {
                         html += '<button type="button" class="btn btn-accion btn-reenviar-whatsapp" title="WhatsApp (próximamente)" value="' + data.id + '" disabled style="opacity: 0.5; cursor: not-allowed;"><i class="fa fa-whatsapp"></i></button>';
                     }
 
@@ -1470,9 +1456,9 @@ function cargarTabla(){
         ],
         order: [[4, 'desc'], [5, 'asc']],
         "rowCallback": function(row, data, index){
-            if(data.estado == 'CANCELADO' || data.estado == 'NO_ASISTIO'){
+            if(data.estado == 'CANCELADO' || data.estado == 'VENCIDO'){
                 $(row).addClass('table-secondary');
-            } else if(data.estado == 'COMPLETADO'){
+            } else if(data.estado == 'CONFIRMADO'){
                 $(row).addClass('table-success');
             }
         }
@@ -1493,21 +1479,13 @@ function getBadgeEstado(estado) {
             badgeClass = 'badge-confirmado';
             estadoTexto = 'Confirmado';
             break;
-        case 'EN_CURSO':
-            badgeClass = 'badge-en-curso';
-            estadoTexto = 'En Curso';
-            break;
-        case 'COMPLETADO':
-            badgeClass = 'badge-completado';
-            estadoTexto = 'Completado';
-            break;
         case 'CANCELADO':
             badgeClass = 'badge-cancelado';
             estadoTexto = 'Cancelado';
             break;
-        case 'NO_ASISTIO':
-            badgeClass = 'badge-no-asistio';
-            estadoTexto = 'No Asistió';
+        case 'VENCIDO':
+            badgeClass = 'badge-vencido';
+            estadoTexto = 'Vencido';
             break;
     }
 
@@ -1624,18 +1602,18 @@ function renderCards() {
 
         var esTaller = (userOrigen === 'TALLER');
 
-        // Editar - Solo ADMINISTRACION y si NO está completado, cancelado o no asistió
-        if (!esTaller && turno.estado !== 'COMPLETADO' && turno.estado !== 'CANCELADO' && turno.estado !== 'NO_ASISTIO') {
+        // Editar - Solo ADMINISTRACION y si está pendiente
+        if (!esTaller && turno.estado === 'PENDIENTE') {
             html += '        <a class="dropdown-item" href="javascript:void(0)" onclick="gestionTurno(' + turno.id + ')"><i class="fa fa-edit text-primary"></i> Editar</a>';
         }
 
-        // Email - Solo ADMINISTRACION y si NO está cancelado o no asistió
-        if (!esTaller && turno.estado !== 'CANCELADO' && turno.estado !== 'NO_ASISTIO') {
+        // Email - Solo ADMINISTRACION y si está pendiente
+        if (!esTaller && turno.estado === 'PENDIENTE') {
             html += '        <a class="dropdown-item" href="javascript:void(0)" onclick="reenviarEmail(' + turno.id + ')"><i class="fa fa-envelope text-info"></i> Enviar Email</a>';
         }
 
-        // WhatsApp - Solo ADMINISTRACION y si NO está cancelado o no asistió (deshabilitado temporalmente)
-        if (!esTaller && turno.estado !== 'CANCELADO' && turno.estado !== 'NO_ASISTIO') {
+        // WhatsApp - Solo ADMINISTRACION y si está pendiente (deshabilitado temporalmente)
+        if (!esTaller && turno.estado === 'PENDIENTE') {
             html += '        <a class="dropdown-item disabled" href="javascript:void(0)" style="opacity: 0.5; pointer-events: none;"><i class="fa fa-whatsapp text-success"></i> WhatsApp (próximamente)</a>';
         }
 

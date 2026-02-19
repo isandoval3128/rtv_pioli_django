@@ -657,31 +657,27 @@ class VerificarTurnoView(TemplateView):
         hoy = date.today()
         ahora = datetime.now().time()
 
-        if turno.estado == 'cancelado':
+        if turno.estado == 'CANCELADO':
             context['estado_clase'] = 'cancelado'
             context['estado_icono'] = 'fa-times-circle'
             context['estado_texto'] = 'CANCELADO'
-        elif turno.estado == 'realizado':
-            context['estado_clase'] = 'realizado'
+        elif turno.estado == 'CONFIRMADO':
+            context['estado_clase'] = 'confirmado'
             context['estado_icono'] = 'fa-check-double'
-            context['estado_texto'] = 'REALIZADO'
-        elif turno.fecha < hoy:
+            context['estado_texto'] = 'CONFIRMADO'
+        elif turno.estado == 'VENCIDO':
             context['estado_clase'] = 'vencido'
             context['estado_icono'] = 'fa-calendar-times'
             context['estado_texto'] = 'VENCIDO'
         elif turno.fecha == hoy:
-            if turno.hora_inicio <= ahora <= turno.hora_fin:
-                context['estado_clase'] = 'activo'
-                context['estado_icono'] = 'fa-check-circle'
-                context['estado_texto'] = 'TURNO ACTIVO'
-            elif ahora < turno.hora_inicio:
+            if ahora < turno.hora_inicio:
                 context['estado_clase'] = 'pendiente-hoy'
                 context['estado_icono'] = 'fa-clock'
                 context['estado_texto'] = 'HOY - PENDIENTE'
             else:
-                context['estado_clase'] = 'vencido'
-                context['estado_icono'] = 'fa-calendar-times'
-                context['estado_texto'] = 'HORARIO PASADO'
+                context['estado_clase'] = 'pendiente-hoy'
+                context['estado_icono'] = 'fa-clock'
+                context['estado_texto'] = 'HOY - EN HORARIO'
         else:
             context['estado_clase'] = 'pendiente'
             context['estado_icono'] = 'fa-calendar-check'
@@ -1099,7 +1095,7 @@ class ConsultarTurnoView(View):
             elif tipo_busqueda == 'dni':
                 turnos = Turno.objects.filter(cliente__dni=valor_busqueda)
 
-            # Filtrar solo turnos activos (no cancelados ni completados antiguos)
+            # Filtrar solo turnos activos (excluir cancelados)
             if turnos:
                 turnos = turnos.exclude(estado='CANCELADO').order_by('-fecha', '-hora_inicio')
 

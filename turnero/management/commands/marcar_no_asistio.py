@@ -1,6 +1,6 @@
 """
-Comando de Django para marcar turnos vencidos como NO_ASISTIO.
-Busca turnos PENDIENTE/CONFIRMADO cuya fecha+hora ya pasó y los actualiza.
+Comando de Django para marcar turnos vencidos como VENCIDO.
+Busca turnos PENDIENTE cuya fecha+hora ya paso y los actualiza.
 
 Uso:
     python manage.py marcar_no_asistio              # Ejecutar
@@ -16,7 +16,7 @@ from turnero.models import Turno, HistorialTurno
 
 
 class Command(BaseCommand):
-    help = 'Marca como NO_ASISTIO los turnos vencidos (fecha/hora pasada) que siguen en PENDIENTE o CONFIRMADO'
+    help = 'Marca como VENCIDO los turnos vencidos (fecha/hora pasada) que siguen en PENDIENTE'
 
     def add_arguments(self, parser):
         parser.add_argument(
@@ -31,15 +31,15 @@ class Command(BaseCommand):
         hoy = ahora.date()
         hora_actual = ahora.time()
 
-        # Turnos de días anteriores que siguen pendientes/confirmados
+        # Turnos de dias anteriores que siguen pendientes
         turnos_dias_pasados = Turno.objects.filter(
-            estado__in=['PENDIENTE', 'CONFIRMADO'],
+            estado='PENDIENTE',
             fecha__lt=hoy,
         )
 
-        # Turnos de hoy cuya hora_fin ya pasó
+        # Turnos de hoy cuya hora_fin ya paso
         turnos_hoy_vencidos = Turno.objects.filter(
-            estado__in=['PENDIENTE', 'CONFIRMADO'],
+            estado='PENDIENTE',
             fecha=hoy,
             hora_fin__lt=hora_actual,
         )
@@ -64,18 +64,17 @@ class Command(BaseCommand):
         # Actualizar turnos
         actualizados = 0
         for turno in turnos_vencidos:
-            estado_anterior = turno.estado
-            turno.estado = 'NO_ASISTIO'
+            turno.estado = 'VENCIDO'
             turno.save(update_fields=['estado'])
 
             # Registrar en historial
             HistorialTurno.objects.create(
                 turno=turno,
-                accion='MARCADO_NO_ASISTIO',
-                descripcion=f'Turno marcado como No Asistió (estado anterior: {estado_anterior})',
+                accion='MARCADO_VENCIDO',
+                descripcion='Turno marcado automaticamente como Vencido',
             )
             actualizados += 1
 
         self.stdout.write(self.style.SUCCESS(
-            f'{actualizados} turno(s) marcados como NO_ASISTIO.'
+            f'{actualizados} turno(s) marcados como VENCIDO.'
         ))
