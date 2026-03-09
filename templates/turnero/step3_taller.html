@@ -650,6 +650,76 @@
     <span><strong>Cliente:</strong> {{ cliente.nombre }} {{ cliente.apellido }} - <strong>Vehiculo:</strong> {{ vehiculo.dominio }}</span>
 </div>
 
+{% if taller_preseleccionado %}
+<!-- Planta preseleccionada desde la página principal -->
+<div class="card-custom" data-aos="fade-up">
+    <div class="card-header-custom">
+        <h3>
+            <i class="fas fa-clipboard-list"></i> Seleccion de Tramite
+        </h3>
+    </div>
+    <div class="card-body-custom">
+        <form method="post" id="form_taller">
+            {% csrf_token %}
+            <input type="hidden" name="taller" id="taller_selected" value="{{ taller_preseleccionado.id }}">
+            <input type="hidden" name="tipo_vehiculo" id="tipo_vehiculo_selected" required>
+
+            <!-- Info de la planta preseleccionada -->
+            <div class="taller-card selected" style="cursor: default;">
+                <div class="row align-items-center">
+                    <div class="col-md-9">
+                        <h5 class="taller-nombre">
+                            <i class="fas fa-tools"></i>{{ taller_preseleccionado.get_nombre }}
+                        </h5>
+                        <p class="taller-info">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>{{ taller_preseleccionado.get_direccion }}, {{ taller_preseleccionado.get_localidad.nombre }}</span>
+                        </p>
+                        <p class="taller-info">
+                            <i class="fas fa-phone"></i>
+                            <span>{{ taller_preseleccionado.get_telefono }}
+                            {% if taller_preseleccionado.get_email %}
+                                <span class="ms-2">|</span>
+                                <i class="fas fa-envelope ms-2"></i>{{ taller_preseleccionado.get_email }}
+                            {% endif %}
+                            </span>
+                        </p>
+                        <div class="d-flex align-items-center gap-3 flex-wrap mt-2">
+                            <div class="taller-horario">
+                                <i class="fas fa-clock"></i>
+                                {{ taller_preseleccionado.horario_apertura|time:"H:i" }} -
+                                {{ taller_preseleccionado.horario_cierre|time:"H:i" }} hs
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tipos de trámite directamente -->
+            <h4 class="search-title mb-3 mt-4" data-aos="fade-up">
+                <i class="fas fa-hand-pointer me-2"></i>Seleccioná el tipo de tramite
+            </h4>
+
+            <div id="tiposTramiteDirecto" class="mt-3">
+                <div class="text-center py-4" id="loadingTipos">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Cargando...</span>
+                    </div>
+                    <p class="mt-2 text-muted">Cargando tipos de tramite...</p>
+                </div>
+                <div id="tiposTramiteListDirecto" class="tipos-tramite-grid" style="display:none;"></div>
+            </div>
+
+            <div class="text-center mt-4" data-aos="fade-up">
+                <button type="submit" class="btn btn-primary-custom btn-lg" id="btnContinuarDirecto" disabled>
+                    <i class="fas fa-arrow-right me-2"></i>Continuar al Paso 4
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% else %}
+<!-- Selección normal de taller -->
 <div class="card-custom" data-aos="fade-up">
     <div class="card-header-custom">
         <h3>
@@ -740,7 +810,9 @@
         </form>
     </div>
 </div>
+{% endif %}
 
+{% if not taller_preseleccionado %}
 <!-- Modal del Mapa -->
 <div class="modal fade" id="mapaModal" tabindex="-1" aria-labelledby="mapaModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
@@ -817,9 +889,99 @@
         </div>
     </div>
 </div>
+{% endif %}
 {% endblock %}
 
 {% block extra_js %}
+<script>
+    function mostrarLeyendaTramite(nombreTipo) {
+        const nombre = (nombreTipo || '').toUpperCase();
+        let leyenda = '';
+        if (nombre.includes('PESADO') || nombre.includes('CAMION') || nombre.includes('TRACTOR')) {
+            leyenda = 'Le recordamos que los tipos de vehículos <b>PESADOS</b> son: Camión, Tractor, Semirremolque, Acoplado, Batea, Ómnibus, Minibús, Combi, Casa Rodante, Mercedes Benz Sprinter, Dodge RAM y todo Furgón o Utilitario con eje trasero dual.';
+        } else {
+            leyenda = 'Le recordamos que los tipos de vehículos <b>LIVIANOS</b> son: Automóvil, Rural, Sedán, Todo Terreno, Coupé, Familiar, Remis, Taxi, Pick Up, Furgón, Furgoneta, Utilitario, Van. <b>¡NO SE PUEDE REALIZAR LA RTO DE VEHICULOS DE USO PARTICULAR RADICADOS EN LAS PROVINCIAS DE BS.AS., MENDOZA Y DE CABA!</b>';
+        }
+        Swal.fire({
+            title: 'Información importante',
+            html: leyenda,
+            icon: 'info',
+            confirmButtonColor: '#13304D',
+            confirmButtonText: 'Entendido',
+            timer: 15000,
+            timerProgressBar: true,
+        });
+    }
+</script>
+{% if taller_preseleccionado %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const tallerId = {{ taller_preseleccionado.id }};
+
+        // Cargar tipos de trámite directamente
+        fetch(`{% url 'turnero:tipos_tramite_taller_ajax' %}?taller_id=${tallerId}`)
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('loadingTipos').style.display = 'none';
+
+                if (data.success && data.tipos_tramite && data.tipos_tramite.length > 0) {
+                    const container = document.getElementById('tiposTramiteListDirecto');
+                    container.style.display = 'flex';
+                    container.innerHTML = '';
+
+                    data.tipos_tramite.forEach(function(tipo) {
+                        const card = document.createElement('div');
+                        card.className = 'tipo-tramite-card';
+                        card.dataset.tipoId = tipo.id;
+                        card.innerHTML = `
+                            <div class="tipo-tramite-header">
+                                <div class="tipo-tramite-icon">
+                                    <i class="fas fa-clipboard-check"></i>
+                                </div>
+                                <div>
+                                    <div class="tipo-tramite-nombre">${tipo.nombre}</div>
+                                </div>
+                            </div>
+                        `;
+
+                        card.addEventListener('click', function() {
+                            document.querySelectorAll('.tipo-tramite-card').forEach(function(c) {
+                                c.classList.remove('selected');
+                            });
+                            this.classList.add('selected');
+                            document.getElementById('tipo_vehiculo_selected').value = tipo.id;
+                            document.getElementById('btnContinuarDirecto').disabled = false;
+
+                            // Mostrar leyenda según tipo de trámite
+                            mostrarLeyendaTramite(tipo.nombre);
+                        });
+
+                        container.appendChild(card);
+                    });
+                } else {
+                    document.getElementById('tiposTramiteDirecto').innerHTML =
+                        '<div class="alert alert-warning"><i class="fas fa-exclamation-triangle me-2"></i>No hay tipos de tramite disponibles para esta planta.</div>';
+                }
+            })
+            .catch(function(error) {
+                document.getElementById('loadingTipos').style.display = 'none';
+                document.getElementById('tiposTramiteDirecto').innerHTML =
+                    '<div class="alert alert-danger"><i class="fas fa-times-circle me-2"></i>Error al cargar tipos de tramite.</div>';
+            });
+
+        // Validación del formulario
+        document.getElementById('form_taller').addEventListener('submit', function(e) {
+            const tipoSeleccionado = document.getElementById('tipo_vehiculo_selected').value;
+            if (!tipoSeleccionado) {
+                e.preventDefault();
+                if (typeof showWarning === 'function') {
+                    showWarning('Por favor, seleccioná un tipo de tramite antes de continuar', 'Selección Requerida');
+                }
+            }
+        });
+    });
+</script>
+{% else %}
 <script>
     // Variables globales para el mapa
     let map = null;
@@ -954,18 +1116,10 @@
         // Cerrar modal
         tiposTramiteModal.hide();
 
-        // Scroll hacia el botón continuar después de cerrar el modal
+        // Mostrar leyenda según tipo de trámite
         setTimeout(function() {
-            const btnContinuar = document.querySelector('button[type="submit"].btn-primary-custom');
-            if (btnContinuar) {
-                btnContinuar.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }
+            mostrarLeyendaTramite(tipoTramiteSeleccionadoNombre);
         }, 300);
-
-        // Mostrar notificación de éxito
-        if (typeof showSuccess === 'function') {
-            showSuccess(`Taller y trámite seleccionados correctamente`, 'Selección Confirmada');
-        }
     }
 
     // Selección de taller desde el mapa (definida globalmente)
@@ -1156,4 +1310,5 @@
 
     }); // Fin DOMContentLoaded
 </script>
+{% endif %}
 {% endblock %}

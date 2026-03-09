@@ -166,6 +166,25 @@
     border-bottom-left-radius: 4px;
     box-shadow: 0 1px 3px rgba(0,0,0,0.08);
 }
+.asistente-msg.assistant strong {
+    font-weight: 600;
+    color: #003466;
+}
+.asistente-msg.assistant ul,
+.asistente-msg.assistant ol {
+    margin: 6px 0;
+    padding-left: 18px;
+}
+.asistente-msg.assistant li {
+    margin-bottom: 3px;
+    line-height: 1.4;
+}
+.asistente-msg.assistant ul li {
+    list-style-type: disc;
+}
+.asistente-msg.assistant ol li {
+    list-style-type: decimal;
+}
 
 /* Botones de acción en respuestas */
 .asistente-acciones {
@@ -518,10 +537,45 @@
         });
     }
 
+    function formatearTexto(texto) {
+        // Sanitizar: escapar HTML para evitar XSS
+        const div = document.createElement('div');
+        div.textContent = texto;
+        let safe = div.innerHTML;
+
+        // **negrita**
+        safe = safe.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+
+        // Listas con viñetas: líneas que empiezan con "- " o "• "
+        safe = safe.replace(/^[\-•]\s+(.+)$/gm, '<li>$1</li>');
+        safe = safe.replace(/((?:<li>.*<\/li>\n?)+)/g, '<ul>$1</ul>');
+
+        // Listas numeradas: líneas que empiezan con "1. ", "2. ", etc.
+        safe = safe.replace(/^\d+\.\s+(.+)$/gm, '<li>$1</li>');
+        // Agrupar <li> consecutivos que no estén ya en <ul>
+        safe = safe.replace(/(?<!<\/ul>)((?:<li>.*<\/li>\n?)+)/g, '<ol>$1</ol>');
+
+        // Saltos de línea (los que no están dentro de listas)
+        safe = safe.replace(/\n/g, '<br>');
+
+        // Limpiar <br> redundantes dentro de listas
+        safe = safe.replace(/<br><ul>/g, '<ul>');
+        safe = safe.replace(/<\/ul><br>/g, '</ul>');
+        safe = safe.replace(/<br><ol>/g, '<ol>');
+        safe = safe.replace(/<\/ol><br>/g, '</ol>');
+        safe = safe.replace(/<\/li><br><li>/g, '</li><li>');
+
+        return safe;
+    }
+
     function agregarMensaje(texto, rol, acciones) {
         const msgDiv = document.createElement('div');
         msgDiv.className = 'asistente-msg ' + rol;
-        msgDiv.textContent = texto;
+        if (rol === 'assistant') {
+            msgDiv.innerHTML = formatearTexto(texto);
+        } else {
+            msgDiv.textContent = texto;
+        }
 
         // Agregar botones de acción
         if (acciones && acciones.length > 0) {

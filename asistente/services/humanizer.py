@@ -78,10 +78,17 @@ def _humanizar_datos(resolver_result, config, session=None):
             f"Usá máximo 2-3 oraciones de texto introductorio. NO inventes datos.\n"
             f"- Si los datos contienen una lista (tarifas, horarios, ubicaciones, etc.), "
             f"incluí TODOS los items de la lista. No resumas ni omitas elementos.\n"
-            f"- Usá emojis relevantes (1-2 máximo) para hacer la respuesta más amigable "
-            f"(ej: 🚗 para vehículos, 📋 para turnos, 💰 para tarifas, 📍 para ubicación, ✅ para confirmaciones).\n"
+            f"- FORMATO DE RESPUESTA: Usá texto plano con estos formatos:\n"
+            f"  · **texto** para negritas (nombres, títulos, precios importantes)\n"
+            f"  · Listas con guión: cada ítem en su propia línea empezando con '- '\n"
+            f"  · Saltos de línea para separar secciones\n"
+            f"  · Emojis relevantes (1-2 máximo): 🚗 vehículos, 📋 turnos, 💰 tarifas, 📍 ubicación, ✅ confirmaciones\n"
+            f"  · NO uses HTML, solo texto plano con los formatos indicados\n"
             f"- Si la información NO es relevante para lo que el usuario pidió, "
-            f"respondé SOLO con la palabra: NO_RELEVANTE"
+            f"respondé SOLO con la palabra: NO_RELEVANTE\n"
+            f"- Si la consulta requiere atención personalizada (reclamos, copias de comprobantes, "
+            f"problemas con pagos, rectificaciones, trámites que no se resuelven con esta info), "
+            f"respondé SOLO con la palabra: NECESITA_OPERADOR"
         )
 
         context = {
@@ -102,6 +109,18 @@ def _humanizar_datos(resolver_result, config, session=None):
                 ChatSession.objects.filter(pk=session.pk).update(
                     ai_calls_count=session.ai_calls_count + 1
                 )
+
+            # Detectar si necesita operador humano
+            if 'NECESITA_OPERADOR' in respuesta:
+                result['respuesta'] = (
+                    '😕 Entiendo tu consulta, pero necesitás atención personalizada '
+                    'para poder resolverla. Si querés, puedo derivarte con un operador.'
+                )
+                result['source'] = 'hardcoded'
+                result['acciones'] = [
+                    {'texto': '👤 Hablar con un operador', 'accion': 'quiero hablar con un operador'},
+                ]
+                return result
 
             # Detectar si la IA determinó que los datos no son relevantes
             if 'NO_RELEVANTE' in respuesta:
@@ -155,8 +174,11 @@ def _respuesta_ia_completa(resolver_result, config, session=None):
         prompt = (
             f"{config.system_prompt}\n\n"
             f"Si la consulta NO está relacionada con revisión técnica vehicular, turnos, "
-            f"tarifas, ubicación o servicios de RTV, o si no tenés la información para responder, "
-            f"respondé SOLO con la palabra: NO_RELEVANTE\n\n"
+            f"tarifas, ubicación o servicios de RTV, respondé SOLO con la palabra: NO_RELEVANTE\n\n"
+            f"Si la consulta SÍ está relacionada con RTV pero requiere atención personalizada "
+            f"(reclamos, copias de comprobantes, problemas con pagos, rectificaciones, trámites "
+            f"específicos que no podés resolver con la información disponible), respondé SOLO con "
+            f"la palabra: NECESITA_OPERADOR\n\n"
         )
 
         # Inyectar contexto KB si hay fragmentos relevantes
@@ -173,9 +195,10 @@ def _respuesta_ia_completa(resolver_result, config, session=None):
 
         prompt += (
             f"Consulta del usuario: \"{resolver_result.datos}\"\n\n"
-            f"Si podés responder, hacelo de forma natural, amable y concisa en español argentino. "
-            f"Usá 1-2 emojis relevantes para hacer la respuesta más amigable "
-            f"(ej: 🚗 vehículos, 📋 turnos, 💰 tarifas, 📍 ubicación, ✅ confirmaciones)."
+            f"Si podés responder, hacelo de forma natural, amable y concisa en español argentino.\n"
+            f"FORMATO: Usá texto plano con **negritas**, listas con '- ' y saltos de línea para estructurar. "
+            f"Usá 1-2 emojis relevantes (🚗 vehículos, 📋 turnos, 💰 tarifas, 📍 ubicación). "
+            f"NO uses HTML."
         )
 
         context = {
@@ -196,6 +219,19 @@ def _respuesta_ia_completa(resolver_result, config, session=None):
                 ChatSession.objects.filter(pk=session.pk).update(
                     ai_calls_count=session.ai_calls_count + 1
                 )
+
+            # Detectar si necesita operador humano
+            if 'NECESITA_OPERADOR' in respuesta:
+                result['respuesta'] = (
+                    '😕 Entiendo tu consulta, pero necesitás atención personalizada '
+                    'para poder resolverla. Si querés, puedo derivarte con un operador.'
+                )
+                result['source'] = 'hardcoded'
+                result['acciones'] = [
+                    {'texto': '👤 Hablar con un operador', 'accion': 'quiero hablar con un operador'},
+                ]
+                _registrar_sugerencia(resolver_result.datos, session)
+                return result
 
             # Detectar si la IA no pudo responder
             if 'NO_RELEVANTE' in respuesta:

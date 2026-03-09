@@ -49,6 +49,26 @@ h4, .h4 {
     max-height: 40px;
 }
 
+/* Logo subido por admin: ajustar para que se vea bien en navbar */
+#mainNav .navbar-brand img.navbar-logo-custom {
+    height: 2.5rem;
+    max-height: 50px;
+    width: auto;
+    object-fit: contain;
+    border-radius: 4px;
+}
+@media (min-width: 992px) {
+    #mainNav .navbar-brand img.navbar-logo-custom {
+        height: 3rem;
+        max-height: 55px;
+        transition: height 0.3s ease-in-out;
+    }
+    #mainNav.navbar-shrink .navbar-brand img.navbar-logo-custom {
+        height: 2.2rem;
+        max-height: 42px;
+    }
+}
+
 /* Aplicar color primario a elementos específicos del tema */
 #mainNav .navbar-nav .nav-item .nav-link:hover {
     color: var(--primary-color);

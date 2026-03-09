@@ -31,6 +31,22 @@ def get_email_connection():
     return connection, email_config
 
 
+def get_logo_image_data():
+    """
+    Obtiene los datos binarios del logo de RTV para emails.
+    Retorna None si no se encuentra.
+    """
+    import os
+    from django.conf import settings
+
+    logo_path = os.path.join(settings.BASE_DIR, 'static', 'assets', 'rtv_mejorado.png')
+    try:
+        with open(logo_path, 'rb') as f:
+            return f.read()
+    except Exception:
+        return None
+
+
 def get_qr_image_data(turno):
     """
     Obtiene los datos binarios del código QR del turno.
@@ -107,9 +123,10 @@ def generar_html_email_turno(turno, incluir_qr=False):
             <td style="padding: 20px 0;">
                 <table role="presentation" style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
 
-                    <!-- Header -->
+                    <!-- Header con logo -->
                     <tr>
                         <td style="background: linear-gradient(135deg, {color_primario} 0%, {color_secundario} 100%); padding: 30px 40px; text-align: center;">
+                            <img src="cid:logo_rtv" alt="RTV Pioli" style="width: 80px; height: auto; margin-bottom: 15px; border-radius: 12px;">
                             <h1 style="margin: 0; color: #ffffff; font-size: 28px; font-weight: 600;">
                                 Confirmación de Turno
                             </h1>
@@ -293,9 +310,10 @@ def enviar_email_turno(turno, motivo='confirmacion'):
         return False, 'No hay configuración de correo definida'
 
     try:
-        # Obtener datos del QR
+        # Obtener datos del QR y logo
         qr_data = get_qr_image_data(turno)
         tiene_qr = qr_data is not None
+        logo_data = get_logo_image_data()
 
         # Generar contenido HTML
         html_content = generar_html_email_turno(turno, incluir_qr=tiene_qr)
@@ -314,53 +332,46 @@ def enviar_email_turno(turno, motivo='confirmacion'):
 
         from_email = email_config.default_from_email or email_config.email_host_user
 
+        # Construir email multipart para soportar imágenes inline (logo + QR)
+        msg_root = MIMEMultipart('related')
+        msg_root['Subject'] = subject
+        msg_root['From'] = from_email
+        msg_root['To'] = turno.cliente.email
+
+        # Crear parte alternativa (texto plano + HTML)
+        msg_alternative = MIMEMultipart('alternative')
+        msg_root.attach(msg_alternative)
+
+        # Adjuntar texto plano
+        msg_text = MIMEText(text_content, 'plain', 'utf-8')
+        msg_alternative.attach(msg_text)
+
+        # Adjuntar HTML
+        msg_html = MIMEText(html_content, 'html', 'utf-8')
+        msg_alternative.attach(msg_html)
+
+        # Adjuntar logo con Content-ID
+        if logo_data:
+            logo_image = MIMEImage(logo_data)
+            logo_image.add_header('Content-ID', '<logo_rtv>')
+            logo_image.add_header('Content-Disposition', 'inline', filename='logo_rtv.png')
+            msg_root.attach(logo_image)
+
+        # Adjuntar imagen QR con Content-ID
         if tiene_qr:
-            # Construir email multipart manualmente para soportar imágenes inline
-            # Estructura: multipart/related > multipart/alternative > text/plain + text/html
-            #                               > image/png (QR)
-
-            msg_root = MIMEMultipart('related')
-            msg_root['Subject'] = subject
-            msg_root['From'] = from_email
-            msg_root['To'] = turno.cliente.email
-
-            # Crear parte alternativa (texto plano + HTML)
-            msg_alternative = MIMEMultipart('alternative')
-            msg_root.attach(msg_alternative)
-
-            # Adjuntar texto plano
-            msg_text = MIMEText(text_content, 'plain', 'utf-8')
-            msg_alternative.attach(msg_text)
-
-            # Adjuntar HTML
-            msg_html = MIMEText(html_content, 'html', 'utf-8')
-            msg_alternative.attach(msg_html)
-
-            # Adjuntar imagen QR con Content-ID
             qr_image = MIMEImage(qr_data)
             qr_image.add_header('Content-ID', '<qr_code>')
             qr_image.add_header('Content-Disposition', 'inline', filename=f'qr_{turno.codigo}.png')
             msg_root.attach(qr_image)
 
-            # Enviar usando la conexión SMTP
-            connection.open()
-            connection.connection.sendmail(
-                from_email,
-                [turno.cliente.email],
-                msg_root.as_string()
-            )
-            connection.close()
-        else:
-            # Sin QR, usar EmailMultiAlternatives estándar
-            email = EmailMultiAlternatives(
-                subject=subject,
-                body=text_content,
-                from_email=from_email,
-                to=[turno.cliente.email],
-                connection=connection
-            )
-            email.attach_alternative(html_content, "text/html")
-            email.send(fail_silently=False)
+        # Enviar usando la conexión SMTP
+        connection.open()
+        connection.connection.sendmail(
+            from_email,
+            [turno.cliente.email],
+            msg_root.as_string()
+        )
+        connection.close()
 
         return True, f'Email enviado correctamente a {turno.cliente.email}'
 
@@ -416,3 +427,53 @@ Estado del turno: {turno.get_estado_display()}
 RTV Pioli - Revisión Técnica Vehicular
 """
     return texto
+
+
+def enviar_email_html_con_logo(subject, body_text, body_html, to_email, connection, from_email, qr_data=None):
+    """
+    Envía un email HTML con logo de RTV Pioli embebido como imagen inline.
+    Opcionalmente incluye imagen QR.
+
+    Args:
+        subject: Asunto del email
+        body_text: Contenido texto plano
+        body_html: Contenido HTML (debe referenciar cid:logo_rtv)
+        to_email: Email del destinatario
+        connection: Conexión SMTP
+        from_email: Email del remitente
+        qr_data: Datos binarios del QR (opcional)
+    """
+    from email.mime.multipart import MIMEMultipart
+    from email.mime.text import MIMEText
+
+    logo_data = get_logo_image_data()
+
+    msg_root = MIMEMultipart('related')
+    msg_root['Subject'] = subject
+    msg_root['From'] = from_email
+    msg_root['To'] = to_email
+
+    msg_alternative = MIMEMultipart('alternative')
+    msg_root.attach(msg_alternative)
+
+    msg_text = MIMEText(body_text, 'plain', 'utf-8')
+    msg_alternative.attach(msg_text)
+
+    msg_html = MIMEText(body_html, 'html', 'utf-8')
+    msg_alternative.attach(msg_html)
+
+    if logo_data:
+        logo_image = MIMEImage(logo_data)
+        logo_image.add_header('Content-ID', '<logo_rtv>')
+        logo_image.add_header('Content-Disposition', 'inline', filename='logo_rtv.png')
+        msg_root.attach(logo_image)
+
+    if qr_data:
+        qr_image = MIMEImage(qr_data)
+        qr_image.add_header('Content-ID', '<qr_code>')
+        qr_image.add_header('Content-Disposition', 'inline', filename='qr_turno.png')
+        msg_root.attach(qr_image)
+
+    connection.open()
+    connection.connection.sendmail(from_email, [to_email], msg_root.as_string())
+    connection.close()

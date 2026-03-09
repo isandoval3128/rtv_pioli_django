@@ -328,11 +328,29 @@ def _similitud_basica(texto1, texto2):
 # ==========================================
 
 def resolver_tarifas(texto, intent, confidence):
-    """Resuelve tarifas desde TipoVehiculo"""
-    from talleres.models import TipoVehiculo
+    """Resuelve tarifas desde la Tarifa vigente (Excel)"""
+    from tarifas.models import Tarifa
+    from tarifas.utils import excel_to_list
 
-    tipos = TipoVehiculo.objects.filter(status=True).order_by('nombre')
-    if not tipos.exists():
+    tarifa = Tarifa.objects.filter(status=True).first()
+    if not tarifa or not tarifa.archivo_excel:
+        return ResolverResult(
+            intent=intent,
+            datos='No hay tarifas disponibles actualmente.',
+            source='db',
+            necesita_humanizar=True,
+            confidence=confidence,
+            acciones=[
+                {'texto': 'Sacar turno', 'url': '/turnero/paso1/'},
+            ],
+        )
+
+    try:
+        tarifas_list = excel_to_list(tarifa.archivo_excel.path)
+    except Exception:
+        tarifas_list = []
+
+    if not tarifas_list:
         return ResolverResult(
             intent=intent,
             datos='No hay tarifas disponibles actualmente.',
@@ -342,18 +360,13 @@ def resolver_tarifas(texto, intent, confidence):
         )
 
     datos_tarifas = []
-    for tipo in tipos:
-        precios = []
-        if tipo.precio_provincial:
-            precios.append(f"Provincial: ${tipo.precio_provincial:,.0f}")
-        if tipo.precio_nacional:
-            precios.append(f"Nacional: ${tipo.precio_nacional:,.0f}")
-        if tipo.precio_cajutad:
-            precios.append(f"CAJUTAC: ${tipo.precio_cajutad:,.0f}")
-        precio_str = ' | '.join(precios) if precios else 'Consultar'
-        datos_tarifas.append(f"- {tipo.nombre}: {precio_str}")
+    for item in tarifas_list:
+        partes = []
+        for key, value in item.items():
+            partes.append(f"{key}: {value}")
+        datos_tarifas.append("- " + " | ".join(partes))
 
-    datos = "Tarifas de trámites RTV:\n" + "\n".join(datos_tarifas)
+    datos = f"Tarifas vigentes ({tarifa.titulo}):\n" + "\n".join(datos_tarifas)
 
     return ResolverResult(
         intent=intent,
