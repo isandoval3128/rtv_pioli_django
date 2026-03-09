@@ -4,8 +4,13 @@
 {% block object-tools-items %}
 {{ block.super }}
 <li>
+    <a href="{% url 'admin:talleres_tipovehiculo_crear_base' %}" class="addlink" style="background: #28a745; padding-left: 10px;">
+        Crear Tipos de Trámite Base
+    </a>
+</li>
+<li>
     <a href="{% url 'admin:talleres_tipovehiculo_importar' %}" class="addlink" style="background: #417690; padding-left: 10px;">
-        <span style="margin-right: 5px;">📥</span> Importar desde Excel
+        Importar desde Excel
     </a>
 </li>
 {% endblock %}

@@ -124,8 +124,71 @@ class TipoVehiculoAdmin(admin.ModelAdmin):
                 self.admin_site.admin_view(self.importar_excel_view),
                 name='talleres_tipovehiculo_importar'
             ),
+            path(
+                'crear-tipos-base/',
+                self.admin_site.admin_view(self.crear_tipos_base_view),
+                name='talleres_tipovehiculo_crear_base'
+            ),
         ]
         return custom_urls + urls
+
+    TIPOS_BASE = [
+        {
+            'codigo_tramite': 'RTO-LIV',
+            'nombre': 'RTO: AUTOS - PICK UP - UTILITARIO',
+            'duracion_minutos': 10,
+        },
+        {
+            'codigo_tramite': 'RTO-PES',
+            'nombre': 'RTO: CAMION/TRACTOR - ACOPLADO/SEMIRREMOLQUE - OMNIBUS - FURGON GRANDE - COMBI',
+            'duracion_minutos': 20,
+        },
+    ]
+
+    def crear_tipos_base_view(self, request):
+        """Crea los tipos de trámite base si no existen"""
+        if request.method == 'POST':
+            creados = 0
+            existentes = 0
+            for tipo_data in self.TIPOS_BASE:
+                _, created = TipoVehiculo.objects.get_or_create(
+                    codigo_tramite=tipo_data['codigo_tramite'],
+                    defaults={
+                        'nombre': tipo_data['nombre'],
+                        'duracion_minutos': tipo_data['duracion_minutos'],
+                        'status': True,
+                    }
+                )
+                if created:
+                    creados += 1
+                else:
+                    existentes += 1
+
+            if creados:
+                self.message_user(request, f"Se crearon {creados} tipos de trámite.", messages.SUCCESS)
+            if existentes:
+                self.message_user(request, f"{existentes} tipos ya existían (no se duplicaron).", messages.INFO)
+
+            return redirect('admin:talleres_tipovehiculo_changelist')
+
+        # GET: mostrar confirmación
+        existentes = TipoVehiculo.objects.filter(
+            codigo_tramite__in=[t['codigo_tramite'] for t in self.TIPOS_BASE]
+        ).values_list('codigo_tramite', flat=True)
+        tipos_info = []
+        for t in self.TIPOS_BASE:
+            tipos_info.append({
+                **t,
+                'existe': t['codigo_tramite'] in existentes,
+            })
+
+        context = {
+            **self.admin_site.each_context(request),
+            'title': 'Crear Tipos de Trámite Base',
+            'opts': self.model._meta,
+            'tipos_info': tipos_info,
+        }
+        return render(request, 'admin/talleres/crear_tipos_base.html', context)
 
     fieldsets = (
         ('Información del Trámite', {
