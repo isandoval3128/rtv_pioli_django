@@ -1639,7 +1639,10 @@
                     <div class="hero-btns-block d-flex flex-column align-items-center w-100">
                         <div class="d-flex flex-wrap justify-content-center gap-3 w-100">
                             {% for taller in talleres %}
-                            <a class="btn btn-xl text-uppercase header-btn hero-btn-fixed btn-modern hover-glow" href="{% url 'turnero:step1_cliente' %}?taller={{ taller.id }}" style="background-color: {{ site_config.header_btn_bgcolor }}; color: #fff; transition: transform 0.3s cubic-bezier(.4,2,.3,1), box-shadow 0.3s; box-shadow: 0 2px 8px rgba(2,25,122,0.08); min-width:220px;">Turno Planta {{ taller.get_localidad.nombre|truncatewords:1|cut:" …" }}</a>
+                            <!-- Original oculto (turnero interno) -->
+                            <a class="btn btn-xl text-uppercase header-btn hero-btn-fixed btn-modern hover-glow d-none" href="{% url 'turnero:step1_cliente' %}?taller={{ taller.id }}" style="background-color: {{ site_config.header_btn_bgcolor }}; color: #fff; transition: transform 0.3s cubic-bezier(.4,2,.3,1), box-shadow 0.3s; box-shadow: 0 2px 8px rgba(2,25,122,0.08); min-width:220px;">Turno Planta {{ taller.get_localidad.nombre|truncatewords:1|cut:" …" }}</a>
+                            <!-- Copia con link externo (turnero Redsoft) -->
+                            <a class="btn btn-xl text-uppercase header-btn hero-btn-fixed btn-modern hover-glow" href="{% if taller.id == 1 %}https://turnos.redsoft.com.ar/agenda/calendario?t=1{% elif taller.id == 2 %}https://turnos.redsoft.com.ar/agenda/calendario?t=25{% else %}{% url 'turnero:step1_cliente' %}?taller={{ taller.id }}{% endif %}" target="_blank" style="background-color: {{ site_config.header_btn_bgcolor }}; color: #fff; transition: transform 0.3s cubic-bezier(.4,2,.3,1), box-shadow 0.3s; box-shadow: 0 2px 8px rgba(2,25,122,0.08); min-width:220px;">Turno Planta {{ taller.get_localidad.nombre|truncatewords:1|cut:" …" }}</a>
                             {% endfor %}
                         </div>
                         {% if site_config.header_btns_text %}
@@ -1725,7 +1728,10 @@
             </div>
             <div class="d-flex flex-wrap justify-content-center gap-3 mt-3">
                 {% for taller in talleres %}
-                <a class="btn btn-xl text-uppercase header-btn btn-modern hover-glow" href="{% url 'turnero:step1_cliente' %}?taller={{ taller.id }}" style="background-color: {{ site_config.header_btn_bgcolor }}; color: #fff; min-width: 220px; transition: transform 0.3s cubic-bezier(.4,2,.3,1), box-shadow 0.3s; box-shadow: 0 2px 8px rgba(2,25,122,0.08);">Turno Planta {{ taller.get_localidad.nombre|truncatewords:1|cut:" …" }}</a>
+                <!-- Original oculto (turnero interno) -->
+                <a class="btn btn-xl text-uppercase header-btn btn-modern hover-glow d-none" href="{% url 'turnero:step1_cliente' %}?taller={{ taller.id }}" style="background-color: {{ site_config.header_btn_bgcolor }}; color: #fff; min-width: 220px; transition: transform 0.3s cubic-bezier(.4,2,.3,1), box-shadow 0.3s; box-shadow: 0 2px 8px rgba(2,25,122,0.08);">Turno Planta {{ taller.get_localidad.nombre|truncatewords:1|cut:" …" }}</a>
+                <!-- Copia con link externo (turnero Redsoft) -->
+                <a class="btn btn-xl text-uppercase header-btn btn-modern hover-glow" href="{% if taller.id == 1 %}https://turnos.redsoft.com.ar/agenda/calendario?t=1{% elif taller.id == 2 %}https://turnos.redsoft.com.ar/agenda/calendario?t=25{% else %}{% url 'turnero:step1_cliente' %}?taller={{ taller.id }}{% endif %}" target="_blank" style="background-color: {{ site_config.header_btn_bgcolor }}; color: #fff; min-width: 220px; transition: transform 0.3s cubic-bezier(.4,2,.3,1), box-shadow 0.3s; box-shadow: 0 2px 8px rgba(2,25,122,0.08);">Turno Planta {{ taller.get_localidad.nombre|truncatewords:1|cut:" …" }}</a>
                 {% endfor %}
             </div>
         </div>
@@ -1795,7 +1801,10 @@
             </div>
             <div class="d-flex flex-wrap justify-content-center gap-3 mt-3">
                 {% for taller in talleres %}
-                <a class="btn btn-xl text-uppercase header-btn btn-modern hover-glow" href="{% url 'turnero:step1_cliente' %}?taller={{ taller.id }}" style="background-color: {{ site_config.header_btn_bgcolor }}; color: #fff; min-width: 220px; transition: transform 0.3s cubic-bezier(.4,2,.3,1), box-shadow 0.3s; box-shadow: 0 2px 8px rgba(2,25,122,0.08);">Turno Planta {{ taller.get_localidad.nombre|truncatewords:1|cut:" …" }}</a>
+                <!-- Original oculto (turnero interno) -->
+                <a class="btn btn-xl text-uppercase header-btn btn-modern hover-glow d-none" href="{% url 'turnero:step1_cliente' %}?taller={{ taller.id }}" style="background-color: {{ site_config.header_btn_bgcolor }}; color: #fff; min-width: 220px; transition: transform 0.3s cubic-bezier(.4,2,.3,1), box-shadow 0.3s; box-shadow: 0 2px 8px rgba(2,25,122,0.08);">Turno Planta {{ taller.get_localidad.nombre|truncatewords:1|cut:" …" }}</a>
+                <!-- Copia con link externo (turnero Redsoft) -->
+                <a class="btn btn-xl text-uppercase header-btn btn-modern hover-glow" href="{% if taller.id == 1 %}https://turnos.redsoft.com.ar/agenda/calendario?t=1{% elif taller.id == 2 %}https://turnos.redsoft.com.ar/agenda/calendario?t=25{% else %}{% url 'turnero:step1_cliente' %}?taller={{ taller.id }}{% endif %}" target="_blank" style="background-color: {{ site_config.header_btn_bgcolor }}; color: #fff; min-width: 220px; transition: transform 0.3s cubic-bezier(.4,2,.3,1), box-shadow 0.3s; box-shadow: 0 2px 8px rgba(2,25,122,0.08);">Turno Planta {{ taller.get_localidad.nombre|truncatewords:1|cut:" …" }}</a>
                 {% endfor %}
             </div>
 
@@ -1865,7 +1874,10 @@
             </div>
             <div class="d-flex flex-wrap justify-content-center gap-3 mt-3">
                 {% for taller in talleres %}
-                <a class="btn btn-xl text-uppercase header-btn btn-modern hover-glow" href="{% url 'turnero:step1_cliente' %}?taller={{ taller.id }}" style="background-color: {{ site_config.header_btn_bgcolor|default:'#007bff' }}; color: #fff; min-width: 220px; transition: transform 0.3s cubic-bezier(.4,2,.3,1), box-shadow 0.3s; box-shadow: 0 2px 8px rgba(2,25,122,0.08);">Turno Planta {{ taller.get_localidad.nombre|truncatewords:1|cut:" …" }}</a>
+                <!-- Original oculto (turnero interno) -->
+                <a class="btn btn-xl text-uppercase header-btn btn-modern hover-glow d-none" href="{% url 'turnero:step1_cliente' %}?taller={{ taller.id }}" style="background-color: {{ site_config.header_btn_bgcolor|default:'#007bff' }}; color: #fff; min-width: 220px; transition: transform 0.3s cubic-bezier(.4,2,.3,1), box-shadow 0.3s; box-shadow: 0 2px 8px rgba(2,25,122,0.08);">Turno Planta {{ taller.get_localidad.nombre|truncatewords:1|cut:" …" }}</a>
+                <!-- Copia con link externo (turnero Redsoft) -->
+                <a class="btn btn-xl text-uppercase header-btn btn-modern hover-glow" href="{% if taller.id == 1 %}https://turnos.redsoft.com.ar/agenda/calendario?t=1{% elif taller.id == 2 %}https://turnos.redsoft.com.ar/agenda/calendario?t=25{% else %}{% url 'turnero:step1_cliente' %}?taller={{ taller.id }}{% endif %}" target="_blank" style="background-color: {{ site_config.header_btn_bgcolor|default:'#007bff' }}; color: #fff; min-width: 220px; transition: transform 0.3s cubic-bezier(.4,2,.3,1), box-shadow 0.3s; box-shadow: 0 2px 8px rgba(2,25,122,0.08);">Turno Planta {{ taller.get_localidad.nombre|truncatewords:1|cut:" …" }}</a>
                 {% endfor %}
             </div>
         </div>
