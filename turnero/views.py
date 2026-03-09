@@ -5,6 +5,7 @@ from django.views import View
 from django.views.generic import TemplateView
 from django.utils import timezone
 from datetime import datetime, timedelta, time
+from django.db import IntegrityError
 from django.db.models import Q, Count, Case, When, Value, IntegerField
 from clientes.models import Cliente
 from territorios.models import Localidad
@@ -573,17 +574,22 @@ class Step5ConfirmacionView(View):
             hora_fin_dt = datetime.combine(fecha, hora_inicio) + timedelta(minutes=duracion)
             hora_fin = hora_fin_dt.time()
 
-            turno = Turno.objects.create(
-                vehiculo=vehiculo,
-                cliente=cliente,
-                taller=taller,
-                tipo_vehiculo=tipo_vehiculo,
-                fecha=fecha,
-                hora_inicio=hora_inicio,
-                hora_fin=hora_fin,
-                estado='PENDIENTE',
-                observaciones=form.cleaned_data.get('observaciones', '')
-            )
+            try:
+                turno = Turno.objects.create(
+                    vehiculo=vehiculo,
+                    cliente=cliente,
+                    taller=taller,
+                    tipo_vehiculo=tipo_vehiculo,
+                    fecha=fecha,
+                    hora_inicio=hora_inicio,
+                    hora_fin=hora_fin,
+                    estado='PENDIENTE',
+                    observaciones=form.cleaned_data.get('observaciones', '')
+                )
+            except IntegrityError:
+                from django.contrib import messages
+                messages.error(request, 'Lo sentimos, el horario seleccionado fue tomado por otro usuario. Por favor, seleccioná otro horario.')
+                return redirect_with_embedded(request, 'turnero:step4_fecha_hora')
 
             # Eliminar la reserva temporal de esta sesión (ya se convirtió en turno real)
             if session_key:
