@@ -1,0 +1,1268 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <title>Preview Tipografia - RTV Pioli</title>
+    <link rel="icon" type="image/x-icon" href="static/assets/rtv.png" />
+    <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,300;1,400;1,500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css" />
+    <link href="https://fonts.googleapis.com/css?family=Roboto+Slab:400,100,300,700" rel="stylesheet" type="text/css" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        /* ========================================
+           VARIABLES
+        ======================================== */
+        :root {
+            --primary-900: #001d3d;
+            --primary-800: #002855;
+            --primary-700: #003466;
+            --primary-600: #004080;
+            --primary-500: #0056b3;
+            --primary-400: #3d8bfd;
+            --primary-300: #6ea8fe;
+            --primary-200: #9ec5fe;
+            --primary-100: #cfe2ff;
+            --primary-50: #e7f1ff;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        /* ========================================
+           TIPOGRAFIA ANTES (estado actual)
+        ======================================== */
+        body.typo-antes {
+            font-family: "Roboto Slab", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+
+        .typo-antes .navbar-nav .nav-link {
+            font-family: "Montserrat", sans-serif;
+            font-size: 0.95rem;
+            font-weight: 700;
+            letter-spacing: 0.0625em;
+        }
+
+        .typo-antes .masthead-heading {
+            font-family: "Montserrat", sans-serif;
+            font-size: 4.5rem;
+            font-weight: 700;
+            line-height: 4.5rem;
+            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .typo-antes .masthead-subheading {
+            font-family: "Roboto Slab", serif;
+            font-size: 2.25rem;
+            font-style: italic;
+            font-weight: 300;
+            line-height: 2.25rem;
+            margin-bottom: 2rem;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .typo-antes .section-badge {
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.15em;
+        }
+
+        .typo-antes .section-heading {
+            font-size: 2.5rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+        }
+
+        .typo-antes .section-subheading {
+            font-size: 1.1rem;
+            font-weight: 400;
+            font-style: normal;
+            letter-spacing: normal;
+        }
+
+        .typo-antes .service-title {
+            font-size: 1.35rem;
+            font-weight: 700;
+        }
+
+        .typo-antes .service-description {
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+
+        .typo-antes .about-text-content {
+            font-size: 1.05rem;
+            line-height: 1.8;
+        }
+
+        .typo-antes .feature-title {
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: none;
+            letter-spacing: normal;
+        }
+
+        .typo-antes .feature-desc {
+            font-size: 0.7rem;
+            font-style: normal;
+        }
+
+        .typo-antes .info-label {
+            font-size: 0.7rem;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+        }
+
+        .typo-antes .info-value {
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+
+        .typo-antes .contact-info-header h4 {
+            font-size: 1.4rem;
+            font-weight: 700;
+        }
+
+        .typo-antes .contact-info-header p {
+            font-size: 0.95rem;
+            font-weight: 400;
+        }
+
+        .typo-antes .channel-label {
+            font-size: 0.7rem;
+            font-weight: 400;
+            letter-spacing: 0.05em;
+        }
+
+        .typo-antes .channel-value {
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+
+        .typo-antes .btn-modern,
+        .typo-antes .btn-tarifa-action,
+        .typo-antes .btn-submit-modern {
+            font-family: "Montserrat", sans-serif;
+            font-weight: 600;
+            letter-spacing: 0.04em;
+        }
+
+        .typo-antes .tarifa-description-content {
+            font-size: 1.02rem;
+            line-height: 1.7;
+        }
+
+        .typo-antes .ubicacion-nombre {
+            font-size: 1.4rem;
+            font-weight: 700;
+        }
+
+        .typo-antes .footer-text {
+            font-size: 0.9rem;
+            font-weight: 400;
+        }
+
+        /* ========================================
+           TIPOGRAFIA DESPUES (propuesta Poppins)
+        ======================================== */
+        body.typo-despues {
+            font-family: "Poppins", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+
+        .typo-despues .navbar-nav .nav-link {
+            font-family: "Poppins", sans-serif;
+            font-size: 0.85rem;
+            font-weight: 500;
+            letter-spacing: 0.12em;
+        }
+
+        .typo-despues .masthead-heading {
+            font-family: "Poppins", sans-serif;
+            font-size: 4.5rem;
+            font-weight: 800;
+            line-height: 4.5rem;
+            letter-spacing: -0.03em;
+            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .typo-despues .masthead-subheading {
+            font-family: "Poppins", sans-serif;
+            font-size: 2.25rem;
+            font-style: italic;
+            font-weight: 300;
+            line-height: 2.25rem;
+            letter-spacing: 0.02em;
+            margin-bottom: 2rem;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .typo-despues .section-badge {
+            font-family: "Poppins", sans-serif;
+            font-size: 0.7rem;
+            font-weight: 600;
+            letter-spacing: 0.18em;
+        }
+
+        .typo-despues .section-heading {
+            font-family: "Poppins", sans-serif;
+            font-size: 2.75rem;
+            font-weight: 700;
+            letter-spacing: -0.01em;
+        }
+
+        .typo-despues .section-subheading {
+            font-family: "Poppins", sans-serif;
+            font-size: 1.1rem;
+            font-weight: 400;
+            font-style: italic;
+            letter-spacing: 0.01em;
+        }
+
+        .typo-despues .service-title {
+            font-family: "Poppins", sans-serif;
+            font-size: 1.35rem;
+            font-weight: 600;
+        }
+
+        .typo-despues .service-description {
+            font-family: "Poppins", sans-serif;
+            font-size: 0.93rem;
+            line-height: 1.75;
+        }
+
+        .typo-despues .about-text-content {
+            font-family: "Poppins", sans-serif;
+            font-size: 1.05rem;
+            line-height: 1.85;
+        }
+
+        .typo-despues .feature-title {
+            font-family: "Poppins", sans-serif;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        .typo-despues .feature-desc {
+            font-family: "Poppins", sans-serif;
+            font-size: 0.7rem;
+            font-style: italic;
+        }
+
+        .typo-despues .info-label {
+            font-family: "Poppins", sans-serif;
+            font-size: 0.68rem;
+            font-weight: 500;
+            letter-spacing: 0.08em;
+        }
+
+        .typo-despues .info-value {
+            font-family: "Poppins", sans-serif;
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+
+        .typo-despues .contact-info-header h4 {
+            font-family: "Poppins", sans-serif;
+            font-size: 1.4rem;
+            font-weight: 600;
+        }
+
+        .typo-despues .contact-info-header p {
+            font-family: "Poppins", sans-serif;
+            font-size: 0.95rem;
+            font-weight: 400;
+        }
+
+        .typo-despues .channel-label {
+            font-family: "Poppins", sans-serif;
+            font-size: 0.68rem;
+            font-weight: 500;
+            letter-spacing: 0.08em;
+        }
+
+        .typo-despues .channel-value {
+            font-family: "Poppins", sans-serif;
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+
+        .typo-despues .btn-modern,
+        .typo-despues .btn-tarifa-action,
+        .typo-despues .btn-submit-modern {
+            font-family: "Poppins", sans-serif;
+            font-weight: 600;
+            letter-spacing: 0.06em;
+        }
+
+        .typo-despues .tarifa-description-content {
+            font-family: "Poppins", sans-serif;
+            font-size: 1.02rem;
+            line-height: 1.75;
+        }
+
+        .typo-despues .ubicacion-nombre {
+            font-family: "Poppins", sans-serif;
+            font-size: 1.4rem;
+            font-weight: 700;
+        }
+
+        .typo-despues .footer-text {
+            font-family: "Poppins", sans-serif;
+            font-size: 0.9rem;
+            font-weight: 400;
+        }
+
+        /* ========================================
+           ESTILOS DE ESTRUCTURA (compartidos)
+        ======================================== */
+
+        /* Navbar */
+        .navbar {
+            background-color: #212529;
+            padding: 1rem 0;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            opacity: 0.9;
+        }
+        .navbar-brand img { height: 2rem; }
+        .navbar-nav { gap: 0.25rem; }
+        .navbar-nav .nav-link {
+            color: #fff !important;
+            text-transform: uppercase;
+            padding: 0.5rem 1rem;
+        }
+        .navbar-nav .nav-link:hover { color: #ffc800 !important; }
+
+        /* Masthead */
+        .masthead {
+            position: relative;
+            padding: 14rem 0 8rem;
+            text-align: center;
+            color: #fff;
+            background: linear-gradient(135deg, #001d3d 0%, #003466 40%, #0056b3 100%);
+            overflow: hidden;
+        }
+        .masthead::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse at 30% 50%, rgba(0,86,179,0.3) 0%, transparent 60%);
+        }
+        .masthead .container { position: relative; z-index: 1; }
+        .masthead-card {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2.5rem 2rem;
+            border-radius: 1.5rem;
+            background-color: rgba(2,25,122,0.35);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 30px rgba(2,25,122,0.25);
+        }
+        .masthead-heading {
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+            color: white;
+        }
+        .masthead-subheading {
+            color: rgba(255,255,255,0.9);
+        }
+
+        /* Botones hero */
+        .hero-btns { margin-top: 2rem; display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+        .btn-modern {
+            display: inline-block;
+            padding: 1rem 2rem;
+            border-radius: 0.75rem;
+            border: none;
+            text-transform: uppercase;
+            color: white;
+            background: linear-gradient(135deg, #003466, #0056b3);
+            text-decoration: none;
+            box-shadow: 0 4px 15px rgba(0,52,102,0.3);
+            min-width: 220px;
+            text-align: center;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .btn-modern:hover { transform: translateY(-4px); box-shadow: 0 8px 25px rgba(0,52,102,0.4); color: white; }
+
+        /* Scroll indicator */
+        .scroll-indicator { text-align: center; margin-top: 3rem; }
+        .scroll-indicator a { color: rgba(255,255,255,0.7); text-decoration: none; font-size: 0.85rem; }
+        .scroll-indicator i { display: block; margin-top: 0.5rem; animation: bounce 2s infinite; }
+        @keyframes bounce { 0%,100% { transform: translateY(0); } 50% { transform: translateY(8px); } }
+
+        /* Page sections */
+        .page-section { padding: 6rem 0; }
+        .page-section.bg-light { background: linear-gradient(180deg, #f8fafc 0%, #eef4fb 50%, #e8f0f8 100%); }
+
+        /* Section headers */
+        .section-badge {
+            display: inline-block;
+            text-transform: uppercase;
+            color: #003466;
+            background: linear-gradient(135deg, #cfe2ff, #e7f1ff);
+            padding: 0.6rem 1.5rem;
+            border-radius: 50px;
+            margin-bottom: 1.25rem;
+            box-shadow: 0 2px 10px rgba(0,52,102,0.08);
+        }
+        .section-heading {
+            text-transform: uppercase;
+            color: #003466;
+            margin-bottom: 0.75rem;
+        }
+        .section-subheading {
+            color: #64748b;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        .divider-dots { display: flex; justify-content: center; gap: 0.5rem; margin-top: 1.5rem; }
+        .divider-dots span { width: 8px; height: 8px; background: linear-gradient(135deg, #003466, #0056b3); border-radius: 50%; opacity: 0.6; }
+        .divider-dots span:nth-child(2) { width: 12px; height: 12px; opacity: 1; }
+
+        /* Services grid */
+        .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; padding: 1rem 0; }
+        .service-card {
+            background: linear-gradient(180deg, #ffffff 0%, #fafcff 100%);
+            border-radius: 1.5rem;
+            padding: 2rem;
+            box-shadow: 0 4px 6px rgba(0,52,102,0.04), 0 10px 20px rgba(0,52,102,0.08);
+            border: 1px solid rgba(255,255,255,0.8);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .service-card:hover { transform: translateY(-8px); box-shadow: 0 20px 40px rgba(0,52,102,0.12); }
+        .service-icon-wrapper { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 1.5rem; }
+        .service-icon {
+            width: 70px; height: 70px; border-radius: 1rem;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.75rem; color: white;
+            background: #003466; box-shadow: 0 8px 25px rgba(0,52,102,0.25);
+        }
+        .service-number { font-size: 3rem; font-weight: 800; color: rgba(0,52,102,0.08); line-height: 1; }
+        .service-title { color: #003466; margin-bottom: 0.75rem; }
+        .service-divider { width: 50px; height: 3px; background: linear-gradient(90deg, #003466, #0056b3); border-radius: 2px; margin-bottom: 1rem; }
+        .service-description { color: #5a6a7a; text-align: left; margin: 0; }
+
+        /* Tarifas */
+        .tarifa-description-card {
+            position: relative;
+            background: linear-gradient(135deg, #ffffff, #f8faff);
+            border-radius: 1.25rem;
+            padding: 1.75rem 2rem 1.75rem 4.5rem;
+            box-shadow: 0 4px 6px rgba(0,52,102,0.04), 0 10px 20px rgba(0,52,102,0.06);
+            border: 1px solid rgba(0,86,179,0.1);
+            border-left: 4px solid #0056b3;
+        }
+        .tarifa-description-icon {
+            position: absolute; left: 1.25rem; top: 50%; transform: translateY(-50%);
+            width: 45px; height: 45px; background: linear-gradient(135deg, #0056b3, #003466);
+            border-radius: 0.75rem; display: flex; align-items: center; justify-content: center;
+            color: white; font-size: 1.1rem; box-shadow: 0 4px 12px rgba(0,52,102,0.3);
+        }
+        .tarifa-description-content { color: #334155; text-align: justify; }
+        .tarifas-table-wrapper {
+            background: linear-gradient(180deg, #ffffff 0%, #fafcff 100%);
+            border-radius: 1.5rem; padding: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0,52,102,0.04), 0 10px 25px rgba(0,52,102,0.08);
+            border: 1px solid rgba(255,255,255,0.9);
+        }
+        .tarifas-table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 0.95rem; }
+        .tarifas-table thead th {
+            background: linear-gradient(135deg, #003466, #0056b3);
+            color: white; font-weight: 600; padding: 1rem 1.25rem; text-align: left; border: none;
+        }
+        .tarifas-table thead th:first-child { border-radius: 0.75rem 0 0 0; }
+        .tarifas-table thead th:last-child { border-radius: 0 0.75rem 0 0; }
+        .tarifas-table tbody td { padding: 0.9rem 1.25rem; border-bottom: 1px solid rgba(226,232,240,0.8); color: #334155; }
+        .tarifas-table tbody tr:nth-child(even) { background: rgba(241,245,249,0.5); }
+        .tarifas-table tbody tr:hover { background: linear-gradient(90deg, rgba(0,86,179,0.08), rgba(0,86,179,0.04)); }
+        .tarifas-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 1.25rem; margin-top: 2rem; }
+        .btn-tarifa-action {
+            display: inline-flex; align-items: center; gap: 0.875rem;
+            padding: 1rem 2rem; border-radius: 50px; text-transform: uppercase; text-decoration: none;
+            background: linear-gradient(135deg, #003466, #0056b3); color: white;
+            box-shadow: 0 8px 25px rgba(0,52,102,0.3); min-width: 200px; justify-content: center;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .btn-tarifa-action:hover { transform: translateY(-4px); box-shadow: 0 12px 35px rgba(0,52,102,0.4); color: white; }
+
+        /* About */
+        .about-layout { display: grid; grid-template-columns: 1fr 1.1fr; gap: 4rem; align-items: center; }
+        .about-content-card {
+            position: relative; background: white; border-radius: 1.5rem; padding: 2.5rem;
+            box-shadow: 0 10px 40px rgba(0,52,102,0.08); border: 1px solid rgba(0,52,102,0.05);
+        }
+        .about-accent-bar { position: absolute; top: 0; left: 2rem; right: 2rem; height: 4px; background: linear-gradient(90deg, #003466, #0056b3, #0077cc); border-radius: 0 0 4px 4px; }
+        .about-icon-badge {
+            position: absolute; top: -25px; left: 2.5rem; width: 50px; height: 50px;
+            background: linear-gradient(135deg, #003466, #0056b3); border-radius: 1rem;
+            display: flex; align-items: center; justify-content: center; color: white; font-size: 1.25rem;
+            box-shadow: 0 8px 25px rgba(0,52,102,0.3);
+        }
+        .about-text-content { color: #334155; text-align: justify; margin-top: 1rem; padding-bottom: 1.5rem; border-bottom: 1px solid #e2e8f0; }
+        .about-features { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-top: 1.5rem; }
+        .about-feature-item {
+            display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem;
+            background: linear-gradient(135deg, #f8fafc, #f1f5f9); border-radius: 0.75rem;
+            transition: all 0.3s;
+        }
+        .about-feature-item:hover { background: linear-gradient(135deg, #e0f2fe, #dbeafe); transform: translateY(-3px); }
+        .feature-icon {
+            width: 40px; height: 40px; min-width: 40px;
+            background: linear-gradient(135deg, #003466, #0056b3); border-radius: 0.5rem;
+            display: flex; align-items: center; justify-content: center; color: white; font-size: 0.9rem;
+        }
+        .feature-text { display: flex; flex-direction: column; }
+        .feature-title { color: #003466; }
+        .feature-desc { color: #64748b; }
+        .about-gallery-placeholder {
+            background: linear-gradient(135deg, #e7f1ff, #dbeafe);
+            border-radius: 1.25rem; height: 400px; display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 20px 50px rgba(0,52,102,0.15); color: #003466; font-size: 1.2rem;
+        }
+
+        /* Ubicacion */
+        .ubicaciones-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); gap: 2.5rem; }
+        .ubicacion-card {
+            background: white; border-radius: 1.5rem; overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,52,102,0.08); border: 1px solid rgba(0,52,102,0.05);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .ubicacion-card:hover { transform: translateY(-10px); box-shadow: 0 25px 50px rgba(0,52,102,0.18); }
+        .ubicacion-card-header {
+            position: relative; background: linear-gradient(135deg, #003466, #0056b3, #0077cc);
+            padding: 2rem 2rem 2.5rem; color: white; overflow: hidden;
+        }
+        .ubicacion-card-header::before {
+            content: ''; position: absolute; top: -50%; right: -50%; width: 100%; height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 60%);
+        }
+        .ubicacion-icon-float {
+            position: absolute; top: 1.5rem; right: 1.5rem; width: 50px; height: 50px;
+            background: rgba(255,255,255,0.15); border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; font-size: 1.25rem; color: white;
+        }
+        .ubicacion-number { position: absolute; top: 1rem; left: 1.5rem; font-size: 4rem; font-weight: 900; color: rgba(255,255,255,0.1); line-height: 1; }
+        .ubicacion-nombre { position: relative; margin: 0; padding-top: 1.5rem; z-index: 1; }
+        .header-decoration { position: absolute; bottom: 0; left: 0; right: 0; height: 20px; background: white; border-radius: 1.5rem 1.5rem 0 0; }
+        .ubicacion-card-body { padding: 1.5rem 2rem 2rem; }
+        .ubicacion-info-list { display: flex; flex-direction: column; gap: 1rem; margin-bottom: 1.5rem; }
+        .ubicacion-info-item {
+            display: flex; align-items: flex-start; gap: 1rem; padding: 0.75rem;
+            background: linear-gradient(135deg, #f8fafc, #f1f5f9); border-radius: 0.75rem;
+        }
+        .info-icon {
+            width: 40px; height: 40px; min-width: 40px;
+            background: linear-gradient(135deg, #003466, #0056b3); border-radius: 0.625rem;
+            display: flex; align-items: center; justify-content: center; color: white; font-size: 0.9rem;
+        }
+        .info-icon.phone { background: linear-gradient(135deg, #059669, #10b981); }
+        .info-icon.clock { background: linear-gradient(135deg, #d97706, #f59e0b); }
+        .info-content { display: flex; flex-direction: column; gap: 0.15rem; }
+        .info-label { text-transform: uppercase; color: #64748b; }
+        .info-value { color: #1e293b; }
+        .ubicacion-actions { display: flex; gap: 1rem; }
+        .btn-nav {
+            flex: 1; display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+            padding: 0.85rem 1rem; border-radius: 0.75rem; font-size: 0.85rem; font-weight: 600;
+            text-decoration: none;
+            background: linear-gradient(135deg, #003466, #0056b3, #0077cc); color: white;
+            box-shadow: 0 4px 15px rgba(0,52,102,0.3); transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .btn-nav:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(0,52,102,0.45); color: white; }
+
+        /* Contact */
+        .contact-section {
+            background: linear-gradient(135deg, #001d3d 0%, #003466 40%, #0056b3 100%);
+            position: relative; overflow: hidden;
+        }
+        .contact-layout { display: grid; grid-template-columns: 0.9fr 1.1fr; gap: 3rem; align-items: stretch; }
+        .contact-info-card {
+            position: relative;
+            background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
+            backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 1.5rem; padding: 2.5rem; color: white; overflow: hidden;
+        }
+        .contact-info-icon {
+            width: 70px; height: 70px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.2), rgba(255,255,255,0.1));
+            border-radius: 1rem; display: flex; align-items: center; justify-content: center; font-size: 1.75rem;
+            margin-bottom: 1.5rem;
+        }
+        .contact-info-header { margin-bottom: 2rem; }
+        .contact-info-header h4 { margin-bottom: 0.75rem; }
+        .contact-info-header p { opacity: 0.85; line-height: 1.6; margin: 0; }
+        .contact-channels { display: flex; flex-direction: column; gap: 1rem; }
+        .contact-channel-item {
+            display: flex; align-items: center; gap: 1rem; padding: 1rem;
+            background: rgba(255,255,255,0.08); border-radius: 0.75rem; text-decoration: none; color: white;
+            transition: all 0.3s;
+        }
+        .contact-channel-item:hover { background: rgba(255,255,255,0.15); transform: translateX(5px); color: white; }
+        .channel-icon {
+            width: 45px; height: 45px; min-width: 45px; border-radius: 0.625rem;
+            display: flex; align-items: center; justify-content: center; font-size: 1.1rem; color: white;
+        }
+        .channel-icon.phone { background: linear-gradient(135deg, #059669, #10b981); }
+        .channel-icon.email { background: linear-gradient(135deg, #dc2626, #ef4444); }
+        .channel-icon.whatsapp { background: linear-gradient(135deg, #25d366, #128c7e); }
+        .channel-info { display: flex; flex-direction: column; }
+        .channel-label { text-transform: uppercase; opacity: 0.7; }
+        .contact-form-card {
+            background: white; border-radius: 1.5rem; padding: 2.5rem;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+        }
+        .form-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
+        .form-field-wrapper.full-width { grid-column: span 2; }
+        .form-field-modern { position: relative; }
+        .form-field-modern input,
+        .form-field-modern textarea {
+            width: 100%; padding: 1rem; border: 2px solid #e2e8f0; border-radius: 0.75rem;
+            font-size: 0.95rem; background: #f8fafc; color: #1e293b;
+        }
+        .form-field-modern textarea { min-height: 120px; resize: vertical; }
+        .form-field-modern input:focus,
+        .form-field-modern textarea:focus { outline: none; border-color: #003466; background: white; }
+        .form-submit-wrapper { margin-top: 2rem; display: flex; justify-content: center; }
+        .btn-submit-modern {
+            display: inline-flex; align-items: center; gap: 1rem;
+            padding: 1rem 2.5rem; border: none; border-radius: 50px;
+            text-transform: uppercase; cursor: pointer;
+            background: linear-gradient(135deg, #003466, #0056b3, #0077cc); color: white;
+            box-shadow: 0 8px 25px rgba(0,52,102,0.3); transition: transform 0.3s;
+        }
+        .btn-submit-modern:hover { transform: translateY(-3px); }
+        .btn-icon-circle {
+            display: flex; align-items: center; justify-content: center;
+            width: 35px; height: 35px; background: rgba(255,255,255,0.2); border-radius: 50%;
+        }
+
+        /* Section badge light */
+        .section-badge-light {
+            background: rgba(255,255,255,0.15) !important;
+            backdrop-filter: blur(10px); color: white !important;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        .contact-section .section-heading { color: white; text-shadow: 0 2px 20px rgba(0,0,0,0.3); }
+        .contact-section .section-subheading { color: rgba(255,255,255,0.85); }
+        .divider-dots-light span { background: linear-gradient(135deg, rgba(255,255,255,0.8), rgba(255,255,255,0.6)); }
+
+        /* Footer */
+        .footer {
+            background: #212529; color: rgba(255,255,255,0.7); padding: 2rem 0;
+        }
+        .footer-text { margin: 0; }
+        .btn-social {
+            height: 2.5rem; width: 2.5rem; display: inline-flex;
+            align-items: center; justify-content: center; border-radius: 100%;
+            background-color: #003466; color: #fff; border: none; transition: transform 0.3s;
+        }
+        .btn-social:hover { transform: translateY(-5px); color: white; }
+
+        /* ========================================
+           TOGGLE BUTTON
+        ======================================== */
+        .toggle-panel {
+            position: fixed; top: 50%; right: 0; transform: translateY(-50%);
+            z-index: 9999; display: flex; flex-direction: column; gap: 0;
+        }
+        .toggle-label {
+            background: #003466; color: white; padding: 0.6rem 1.2rem;
+            font-family: 'Poppins', sans-serif; font-size: 0.7rem; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 0.1em; text-align: center;
+            border-radius: 0.75rem 0 0 0;
+        }
+        .toggle-btn {
+            padding: 0.8rem 1.5rem; border: none; cursor: pointer;
+            font-family: 'Poppins', sans-serif; font-size: 0.85rem; font-weight: 600;
+            transition: all 0.3s; display: flex; align-items: center; gap: 0.5rem;
+        }
+        .toggle-btn.btn-antes {
+            background: #dc2626; color: white;
+        }
+        .toggle-btn.btn-antes:hover { background: #b91c1c; }
+        .toggle-btn.btn-antes.active { background: #991b1b; box-shadow: inset 0 3px 8px rgba(0,0,0,0.3); }
+        .toggle-btn.btn-despues {
+            background: #16a34a; color: white;
+            border-radius: 0 0 0 0.75rem;
+        }
+        .toggle-btn.btn-despues:hover { background: #15803d; }
+        .toggle-btn.btn-despues.active { background: #166534; box-shadow: inset 0 3px 8px rgba(0,0,0,0.3); }
+
+        .current-indicator {
+            position: fixed; top: 70px; left: 50%; transform: translateX(-50%);
+            z-index: 9999; padding: 0.5rem 1.5rem; border-radius: 50px;
+            font-family: 'Poppins', sans-serif; font-size: 0.8rem; font-weight: 600;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15); transition: all 0.3s;
+        }
+        .current-indicator.showing-antes {
+            background: #dc2626; color: white;
+        }
+        .current-indicator.showing-despues {
+            background: #16a34a; color: white;
+        }
+
+        /* Toggle panel responsive */
+        @media (max-width: 768px) {
+            .toggle-panel {
+                top: auto;
+                bottom: 0;
+                right: 0;
+                left: 0;
+                transform: none;
+                flex-direction: row;
+                background: #003466;
+                box-shadow: 0 -4px 20px rgba(0,0,0,0.2);
+            }
+            .toggle-label {
+                border-radius: 0;
+                display: flex;
+                align-items: center;
+                padding: 0.6rem 0.8rem;
+                font-size: 0.6rem;
+            }
+            .toggle-btn {
+                flex: 1;
+                justify-content: center;
+                padding: 0.7rem 1rem;
+                font-size: 0.75rem;
+                border-radius: 0 !important;
+            }
+            .current-indicator {
+                top: 55px;
+                font-size: 0.7rem;
+                padding: 0.4rem 1rem;
+                white-space: nowrap;
+            }
+        }
+
+        /* ========================================
+           RESPONSIVE - ESTRUCTURA
+        ======================================== */
+        @media (max-width: 992px) {
+            /* Layouts a 1 columna */
+            .about-layout { grid-template-columns: 1fr; gap: 2.5rem; }
+            .about-features { grid-template-columns: 1fr; }
+            .contact-layout { grid-template-columns: 1fr; }
+            .form-grid { grid-template-columns: 1fr; }
+            .form-field-wrapper.full-width { grid-column: span 1; }
+            .ubicaciones-container { grid-template-columns: 1fr; }
+
+            /* Tipografia ANTES - tablet */
+            .typo-antes .section-heading { font-size: 2.2rem; }
+            .typo-antes .masthead-heading { font-size: 3.5rem !important; line-height: 3.5rem !important; }
+            .typo-antes .masthead-subheading { font-size: 1.75rem !important; line-height: 1.75rem !important; }
+
+            /* Tipografia DESPUES - tablet */
+            .typo-despues .section-heading { font-size: 2.3rem; }
+            .typo-despues .masthead-heading { font-size: 3.5rem !important; line-height: 3.5rem !important; }
+            .typo-despues .masthead-subheading { font-size: 1.75rem !important; line-height: 1.75rem !important; }
+        }
+
+        @media (max-width: 768px) {
+            /* Estructura */
+            .services-grid { grid-template-columns: 1fr; }
+            .masthead { padding: 10rem 0 5rem; }
+            .page-section { padding: 4rem 0; }
+            .hero-btns { flex-direction: column; align-items: center; }
+            .btn-modern { width: 100%; max-width: 320px; }
+            .tarifas-actions { flex-direction: column; align-items: center; }
+            .btn-tarifa-action { width: 100%; max-width: 320px; }
+            .ubicacion-actions { flex-direction: column; }
+
+            /* Tipografia ANTES - movil */
+            .typo-antes .masthead-heading { font-size: 2.5rem !important; line-height: 2.5rem !important; }
+            .typo-antes .masthead-subheading { font-size: 1.35rem !important; line-height: 1.6 !important; }
+            .typo-antes .section-heading { font-size: 2rem; }
+            .typo-antes .section-subheading { font-size: 1rem; }
+            .typo-antes .section-badge { font-size: 0.7rem; }
+            .typo-antes .service-title { font-size: 1.2rem; }
+            .typo-antes .service-description { font-size: 0.9rem; }
+            .typo-antes .about-text-content { font-size: 0.95rem; line-height: 1.7; }
+            .typo-antes .contact-info-header h4 { font-size: 1.2rem; }
+            .typo-antes .tarifa-description-content { font-size: 0.93rem; }
+            .typo-antes .ubicacion-nombre { font-size: 1.2rem; }
+
+            /* Tipografia DESPUES - movil */
+            .typo-despues .masthead-heading { font-size: 2.5rem !important; line-height: 2.6rem !important; letter-spacing: -0.02em !important; }
+            .typo-despues .masthead-subheading { font-size: 1.3rem !important; line-height: 1.6 !important; letter-spacing: 0.01em !important; }
+            .typo-despues .section-heading { font-size: 2.1rem; letter-spacing: -0.005em; }
+            .typo-despues .section-subheading { font-size: 0.95rem; }
+            .typo-despues .section-badge { font-size: 0.65rem; letter-spacing: 0.15em; }
+            .typo-despues .service-title { font-size: 1.2rem; }
+            .typo-despues .service-description { font-size: 0.88rem; line-height: 1.7; }
+            .typo-despues .about-text-content { font-size: 0.95rem; line-height: 1.75; }
+            .typo-despues .feature-title { font-size: 0.75rem; letter-spacing: 0.03em; }
+            .typo-despues .feature-desc { font-size: 0.68rem; }
+            .typo-despues .contact-info-header h4 { font-size: 1.2rem; }
+            .typo-despues .contact-info-header p { font-size: 0.9rem; }
+            .typo-despues .channel-label { font-size: 0.63rem; letter-spacing: 0.06em; }
+            .typo-despues .channel-value { font-size: 0.9rem; }
+            .typo-despues .info-label { font-size: 0.63rem; letter-spacing: 0.06em; }
+            .typo-despues .info-value { font-size: 0.9rem; }
+            .typo-despues .tarifa-description-content { font-size: 0.93rem; line-height: 1.7; }
+            .typo-despues .ubicacion-nombre { font-size: 1.2rem; }
+            .typo-despues .btn-submit-modern,
+            .typo-despues .btn-modern,
+            .typo-despues .btn-tarifa-action { font-size: 0.85rem; letter-spacing: 0.04em; }
+
+            /* Navbar en movil - ambas variantes */
+            .typo-antes .navbar-nav .nav-link { font-size: 0.85rem; }
+            .typo-despues .navbar-nav .nav-link { font-size: 0.8rem; letter-spacing: 0.08em; }
+        }
+
+        @media (max-width: 480px) {
+            /* Estructura */
+            .masthead { padding: 8rem 0 4rem; }
+            .masthead-card { padding: 1.75rem 1.25rem; }
+            .page-section { padding: 3rem 0; }
+            .about-content-card { padding: 2rem 1.25rem; }
+            .contact-info-card { padding: 1.75rem; }
+            .contact-form-card { padding: 1.75rem; }
+            .ubicacion-card-body { padding: 1.25rem 1.5rem 1.5rem; }
+            .tarifa-description-card { padding: 1.5rem 1.25rem 1.5rem 1.25rem; padding-top: 4rem; }
+            .tarifa-description-icon { left: 50%; top: 1rem; transform: translateX(-50%); }
+
+            /* Tipografia ANTES - movil chico */
+            .typo-antes .masthead-heading { font-size: 2rem !important; line-height: 2.1rem !important; }
+            .typo-antes .masthead-subheading { font-size: 1.15rem !important; }
+            .typo-antes .section-heading { font-size: 1.75rem; }
+            .typo-antes .section-subheading { font-size: 0.93rem; }
+
+            /* Tipografia DESPUES - movil chico */
+            .typo-despues .masthead-heading { font-size: 2rem !important; line-height: 2.2rem !important; }
+            .typo-despues .masthead-subheading { font-size: 1.1rem !important; letter-spacing: 0 !important; }
+            .typo-despues .section-heading { font-size: 1.8rem; }
+            .typo-despues .section-subheading { font-size: 0.9rem; }
+            .typo-despues .section-badge { font-size: 0.6rem; letter-spacing: 0.12em; padding: 0.5rem 1.2rem; }
+        }
+    </style>
+</head>
+<body id="page-top" class="typo-antes">
+
+    <!-- Toggle panel -->
+    <div class="toggle-panel">
+        <div class="toggle-label">Tipografia</div>
+        <button class="toggle-btn btn-antes active" onclick="setTypo('antes')">
+            <i class="fas fa-font"></i> ANTES
+        </button>
+        <button class="toggle-btn btn-despues" onclick="setTypo('despues')">
+            <i class="fas fa-wand-magic-sparkles"></i> DESPUES
+        </button>
+    </div>
+
+    <!-- Current indicator -->
+    <div class="current-indicator showing-antes" id="currentIndicator">
+        <i class="fas fa-eye me-1"></i> Viendo: ANTES (Roboto Slab + Montserrat)
+    </div>
+
+    <!-- ========================================
+         NAVBAR
+    ======================================== -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="#page-top">
+                <img src="static/assets/img/navbar-logo.svg" alt="RTV Pioli" onerror="this.style.display='none'" />
+                RTV Pioli
+            </a>
+            <div class="collapse navbar-collapse show" id="navbarResponsive">
+                <ul class="navbar-nav text-uppercase ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="#services">Servicios</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#tarifas">Tarifas</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#about">Nosotros</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#ubicacion">Ubicacion</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#contact">Contacto</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ========================================
+         MASTHEAD
+    ======================================== -->
+    <header class="masthead">
+        <div class="container">
+            <div class="masthead-card">
+                <div class="masthead-subheading">Bienvenidos a</div>
+                <div class="masthead-heading">RTV PIOLI</div>
+            </div>
+            <div class="hero-btns">
+                <a class="btn-modern" href="#">Sacar Turno</a>
+                <a class="btn-modern" href="#">Mas Info</a>
+            </div>
+            <div class="scroll-indicator">
+                <a href="#services">
+                    <span>Descubri mas</span>
+                    <i class="fas fa-chevron-down"></i>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- ========================================
+         SERVICES
+    ======================================== -->
+    <section class="page-section" id="services">
+        <div class="container">
+            <div class="text-center mb-5">
+                <span class="section-badge">Lo que hacemos</span>
+                <h2 class="section-heading">Servicios</h2>
+                <p class="section-subheading">Soluciones profesionales para tu vehiculo</p>
+                <div class="divider-dots"><span></span><span></span><span></span></div>
+            </div>
+            <div class="services-grid">
+                <div class="service-card">
+                    <div class="service-icon-wrapper">
+                        <div class="service-icon"><i class="fas fa-car"></i></div>
+                        <div class="service-number">01</div>
+                    </div>
+                    <h4 class="service-title">Revision Tecnica Vehicular</h4>
+                    <div class="service-divider"></div>
+                    <p class="service-description">Realizamos la inspeccion tecnica obligatoria de tu vehiculo, verificando todos los sistemas de seguridad, emision de gases y estado general segun la normativa vigente.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon-wrapper">
+                        <div class="service-icon"><i class="fas fa-fire"></i></div>
+                        <div class="service-number">02</div>
+                    </div>
+                    <h4 class="service-title">Control de GNC</h4>
+                    <div class="service-divider"></div>
+                    <p class="service-description">Verificacion integral del sistema de Gas Natural Comprimido, incluyendo cilindros, valvulas, reguladores y toda la instalacion segun normativa vigente.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon-wrapper">
+                        <div class="service-icon"><i class="fas fa-truck"></i></div>
+                        <div class="service-number">03</div>
+                    </div>
+                    <h4 class="service-title">Vehiculos Pesados</h4>
+                    <div class="service-divider"></div>
+                    <p class="service-description">Inspeccion especializada para camiones, colectivos y vehiculos de transporte de carga y pasajeros con equipamiento profesional dedicado.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========================================
+         TARIFAS
+    ======================================== -->
+    <section class="page-section bg-light" id="tarifas">
+        <div class="container">
+            <div class="text-center mb-5">
+                <span class="section-badge">Precios</span>
+                <h2 class="section-heading">Tarifas</h2>
+                <p class="section-subheading">Precios actualizados para tu conveniencia</p>
+                <div class="divider-dots"><span></span><span></span><span></span></div>
+            </div>
+            <div class="row justify-content-center mb-4">
+                <div class="col-lg-10">
+                    <div class="tarifa-description-card">
+                        <div class="tarifa-description-icon"><i class="fas fa-info-circle"></i></div>
+                        <div class="tarifa-description-content">
+                            Los precios pueden variar segun el tipo de vehiculo y el servicio requerido. Consulte por descuentos especiales para flotas empresariales y vehiculos de transporte publico.
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row justify-content-center mb-4">
+                <div class="col-lg-12">
+                    <div class="tarifas-table-wrapper">
+                        <table class="tarifas-table">
+                            <thead>
+                                <tr><th>Categoria</th><th>Tipo</th><th>Precio</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>Automovil</td><td>RTV</td><td>$15.000</td></tr>
+                                <tr><td>Camioneta</td><td>RTV</td><td>$18.000</td></tr>
+                                <tr><td>Automovil</td><td>GNC</td><td>$12.000</td></tr>
+                                <tr><td>Transporte Publico</td><td>RTV</td><td>$25.000</td></tr>
+                                <tr><td>Camion</td><td>RTV</td><td>$30.000</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="tarifas-actions">
+                <a class="btn-tarifa-action" href="#">Sacar Turno <i class="fas fa-calendar-check ms-2"></i></a>
+                <a class="btn-tarifa-action" href="#">Mas Info <i class="fas fa-info-circle ms-2"></i></a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========================================
+         ABOUT
+    ======================================== -->
+    <section class="page-section" id="about">
+        <div class="container">
+            <div class="text-center mb-5">
+                <span class="section-badge">Conocenos</span>
+                <h2 class="section-heading">Nosotros</h2>
+                <p class="section-subheading">Nuestra historia y compromiso</p>
+                <div class="divider-dots"><span></span><span></span><span></span></div>
+            </div>
+            <div class="about-layout">
+                <div>
+                    <div class="about-content-card">
+                        <div class="about-accent-bar"></div>
+                        <div class="about-icon-badge"><i class="fas fa-building"></i></div>
+                        <div class="about-text-content">
+                            Somos una empresa dedicada a la revision tecnica vehicular con mas de 15 anos de experiencia en el mercado. Nuestro compromiso es brindar un servicio de calidad, con profesionales capacitados y tecnologia de ultima generacion para garantizar la seguridad vial de todos los usuarios.
+                        </div>
+                        <div class="about-features">
+                            <div class="about-feature-item">
+                                <div class="feature-icon"><i class="fas fa-shield-alt"></i></div>
+                                <div class="feature-text">
+                                    <span class="feature-title">Confianza</span>
+                                    <span class="feature-desc">Servicio garantizado</span>
+                                </div>
+                            </div>
+                            <div class="about-feature-item">
+                                <div class="feature-icon"><i class="fas fa-certificate"></i></div>
+                                <div class="feature-text">
+                                    <span class="feature-title">Certificados</span>
+                                    <span class="feature-desc">Habilitacion oficial</span>
+                                </div>
+                            </div>
+                            <div class="about-feature-item">
+                                <div class="feature-icon"><i class="fas fa-users"></i></div>
+                                <div class="feature-text">
+                                    <span class="feature-title">Experiencia</span>
+                                    <span class="feature-desc">Equipo profesional</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <div class="about-gallery-placeholder">
+                        <i class="fas fa-images me-2"></i> Galeria de imagenes
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========================================
+         UBICACION
+    ======================================== -->
+    <section class="page-section bg-light" id="ubicacion">
+        <div class="container">
+            <div class="text-center mb-5">
+                <span class="section-badge">Nuestras Sedes</span>
+                <h2 class="section-heading">Donde Encontrarnos?</h2>
+                <p class="section-subheading">Visitanos en nuestras ubicaciones estrategicas</p>
+                <div class="divider-dots"><span></span><span></span><span></span></div>
+            </div>
+            <div class="ubicaciones-container">
+                <div class="ubicacion-card">
+                    <div class="ubicacion-card-header">
+                        <div class="ubicacion-icon-float"><i class="fas fa-map-marker-alt"></i></div>
+                        <div class="ubicacion-number">1</div>
+                        <h4 class="ubicacion-nombre">Planta San Salvador</h4>
+                        <div class="header-decoration"></div>
+                    </div>
+                    <div class="ubicacion-card-body">
+                        <div class="ubicacion-info-list">
+                            <div class="ubicacion-info-item">
+                                <div class="info-icon"><i class="fas fa-location-dot"></i></div>
+                                <div class="info-content">
+                                    <span class="info-label">Direccion</span>
+                                    <span class="info-value">Av. Bolivia 1234, San Salvador de Jujuy</span>
+                                </div>
+                            </div>
+                            <div class="ubicacion-info-item">
+                                <div class="info-icon phone"><i class="fas fa-phone"></i></div>
+                                <div class="info-content">
+                                    <span class="info-label">Telefono</span>
+                                    <span class="info-value">0388-4221234</span>
+                                </div>
+                            </div>
+                            <div class="ubicacion-info-item">
+                                <div class="info-icon clock"><i class="fas fa-clock"></i></div>
+                                <div class="info-content">
+                                    <span class="info-label">Horario</span>
+                                    <span class="info-value">Lunes a Viernes de 8:00 a 17:00</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="ubicacion-actions">
+                            <a class="btn-nav" href="#"><i class="fab fa-google"></i> Google Maps</a>
+                            <a class="btn-nav" href="#"><i class="fab fa-waze"></i> Waze</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="ubicacion-card">
+                    <div class="ubicacion-card-header">
+                        <div class="ubicacion-icon-float"><i class="fas fa-map-marker-alt"></i></div>
+                        <div class="ubicacion-number">2</div>
+                        <h4 class="ubicacion-nombre">Planta Palpala</h4>
+                        <div class="header-decoration"></div>
+                    </div>
+                    <div class="ubicacion-card-body">
+                        <div class="ubicacion-info-list">
+                            <div class="ubicacion-info-item">
+                                <div class="info-icon"><i class="fas fa-location-dot"></i></div>
+                                <div class="info-content">
+                                    <span class="info-label">Direccion</span>
+                                    <span class="info-value">Ruta 66 Km 3, Palpala</span>
+                                </div>
+                            </div>
+                            <div class="ubicacion-info-item">
+                                <div class="info-icon phone"><i class="fas fa-phone"></i></div>
+                                <div class="info-content">
+                                    <span class="info-label">Telefono</span>
+                                    <span class="info-value">0388-4555678</span>
+                                </div>
+                            </div>
+                            <div class="ubicacion-info-item">
+                                <div class="info-icon clock"><i class="fas fa-clock"></i></div>
+                                <div class="info-content">
+                                    <span class="info-label">Horario</span>
+                                    <span class="info-value">Lunes a Sabado de 7:30 a 16:30</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="ubicacion-actions">
+                            <a class="btn-nav" href="#"><i class="fab fa-google"></i> Google Maps</a>
+                            <a class="btn-nav" href="#"><i class="fab fa-waze"></i> Waze</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========================================
+         CONTACT
+    ======================================== -->
+    <section class="page-section contact-section" id="contact">
+        <div class="container position-relative" style="z-index:2;">
+            <div class="text-center mb-5">
+                <span class="section-badge section-badge-light">Hablemos</span>
+                <h2 class="section-heading">Contactanos</h2>
+                <p class="section-subheading">Estamos aqui para ayudarte</p>
+                <div class="divider-dots divider-dots-light"><span></span><span></span><span></span></div>
+            </div>
+            <div class="contact-layout">
+                <div>
+                    <div class="contact-info-card">
+                        <div class="contact-info-header">
+                            <div class="contact-info-icon"><i class="fas fa-headset"></i></div>
+                            <h4>Como podemos ayudarte?</h4>
+                            <p>Completa el formulario y nos pondremos en contacto contigo a la brevedad.</p>
+                        </div>
+                        <div class="contact-channels">
+                            <a href="#" class="contact-channel-item">
+                                <div class="channel-icon phone"><i class="fas fa-phone-alt"></i></div>
+                                <div class="channel-info">
+                                    <span class="channel-label">Telefono</span>
+                                    <span class="channel-value">0388-4221234</span>
+                                </div>
+                            </a>
+                            <a href="#" class="contact-channel-item">
+                                <div class="channel-icon email"><i class="fas fa-envelope"></i></div>
+                                <div class="channel-info">
+                                    <span class="channel-label">Email</span>
+                                    <span class="channel-value">contacto@rtvpioli.com</span>
+                                </div>
+                            </a>
+                            <a href="#" class="contact-channel-item">
+                                <div class="channel-icon whatsapp"><i class="fab fa-whatsapp"></i></div>
+                                <div class="channel-info">
+                                    <span class="channel-label">WhatsApp</span>
+                                    <span class="channel-value">Escribenos</span>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <div class="contact-form-card">
+                        <div class="form-grid">
+                            <div class="form-field-wrapper">
+                                <div class="form-field-modern">
+                                    <input type="text" placeholder="Nombre completo">
+                                </div>
+                            </div>
+                            <div class="form-field-wrapper">
+                                <div class="form-field-modern">
+                                    <input type="email" placeholder="Email">
+                                </div>
+                            </div>
+                            <div class="form-field-wrapper full-width">
+                                <div class="form-field-modern">
+                                    <input type="tel" placeholder="Telefono">
+                                </div>
+                            </div>
+                            <div class="form-field-wrapper full-width">
+                                <div class="form-field-modern">
+                                    <textarea placeholder="Mensaje"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-submit-wrapper">
+                            <button class="btn-submit-modern">
+                                <span>Enviar Mensaje</span>
+                                <span class="btn-icon-circle"><i class="fas fa-paper-plane"></i></span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========================================
+         FOOTER
+    ======================================== -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-4 text-lg-start">
+                    <p class="footer-text">Copyright &copy; RTV Pioli 2025</p>
+                </div>
+                <div class="col-lg-4 text-center my-3 my-lg-0">
+                    <a class="btn-social mx-2" href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a class="btn-social mx-2" href="#"><i class="fab fa-instagram"></i></a>
+                    <a class="btn-social mx-2" href="#"><i class="fab fa-whatsapp"></i></a>
+                </div>
+                <div class="col-lg-4 text-lg-end"></div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ========================================
+         TOGGLE SCRIPT
+    ======================================== -->
+    <script>
+        function setTypo(mode) {
+            const body = document.body;
+            const indicator = document.getElementById('currentIndicator');
+            const btnAntes = document.querySelector('.btn-antes');
+            const btnDespues = document.querySelector('.btn-despues');
+
+            if (mode === 'antes') {
+                body.className = 'typo-antes';
+                indicator.className = 'current-indicator showing-antes';
+                indicator.innerHTML = '<i class="fas fa-eye me-1"></i> Viendo: ANTES (Roboto Slab + Montserrat)';
+                btnAntes.classList.add('active');
+                btnDespues.classList.remove('active');
+            } else {
+                body.className = 'typo-despues';
+                indicator.className = 'current-indicator showing-despues';
+                indicator.innerHTML = '<i class="fas fa-wand-magic-sparkles me-1"></i> Viendo: DESPUES (Poppins)';
+                btnDespues.classList.add('active');
+                btnAntes.classList.remove('active');
+            }
+        }
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
