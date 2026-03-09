@@ -115,8 +115,13 @@ dmypy.json
 Thumbs.db
 nul
 
-# Static files collected
-/static/
+# Static files collected (excepto assets propios)
+/static/*
+!/static/assets/
+!/static/panel/
+!/static/panel/*
+!/static/panel/assets/
+!/static/panel/assets/images/
 /staticfiles/
 
 # Media files
