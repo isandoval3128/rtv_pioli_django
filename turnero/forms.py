@@ -12,26 +12,26 @@ class Step1ClienteForm(forms.Form):
 
     # Búsqueda
     dni_busqueda = forms.CharField(
-        max_length=8,
+        max_length=11,
         required=False,
         widget=forms.TextInput(attrs={
             'class': 'form-control',
-            'placeholder': 'Ingrese DNI',
+            'placeholder': 'Ingrese DNI o CUIL',
             'id': 'dni_busqueda'
         }),
-        label='DNI del Cliente'
+        label='DNI / CUIL del Cliente'
     )
 
     # Creación de nuevo cliente
     dni = forms.CharField(
-        max_length=8,
+        max_length=11,
         required=False,
         widget=forms.TextInput(attrs={
             'class': 'form-control',
-            'placeholder': '12345678',
+            'placeholder': '12345678 o 20123456789',
             'data-cleave': 'dni'
         }),
-        label='DNI'
+        label='DNI / CUIL'
     )
 
     nombre = forms.CharField(
@@ -95,11 +95,35 @@ class Step1ClienteForm(forms.Form):
 
     def clean_dni(self):
         dni = self.cleaned_data.get('dni')
-        if dni and not dni.isdigit():
-            raise ValidationError('El DNI debe contener solo números')
-        if dni and len(dni) < 7:
-            raise ValidationError('El DNI debe tener al menos 7 dígitos')
+        if not dni:
+            return dni
+        if not dni.isdigit():
+            raise ValidationError('Solo se permiten números, sin puntos ni guiones')
+        if len(dni) <= 8:
+            if len(dni) < 7:
+                raise ValidationError('El DNI debe tener al menos 7 dígitos')
+        elif len(dni) == 11:
+            if not self._validar_cuil(dni):
+                raise ValidationError('El CUIL ingresado no es válido')
+        else:
+            raise ValidationError('Ingrese un DNI (7-8 dígitos) o CUIL (11 dígitos)')
         return dni
+
+    @staticmethod
+    def _validar_cuil(cuil):
+        """Valida un CUIL/CUIT argentino con el algoritmo de dígito verificador"""
+        if len(cuil) != 11 or not cuil.isdigit():
+            return False
+        pesos = [5, 4, 3, 2, 7, 6, 5, 4, 3, 2]
+        suma = sum(int(cuil[i]) * pesos[i] for i in range(10))
+        resto = 11 - (suma % 11)
+        if resto == 11:
+            digito = 0
+        elif resto == 10:
+            digito = 9
+        else:
+            digito = resto
+        return int(cuil[10]) == digito
 
 
 class Step2VehiculoForm(forms.Form):
@@ -150,12 +174,16 @@ class Step2VehiculoForm(forms.Form):
     def clean_dominio(self):
         dominio = self.cleaned_data.get('dominio', '').upper().replace(' ', '')
 
-        # Validar formatos válidos de patente argentina
-        patron_viejo = r'^[A-Z]{3}\d{3}$'  # ABC123
-        patron_nuevo = r'^[A-Z]{2}\d{3}[A-Z]{2}$'  # AB123CD
-
-        if dominio and not (re.match(patron_viejo, dominio) or re.match(patron_nuevo, dominio)):
-            raise ValidationError('Formato de dominio inválido. Use ABC123 o AB123CD')
+        if dominio:
+            # Formatos válidos de patente argentina
+            patrones = [
+                r'^[A-Z]{3}\d{3}$',        # Auto viejo: ABC123
+                r'^[A-Z]{2}\d{3}[A-Z]{2}$', # Auto nuevo Mercosur: AB123CD
+                r'^[A-Z]\d{3}[A-Z]{3}$',    # Moto nueva Mercosur: A123BCD
+                r'^\d{3}[A-Z]{3}$',          # Moto vieja: 123ABC
+            ]
+            if not any(re.match(p, dominio) for p in patrones):
+                raise ValidationError('Formato de dominio inválido. Formatos válidos: ABC123, AB123CD, A123BCD, 123ABC')
 
         return dominio
 
@@ -260,7 +288,7 @@ class BuscarTurnoForm(forms.Form):
     TIPO_BUSQUEDA = [
         ('codigo', 'Código de turno'),
         ('dominio', 'Dominio del vehículo'),
-        ('dni', 'DNI del cliente'),
+        ('dni', 'DNI / CUIL del cliente'),
     ]
 
     tipo_busqueda = forms.ChoiceField(

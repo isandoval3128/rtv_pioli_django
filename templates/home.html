@@ -1638,8 +1638,9 @@
                     <!-- Texto tutorial sobre los botones -->
                     <div class="hero-btns-block d-flex flex-column align-items-center w-100">
                         <div class="d-flex flex-wrap justify-content-center gap-3 w-100">
-                            <a class="btn btn-xl text-uppercase header-btn hero-btn-fixed btn-modern hover-glow" href="{{ site_config.header_btn1_url }}" target="_blank" style="background-color: {{ site_config.header_btn_bgcolor }}; color: #fff; transition: transform 0.3s cubic-bezier(.4,2,.3,1), box-shadow 0.3s; box-shadow: 0 2px 8px rgba(2,25,122,0.08); min-width:220px;">{{ site_config.header_btn1_text }}</a>
-                            <a class="btn btn-xl text-uppercase header-btn hero-btn-fixed btn-modern hover-glow" href="{{ site_config.header_btn2_url }}" target="_blank" style="background-color: {{ site_config.header_btn_bgcolor }}; color: #fff; transition: transform 0.3s cubic-bezier(.4,2,.3,1), box-shadow 0.3s; box-shadow: 0 2px 8px rgba(2,25,122,0.08); min-width:220px;">{{ site_config.header_btn2_text }}</a>
+                            {% for taller in talleres %}
+                            <a class="btn btn-xl text-uppercase header-btn hero-btn-fixed btn-modern hover-glow" href="{% url 'turnero:step1_cliente' %}?taller={{ taller.id }}" style="background-color: {{ site_config.header_btn_bgcolor }}; color: #fff; transition: transform 0.3s cubic-bezier(.4,2,.3,1), box-shadow 0.3s; box-shadow: 0 2px 8px rgba(2,25,122,0.08); min-width:220px;">Turno Planta {{ taller.get_localidad.nombre|truncatewords:1|cut:" …" }}</a>
+                            {% endfor %}
                         </div>
                         {% if site_config.header_btns_text %}
                         <div class="text-center mt-3 px-2 hero-btns-text" style="font-size:1.15rem; color:{{ site_config.header_btns_text_color|default:'#fff' }}; font-weight:500; max-width:600px; width:100%;">
@@ -1723,8 +1724,9 @@
                 {% endif %}
             </div>
             <div class="d-flex flex-wrap justify-content-center gap-3 mt-3">
-                <a class="btn btn-xl text-uppercase header-btn btn-modern hover-glow" href="{{ site_config.header_btn1_url }}" target="_blank" style="background-color: {{ site_config.header_btn_bgcolor }}; color: #fff; min-width: 220px; transition: transform 0.3s cubic-bezier(.4,2,.3,1), box-shadow 0.3s; box-shadow: 0 2px 8px rgba(2,25,122,0.08);">{{ site_config.header_btn1_text }}</a>
-                <a class="btn btn-xl text-uppercase header-btn btn-modern hover-glow" href="{{ site_config.header_btn2_url }}" target="_blank" style="background-color: {{ site_config.header_btn_bgcolor }}; color: #fff; min-width: 220px; transition: transform 0.3s cubic-bezier(.4,2,.3,1), box-shadow 0.3s; box-shadow: 0 2px 8px rgba(2,25,122,0.08);">{{ site_config.header_btn2_text }}</a>
+                {% for taller in talleres %}
+                <a class="btn btn-xl text-uppercase header-btn btn-modern hover-glow" href="{% url 'turnero:step1_cliente' %}?taller={{ taller.id }}" style="background-color: {{ site_config.header_btn_bgcolor }}; color: #fff; min-width: 220px; transition: transform 0.3s cubic-bezier(.4,2,.3,1), box-shadow 0.3s; box-shadow: 0 2px 8px rgba(2,25,122,0.08);">Turno Planta {{ taller.get_localidad.nombre|truncatewords:1|cut:" …" }}</a>
+                {% endfor %}
             </div>
         </div>
         <!-- Indicador de scroll animado premium -->
@@ -1792,8 +1794,9 @@
                 {% endif %}
             </div>
             <div class="d-flex flex-wrap justify-content-center gap-3 mt-3">
-                <a class="btn btn-xl text-uppercase header-btn btn-modern hover-glow" href="{{ site_config.header_btn1_url }}" target="_blank" style="background-color: {{ site_config.header_btn_bgcolor }}; color: #fff; min-width: 220px; transition: transform 0.3s cubic-bezier(.4,2,.3,1), box-shadow 0.3s; box-shadow: 0 2px 8px rgba(2,25,122,0.08);">{{ site_config.header_btn1_text }}</a>
-                <a class="btn btn-xl text-uppercase header-btn btn-modern hover-glow" href="{{ site_config.header_btn2_url }}" target="_blank" style="background-color: {{ site_config.header_btn_bgcolor }}; color: #fff; min-width: 220px; transition: transform 0.3s cubic-bezier(.4,2,.3,1), box-shadow 0.3s; box-shadow: 0 2px 8px rgba(2,25,122,0.08);">{{ site_config.header_btn2_text }}</a>
+                {% for taller in talleres %}
+                <a class="btn btn-xl text-uppercase header-btn btn-modern hover-glow" href="{% url 'turnero:step1_cliente' %}?taller={{ taller.id }}" style="background-color: {{ site_config.header_btn_bgcolor }}; color: #fff; min-width: 220px; transition: transform 0.3s cubic-bezier(.4,2,.3,1), box-shadow 0.3s; box-shadow: 0 2px 8px rgba(2,25,122,0.08);">Turno Planta {{ taller.get_localidad.nombre|truncatewords:1|cut:" …" }}</a>
+                {% endfor %}
             </div>
 
         </div>
@@ -1861,9 +1864,9 @@
                 {% endif %}
             </div>
             <div class="d-flex flex-wrap justify-content-center gap-3 mt-3">
-                <a class="btn btn-xl text-uppercase header-btn btn-modern hover-glow" href="{{ site_config.header_btn1_url }}" target="_blank" style="background-color: {{ site_config.header_btn_bgcolor|default:'#007bff' }}; color: #fff; min-width: 220px; transition: transform 0.3s cubic-bezier(.4,2,.3,1), box-shadow 0.3s; box-shadow: 0 2px 8px rgba(2,25,122,0.08);">{{ site_config.header_btn1_text }}</a>
-
-                <a class="btn btn-xl text-uppercase header-btn btn-modern hover-glow" href="{{ site_config.header_btn2_url }}" target="_blank" style="background-color: {{ site_config.header_btn_bgcolor|default:'#007bff' }}; color: #fff; min-width: 220px; transition: transform 0.3s cubic-bezier(.4,2,.3,1), box-shadow 0.3s; box-shadow: 0 2px 8px rgba(2,25,122,0.08);">{{ site_config.header_btn2_text }}</a>
+                {% for taller in talleres %}
+                <a class="btn btn-xl text-uppercase header-btn btn-modern hover-glow" href="{% url 'turnero:step1_cliente' %}?taller={{ taller.id }}" style="background-color: {{ site_config.header_btn_bgcolor|default:'#007bff' }}; color: #fff; min-width: 220px; transition: transform 0.3s cubic-bezier(.4,2,.3,1), box-shadow 0.3s; box-shadow: 0 2px 8px rgba(2,25,122,0.08);">Turno Planta {{ taller.get_localidad.nombre|truncatewords:1|cut:" …" }}</a>
+                {% endfor %}
             </div>
         </div>
         <!-- Indicador de scroll animado premium -->

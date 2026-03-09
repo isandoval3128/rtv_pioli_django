@@ -311,6 +311,30 @@ class ConfiguracionTaller(models.Model):
         return f"{self.taller.get_nombre()} - {self.tipo_vehiculo.nombre}"
 
 
+class FranjaAnulada(models.Model):
+    """Franjas horarias anuladas para un taller en una fecha especifica"""
+    taller = models.ForeignKey(
+        Taller,
+        on_delete=models.CASCADE,
+        related_name='franjas_anuladas',
+        verbose_name="Taller"
+    )
+    fecha = models.DateField(verbose_name="Fecha")
+    hora_inicio = models.TimeField(verbose_name="Hora inicio")
+    hora_fin = models.TimeField(verbose_name="Hora fin")
+    motivo = models.CharField(max_length=200, blank=True, verbose_name="Motivo")
+    status = models.BooleanField(default=True, verbose_name="Activa")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = "Franja Horaria Anulada"
+        verbose_name_plural = "Franjas Horarias Anuladas"
+        ordering = ['fecha', 'hora_inicio']
+
+    def __str__(self):
+        return f"{self.taller.get_nombre()} - {self.fecha} {self.hora_inicio}-{self.hora_fin}"
+
+
 class Vehiculo(models.Model):
     """Vehículos registrados en el sistema"""
     dominio = models.CharField(

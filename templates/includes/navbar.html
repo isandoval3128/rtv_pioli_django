@@ -4,7 +4,7 @@
     <div class="container">
         <a class="navbar-brand" href="#page-top" style="color: {{ site_config.navbar_text_color|default:'#fff' }};">
             {% if site_config.site_logo %}
-                <img src="{{ site_config.site_logo.url }}" alt="{{ site_config.site_title }}" />
+                <img src="{{ site_config.site_logo.url }}" alt="{{ site_config.site_title }}" class="navbar-logo-custom" />
             {% else %}
                 <img src="{% static 'assets/img/navbar-logo.svg' %}" alt="{{ site_config.site_title }}" />
             {% endif %}

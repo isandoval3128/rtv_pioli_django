@@ -12,6 +12,7 @@ from .models import EmailConfig
 from .models import ContactMessage
 from .models import WhatsAppConfig
 from ubicacion.models import Ubicacion
+from talleres.models import Taller
 
 def home_view(request):
     """
@@ -42,7 +43,7 @@ def home_view(request):
 
     # Obtener la tarifa, la tabla HTML y la lista para móviles
     try:
-        tarifa = Tarifa.objects.first()
+        tarifa = Tarifa.objects.filter(status=True).first()
         tabla_html = None
         tarifas_list = []
         if tarifa and tarifa.archivo_excel:
@@ -57,6 +58,17 @@ def home_view(request):
 
     about_section = AboutSection.objects.first()
 
+    # Talleres activos para botones de turnero
+    from django.db.models import Case, When, Value, IntegerField
+    talleres = Taller.objects.filter(status=True).annotate(
+        orden_personalizado=Case(
+            When(id=1, then=Value(1)),
+            When(id=2, then=Value(2)),
+            default=Value(3),
+            output_field=IntegerField()
+        )
+    ).order_by('orden_personalizado', 'nombre')
+
     context = {
         'site_config': site_config,
         'services': services,
@@ -70,6 +82,7 @@ def home_view(request):
         'tarifas_list': tarifas_list,
         'about_section': about_section,
         'whatsapp_config': whatsapp_config,
+        'talleres': talleres,
     }
 
     return render(request, 'home.html', context)

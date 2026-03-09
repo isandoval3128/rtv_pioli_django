@@ -8,7 +8,7 @@ from datetime import datetime, timedelta, time
 from django.db.models import Q, Count, Case, When, Value, IntegerField
 from clientes.models import Cliente
 from territorios.models import Localidad
-from talleres.models import Taller, TipoVehiculo, Vehiculo, ConfiguracionTaller
+from talleres.models import Taller, TipoVehiculo, Vehiculo, ConfiguracionTaller, FranjaAnulada
 from .models import Turno, HistorialTurno, ReservaTemporal
 from .forms import (
     Step1ClienteForm, Step2VehiculoForm, Step3TallerForm,
@@ -46,6 +46,15 @@ class Step1ClienteView(View):
     template_name = 'turnero/step1_cliente.html'
 
     def get(self, request):
+        # Si viene taller_id desde la página principal, guardarlo en sesión
+        taller_param = request.GET.get('taller')
+        if taller_param:
+            try:
+                taller = Taller.objects.get(id=taller_param, status=True)
+                request.session['taller_id'] = taller.id
+            except Taller.DoesNotExist:
+                pass
+
         form = Step1ClienteForm()
         return render(request, self.template_name, {
             'form': form,
@@ -61,36 +70,57 @@ class Step1ClienteView(View):
             dni_busqueda = form.cleaned_data.get('dni_busqueda')
 
             if dni_busqueda:
-                # Buscar cliente existente
-                try:
-                    cliente = Cliente.objects.get(dni=dni_busqueda, status=True)
+                # Buscar cliente existente por DNI o CUIL
+                if len(dni_busqueda) == 11:
+                    cliente = Cliente.objects.filter(
+                        status=True
+                    ).filter(
+                        Q(cuit=dni_busqueda) | Q(dni=dni_busqueda[2:10])
+                    ).first()
+                else:
+                    cliente = Cliente.objects.filter(dni=dni_busqueda, status=True).first()
+
+                if cliente:
                     request.session['cliente_id'] = cliente.id
                     return redirect_with_embedded(request, 'turnero:step2_vehiculo')
-                except Cliente.DoesNotExist:
+                else:
                     return render(request, self.template_name, {
                         'form': form,
                         'step': 1,
                         'progress': 20,
-                        'error': 'No se encontró un cliente con ese DNI. Por favor, complete los datos para crear uno nuevo.'
+                        'error': 'No se encontró un cliente con ese DNI/CUIL. Por favor, complete los datos para crear uno nuevo.'
                     })
             else:
                 # Crear nueva persona
-                dni = form.cleaned_data.get('dni')
-                if not dni:
+                documento = form.cleaned_data.get('dni')
+                if not documento:
                     return render(request, self.template_name, {
                         'form': form,
                         'step': 1,
                         'progress': 20,
-                        'error': 'Debe ingresar un DNI para buscar o crear un cliente.'
+                        'error': 'Debe ingresar un DNI o CUIL para buscar o crear un cliente.'
                     })
+
+                # Si es CUIL (11 dígitos), extraer DNI y guardar CUIL
+                if len(documento) == 11:
+                    dni = documento[2:10]
+                    cuil = documento
+                else:
+                    dni = documento
+                    cuil = None
 
                 # Verificar si ya existe
                 if Cliente.objects.filter(dni=dni).exists():
                     cliente = Cliente.objects.get(dni=dni)
+                    # Actualizar CUIL si no lo tenía
+                    if cuil and not cliente.cuit:
+                        cliente.cuit = cuil
+                        cliente.save(update_fields=['cuit'])
                 else:
                     # Crear nuevo cliente
                     cliente = Cliente.objects.create(
                         dni=dni,
+                        cuit=cuil,
                         nombre=form.cleaned_data.get('nombre'),
                         apellido=form.cleaned_data.get('apellido'),
                         email=form.cleaned_data.get('email'),
@@ -225,6 +255,16 @@ class Step3TallerView(View):
         cliente = Cliente.objects.get(id=request.session['cliente_id'])
         vehiculo = Vehiculo.objects.get(id=request.session['vehiculo_id'])
 
+        # Verificar si el taller ya fue preseleccionado desde la página principal
+        taller_preseleccionado = None
+        if 'taller_id' in request.session:
+            try:
+                taller_preseleccionado = Taller.objects.get(
+                    id=request.session['taller_id'], status=True
+                )
+            except Taller.DoesNotExist:
+                del request.session['taller_id']
+
         # Obtener todos los talleres activos que tienen configuración de trámites
         # Ordenar: Palpalá (ID=1) primero, luego Libertador (ID=2)
         talleres = Taller.objects.filter(
@@ -249,7 +289,8 @@ class Step3TallerView(View):
             'progress': 60,
             'cliente': cliente,
             'vehiculo': vehiculo,
-            'talleres': talleres
+            'talleres': talleres,
+            'taller_preseleccionado': taller_preseleccionado,
         })
 
     def post(self, request):
@@ -689,26 +730,37 @@ class VerificarTurnoView(TemplateView):
 # AJAX Views para búsquedas dinámicas
 
 def buscar_persona_ajax(request):
-    """Buscar cliente por DNI (AJAX)"""
-    dni = request.GET.get('dni', '')
+    """Buscar cliente por DNI o CUIL (AJAX)"""
+    valor = request.GET.get('dni', '').strip()
 
-    if not dni:
+    if not valor:
         return JsonResponse({'found': False})
 
     try:
-        cliente = Cliente.objects.get(dni=dni, status=True)
-        return JsonResponse({
-            'found': True,
-            'data': {
-                'id': cliente.id,
-                'nombre': cliente.nombre,
-                'apellido': cliente.apellido,
-                'email': cliente.email or '',
-                'cel': cliente.celular or '',
-                'localidad_id': cliente.localidad.id if cliente.localidad else None,
-                'domicilio': cliente.domicilio or ''
-            }
-        })
+        if len(valor) == 11:
+            # Buscar por CUIL, o extraer DNI del CUIL (posiciones 2-9)
+            cliente = Cliente.objects.filter(
+                status=True
+            ).filter(
+                Q(cuit=valor) | Q(dni=valor[2:10])
+            ).first()
+        else:
+            cliente = Cliente.objects.get(dni=valor, status=True)
+
+        if cliente:
+            return JsonResponse({
+                'found': True,
+                'data': {
+                    'id': cliente.id,
+                    'nombre': cliente.nombre,
+                    'apellido': cliente.apellido,
+                    'email': cliente.email or '',
+                    'cel': cliente.celular or '',
+                    'localidad_id': cliente.localidad.id if cliente.localidad else None,
+                    'domicilio': cliente.domicilio or ''
+                }
+            })
+        return JsonResponse({'found': False})
     except Cliente.DoesNotExist:
         return JsonResponse({'found': False})
 
@@ -749,7 +801,7 @@ def buscar_vehiculo_ajax(request):
                 'hora': turno_pendiente.hora_inicio.strftime('%H:%M'),
                 'taller_nombre': turno_pendiente.taller.get_nombre(),
                 'taller_direccion': turno_pendiente.taller.get_direccion(),
-                'tipo_tramite': turno_pendiente.tipo_vehiculo.nombre,
+                'tipo_tramite': turno_pendiente.tipo_vehiculo.nombre if turno_pendiente.tipo_vehiculo else 'Sin tipo',
                 'estado': turno_pendiente.get_estado_display(),
                 'puede_reprogramar': turno_pendiente.puede_reprogramar,
                 'cliente_nombre': f"{turno_pendiente.cliente.nombre} {turno_pendiente.cliente.apellido}",
@@ -833,6 +885,13 @@ def obtener_horarios_disponibles_ajax(request):
         hoy = ahora.date()
         hora_actual_sistema = ahora.time()
 
+        # Obtener franjas anuladas activas para esta fecha y taller
+        franjas_anuladas = FranjaAnulada.objects.filter(
+            taller=taller,
+            fecha=fecha,
+            status=True
+        )
+
         # Generar horarios disponibles
         horarios = []
         hora_actual = datetime.combine(fecha, taller.horario_apertura)
@@ -843,6 +902,15 @@ def obtener_horarios_disponibles_ajax(request):
 
             # Si la fecha es hoy, filtrar horarios que ya pasaron
             if fecha == hoy and hora_time <= hora_actual_sistema:
+                hora_actual += timedelta(minutes=config.intervalo_minutos)
+                continue
+
+            # Verificar si el horario cae en una franja anulada
+            en_franja_anulada = franjas_anuladas.filter(
+                hora_inicio__lte=hora_time,
+                hora_fin__gt=hora_time
+            ).exists()
+            if en_franja_anulada:
                 hora_actual += timedelta(minutes=config.intervalo_minutos)
                 continue
 
@@ -1093,11 +1161,17 @@ class ConsultarTurnoView(View):
             elif tipo_busqueda == 'dominio':
                 turnos = Turno.objects.filter(vehiculo__dominio__iexact=valor_busqueda)
             elif tipo_busqueda == 'dni':
-                turnos = Turno.objects.filter(cliente__dni=valor_busqueda)
+                if len(valor_busqueda) == 11:
+                    # Buscar por CUIL o extraer DNI del CUIL
+                    turnos = Turno.objects.filter(
+                        Q(cliente__cuit=valor_busqueda) | Q(cliente__dni=valor_busqueda[2:10])
+                    )
+                else:
+                    turnos = Turno.objects.filter(cliente__dni=valor_busqueda)
 
-            # Filtrar solo turnos activos (excluir cancelados)
+            # Filtrar solo turnos pendientes
             if turnos:
-                turnos = turnos.exclude(estado='CANCELADO').order_by('-fecha', '-hora_inicio')
+                turnos = turnos.filter(estado='PENDIENTE').order_by('-fecha', '-hora_inicio')
 
             return render(request, self.template_name, {
                 'form': form,

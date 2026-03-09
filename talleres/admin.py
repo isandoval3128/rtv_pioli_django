@@ -3,7 +3,7 @@ from django.contrib import messages
 from django.shortcuts import render, redirect
 from django.urls import path
 from django import forms
-from .models import Taller, TipoVehiculo, ConfiguracionTaller, Vehiculo
+from .models import Taller, TipoVehiculo, ConfiguracionTaller, Vehiculo, FranjaAnulada
 from .forms import TallerAdminForm
 from .utils import importar_tramites_desde_excel
 
@@ -306,43 +306,61 @@ class ConfiguracionTallerAdmin(admin.ModelAdmin):
     def sincronizar_talleres_tramites(self, request):
         """
         Sincroniza todos los talleres con todos los tipos de trámite.
-        Crea las configuraciones faltantes con valores por defecto.
+        Crea las configuraciones faltantes y actualiza intervalos según tipo.
+        Livianos (AUTOS): 10 min | Pesados (CAMION/TRACTOR): 20 min
         """
         if request.method == 'POST':
             talleres = Taller.objects.filter(status=True)
             tipos_tramite = TipoVehiculo.objects.filter(status=True)
 
             creados = 0
-            existentes = 0
+            actualizados = 0
 
             for taller in talleres:
                 for tipo in tipos_tramite:
+                    # Determinar intervalo según tipo de trámite
+                    nombre = tipo.nombre.upper()
+                    if 'CAMION' in nombre or 'TRACTOR' in nombre or 'PESADO' in nombre:
+                        intervalo = 20
+                    else:
+                        intervalo = 10
+
                     config, created = ConfiguracionTaller.objects.get_or_create(
                         taller=taller,
                         tipo_vehiculo=tipo,
                         defaults={
                             'turnos_simultaneos': 2,
-                            'intervalo_minutos': tipo.duracion_minutos or 30,
+                            'intervalo_minutos': intervalo,
                             'status': True,
                         }
                     )
                     if created:
                         creados += 1
                     else:
-                        existentes += 1
+                        # Actualizar intervalo en configuraciones existentes
+                        if config.intervalo_minutos != intervalo:
+                            config.intervalo_minutos = intervalo
+                            config.save(update_fields=['intervalo_minutos'])
+                            actualizados += 1
 
+                    # Actualizar duracion_minutos en TipoVehiculo
+                    if tipo.duracion_minutos != intervalo:
+                        tipo.duracion_minutos = intervalo
+                        tipo.save(update_fields=['duracion_minutos'])
+
+            msg_parts = []
             if creados > 0:
-                self.message_user(
-                    request,
-                    f"Sincronización completada: {creados} configuraciones creadas.",
-                    messages.SUCCESS
-                )
-            else:
-                self.message_user(
-                    request,
-                    f"No se crearon nuevas configuraciones. {existentes} ya existían.",
-                    messages.INFO
-                )
+                msg_parts.append(f"{creados} configuraciones creadas")
+            if actualizados > 0:
+                msg_parts.append(f"{actualizados} intervalos actualizados")
+            if not msg_parts:
+                msg_parts.append("Todo ya estaba sincronizado")
+
+            self.message_user(
+                request,
+                f"Sincronización completada: {', '.join(msg_parts)}.",
+                messages.SUCCESS if (creados or actualizados) else messages.INFO
+            )
 
             return redirect('admin:talleres_configuraciontaller_changelist')
 
@@ -364,6 +382,16 @@ class ConfiguracionTallerAdmin(admin.ModelAdmin):
             'faltantes': max(0, faltantes),
         }
         return render(request, 'admin/talleres/sincronizar_configuracion.html', context)
+
+
+@admin.register(FranjaAnulada)
+class FranjaAnuladaAdmin(admin.ModelAdmin):
+    list_display = ('taller', 'fecha', 'hora_inicio', 'hora_fin', 'motivo', 'status')
+    list_filter = ('status', 'taller', 'fecha')
+    search_fields = ('motivo', 'taller__nombre')
+    ordering = ('-fecha', 'hora_inicio')
+    list_editable = ('status',)
+    date_hierarchy = 'fecha'
 
 
 @admin.register(Vehiculo)

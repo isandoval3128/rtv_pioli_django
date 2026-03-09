@@ -342,6 +342,7 @@ def enviar_email_solicitud_cancelacion(turno, token):
                     <!-- Header -->
                     <tr>
                         <td style="background: linear-gradient(135deg, {color_danger} 0%, #f87171 100%); padding: 30px 40px; text-align: center;">
+                            <img src="cid:logo_rtv" alt="RTV Pioli" style="width: 80px; height: auto; margin-bottom: 15px; border-radius: 12px;">
                             <h1 style="margin: 0; color: #ffffff; font-size: 26px; font-weight: 600;">
                                 Cancelar Turno
                             </h1>
@@ -483,16 +484,15 @@ def enviar_email_solicitud_cancelacion(turno, token):
 </html>
 """
 
-        email = EmailMultiAlternatives(
-            subject,
-            body_text,
-            email_config.default_from_email or email_config.email_host_user,
-            [turno.cliente.email],
-            connection=connection
+        from .utils import enviar_email_html_con_logo
+        enviar_email_html_con_logo(
+            subject=subject,
+            body_text=body_text,
+            body_html=body_html,
+            to_email=turno.cliente.email,
+            connection=connection,
+            from_email=email_config.default_from_email or email_config.email_host_user,
         )
-        email.attach_alternative(body_html, "text/html")
-
-        email.send(fail_silently=False)
         return True
 
     except Exception as e:
@@ -589,6 +589,7 @@ def enviar_email_cancelacion(turno, motivo=''):
                     <!-- Header -->
                     <tr>
                         <td style="background: linear-gradient(135deg, #6b7280 0%, #9ca3af 100%); padding: 30px 40px; text-align: center;">
+                            <img src="cid:logo_rtv" alt="RTV Pioli" style="width: 80px; height: auto; margin-bottom: 15px; border-radius: 12px;">
                             <h1 style="margin: 0; color: #ffffff; font-size: 26px; font-weight: 600;">
                                 Turno Cancelado
                             </h1>
@@ -691,16 +692,15 @@ def enviar_email_cancelacion(turno, motivo=''):
 </html>
 """
 
-        email = EmailMultiAlternatives(
-            subject,
-            body_text,
-            email_config.default_from_email or email_config.email_host_user,
-            [turno.cliente.email],
-            connection=connection
+        from .utils import enviar_email_html_con_logo
+        enviar_email_html_con_logo(
+            subject=subject,
+            body_text=body_text,
+            body_html=body_html,
+            to_email=turno.cliente.email,
+            connection=connection,
+            from_email=email_config.default_from_email or email_config.email_host_user,
         )
-        email.attach_alternative(body_html, "text/html")
-
-        email.send(fail_silently=False)
         return True
 
     except Exception as e:
@@ -773,6 +773,7 @@ def enviar_email_reprogramacion(turno, token):
                     <!-- Header -->
                     <tr>
                         <td style="background: linear-gradient(135deg, {color_acento} 0%, #fbbf24 100%); padding: 30px 40px; text-align: center;">
+                            <img src="cid:logo_rtv" alt="RTV Pioli" style="width: 80px; height: auto; margin-bottom: 15px; border-radius: 12px;">
                             <h1 style="margin: 0; color: #ffffff; font-size: 26px; font-weight: 600;">
                                 Reprogramar Turno
                             </h1>
@@ -914,16 +915,15 @@ def enviar_email_reprogramacion(turno, token):
 </html>
 """
 
-        email = EmailMultiAlternatives(
-            subject,
-            body_text,
-            email_config.default_from_email or email_config.email_host_user,
-            [turno.cliente.email],
-            connection=connection
+        from .utils import enviar_email_html_con_logo
+        enviar_email_html_con_logo(
+            subject=subject,
+            body_text=body_text,
+            body_html=body_html,
+            to_email=turno.cliente.email,
+            connection=connection,
+            from_email=email_config.default_from_email or email_config.email_host_user,
         )
-        email.attach_alternative(body_html, "text/html")
-
-        email.send(fail_silently=False)
         return True
 
     except Exception as e:
@@ -999,6 +999,7 @@ def enviar_email_confirmacion_reprogramacion(turno):
                     <!-- Header -->
                     <tr>
                         <td style="background: linear-gradient(135deg, {color_success} 0%, #34d399 100%); padding: 30px 40px; text-align: center;">
+                            <img src="cid:logo_rtv" alt="RTV Pioli" style="width: 80px; height: auto; margin-bottom: 15px; border-radius: 12px;">
                             <h1 style="margin: 0; color: #ffffff; font-size: 26px; font-weight: 600;">
                                 Turno Reprogramado
                             </h1>
@@ -1150,16 +1151,15 @@ def enviar_email_confirmacion_reprogramacion(turno):
 </html>
 """
 
-        email = EmailMultiAlternatives(
-            subject,
-            body_text,
-            email_config.default_from_email or email_config.email_host_user,
-            [turno.cliente.email],
-            connection=connection
+        from .utils import enviar_email_html_con_logo
+        enviar_email_html_con_logo(
+            subject=subject,
+            body_text=body_text,
+            body_html=body_html,
+            to_email=turno.cliente.email,
+            connection=connection,
+            from_email=email_config.default_from_email or email_config.email_host_user,
         )
-        email.attach_alternative(body_html, "text/html")
-
-        email.send(fail_silently=False)
         return True
 
     except Exception as e:

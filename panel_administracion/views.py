@@ -8,6 +8,7 @@ from django.template.loader import render_to_string
 from django.db.models import Q, Count
 from datetime import timedelta, datetime
 from collections import Counter
+import re
 from turnero.models import Turno, HistorialTurno
 from clientes.models import Cliente
 from talleres.models import Taller, TipoVehiculo, Vehiculo, ConfiguracionTaller
@@ -154,7 +155,7 @@ def gestion_turnos_ajax(request):
                 'cliente_nombre': f"{t.cliente.nombre} {t.cliente.apellido}",
                 'cliente_dni': t.cliente.dni,
                 'vehiculo_dominio': t.vehiculo.dominio,
-                'tipo_vehiculo': t.tipo_vehiculo.nombre,
+                'tipo_vehiculo': t.tipo_vehiculo.nombre if t.tipo_vehiculo else 'Sin tipo',
                 'taller_nombre': t.taller.get_nombre(),
                 'fecha': str(t.fecha),
                 'hora_inicio': t.hora_inicio.strftime('%H:%M'),
@@ -886,15 +887,22 @@ def verificar_turno_panel(request):
         dni = request.POST.get('dni', '').strip()
         token = request.POST.get('token', '').strip()
 
-        # Si viene 'busqueda', determinar si es codigo o DNI
+        dominio = request.POST.get('dominio', '').strip().upper()
+
+        # Si viene 'busqueda', determinar si es codigo, DNI/CUIL o patente
         if busqueda and not codigo and not dni:
-            busqueda_upper = busqueda.upper()
+            busqueda_upper = busqueda.upper().replace(' ', '')
             # Si empieza con TRN- o tiene formato de codigo, es codigo
-            if busqueda_upper.startswith('TRN-') or '-' in busqueda_upper:
+            if busqueda_upper.startswith('TRN-') or ('-' in busqueda_upper and len(busqueda_upper) <= 12):
                 codigo = busqueda_upper
-            # Si es solo numeros, es DNI
-            elif busqueda.isdigit():
-                dni = busqueda
+            # Si es solo numeros: DNI (7-8) o CUIL (11)
+            elif busqueda.replace(' ', '').isdigit():
+                dni = busqueda.replace(' ', '')
+            # Si parece patente argentina (alfanumérico 6-7 chars)
+            elif re.match(r'^[A-Z]{2,3}\d{3}[A-Z]{0,3}$', busqueda_upper) and len(busqueda_upper) in (6, 7):
+                dominio = busqueda_upper
+            elif re.match(r'^\d{3}[A-Z]{3}$', busqueda_upper):
+                dominio = busqueda_upper
             # Si no, intentar como codigo
             else:
                 codigo = busqueda_upper
@@ -919,14 +927,20 @@ def verificar_turno_panel(request):
                     'cliente', 'vehiculo', 'taller', 'tipo_vehiculo', 'atendido_por'
                 ).get(codigo=codigo)
 
-            # Buscar por DNI (plan B)
+            # Buscar por DNI/CUIL (plan B)
             elif dni:
-                # Buscar turnos del dia para este DNI
+                # Buscar turnos del dia para este DNI o CUIL
                 hoy = timezone.localtime().date()
+                # Si es CUIL (11 dígitos), buscar por cuit o extraer DNI
+                if len(dni) == 11:
+                    dni_filter = Q(cliente__cuit=dni) | Q(cliente__dni=dni[2:10])
+                else:
+                    dni_filter = Q(cliente__dni=dni)
+
                 turnos = Turno.objects.select_related(
                     'cliente', 'vehiculo', 'taller', 'tipo_vehiculo', 'atendido_por'
                 ).filter(
-                    cliente__dni=dni,
+                    dni_filter,
                     fecha=hoy,
                     estado__in=['PENDIENTE', 'CONFIRMADO']
                 ).order_by('hora_inicio')
@@ -936,7 +950,7 @@ def verificar_turno_panel(request):
                     turnos_futuros = Turno.objects.select_related(
                         'cliente', 'vehiculo', 'taller', 'tipo_vehiculo'
                     ).filter(
-                        cliente__dni=dni,
+                        dni_filter,
                         fecha__gt=hoy,
                         estado__in=['PENDIENTE', 'CONFIRMADO']
                     ).order_by('fecha', 'hora_inicio')
@@ -961,9 +975,55 @@ def verificar_turno_panel(request):
                             'dni': dni
                         })
 
+                    label = 'CUIL' if len(dni) == 11 else 'DNI'
                     return JsonResponse({
                         'success': False,
-                        'error': f'No se encontraron turnos pendientes con DNI: {dni}',
+                        'error': f'No se encontraron turnos pendientes con {label}: {dni}',
+                        'tipo_error': 'no_encontrado'
+                    })
+
+            # Buscar por patente/dominio
+            elif dominio:
+                hoy = timezone.localtime().date()
+                turnos = Turno.objects.select_related(
+                    'cliente', 'vehiculo', 'taller', 'tipo_vehiculo', 'atendido_por'
+                ).filter(
+                    vehiculo__dominio__iexact=dominio,
+                    fecha=hoy,
+                    estado__in=['PENDIENTE', 'CONFIRMADO']
+                ).order_by('hora_inicio')
+
+                if not turnos.exists():
+                    turnos_futuros = Turno.objects.select_related(
+                        'cliente', 'vehiculo', 'taller', 'tipo_vehiculo'
+                    ).filter(
+                        vehiculo__dominio__iexact=dominio,
+                        fecha__gt=hoy,
+                        estado__in=['PENDIENTE', 'CONFIRMADO']
+                    ).order_by('fecha', 'hora_inicio')
+
+                    if turnos_futuros.exists():
+                        lista_turnos_futuros = []
+                        for t in turnos_futuros:
+                            lista_turnos_futuros.append({
+                                'codigo': t.codigo,
+                                'fecha': t.fecha.strftime('%d/%m/%Y'),
+                                'hora': t.hora_inicio.strftime('%H:%M'),
+                                'vehiculo': t.vehiculo.dominio,
+                                'taller': t.taller.get_nombre(),
+                                'estado': t.get_estado_display()
+                            })
+                        return JsonResponse({
+                            'success': False,
+                            'error': f'Este vehiculo tiene turnos pendientes pero ninguno para hoy',
+                            'tipo_error': 'turnos_futuros',
+                            'turnos_futuros': lista_turnos_futuros,
+                            'dni': dominio
+                        })
+
+                    return JsonResponse({
+                        'success': False,
+                        'error': f'No se encontraron turnos pendientes para patente: {dominio}',
                         'tipo_error': 'no_encontrado'
                     })
 
@@ -988,7 +1048,7 @@ def verificar_turno_panel(request):
             else:
                 return JsonResponse({
                     'success': False,
-                    'error': 'Debe ingresar codigo de turno o DNI',
+                    'error': 'Debe ingresar codigo de turno, DNI/CUIL o patente',
                     'tipo_error': 'sin_datos'
                 })
 

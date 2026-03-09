@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -32,6 +33,13 @@
             border-bottom: 2px solid #13304D;
             padding-bottom: 20px;
             margin-bottom: 20px;
+        }
+
+        .header-logo {
+            max-width: 180px;
+            height: auto;
+            margin-bottom: 10px;
+            border-radius: 12px;
         }
 
         .header h1 {
@@ -163,76 +171,97 @@
         @media print {
             @page {
                 size: A4;
-                margin: 10mm;
+                margin: 15mm;
             }
 
-            body {
+            html, body {
+                width: 210mm;
+                height: 297mm;
                 padding: 0;
+                margin: 0;
                 font-size: 10pt;
                 -webkit-print-color-adjust: exact;
                 print-color-adjust: exact;
+                overflow: hidden;
             }
 
             .container {
                 border: 1px solid #13304D;
-                padding: 15px;
+                padding: 20px;
                 max-width: 100%;
-                /* Ajustar todo el contenido a una página */
+                width: 100%;
+                margin: 0;
                 page-break-inside: avoid;
-                transform-origin: top left;
+                box-sizing: border-box;
+            }
+
+            .header {
+                padding-bottom: 15px;
+                margin-bottom: 15px;
+            }
+
+            .header-logo {
+                max-width: 120px;
+                margin-bottom: 8px;
             }
 
             .header h1 {
-                font-size: 18pt;
+                font-size: 16pt;
+                margin-bottom: 3px;
             }
 
             .header .subtitle {
-                font-size: 11pt;
+                font-size: 10pt;
             }
 
             .codigo-turno {
-                font-size: 14pt;
-                padding: 8px 15px;
-                margin: 10px 0;
+                font-size: 13pt;
+                padding: 6px 14px;
+                margin: 8px 0;
+            }
+
+            .section {
+                margin-bottom: 12px;
             }
 
             .section-title {
-                font-size: 10pt;
-                padding: 5px 10px;
+                font-size: 9pt;
+                padding: 4px 10px;
+                margin-bottom: 6px;
             }
 
             .info-grid {
-                gap: 5px 20px;
+                gap: 4px 20px;
             }
 
             .info-item {
-                padding: 3px 0;
+                padding: 2px 0;
                 font-size: 9pt;
             }
 
             .info-label {
-                min-width: 90px;
+                min-width: 85px;
             }
 
             .datetime-box {
-                padding: 12px;
-                margin: 12px 0;
+                padding: 10px;
+                margin: 10px 0;
             }
 
             .datetime-box .fecha {
-                font-size: 14pt;
+                font-size: 13pt;
             }
 
             .datetime-box .hora {
-                font-size: 12pt;
+                font-size: 11pt;
             }
 
             .qr-section {
-                margin: 12px 0;
+                margin: 10px 0;
             }
 
             .qr-section img {
-                max-width: 100px;
+                max-width: 90px;
             }
 
             .qr-section p {
@@ -240,23 +269,23 @@
             }
 
             .instrucciones {
-                padding: 10px;
-                margin-top: 12px;
+                padding: 8px 10px;
+                margin-top: 10px;
             }
 
             .instrucciones h4 {
-                font-size: 10pt;
-                margin-bottom: 5px;
+                font-size: 9pt;
+                margin-bottom: 4px;
             }
 
             .instrucciones li {
-                font-size: 9pt;
-                margin-bottom: 3px;
+                font-size: 8pt;
+                margin-bottom: 2px;
             }
 
             .footer {
-                margin-top: 15px;
-                padding-top: 10px;
+                margin-top: 10px;
+                padding-top: 8px;
                 font-size: 8pt;
             }
 
@@ -396,6 +425,7 @@
 
     <div class="container">
         <div class="header">
+            <img src="{% static 'assets/rtv_mejorado.png' %}" alt="RTV Logo" class="header-logo">
             <h1>COMPROBANTE DE TURNO</h1>
             <p class="subtitle">Revisión Técnica Vehicular</p>
             <div class="codigo-turno">{{ turno.codigo }}</div>

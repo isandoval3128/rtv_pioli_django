@@ -367,7 +367,7 @@
                             <div class="input-icon">
                                 <i class="fas fa-car"></i>
                                 <input type="text" class="form-control text-uppercase" id="dominio_busqueda_input"
-                                       placeholder="ABC123 o AB123CD" maxlength="7">
+                                       placeholder="ABC123, AB123CD, A123BCD, 123ABC" maxlength="7">
                             </div>
                             <div class="patente-preview" id="patente_preview"></div>
                         </div>
@@ -405,8 +405,8 @@
                                 <input type="text" class="form-control text-uppercase"
                                        id="{{ form.dominio.id_for_label }}"
                                        name="dominio" maxlength="7"
-                                       placeholder="ABC123 o AB123CD" required>
-                                <small class="text-muted d-block mt-1">Formatos: ABC123 (vieja) o AB123CD (nueva)</small>
+                                       placeholder="ABC123, AB123CD, A123BCD" required>
+                                <small class="text-muted d-block mt-1">Autos: ABC123 / AB123CD — Motos: A123BCD / 123ABC</small>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">
@@ -799,11 +799,11 @@
     function validarFormatoDominio(dominio) {
         if (!dominio) return false;
         dominio = dominio.toUpperCase().trim();
-        // Formato viejo: 3 letras + 3 números (ABC123)
-        const formatoViejo = /^[A-Z]{3}[0-9]{3}$/;
-        // Formato nuevo: 2 letras + 3 números + 2 letras (AB123CD)
-        const formatoNuevo = /^[A-Z]{2}[0-9]{3}[A-Z]{2}$/;
-        return formatoViejo.test(dominio) || formatoNuevo.test(dominio);
+        const autoViejo = /^[A-Z]{3}[0-9]{3}$/;         // ABC123
+        const autoNuevo = /^[A-Z]{2}[0-9]{3}[A-Z]{2}$/; // AB123CD
+        const motoNueva = /^[A-Z][0-9]{3}[A-Z]{3}$/;    // A123BCD
+        const motoVieja = /^[0-9]{3}[A-Z]{3}$/;          // 123ABC
+        return autoViejo.test(dominio) || autoNuevo.test(dominio) || motoNueva.test(dominio) || motoVieja.test(dominio);
     }
 
     // Validación del formulario
@@ -816,7 +816,7 @@
             if (!validarFormatoDominio(dominio)) {
                 e.preventDefault();
                 showError(
-                    'El formato del dominio es inválido. Use el formato ABC123 (patente vieja) o AB123CD (patente nueva del Mercosur).',
+                    'Formato inválido. Autos: ABC123 o AB123CD. Motos: A123BCD o 123ABC.',
                     'Formato de Dominio Inválido'
                 );
                 document.getElementById('{{ form.dominio.id_for_label }}').focus();

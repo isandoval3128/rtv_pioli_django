@@ -51,7 +51,9 @@ class Turno(models.Model):
     )
     tipo_vehiculo = models.ForeignKey(
         TipoVehiculo,
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
         verbose_name="Tipo de Trámite"
     )
 
@@ -406,7 +408,9 @@ class ReservaTemporal(models.Model):
     )
     tipo_vehiculo = models.ForeignKey(
         TipoVehiculo,
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
         verbose_name="Tipo de Vehículo"
     )
     fecha = models.DateField(verbose_name="Fecha del Turno")
