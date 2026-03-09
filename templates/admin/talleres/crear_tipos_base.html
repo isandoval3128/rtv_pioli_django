@@ -1,0 +1,46 @@
+{% extends "admin/base_site.html" %}
+{% load i18n %}
+
+{% block title %}Crear Tipos de Trámite Base{% endblock %}
+
+{% block content %}
+<div style="max-width: 700px; margin: 20px auto;">
+    <h2 style="margin-bottom: 20px;">Crear Tipos de Trámite Base</h2>
+    <p style="margin-bottom: 20px;">Se crearán los siguientes tipos de trámite (si no existen):</p>
+
+    <table style="width: 100%; border-collapse: collapse; margin-bottom: 24px;">
+        <thead>
+            <tr style="background: #f8f8f8;">
+                <th style="padding: 10px; border: 1px solid #ddd; text-align: left;">Código</th>
+                <th style="padding: 10px; border: 1px solid #ddd; text-align: left;">Nombre</th>
+                <th style="padding: 10px; border: 1px solid #ddd; text-align: center;">Duración</th>
+                <th style="padding: 10px; border: 1px solid #ddd; text-align: center;">Estado</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for tipo in tipos_info %}
+            <tr>
+                <td style="padding: 10px; border: 1px solid #ddd;"><strong>{{ tipo.codigo_tramite }}</strong></td>
+                <td style="padding: 10px; border: 1px solid #ddd;">{{ tipo.nombre }}</td>
+                <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">{{ tipo.duracion_minutos }} min</td>
+                <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">
+                    {% if tipo.existe %}
+                        <span style="color: #856404; background: #fff3cd; padding: 3px 10px; border-radius: 4px;">Ya existe</span>
+                    {% else %}
+                        <span style="color: #155724; background: #d4edda; padding: 3px 10px; border-radius: 4px;">Se creará</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <form method="post">
+        {% csrf_token %}
+        <div style="display: flex; gap: 12px;">
+            <input type="submit" value="Crear Tipos de Trámite" class="default" style="padding: 8px 20px; cursor: pointer;">
+            <a href="{% url 'admin:talleres_tipovehiculo_changelist' %}" style="padding: 8px 20px; background: #6c757d; color: white; text-decoration: none; border-radius: 4px;">Cancelar</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

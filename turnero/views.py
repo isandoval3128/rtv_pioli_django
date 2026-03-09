@@ -787,8 +787,8 @@ def buscar_vehiculo_ajax(request):
             'data': {
                 'id': vehiculo.id,
                 'dominio': vehiculo.dominio,
-                'tipo_vehiculo_id': vehiculo.tipo_vehiculo.id,
-                'tipo_vehiculo_nombre': vehiculo.tipo_vehiculo.nombre,
+                'tipo_vehiculo_id': vehiculo.tipo_vehiculo.id if vehiculo.tipo_vehiculo else None,
+                'tipo_vehiculo_nombre': vehiculo.tipo_vehiculo.nombre if vehiculo.tipo_vehiculo else '',
                 'tiene_gnc': vehiculo.tiene_gnc
             }
         }

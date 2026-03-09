@@ -14,6 +14,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 
 from pathlib import Path
 import platform
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -26,16 +27,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-$dsi$xus+mu8cadlq5nyc52=!v@vglz&&u$ve(m_yque2^qa@z'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# En producción: export DJANGO_DEBUG=False
+DEBUG = os.environ.get('DJANGO_DEBUG', 'True' if platform.system() == 'Windows' else 'False').lower() in ('true', '1', 'yes')
 
 ALLOWED_HOSTS = ["rtvpioli.com.ar", "www.rtvpioli.com.ar", '167.71.93.198', 'localhost', '127.0.0.1']
 
 # URL base del sitio para generacion de QR y enlaces en emails
-# Detecta automáticamente: Windows = desarrollo local, Linux = producción
-if platform.system() == 'Windows':
-    SITE_URL = "http://127.0.0.1:8000"  # Cambiar a tu IP local si queres escanear desde el celular (ej: "http://192.168.1.X:8000")
-else:
-    SITE_URL = "https://rtvpioli.com.ar"
+SITE_URL = os.environ.get('SITE_URL', "http://127.0.0.1:8000" if DEBUG else "https://rtvpioli.com.ar")
 
 
 # Application definition
