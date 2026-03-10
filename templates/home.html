@@ -644,12 +644,9 @@
         .floating-shape-3 { width: 80px; height: 80px; }
         .floating-shape-4 { display: none; }
     }
-    /* Ocultar botones solo en tablets (entre 576px y 768px) */
-    @media (min-width: 576px) and (max-width: 768px) {
-        .masthead .header-btn {
-            display: none !important;
-        }
-        .hero-btns-block {
+    /* Responsive: solo ocultar texto hero, mantener botones externos visibles */
+    @media (max-width: 768px) {
+        .hero-btns-text {
             display: none !important;
         }
     }
@@ -696,7 +693,7 @@
                                 width: 100% !important;
                                 max-width: 100% !important;
                             }
-                            .hero-btn-fixed {
+                            .hero-btn-fixed:not(.d-none) {
                                 margin-right: 0 !important;
                                 margin-left: 0 !important;
                                 display: block !important;
@@ -846,7 +843,7 @@
                                 align-items: center !important;
                                 margin-bottom: 2.5rem !important;
                             }
-                            .hero-btn-fixed {
+                            .hero-btn-fixed:not(.d-none) {
                                 font-size: 0.95rem !important;
                                 width: 90vw !important;
                                 min-width: 220px !important;
