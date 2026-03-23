@@ -1,0 +1,1123 @@
+{% extends "panel/base.html" %}
+{% load static %}
+
+{% block title %}Gestión del Sitio - Panel de Administración{% endblock %}
+{% block page_title %}Gestión del Sitio Web{% endblock %}
+
+{% block extraCss %}
+<style>
+/* =====================================================
+   TABS DE SECCIONES
+   ===================================================== */
+.nav-tabs-admin {
+    border-bottom: 2px solid #e9ecef;
+    gap: 4px;
+    flex-wrap: wrap;
+}
+.nav-tabs-admin .nav-link {
+    border: none;
+    border-bottom: 3px solid transparent;
+    border-radius: 0;
+    padding: 12px 20px;
+    color: #6c757d;
+    font-weight: 500;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+}
+.nav-tabs-admin .nav-link:hover {
+    color: var(--theme-primary);
+    border-bottom-color: rgba(var(--theme-primary-rgb), 0.3);
+    background-color: var(--theme-primary-lighter);
+}
+.nav-tabs-admin .nav-link.active {
+    color: var(--theme-primary);
+    border-bottom-color: var(--theme-primary);
+    font-weight: 600;
+    background-color: transparent;
+}
+
+/* =====================================================
+   SECCIONES DE FORMULARIO
+   ===================================================== */
+.form-section {
+    background: white;
+    border-radius: 12px;
+    margin-bottom: 1.25rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    border: 1px solid #e2e8f0;
+}
+.section-header {
+    background: linear-gradient(to right, #f8fafc, white);
+    padding: 0.875rem 1.25rem;
+    border-bottom: 1px solid #e2e8f0;
+    border-radius: 12px 12px 0 0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.section-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    background: var(--theme-primary);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+    flex-shrink: 0;
+}
+.section-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #334155;
+    margin: 0;
+}
+.section-body {
+    padding: 1.25rem;
+}
+
+/* =====================================================
+   FILAS DE FORMULARIO
+   ===================================================== */
+.form-row-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1rem;
+}
+.form-row-single { grid-template-columns: 1fr; }
+.form-row-3 { grid-template-columns: repeat(3, 1fr); }
+.form-row-4 { grid-template-columns: repeat(4, 1fr); }
+
+.form-label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #475569;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.form-label i { color: var(--theme-primary); font-size: 0.75rem; }
+.form-label .required { color: var(--theme-danger); font-weight: 700; }
+.form-control:focus {
+    border-color: var(--theme-primary);
+    box-shadow: 0 0 0 3px rgba(var(--theme-primary-rgb), 0.1);
+}
+.form-text { font-size: 0.75rem; color: #94a3b8; margin-top: 4px; }
+
+/* =====================================================
+   COLOR PICKER INLINE
+   ===================================================== */
+.color-input-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.color-input-group input[type="color"] {
+    width: 42px;
+    height: 38px;
+    padding: 2px;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 8px;
+    cursor: pointer;
+}
+.color-input-group input[type="text"] {
+    max-width: 110px;
+}
+
+/* =====================================================
+   RED SOCIAL ITEM
+   ===================================================== */
+.red-social-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 16px;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 10px;
+    margin-bottom: 12px;
+    background: #fafbfc;
+}
+.red-social-item .icon-rs {
+    width: 44px; height: 44px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.2rem; color: white; flex-shrink: 0;
+}
+.icon-rs.facebook { background: #1877F2; }
+.icon-rs.instagram { background: linear-gradient(135deg, #833AB4, #FD1D1D, #FCAF45); }
+.icon-rs.twitter { background: #1DA1F2; }
+.icon-rs.linkedin { background: #0A66C2; }
+
+/* =====================================================
+   VISTA PREVIA
+   ===================================================== */
+.preview-container {
+    background: #1a1a2e;
+    border-radius: 12px;
+    padding: 20px;
+    color: white;
+    margin-top: 15px;
+}
+.preview-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: rgba(255,255,255,0.5);
+    margin-bottom: 10px;
+}
+
+/* =====================================================
+   ALERTAS Y BOTÓN GUARDAR
+   ===================================================== */
+.alert-info-custom {
+    background: var(--theme-primary-lighter);
+    border: 1px solid rgba(var(--theme-primary-rgb), 0.15);
+    border-radius: 8px;
+    padding: 12px 16px;
+    color: var(--theme-primary);
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.btn-guardar-container {
+    position: sticky;
+    bottom: 0;
+    background: white;
+    padding: 15px 24px;
+    margin: 0 -24px -24px;
+    border-top: 1px solid #e9ecef;
+    border-radius: 0 0 12px 12px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+.file-actual {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 6px;
+    font-size: 0.82rem;
+    color: #64748b;
+}
+
+/* =====================================================
+   RESPONSIVE
+   ===================================================== */
+@media (max-width: 768px) {
+    .form-row-grid, .form-row-3, .form-row-4 { grid-template-columns: 1fr; }
+    .nav-tabs-admin .nav-link { padding: 10px 12px; font-size: 0.8rem; }
+    .btn-guardar-container { flex-direction: column; }
+    .btn-guardar-container .btn { width: 100%; }
+    .red-social-item { flex-direction: column; align-items: stretch; text-align: center; }
+    .red-social-item .icon-rs { margin: 0 auto; }
+}
+@media (max-width: 992px) {
+    .form-row-3 { grid-template-columns: repeat(2, 1fr); }
+    .form-row-4 { grid-template-columns: repeat(2, 1fr); }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-body">
+
+                <div class="alert-info-custom mb-3">
+                    <i class="fa fa-info-circle"></i>
+                    Configure todas las secciones del sitio web desde aquí. Los cambios se aplicarán al guardar.
+                </div>
+
+                <!-- ==================== PESTAÑAS ==================== -->
+                <ul class="nav nav-tabs nav-tabs-admin" id="tabSecciones" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#pane-general" type="button" role="tab">
+                            <i class="fa fa-cog"></i> General
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#pane-hero" type="button" role="tab">
+                            <i class="fa fa-star"></i> Hero
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#pane-header" type="button" role="tab">
+                            <i class="fa fa-columns"></i> Header / Navegación
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#pane-fondo" type="button" role="tab">
+                            <i class="fa fa-image"></i> Fondo
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#pane-contacto" type="button" role="tab">
+                            <i class="fa fa-envelope"></i> Contacto
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#pane-servicios" type="button" role="tab">
+                            <i class="fa fa-briefcase"></i> Servicios / Portfolio
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#pane-redes" type="button" role="tab">
+                            <i class="fa fa-share-alt"></i> Redes Sociales
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#pane-tipografia" type="button" role="tab">
+                            <i class="fa fa-font"></i> Tipografía
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#pane-footer" type="button" role="tab">
+                            <i class="fa fa-window-minimize"></i> Footer
+                        </button>
+                    </li>
+                </ul>
+
+                <!-- ==================== CONTENIDO DE PESTAÑAS ==================== -->
+                <div class="tab-content pt-3" id="tabSeccionesContent">
+
+                    <!-- =============================================
+                         TAB: GENERAL
+                         ============================================= -->
+                    <div class="tab-pane fade show active" id="pane-general" role="tabpanel">
+                        <div class="form-section">
+                            <div class="section-header">
+                                <div class="section-icon"><i class="fa fa-globe"></i></div>
+                                <h6 class="section-title">Información General</h6>
+                            </div>
+                            <div class="section-body">
+                                <div class="form-row-grid">
+                                    <div class="form-group">
+                                        <label class="form-label">
+                                            <i class="fa fa-font"></i> Título del Sitio <span class="required">*</span>
+                                        </label>
+                                        <input type="text" class="form-control" id="site_title" value="{{ config.site_title }}" placeholder="Ej: RTV Pioli">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">
+                                            <i class="fa fa-image"></i> Logo del Sitio
+                                        </label>
+                                        <input type="file" class="form-control" id="site_logo" accept="image/*">
+                                        {% if config.site_logo %}
+                                        <div class="file-actual">
+                                            <span class="badge bg-success"><i class="fa fa-check me-1"></i> {{ config.site_logo.name }}</span>
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-section">
+                            <div class="section-header">
+                                <div class="section-icon"><i class="fa fa-palette"></i></div>
+                                <h6 class="section-title">Colores del Sitio</h6>
+                            </div>
+                            <div class="section-body">
+                                <div class="form-row-grid">
+                                    <div class="form-group">
+                                        <label class="form-label"><i class="fa fa-paint-brush"></i> Color Primario</label>
+                                        <div class="color-input-group">
+                                            <input type="color" id="primary_color" value="{{ config.primary_color }}">
+                                            <input type="text" class="form-control" id="primary_color_hex" value="{{ config.primary_color }}" readonly>
+                                        </div>
+                                        <div class="form-text">Color principal del sitio (botones, acentos)</div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label"><i class="fa fa-paint-brush"></i> Color Secundario</label>
+                                        <div class="color-input-group">
+                                            <input type="color" id="secondary_color" value="{{ config.secondary_color }}">
+                                            <input type="text" class="form-control" id="secondary_color_hex" value="{{ config.secondary_color }}" readonly>
+                                        </div>
+                                        <div class="form-text">Color de fondos y textos secundarios</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- =============================================
+                         TAB: HERO SECTION
+                         ============================================= -->
+                    <div class="tab-pane fade" id="pane-hero" role="tabpanel">
+                        <div class="form-section">
+                            <div class="section-header">
+                                <div class="section-icon"><i class="fa fa-heading"></i></div>
+                                <h6 class="section-title">Contenido del Hero</h6>
+                            </div>
+                            <div class="section-body">
+                                <div class="form-row-grid mb-3">
+                                    <div class="form-group">
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" id="show_hero_title" {% if config.show_hero_title %}checked{% endif %}>
+                                            <label class="form-check-label" for="show_hero_title">Mostrar título del Hero</label>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" id="show_hero_subtitle" {% if config.show_hero_subtitle %}checked{% endif %}>
+                                            <label class="form-check-label" for="show_hero_subtitle">Mostrar subtítulo del Hero</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-row-grid">
+                                    <div class="form-group">
+                                        <label class="form-label"><i class="fa fa-heading"></i> Título del Hero</label>
+                                        <input type="text" class="form-control" id="hero_title" value="{{ config.hero_title|default_if_none:'' }}">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label"><i class="fa fa-align-left"></i> Subtítulo del Hero</label>
+                                        <input type="text" class="form-control" id="hero_subtitle" value="{{ config.hero_subtitle|default_if_none:'' }}">
+                                    </div>
+                                </div>
+                                <div class="form-row-grid mt-3">
+                                    <div class="form-group">
+                                        <label class="form-label"><i class="fa fa-hand-pointer"></i> Texto del Botón</label>
+                                        <input type="text" class="form-control" id="hero_button_text" value="{{ config.hero_button_text }}">
+                                    </div>
+                                </div>
+
+                                <!-- Vista previa -->
+                                <div class="preview-container">
+                                    <div class="preview-label"><i class="fa fa-eye me-1"></i> Vista previa</div>
+                                    <h3 class="fst-italic" id="preview-hero-title">{{ config.hero_title|default_if_none:'Sin título' }}</h3>
+                                    <p class="mb-2 opacity-75" id="preview-hero-subtitle">{{ config.hero_subtitle|default_if_none:'' }}</p>
+                                    <button class="btn btn-sm text-dark" id="preview-hero-btn" style="background: {{ config.primary_color }};">{{ config.hero_button_text }}</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-section">
+                            <div class="section-header">
+                                <div class="section-icon"><i class="fa fa-square"></i></div>
+                                <h6 class="section-title">Estilo de la Card Hero</h6>
+                            </div>
+                            <div class="section-body">
+                                <div class="form-row-grid">
+                                    <div class="form-group">
+                                        <label class="form-label"><i class="fa fa-palette"></i> Color de Fondo</label>
+                                        <div class="color-input-group">
+                                            <input type="color" id="hero_card_bg_color_picker" value="{{ config.hero_card_bg_color|truncatechars:7 }}">
+                                            <input type="text" class="form-control" id="hero_card_bg_color" value="{{ config.hero_card_bg_color }}">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label"><i class="fa fa-adjust"></i> Opacidad del Fondo</label>
+                                        <div class="d-flex align-items-center gap-3">
+                                            <input type="range" class="form-range flex-grow-1" id="hero_card_bg_opacity" min="0" max="1" step="0.05" value="{{ config.hero_card_bg_opacity }}" style="max-width: 300px;">
+                                            <span class="badge bg-secondary" id="hero_opacity_value">{{ config.hero_card_bg_opacity }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-row-grid mt-3">
+                                    <div class="form-group">
+                                        <label class="form-label"><i class="fa fa-image"></i> Imagen de Fondo Card</label>
+                                        <input type="file" class="form-control" id="hero_card_bg_image" accept="image/*">
+                                        {% if config.hero_card_bg_image %}
+                                        <div class="file-actual">
+                                            <span class="badge bg-success"><i class="fa fa-check me-1"></i> {{ config.hero_card_bg_image.name }}</span>
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label"><i class="fa fa-layer-group"></i> Elevación (Sombra)</label>
+                                        <div class="form-row-grid" style="grid-template-columns: 1fr 1fr;">
+                                            <input type="text" class="form-control" id="hero_card_elevation" value="{{ config.hero_card_elevation }}" placeholder="8px">
+                                            <input type="text" class="form-control" id="hero_card_hover_elevation" value="{{ config.hero_card_hover_elevation }}" placeholder="24px (hover)">
+                                        </div>
+                                        <div class="form-text">Normal / Hover. Ej: 8px, 24px</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- =============================================
+                         TAB: HEADER / NAVEGACIÓN
+                         ============================================= -->
+                    <div class="tab-pane fade" id="pane-header" role="tabpanel">
+                        <div class="form-section">
+                            <div class="section-header">
+                                <div class="section-icon"><i class="fa fa-bars"></i></div>
+                                <h6 class="section-title">Barra de Navegación</h6>
+                            </div>
+                            <div class="section-body">
+                                <div class="form-row-grid form-row-single">
+                                    <div class="form-group">
+                                        <label class="form-label"><i class="fa fa-palette"></i> Color del Navbar al hacer Scroll</label>
+                                        <div class="color-input-group">
+                                            <input type="color" id="navbar_bg_color_scrolled_picker" value="{{ config.navbar_bg_color_scrolled|truncatechars:7 }}">
+                                            <input type="text" class="form-control" id="navbar_bg_color_scrolled" value="{{ config.navbar_bg_color_scrolled }}">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-section">
+                            <div class="section-header">
+                                <div class="section-icon"><i class="fa fa-calendar-check"></i></div>
+                                <h6 class="section-title">Botones de Turnos</h6>
+                            </div>
+                            <div class="section-body">
+                                <div class="form-row-grid">
+                                    <div class="form-group">
+                                        <label class="form-label"><i class="fa fa-tag"></i> Texto Botón 1</label>
+                                        <input type="text" class="form-control" id="header_btn1_text" value="{{ config.header_btn1_text }}">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label"><i class="fa fa-link"></i> URL Botón 1</label>
+                                        <input type="url" class="form-control" id="header_btn1_url" value="{{ config.header_btn1_url }}">
+                                    </div>
+                                </div>
+                                <div class="form-row-grid mt-3">
+                                    <div class="form-group">
+                                        <label class="form-label"><i class="fa fa-tag"></i> Texto Botón 2</label>
+                                        <input type="text" class="form-control" id="header_btn2_text" value="{{ config.header_btn2_text }}">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label"><i class="fa fa-link"></i> URL Botón 2</label>
+                                        <input type="url" class="form-control" id="header_btn2_url" value="{{ config.header_btn2_url }}">
+                                    </div>
+                                </div>
+                                <div class="form-row-grid mt-3">
+                                    <div class="form-group">
+                                        <label class="form-label"><i class="fa fa-palette"></i> Color de Fondo Botones</label>
+                                        <div class="color-input-group">
+                                            <input type="color" id="header_btn_bgcolor_picker" value="{{ config.header_btn_bgcolor }}">
+                                            <input type="text" class="form-control" id="header_btn_bgcolor" value="{{ config.header_btn_bgcolor }}">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-section">
+                            <div class="section-header">
+                                <div class="section-icon"><i class="fa fa-play-circle"></i></div>
+                                <h6 class="section-title">Texto y Video Tutorial</h6>
+                            </div>
+                            <div class="section-body">
+                                <div class="form-row-grid">
+                                    <div class="form-group">
+                                        <label class="form-label"><i class="fa fa-comment"></i> Texto sobre los Botones</label>
+                                        <input type="text" class="form-control" id="header_btns_text" value="{{ config.header_btns_text|default_if_none:'' }}" placeholder="Ej: Listo para solicitar tu turno? Ver tutorial">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label"><i class="fa fa-palette"></i> Color del Texto</label>
+                                        <div class="color-input-group">
+                                            <input type="color" id="header_btns_text_color_picker" value="{{ config.header_btns_text_color|truncatechars:7 }}">
+                                            <input type="text" class="form-control" id="header_btns_text_color" value="{{ config.header_btns_text_color }}">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-row-grid mt-3">
+                                    <div class="form-group">
+                                        <label class="form-label"><i class="fa fa-video"></i> Video Tutorial</label>
+                                        <input type="file" class="form-control" id="header_btns_video" accept="video/*">
+                                        {% if config.header_btns_video %}
+                                        <div class="file-actual">
+                                            <span class="badge bg-success"><i class="fa fa-check me-1"></i> {{ config.header_btns_video.name }}</span>
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- =============================================
+                         TAB: FONDO
+                         ============================================= -->
+                    <div class="tab-pane fade" id="pane-fondo" role="tabpanel">
+                        <div class="form-section">
+                            <div class="section-header">
+                                <div class="section-icon"><i class="fa fa-image"></i></div>
+                                <h6 class="section-title">Imagen de Fondo del Header</h6>
+                            </div>
+                            <div class="section-body">
+                                <div class="form-row-grid">
+                                    <div class="form-group">
+                                        <label class="form-label"><i class="fa fa-image"></i> Imagen de Fondo</label>
+                                        <input type="file" class="form-control" id="header_background" accept="image/*">
+                                        {% if config.header_background %}
+                                        <div class="file-actual">
+                                            <span class="badge bg-success"><i class="fa fa-check me-1"></i> {{ config.header_background.name }}</span>
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-section">
+                            <div class="section-header">
+                                <div class="section-icon"><i class="fa fa-video"></i></div>
+                                <h6 class="section-title">Video de Fondo del Header</h6>
+                            </div>
+                            <div class="section-body">
+                                <div class="form-row-grid">
+                                    <div class="form-group">
+                                        <label class="form-label"><i class="fa fa-film"></i> Video de Fondo</label>
+                                        <input type="file" class="form-control" id="header_background_video" accept="video/*">
+                                        {% if config.header_background_video %}
+                                        <div class="file-actual">
+                                            <span class="badge bg-success"><i class="fa fa-check me-1"></i> {{ config.header_background_video.name }}</span>
+                                        </div>
+                                        {% endif %}
+                                        <div class="form-text">Formato: MP4, WebM. Tiene prioridad sobre la imagen.</div>
+                                    </div>
+                                </div>
+                                <div class="form-row-grid mt-3">
+                                    <div class="form-group">
+                                        <label class="form-label"><i class="fa fa-arrows-alt-h"></i> Ancho del Video</label>
+                                        <input type="text" class="form-control" id="header_video_width" value="{{ config.header_video_width }}" placeholder="100%">
+                                        <div class="form-text">Ej: 100%, 1920px, 80vw</div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label"><i class="fa fa-arrows-alt-v"></i> Alto del Video</label>
+                                        <input type="text" class="form-control" id="header_video_height" value="{{ config.header_video_height }}" placeholder="100%">
+                                        <div class="form-text">Ej: 100%, 600px, 50vh</div>
+                                    </div>
+                                </div>
+                                <div class="form-row-grid mt-3">
+                                    <div class="form-group">
+                                        <label class="form-label"><i class="fa fa-sun"></i> Brillo</label>
+                                        <div class="d-flex align-items-center gap-3">
+                                            <input type="range" class="form-range flex-grow-1" id="header_video_brightness" min="0" max="1" step="0.05" value="{{ config.header_video_brightness }}" style="max-width: 300px;">
+                                            <span class="badge bg-secondary" id="brightness_value">{{ config.header_video_brightness }}</span>
+                                        </div>
+                                        <div class="form-text">0 = oscuro, 1 = normal. Recomendado: 0.3 a 0.7</div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label"><i class="fa fa-adjust"></i> Contraste</label>
+                                        <div class="d-flex align-items-center gap-3">
+                                            <input type="range" class="form-range flex-grow-1" id="header_video_contrast" min="0" max="2" step="0.05" value="{{ config.header_video_contrast }}" style="max-width: 300px;">
+                                            <span class="badge bg-secondary" id="contrast_value">{{ config.header_video_contrast }}</span>
+                                        </div>
+                                        <div class="form-text">1 = normal</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- =============================================
+                         TAB: CONTACTO
+                         ============================================= -->
+                    <div class="tab-pane fade" id="pane-contacto" role="tabpanel">
+                        <div class="form-section">
+                            <div class="section-header">
+                                <div class="section-icon"><i class="fa fa-address-card"></i></div>
+                                <h6 class="section-title">Información de Contacto</h6>
+                            </div>
+                            <div class="section-body">
+                                <div class="form-row-grid">
+                                    <div class="form-group">
+                                        <label class="form-label"><i class="fa fa-envelope"></i> Email</label>
+                                        <input type="email" class="form-control" id="contact_email" value="{{ config.contact_email }}">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label"><i class="fa fa-phone"></i> Teléfono</label>
+                                        <input type="text" class="form-control" id="contact_phone" value="{{ config.contact_phone }}">
+                                    </div>
+                                </div>
+                                <div class="form-row-grid form-row-single mt-3">
+                                    <div class="form-group">
+                                        <label class="form-label"><i class="fa fa-map-marker-alt"></i> Dirección</label>
+                                        <textarea class="form-control" id="contact_address" rows="2">{{ config.contact_address }}</textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-section">
+                            <div class="section-header">
+                                <div class="section-icon"><i class="fa fa-paper-plane"></i></div>
+                                <h6 class="section-title">Botón de Contacto</h6>
+                            </div>
+                            <div class="section-body">
+                                <div class="form-row-grid">
+                                    <div class="form-group">
+                                        <label class="form-label"><i class="fa fa-tag"></i> Texto del Botón</label>
+                                        <input type="text" class="form-control" id="contact_btn_text" value="{{ config.contact_btn_text }}">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label"><i class="fa fa-palette"></i> Color de Fondo</label>
+                                        <div class="color-input-group">
+                                            <input type="color" id="contact_btn_bgcolor_picker" value="{{ config.contact_btn_bgcolor|truncatechars:7 }}">
+                                            <input type="text" class="form-control" id="contact_btn_bgcolor" value="{{ config.contact_btn_bgcolor }}">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-row-grid mt-3">
+                                    <div class="form-group">
+                                        <label class="form-label"><i class="fa fa-font"></i> Color de Texto</label>
+                                        <div class="color-input-group">
+                                            <input type="color" id="contact_btn_fgcolor_picker" value="{{ config.contact_btn_fgcolor|truncatechars:7 }}">
+                                            <input type="text" class="form-control" id="contact_btn_fgcolor" value="{{ config.contact_btn_fgcolor }}">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label"><i class="fa fa-hand-pointer"></i> Color Hover</label>
+                                        <div class="color-input-group">
+                                            <input type="color" id="contact_btn_hover_bgcolor_picker" value="{{ config.contact_btn_hover_bgcolor|truncatechars:7 }}">
+                                            <input type="text" class="form-control" id="contact_btn_hover_bgcolor" value="{{ config.contact_btn_hover_bgcolor }}">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-section">
+                            <div class="section-header">
+                                <div class="section-icon"><i class="fa fa-image"></i></div>
+                                <h6 class="section-title">Fondo Sección Contacto</h6>
+                            </div>
+                            <div class="section-body">
+                                <div class="form-row-grid">
+                                    <div class="form-group">
+                                        <label class="form-label"><i class="fa fa-palette"></i> Color de Fondo</label>
+                                        <div class="color-input-group">
+                                            <input type="color" id="contact_section_bg_color_picker" value="{{ config.contact_section_bg_color|truncatechars:7 }}">
+                                            <input type="text" class="form-control" id="contact_section_bg_color" value="{{ config.contact_section_bg_color }}">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label"><i class="fa fa-adjust"></i> Opacidad</label>
+                                        <div class="d-flex align-items-center gap-3">
+                                            <input type="range" class="form-range flex-grow-1" id="contact_section_bg_opacity" min="0" max="1" step="0.05" value="{{ config.contact_section_bg_opacity }}" style="max-width: 300px;">
+                                            <span class="badge bg-secondary" id="contact_opacity_value">{{ config.contact_section_bg_opacity }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-row-grid mt-3">
+                                    <div class="form-group">
+                                        <label class="form-label"><i class="fa fa-image"></i> Imagen de Fondo</label>
+                                        <input type="file" class="form-control" id="contact_section_bg_image" accept="image/*">
+                                        {% if config.contact_section_bg_image %}
+                                        <div class="file-actual">
+                                            <span class="badge bg-success"><i class="fa fa-check me-1"></i> {{ config.contact_section_bg_image.name }}</span>
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label"><i class="fa fa-video"></i> Video de Fondo</label>
+                                        <input type="file" class="form-control" id="contact_section_bg_video" accept="video/*">
+                                        {% if config.contact_section_bg_video %}
+                                        <div class="file-actual">
+                                            <span class="badge bg-success"><i class="fa fa-check me-1"></i> {{ config.contact_section_bg_video.name }}</span>
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- =============================================
+                         TAB: SERVICIOS / PORTFOLIO
+                         ============================================= -->
+                    <div class="tab-pane fade" id="pane-servicios" role="tabpanel">
+                        <div class="form-section">
+                            <div class="section-header">
+                                <div class="section-icon"><i class="fa fa-th-large"></i></div>
+                                <h6 class="section-title">Portfolio</h6>
+                            </div>
+                            <div class="section-body">
+                                <div class="form-row-grid form-row-single">
+                                    <div class="form-group">
+                                        <label class="form-label"><i class="fa fa-palette"></i> Color Hover en Portfolio</label>
+                                        <div class="color-input-group">
+                                            <input type="color" id="portfolio_hover_bgcolor_picker" value="{{ config.portfolio_hover_bgcolor|truncatechars:7 }}">
+                                            <input type="text" class="form-control" id="portfolio_hover_bgcolor" value="{{ config.portfolio_hover_bgcolor }}">
+                                        </div>
+                                        <div class="form-text">Color de fondo al pasar el mouse sobre las imágenes del portfolio</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-section">
+                            <div class="section-header">
+                                <div class="section-icon"><i class="fa fa-concierge-bell"></i></div>
+                                <h6 class="section-title">Íconos de Servicios</h6>
+                            </div>
+                            <div class="section-body">
+                                <div class="form-row-grid">
+                                    <div class="form-group">
+                                        <label class="form-label"><i class="fa fa-circle"></i> Color de Fondo del Ícono</label>
+                                        <div class="color-input-group">
+                                            <input type="color" id="service_icon_bgcolor_picker" value="{{ config.service_icon_bgcolor|truncatechars:7 }}">
+                                            <input type="text" class="form-control" id="service_icon_bgcolor" value="{{ config.service_icon_bgcolor }}">
+                                        </div>
+                                        <div class="form-text">Color del círculo que rodea el ícono</div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label"><i class="fa fa-icons"></i> Color del Ícono (FA)</label>
+                                        <div class="color-input-group">
+                                            <input type="color" id="service_icon_fgcolor_picker" value="{{ config.service_icon_fgcolor|truncatechars:7 }}">
+                                            <input type="text" class="form-control" id="service_icon_fgcolor" value="{{ config.service_icon_fgcolor }}">
+                                        </div>
+                                        <div class="form-text">Color del ícono FontAwesome dentro del círculo</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- =============================================
+                         TAB: REDES SOCIALES
+                         ============================================= -->
+                    <div class="tab-pane fade" id="pane-redes" role="tabpanel">
+                        <div class="form-section">
+                            <div class="section-header">
+                                <div class="section-icon"><i class="fa fa-share-alt"></i></div>
+                                <h6 class="section-title">Redes Sociales</h6>
+                            </div>
+                            <div class="section-body">
+                                <div class="alert-info-custom mb-3">
+                                    <i class="fa fa-info-circle"></i>
+                                    Deje vacío el campo para ocultar una red social del sitio.
+                                </div>
+
+                                <div class="red-social-item">
+                                    <div class="icon-rs facebook"><i class="fab fa-facebook-f"></i></div>
+                                    <div class="flex-grow-1">
+                                        <label class="form-label mb-1"><i class="fab fa-facebook"></i> Facebook</label>
+                                        <input type="url" class="form-control" id="facebook_url" value="{{ config.facebook_url }}" placeholder="https://www.facebook.com/...">
+                                    </div>
+                                </div>
+
+                                <div class="red-social-item">
+                                    <div class="icon-rs instagram"><i class="fab fa-instagram"></i></div>
+                                    <div class="flex-grow-1">
+                                        <label class="form-label mb-1"><i class="fab fa-instagram"></i> Instagram</label>
+                                        <input type="url" class="form-control" id="instagram_url" value="{{ config.instagram_url }}" placeholder="https://www.instagram.com/...">
+                                    </div>
+                                </div>
+
+                                <div class="red-social-item">
+                                    <div class="icon-rs twitter"><i class="fab fa-twitter"></i></div>
+                                    <div class="flex-grow-1">
+                                        <label class="form-label mb-1"><i class="fab fa-twitter"></i> X (Twitter)</label>
+                                        <input type="url" class="form-control" id="twitter_url" value="{{ config.twitter_url }}" placeholder="https://twitter.com/...">
+                                    </div>
+                                </div>
+
+                                <div class="red-social-item">
+                                    <div class="icon-rs linkedin"><i class="fab fa-linkedin-in"></i></div>
+                                    <div class="flex-grow-1">
+                                        <label class="form-label mb-1"><i class="fab fa-linkedin"></i> LinkedIn</label>
+                                        <input type="url" class="form-control" id="linkedin_url" value="{{ config.linkedin_url }}" placeholder="https://www.linkedin.com/...">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- =============================================
+                         TAB: TIPOGRAFÍA
+                         ============================================= -->
+                    <div class="tab-pane fade" id="pane-tipografia" role="tabpanel">
+                        <div class="form-section">
+                            <div class="section-header">
+                                <div class="section-icon"><i class="fa fa-font"></i></div>
+                                <h6 class="section-title">Fuente y Tamaños</h6>
+                            </div>
+                            <div class="section-body">
+                                <div class="form-row-grid">
+                                    <div class="form-group">
+                                        <label class="form-label"><i class="fa fa-text-height"></i> Fuente Principal</label>
+                                        <select class="form-control" id="font_family">
+                                            {% for value, label in font_choices %}
+                                            <option value="{{ value }}" {% if config.font_family == value %}selected{% endif %}>{{ label }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label"><i class="fa fa-text-height"></i> Tamaño Base (px)</label>
+                                        <input type="number" class="form-control" id="base_font_size" value="{{ config.base_font_size }}" min="10" max="30">
+                                    </div>
+                                </div>
+                                <div class="form-row-4 mt-3">
+                                    <div class="form-group">
+                                        <label class="form-label">H1 (px)</label>
+                                        <input type="number" class="form-control" id="heading_font_size_h1" value="{{ config.heading_font_size_h1 }}" min="16" max="80">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">H2 (px)</label>
+                                        <input type="number" class="form-control" id="heading_font_size_h2" value="{{ config.heading_font_size_h2 }}" min="14" max="60">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">H3 (px)</label>
+                                        <input type="number" class="form-control" id="heading_font_size_h3" value="{{ config.heading_font_size_h3 }}" min="12" max="50">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">H4 (px)</label>
+                                        <input type="number" class="form-control" id="heading_font_size_h4" value="{{ config.heading_font_size_h4 }}" min="10" max="40">
+                                    </div>
+                                </div>
+
+                                <!-- Vista previa tipografía -->
+                                <div class="preview-container mt-3">
+                                    <div class="preview-label"><i class="fa fa-eye me-1"></i> Vista previa</div>
+                                    <h1 id="preview-h1" style="font-size: {{ config.heading_font_size_h1 }}px; margin-bottom: 8px;">Heading H1</h1>
+                                    <h2 id="preview-h2" style="font-size: {{ config.heading_font_size_h2 }}px; margin-bottom: 8px;">Heading H2</h2>
+                                    <h3 id="preview-h3" style="font-size: {{ config.heading_font_size_h3 }}px; margin-bottom: 8px;">Heading H3</h3>
+                                    <h4 id="preview-h4" style="font-size: {{ config.heading_font_size_h4 }}px; margin-bottom: 8px;">Heading H4</h4>
+                                    <p id="preview-body" style="font-size: {{ config.base_font_size }}px;">Texto de ejemplo con el tamaño base.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- =============================================
+                         TAB: FOOTER
+                         ============================================= -->
+                    <div class="tab-pane fade" id="pane-footer" role="tabpanel">
+                        <div class="form-section">
+                            <div class="section-header">
+                                <div class="section-icon"><i class="fa fa-window-minimize"></i></div>
+                                <h6 class="section-title">Pie de Página</h6>
+                            </div>
+                            <div class="section-body">
+                                <div class="form-row-grid form-row-single">
+                                    <div class="form-group">
+                                        <label class="form-label"><i class="fa fa-copyright"></i> Texto de Copyright</label>
+                                        <input type="text" class="form-control" id="footer_copyright" value="{{ config.footer_copyright }}">
+                                        <div class="form-text">Texto que se muestra en el pie de página del sitio</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div><!-- /tab-content -->
+
+                <!-- Botón guardar sticky -->
+                <div class="btn-guardar-container">
+                    <button class="btn btn-outline-secondary" onclick="resetearFormulario()">
+                        <i class="fa fa-undo me-1"></i> Resetear
+                    </button>
+                    <button class="btn btn-orange" onclick="guardarTodo()">
+                        <i class="fa fa-save me-1"></i> Guardar Cambios
+                    </button>
+                </div>
+
+            </div><!-- /card-body -->
+        </div><!-- /card -->
+    </div>
+</div>
+{% endblock %}
+
+{% block extraJS %}
+<script>
+$(document).ready(function() {
+    // =====================================================
+    // SYNC COLOR PICKERS <-> TEXT INPUTS
+    // =====================================================
+    $('input[type="color"]').each(function() {
+        var $picker = $(this);
+        var targetId = $picker.attr('id').replace('_picker', '');
+        var $text = $('#' + targetId);
+        // Si no hay un _hex o campo de texto asociado, usar el siguiente input
+        if (!$text.length) {
+            $text = $picker.siblings('input[type="text"]');
+        }
+
+        $picker.on('input', function() {
+            $text.val($picker.val());
+        });
+        $text.on('change', function() {
+            var val = $text.val();
+            if (/^#[0-9A-Fa-f]{6}$/.test(val)) {
+                $picker.val(val);
+            }
+        });
+    });
+
+    // =====================================================
+    // RANGE SLIDERS - Actualizar badges
+    // =====================================================
+    $('#hero_card_bg_opacity').on('input', function() {
+        $('#hero_opacity_value').text($(this).val());
+    });
+    $('#header_video_brightness').on('input', function() {
+        $('#brightness_value').text($(this).val());
+    });
+    $('#header_video_contrast').on('input', function() {
+        $('#contrast_value').text($(this).val());
+    });
+    $('#contact_section_bg_opacity').on('input', function() {
+        $('#contact_opacity_value').text($(this).val());
+    });
+
+    // =====================================================
+    // VISTAS PREVIAS EN TIEMPO REAL
+    // =====================================================
+    // Hero
+    $('#hero_title').on('input', function() {
+        $('#preview-hero-title').text($(this).val() || 'Sin título');
+    });
+    $('#hero_subtitle').on('input', function() {
+        $('#preview-hero-subtitle').text($(this).val() || '');
+    });
+    $('#hero_button_text').on('input', function() {
+        $('#preview-hero-btn').text($(this).val());
+    });
+
+    // Tipografía
+    $('#heading_font_size_h1').on('input', function() { $('#preview-h1').css('font-size', $(this).val() + 'px'); });
+    $('#heading_font_size_h2').on('input', function() { $('#preview-h2').css('font-size', $(this).val() + 'px'); });
+    $('#heading_font_size_h3').on('input', function() { $('#preview-h3').css('font-size', $(this).val() + 'px'); });
+    $('#heading_font_size_h4').on('input', function() { $('#preview-h4').css('font-size', $(this).val() + 'px'); });
+    $('#base_font_size').on('input', function() { $('#preview-body').css('font-size', $(this).val() + 'px'); });
+    $('#font_family').on('change', function() {
+        var font = $(this).val();
+        $('#preview-h1, #preview-h2, #preview-h3, #preview-h4, #preview-body').css('font-family', font);
+    });
+});
+
+// =====================================================
+// GUARDAR CAMBIOS
+// =====================================================
+function guardarTodo() {
+    var titulo = $('#site_title').val();
+    if (!titulo) {
+        Swal.fire('Campo requerido', 'El título del sitio es obligatorio.', 'warning');
+        return;
+    }
+
+    var formData = new FormData();
+    formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+
+    // General
+    formData.append('site_title', titulo);
+    formData.append('primary_color', $('#primary_color_hex').val() || $('#primary_color').val());
+    formData.append('secondary_color', $('#secondary_color_hex').val() || $('#secondary_color').val());
+    if ($('#site_logo')[0].files.length) formData.append('site_logo', $('#site_logo')[0].files[0]);
+
+    // Hero
+    formData.append('show_hero_title', $('#show_hero_title').is(':checked') ? 'on' : '');
+    formData.append('show_hero_subtitle', $('#show_hero_subtitle').is(':checked') ? 'on' : '');
+    formData.append('hero_title', $('#hero_title').val());
+    formData.append('hero_subtitle', $('#hero_subtitle').val());
+    formData.append('hero_button_text', $('#hero_button_text').val());
+    formData.append('hero_card_bg_color', $('#hero_card_bg_color').val());
+    formData.append('hero_card_bg_opacity', $('#hero_card_bg_opacity').val());
+    formData.append('hero_card_elevation', $('#hero_card_elevation').val());
+    formData.append('hero_card_hover_elevation', $('#hero_card_hover_elevation').val());
+    if ($('#hero_card_bg_image')[0].files.length) formData.append('hero_card_bg_image', $('#hero_card_bg_image')[0].files[0]);
+
+    // Header / Navegación
+    formData.append('navbar_bg_color_scrolled', $('#navbar_bg_color_scrolled').val());
+    formData.append('header_btn1_text', $('#header_btn1_text').val());
+    formData.append('header_btn1_url', $('#header_btn1_url').val());
+    formData.append('header_btn2_text', $('#header_btn2_text').val());
+    formData.append('header_btn2_url', $('#header_btn2_url').val());
+    formData.append('header_btn_bgcolor', $('#header_btn_bgcolor').val());
+    formData.append('header_btns_text', $('#header_btns_text').val());
+    formData.append('header_btns_text_color', $('#header_btns_text_color').val());
+    if ($('#header_btns_video')[0].files.length) formData.append('header_btns_video', $('#header_btns_video')[0].files[0]);
+
+    // Fondo
+    if ($('#header_background')[0].files.length) formData.append('header_background', $('#header_background')[0].files[0]);
+    if ($('#header_background_video')[0].files.length) formData.append('header_background_video', $('#header_background_video')[0].files[0]);
+    formData.append('header_video_width', $('#header_video_width').val());
+    formData.append('header_video_height', $('#header_video_height').val());
+    formData.append('header_video_brightness', $('#header_video_brightness').val());
+    formData.append('header_video_contrast', $('#header_video_contrast').val());
+
+    // Contacto
+    formData.append('contact_email', $('#contact_email').val());
+    formData.append('contact_phone', $('#contact_phone').val());
+    formData.append('contact_address', $('#contact_address').val());
+    formData.append('contact_btn_text', $('#contact_btn_text').val());
+    formData.append('contact_btn_bgcolor', $('#contact_btn_bgcolor').val());
+    formData.append('contact_btn_fgcolor', $('#contact_btn_fgcolor').val());
+    formData.append('contact_btn_hover_bgcolor', $('#contact_btn_hover_bgcolor').val());
+    formData.append('contact_section_bg_color', $('#contact_section_bg_color').val());
+    formData.append('contact_section_bg_opacity', $('#contact_section_bg_opacity').val());
+    if ($('#contact_section_bg_image')[0].files.length) formData.append('contact_section_bg_image', $('#contact_section_bg_image')[0].files[0]);
+    if ($('#contact_section_bg_video')[0].files.length) formData.append('contact_section_bg_video', $('#contact_section_bg_video')[0].files[0]);
+
+    // Servicios / Portfolio
+    formData.append('portfolio_hover_bgcolor', $('#portfolio_hover_bgcolor').val());
+    formData.append('service_icon_bgcolor', $('#service_icon_bgcolor').val());
+    formData.append('service_icon_fgcolor', $('#service_icon_fgcolor').val());
+
+    // Redes Sociales
+    formData.append('facebook_url', $('#facebook_url').val());
+    formData.append('instagram_url', $('#instagram_url').val());
+    formData.append('twitter_url', $('#twitter_url').val());
+    formData.append('linkedin_url', $('#linkedin_url').val());
+
+    // Tipografía
+    formData.append('font_family', $('#font_family').val());
+    formData.append('base_font_size', $('#base_font_size').val());
+    formData.append('heading_font_size_h1', $('#heading_font_size_h1').val());
+    formData.append('heading_font_size_h2', $('#heading_font_size_h2').val());
+    formData.append('heading_font_size_h3', $('#heading_font_size_h3').val());
+    formData.append('heading_font_size_h4', $('#heading_font_size_h4').val());
+
+    // Footer
+    formData.append('footer_copyright', $('#footer_copyright').val());
+
+    $.ajax({
+        url: '{% url "gestion_sitio_guardar" %}',
+        type: 'POST',
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function(data) {
+            if (data.success) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Guardado',
+                    text: data.message,
+                    confirmButtonColor: '#13304D',
+                    timer: 2000,
+                    showConfirmButton: false
+                });
+            } else {
+                Swal.fire('Error', data.error || 'Error al guardar.', 'error');
+            }
+        },
+        error: function(xhr) {
+            Swal.fire('Error', 'No se pudo conectar con el servidor.', 'error');
+        }
+    });
+}
+
+function resetearFormulario() {
+    Swal.fire({
+        title: '¿Resetear formulario?',
+        text: 'Se perderán los cambios no guardados.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#13304D',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: 'Sí, resetear',
+        cancelButtonText: 'Cancelar'
+    }).then(function(result) {
+        if (result.isConfirmed) {
+            location.reload();
+        }
+    });
+}
+</script>
+{% endblock %}

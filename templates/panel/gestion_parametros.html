@@ -1,0 +1,1270 @@
+{% extends "panel/base.html" %}
+{% load static %}
+
+{% block title %}Configuraciones - Panel de Administración{% endblock %}
+{% block page_title %}Configuraciones del Turnero{% endblock %}
+
+{% block extraCss %}
+<style>
+/* =====================================================
+   TABS
+   ===================================================== */
+.nav-tabs-admin {
+    border-bottom: 2px solid #e9ecef;
+    gap: 4px;
+    flex-wrap: wrap;
+}
+.nav-tabs-admin .nav-link {
+    border: none;
+    border-bottom: 3px solid transparent;
+    border-radius: 0;
+    padding: 12px 20px;
+    color: #6c757d;
+    font-weight: 500;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+}
+.nav-tabs-admin .nav-link:hover {
+    color: var(--theme-primary);
+    border-bottom-color: rgba(var(--theme-primary-rgb), 0.3);
+    background-color: var(--theme-primary-lighter);
+}
+.nav-tabs-admin .nav-link.active {
+    color: var(--theme-primary);
+    border-bottom-color: var(--theme-primary);
+    font-weight: 600;
+    background-color: transparent;
+}
+
+/* =====================================================
+   SECCIONES
+   ===================================================== */
+.form-section {
+    background: white;
+    border-radius: 12px;
+    margin-bottom: 1.25rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    border: 1px solid #e2e8f0;
+}
+.section-header {
+    background: linear-gradient(to right, #f8fafc, white);
+    padding: 0.875rem 1.25rem;
+    border-bottom: 1px solid #e2e8f0;
+    border-radius: 12px 12px 0 0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.section-icon {
+    width: 36px; height: 36px; border-radius: 8px;
+    background: var(--theme-primary); color: white;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.9rem; flex-shrink: 0;
+}
+.section-title { font-size: 0.95rem; font-weight: 600; color: #334155; margin: 0; }
+.section-body { padding: 1.25rem; }
+
+/* =====================================================
+   TABLAS PARAMETROS
+   ===================================================== */
+.param-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 0.88rem;
+}
+.param-table thead th {
+    background: var(--theme-gradient);
+    color: #fff;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.5px;
+    padding: 12px 10px;
+    border: none;
+    white-space: nowrap;
+}
+.param-table thead th:first-child { border-radius: 8px 0 0 0; }
+.param-table thead th:last-child { border-radius: 0 8px 0 0; }
+.param-table tbody tr { border-bottom: 1px solid #eef2f7; transition: all 0.2s ease; }
+.param-table tbody tr:hover { background-color: #f8fafc; }
+.param-table tbody tr:nth-child(even) { background-color: #fafbfc; }
+.param-table tbody td { padding: 10px; vertical-align: middle; }
+.param-table .form-control-sm { font-size: 0.85rem; padding: 0.3rem 0.5rem; }
+
+/* =====================================================
+   BADGES Y SWITCHES
+   ===================================================== */
+.badge-activo { background: linear-gradient(135deg, #10b981, #059669); color: white; padding: 5px 12px; border-radius: 20px; font-size: 0.75rem; }
+.badge-inactivo { background: linear-gradient(135deg, #fee2e2, #fecaca); color: #991b1b; padding: 5px 12px; border-radius: 20px; font-size: 0.75rem; }
+
+/* =====================================================
+   ACCIONES
+   ===================================================== */
+.btn-accion {
+    width: 32px; height: 32px; padding: 0; border-radius: 8px;
+    display: inline-flex; align-items: center; justify-content: center;
+    transition: all 0.2s ease; font-size: 0.8rem;
+}
+.btn-editar { background: var(--theme-primary-lighter); border: 1px solid var(--theme-primary); color: var(--theme-primary); }
+.btn-editar:hover { background: var(--theme-primary); color: white; }
+.btn-eliminar { background: #fef2f2; border-color: #fca5a5; color: #dc2626; }
+.btn-eliminar:hover { background: #fca5a5; color: #991b1b; }
+
+/* =====================================================
+   DIAS ATENCION CHECKS
+   ===================================================== */
+.dias-grid {
+    display: flex; flex-wrap: wrap; gap: 8px;
+}
+.dia-check {
+    display: flex; align-items: center; gap: 4px;
+    padding: 4px 10px; border-radius: 6px;
+    background: #f1f5f9; font-size: 0.82rem;
+}
+.dia-check input { margin: 0; }
+.dia-check label { margin: 0; cursor: pointer; font-size: 0.82rem; color: #475569; }
+
+/* =====================================================
+   FECHAS NO LABORABLES
+   ===================================================== */
+.fechas-resumen {
+    display: flex; align-items: center;
+}
+.fechas-counter {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 8px 16px; background: var(--theme-primary-lighter);
+    color: var(--theme-primary); border-radius: 8px;
+    font-size: 0.85rem; border: 1px solid rgba(var(--theme-primary-rgb), 0.15);
+}
+.fechas-counter i { font-size: 1rem; }
+
+/* Feriados rápidos */
+.feriados-rapidos { margin-top: 10px; padding-top: 15px; border-top: 1px solid #e9ecef; }
+.feriados-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+.btn-feriado {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 6px 14px; background: white; color: #475569;
+    border: 1.5px solid #e2e8f0; border-radius: 8px;
+    font-size: 0.8rem; font-weight: 500; cursor: pointer;
+    transition: all 0.2s ease;
+}
+.btn-feriado:hover { border-color: var(--theme-primary); color: var(--theme-primary); background: var(--theme-primary-lighter); }
+.btn-feriado.ya-agregado { background: #f0fdf4; border-color: #86efac; color: #166534; cursor: default; opacity: 0.7; }
+.btn-feriado i { font-size: 0.7rem; }
+
+/* Meses agrupados */
+.fechas-mes-grupo { margin-bottom: 20px; }
+.fechas-mes-header {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 14px; background: var(--theme-gradient);
+    color: white; border-radius: 8px 8px 0 0;
+    font-size: 0.82rem; font-weight: 600; text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+.fechas-mes-header .mes-count {
+    margin-left: auto; background: rgba(255,255,255,0.2);
+    padding: 2px 10px; border-radius: 12px; font-size: 0.75rem;
+}
+.fechas-mes-body { border: 1px solid #e2e8f0; border-top: none; border-radius: 0 0 8px 8px; }
+.fecha-item {
+    display: flex; align-items: center; padding: 10px 14px;
+    border-bottom: 1px solid #f1f5f9; transition: background 0.15s;
+}
+.fecha-item:last-child { border-bottom: none; }
+.fecha-item:hover { background: #f8fafc; }
+.fecha-item .fecha-dia {
+    min-width: 40px; height: 40px; border-radius: 8px;
+    background: var(--theme-primary-lighter); color: var(--theme-primary);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 1.1rem; margin-right: 12px;
+}
+.fecha-item .fecha-info { flex: 1; }
+.fecha-item .fecha-nombre-dia { font-size: 0.85rem; font-weight: 600; color: #334155; }
+.fecha-item .fecha-completa { font-size: 0.75rem; color: #94a3b8; }
+.fecha-item .fecha-motivo { font-size: 0.78rem; color: #64748b; font-style: italic; margin-top: 2px; }
+.fecha-item .btn-quitar {
+    width: 30px; height: 30px; border-radius: 6px; border: 1px solid #fca5a5;
+    background: #fef2f2; color: #dc2626; display: flex; align-items: center;
+    justify-content: center; cursor: pointer; transition: all 0.2s; font-size: 0.75rem;
+}
+.fecha-item .btn-quitar:hover { background: #fca5a5; color: #991b1b; }
+
+.fechas-vacio {
+    text-align: center; padding: 40px 20px; color: #94a3b8;
+}
+.fechas-vacio i { font-size: 2.5rem; margin-bottom: 10px; display: block; opacity: 0.4; }
+.fechas-vacio p { font-size: 0.9rem; margin: 0; }
+
+/* =====================================================
+   ALERTAS Y FILTROS
+   ===================================================== */
+.alert-info-custom {
+    background: var(--theme-primary-lighter);
+    border: 1px solid rgba(var(--theme-primary-rgb), 0.15);
+    border-radius: 8px; padding: 12px 16px;
+    color: var(--theme-primary); font-size: 0.85rem;
+    display: flex; align-items: center; gap: 10px;
+}
+.filtro-taller {
+    display: flex; align-items: center; gap: 10px; margin-bottom: 15px;
+}
+.filtro-taller label { font-size: 0.85rem; font-weight: 600; color: #475569; white-space: nowrap; }
+.filtro-taller select { max-width: 300px; }
+
+/* =====================================================
+   MODAL FORM
+   ===================================================== */
+.form-row-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+}
+.form-label {
+    font-size: 0.8rem; font-weight: 600; color: #475569;
+    text-transform: uppercase; letter-spacing: 0.3px;
+    margin-bottom: 6px; display: flex; align-items: center; gap: 6px;
+}
+.form-label i { color: var(--theme-primary); font-size: 0.75rem; }
+.form-control:focus {
+    border-color: var(--theme-primary);
+    box-shadow: 0 0 0 3px rgba(var(--theme-primary-rgb), 0.1);
+}
+
+/* =====================================================
+   RESPONSIVE
+   ===================================================== */
+@media (max-width: 768px) {
+    .param-table { font-size: 0.8rem; }
+    .param-table thead th { padding: 8px 6px; font-size: 0.7rem; }
+    .param-table tbody td { padding: 8px 6px; }
+    .nav-tabs-admin .nav-link { padding: 10px 12px; font-size: 0.8rem; }
+    .form-row-grid { grid-template-columns: 1fr; }
+    .feriados-grid { gap: 6px; }
+    .btn-feriado { font-size: 0.75rem; padding: 5px 10px; }
+    .fecha-item .fecha-dia { min-width: 34px; height: 34px; font-size: 0.95rem; }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-body">
+
+                <div class="alert-info-custom mb-3">
+                    <i class="fa fa-info-circle"></i>
+                    Configure los parámetros del sistema de turnos: horarios, tipos de trámite, capacidad, fechas especiales y bloqueos de horarios.
+                </div>
+
+                <!-- PESTAÑAS -->
+                <ul class="nav nav-tabs nav-tabs-admin" id="tabParametros" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" data-toggle="tab" data-target="#pane-talleres" type="button" role="tab">
+                            <i class="fa fa-building"></i> Talleres
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" data-toggle="tab" data-target="#pane-tipos" type="button" role="tab">
+                            <i class="fa fa-car"></i> Tipos de Trámite
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" data-toggle="tab" data-target="#pane-capacidad" type="button" role="tab">
+                            <i class="fa fa-sliders-h"></i> Capacidad
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" data-toggle="tab" data-target="#pane-fechas" type="button" role="tab">
+                            <i class="fa fa-calendar-times"></i> Fechas No Laborables
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" data-toggle="tab" data-target="#pane-franjas" type="button" role="tab">
+                            <i class="fa fa-ban"></i> Franjas Anuladas
+                        </button>
+                    </li>
+                </ul>
+
+                <!-- CONTENIDO -->
+                <div class="tab-content pt-3" id="tabParametrosContent">
+
+                    <!-- =============================================
+                         TAB: TALLERES
+                         ============================================= -->
+                    <div class="tab-pane fade show active" id="pane-talleres" role="tabpanel">
+                        <div class="form-section">
+                            <div class="section-header">
+                                <div class="section-icon"><i class="fa fa-building"></i></div>
+                                <h6 class="section-title">Configuración de Talleres / Plantas</h6>
+                            </div>
+                            <div class="section-body">
+                                <div class="table-responsive">
+                                    <table class="param-table" id="tabla-talleres">
+                                        <thead>
+                                            <tr>
+                                                <th>Taller</th>
+                                                <th>Horario Apertura</th>
+                                                <th>Horario Cierre</th>
+                                                <th>Días de Atención</th>
+                                                <th>Estado</th>
+                                                <th style="width: 80px;">Acciones</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="tbody-talleres">
+                                            <tr><td colspan="6" class="text-center text-muted py-3"><i class="fa fa-spinner fa-spin me-1"></i> Cargando...</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- =============================================
+                         TAB: TIPOS DE TRÁMITE
+                         ============================================= -->
+                    <div class="tab-pane fade" id="pane-tipos" role="tabpanel">
+                        <div class="form-section">
+                            <div class="section-header">
+                                <div class="section-icon"><i class="fa fa-car"></i></div>
+                                <h6 class="section-title">Tipos de Trámite / Vehículo</h6>
+                            </div>
+                            <div class="section-body">
+                                <div class="alert-info-custom mb-3">
+                                    <i class="fa fa-info-circle"></i>
+                                    Los precios Provincial, Nacional y CAJUTAC se muestran en la página oficial con su formato correspondiente. Estos valores son informativos y no forman parte del flujo del turnero, que utiliza una versión simplificada.
+                                </div>
+                                <div class="table-responsive">
+                                    <table class="param-table" id="tabla-tipos">
+                                        <thead>
+                                            <tr>
+                                                <th>Código</th>
+                                                <th>Nombre</th>
+                                                <th>$ Provincial</th>
+                                                <th>$ Nacional</th>
+                                                <th>$ CAJUTAC</th>
+                                                <th>Estado</th>
+                                                <th style="width: 80px;">Acciones</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="tbody-tipos">
+                                            <tr><td colspan="8" class="text-center text-muted py-3"><i class="fa fa-spinner fa-spin me-1"></i> Cargando...</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- =============================================
+                         TAB: CAPACIDAD
+                         ============================================= -->
+                    <div class="tab-pane fade" id="pane-capacidad" role="tabpanel">
+                        <div class="form-section">
+                            <div class="section-header">
+                                <div class="section-icon"><i class="fa fa-sliders-h"></i></div>
+                                <h6 class="section-title">Capacidad por Taller y Tipo de Trámite</h6>
+                            </div>
+                            <div class="section-body">
+                                <div class="alert-info-custom mb-3">
+                                    <i class="fa fa-info-circle"></i>
+                                    <strong>Turnos simultáneos:</strong> cantidad de vehículos que se atienden al mismo tiempo. <strong>Duración del turno:</strong> tiempo en minutos de cada turno (define los horarios disponibles).
+                                </div>
+
+                                <div class="filtro-taller">
+                                    <label><i class="fa fa-filter me-1"></i> Filtrar por taller:</label>
+                                    <select class="form-control form-control-sm" id="filtro-config-taller">
+                                        <option value="">Todos los talleres</option>
+                                        {% for t in talleres %}
+                                        <option value="{{ t.id }}">{{ t.get_nombre }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+
+                                <div class="table-responsive">
+                                    <table class="param-table" id="tabla-config">
+                                        <thead>
+                                            <tr>
+                                                <th>Taller</th>
+                                                <th>Tipo Trámite</th>
+                                                <th>Turnos Simultáneos</th>
+                                                <th>Duración turno (min)</th>
+                                                <th>Estado</th>
+                                                <th style="width: 80px;">Acciones</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="tbody-config">
+                                            <tr><td colspan="6" class="text-center text-muted py-3"><i class="fa fa-spinner fa-spin me-1"></i> Cargando...</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- =============================================
+                         TAB: FECHAS NO LABORABLES
+                         ============================================= -->
+                    <div class="tab-pane fade" id="pane-fechas" role="tabpanel">
+
+                        <!-- Selector de taller -->
+                        <div class="form-section">
+                            <div class="section-header">
+                                <div class="section-icon"><i class="fa fa-building"></i></div>
+                                <h6 class="section-title">Seleccionar Taller</h6>
+                            </div>
+                            <div class="section-body">
+                                <div class="row align-items-center">
+                                    <div class="col-md-6">
+                                        <select class="form-control" id="filtro-fechas-taller">
+                                            {% for t in talleres %}
+                                            <option value="{{ t.id }}">{{ t.get_nombre }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6 mt-2 mt-md-0">
+                                        <div class="fechas-resumen">
+                                            <span class="fechas-counter" id="fechas-counter">
+                                                <i class="fa fa-calendar-times"></i> <strong id="fechas-count">0</strong> fechas no laborables configuradas
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Agregar fechas -->
+                        <div class="form-section">
+                            <div class="section-header">
+                                <div class="section-icon"><i class="fa fa-plus-circle"></i></div>
+                                <h6 class="section-title">Agregar Fechas</h6>
+                            </div>
+                            <div class="section-body">
+                                <!-- Fecha manual -->
+                                <div class="row align-items-end mb-3">
+                                    <div class="col-md-4">
+                                        <label class="form-label"><i class="fa fa-calendar"></i> Fecha</label>
+                                        <input type="date" class="form-control" id="nueva-fecha">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label"><i class="fa fa-comment"></i> Motivo (opcional)</label>
+                                        <input type="text" class="form-control" id="nueva-fecha-motivo" placeholder="Ej: Feriado nacional">
+                                    </div>
+                                    <div class="col-md-4 mt-2 mt-md-0">
+                                        <button class="btn btn-orange" onclick="agregarFecha()">
+                                            <i class="fa fa-plus mr-1"></i> Agregar Fecha
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- Feriados rápidos -->
+                                <div class="feriados-rapidos">
+                                    <label class="form-label"><i class="fa fa-bolt"></i> Feriados Nacionales (agregar rápido)</label>
+                                    <div class="feriados-grid" id="feriados-rapidos">
+                                        <!-- Se genera con JS -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Lista de fechas -->
+                        <div class="form-section">
+                            <div class="section-header">
+                                <div class="section-icon"><i class="fa fa-list"></i></div>
+                                <h6 class="section-title">Fechas Configuradas</h6>
+                                <button class="btn btn-orange btn-sm ml-auto" onclick="guardarFechas()">
+                                    <i class="fa fa-save mr-1"></i> Guardar Cambios
+                                </button>
+                            </div>
+                            <div class="section-body">
+                                <div id="fechas-container">
+                                    <div class="text-center text-muted py-4">
+                                        <i class="fa fa-spinner fa-spin mr-1"></i> Cargando...
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- =============================================
+                         TAB: FRANJAS ANULADAS
+                         ============================================= -->
+                    <div class="tab-pane fade" id="pane-franjas" role="tabpanel">
+                        <div class="form-section">
+                            <div class="section-header">
+                                <div class="section-icon"><i class="fa fa-ban"></i></div>
+                                <h6 class="section-title">Franjas Horarias Anuladas</h6>
+                                <button class="btn btn-orange btn-sm ms-auto" onclick="nuevaFranja()">
+                                    <i class="fa fa-plus me-1"></i> Nueva Franja
+                                </button>
+                            </div>
+                            <div class="section-body">
+                                <div class="alert-info-custom mb-3">
+                                    <i class="fa fa-info-circle"></i>
+                                    Bloquee rangos horarios en fechas específicas. Los turnos no estarán disponibles durante estas franjas.
+                                </div>
+
+                                <div class="filtro-taller">
+                                    <label><i class="fa fa-filter me-1"></i> Filtrar por taller:</label>
+                                    <select class="form-control form-control-sm" id="filtro-franjas-taller">
+                                        <option value="">Todos</option>
+                                        {% for t in talleres %}
+                                        <option value="{{ t.id }}">{{ t.get_nombre }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+
+                                <div class="table-responsive">
+                                    <table class="param-table" id="tabla-franjas">
+                                        <thead>
+                                            <tr>
+                                                <th>Taller</th>
+                                                <th>Fecha</th>
+                                                <th>Hora Inicio</th>
+                                                <th>Hora Fin</th>
+                                                <th>Motivo</th>
+                                                <th>Estado</th>
+                                                <th style="width: 100px;">Acciones</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="tbody-franjas">
+                                            <tr><td colspan="7" class="text-center text-muted py-3"><i class="fa fa-spinner fa-spin me-1"></i> Cargando...</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div><!-- /tab-content -->
+
+            </div><!-- /card-body -->
+        </div><!-- /card -->
+    </div>
+</div>
+
+<!-- =====================================================
+     MODAL: EDITAR TALLER
+     ===================================================== -->
+<div class="modal fade" id="modal-taller">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header modal-header-themed">
+                <h6><i class="fa fa-building me-2"></i> Editar Taller</h6>
+                <button type="button" class="close text-white" onclick="$(this).closest('.modal').modal('hide')"><span>&times;</span></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="edit-taller-id">
+                <div class="form-row-grid mb-3">
+                    <div class="form-group">
+                        <label class="form-label"><i class="fa fa-clock"></i> Horario Apertura</label>
+                        <input type="time" class="form-control" id="edit-taller-apertura">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label"><i class="fa fa-clock"></i> Horario Cierre</label>
+                        <input type="time" class="form-control" id="edit-taller-cierre">
+                    </div>
+                </div>
+                <div class="form-row-grid mb-3">
+                    <div class="form-group">
+                        <label class="form-label"><i class="fa fa-envelope"></i> Email Operador</label>
+                        <input type="email" class="form-control" id="edit-taller-email-op">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label"><i class="fab fa-whatsapp"></i> WhatsApp Operador</label>
+                        <input type="text" class="form-control" id="edit-taller-whatsapp">
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label"><i class="fa fa-calendar-week"></i> Días de Atención</label>
+                    <div class="dias-grid" id="edit-taller-dias">
+                        <div class="dia-check"><input type="checkbox" id="dia-lunes" value="lunes"><label for="dia-lunes">Lun</label></div>
+                        <div class="dia-check"><input type="checkbox" id="dia-martes" value="martes"><label for="dia-martes">Mar</label></div>
+                        <div class="dia-check"><input type="checkbox" id="dia-miercoles" value="miercoles"><label for="dia-miercoles">Mié</label></div>
+                        <div class="dia-check"><input type="checkbox" id="dia-jueves" value="jueves"><label for="dia-jueves">Jue</label></div>
+                        <div class="dia-check"><input type="checkbox" id="dia-viernes" value="viernes"><label for="dia-viernes">Vie</label></div>
+                        <div class="dia-check"><input type="checkbox" id="dia-sabado" value="sabado"><label for="dia-sabado">Sáb</label></div>
+                        <div class="dia-check"><input type="checkbox" id="dia-domingo" value="domingo"><label for="dia-domingo">Dom</label></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary btn-sm" onclick="$(this).closest('.modal').modal('hide')">Cancelar</button>
+                <button type="button" class="btn btn-orange btn-sm" onclick="guardarTaller()"><i class="fa fa-save me-1"></i> Guardar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- =====================================================
+     MODAL: EDITAR TIPO TRÁMITE
+     ===================================================== -->
+<div class="modal fade" id="modal-tipo">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header modal-header-themed">
+                <h6><i class="fa fa-car me-2"></i> Editar Tipo de Trámite</h6>
+                <button type="button" class="close text-white" onclick="$(this).closest('.modal').modal('hide')"><span>&times;</span></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="edit-tipo-id">
+                <div class="mb-3">
+                    <label class="form-label"><i class="fa fa-tag"></i> Código</label>
+                    <input type="text" class="form-control" id="edit-tipo-codigo" readonly style="background: #f1f5f9;">
+                </div>
+                <div class="form-row-grid mb-3">
+                    <div class="form-group">
+                        <label class="form-label"><i class="fa fa-dollar-sign"></i> Precio Provincial</label>
+                        <input type="number" class="form-control" id="edit-tipo-provincial" step="0.01" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label"><i class="fa fa-dollar-sign"></i> Precio Nacional</label>
+                        <input type="number" class="form-control" id="edit-tipo-nacional" step="0.01" min="0">
+                    </div>
+                </div>
+                <div class="form-row-grid mb-3">
+                    <div class="form-group">
+                        <label class="form-label"><i class="fa fa-dollar-sign"></i> Precio CAJUTAC</label>
+                        <input type="number" class="form-control" id="edit-tipo-cajutac" step="0.01" min="0">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary btn-sm" onclick="$(this).closest('.modal').modal('hide')">Cancelar</button>
+                <button type="button" class="btn btn-orange btn-sm" onclick="guardarTipo()"><i class="fa fa-save me-1"></i> Guardar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- =====================================================
+     MODAL: EDITAR CAPACIDAD
+     ===================================================== -->
+<div class="modal fade" id="modal-config">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header modal-header-themed">
+                <h6><i class="fa fa-sliders-h me-2"></i> Editar Capacidad</h6>
+                <button type="button" class="close text-white" onclick="$(this).closest('.modal').modal('hide')"><span>&times;</span></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="edit-config-id">
+                <div class="mb-3">
+                    <span class="text-muted" style="font-size: 0.85rem;" id="edit-config-info"></span>
+                </div>
+                <div class="form-row-grid mb-3">
+                    <div class="form-group">
+                        <label class="form-label"><i class="fa fa-users"></i> Turnos Simultáneos</label>
+                        <input type="number" class="form-control" id="edit-config-simultaneos" min="1">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label"><i class="fa fa-clock"></i> Duración del turno (min)</label>
+                        <input type="number" class="form-control" id="edit-config-intervalo" min="1">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary btn-sm" onclick="$(this).closest('.modal').modal('hide')">Cancelar</button>
+                <button type="button" class="btn btn-orange btn-sm" onclick="guardarConfig()"><i class="fa fa-save me-1"></i> Guardar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- =====================================================
+     MODAL: NUEVA/EDITAR FRANJA ANULADA
+     ===================================================== -->
+<div class="modal fade" id="modal-franja">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header modal-header-themed">
+                <h6><i class="fa fa-ban me-2"></i> <span id="modal-franja-titulo">Nueva Franja Anulada</span></h6>
+                <button type="button" class="close text-white" onclick="$(this).closest('.modal').modal('hide')"><span>&times;</span></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="edit-franja-id">
+                <div class="mb-3">
+                    <label class="form-label"><i class="fa fa-building"></i> Taller</label>
+                    <select class="form-control" id="edit-franja-taller">
+                        {% for t in talleres %}
+                        <option value="{{ t.id }}">{{ t.get_nombre }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-row-grid mb-3">
+                    <div class="form-group">
+                        <label class="form-label"><i class="fa fa-calendar"></i> Fecha</label>
+                        <input type="date" class="form-control" id="edit-franja-fecha">
+                    </div>
+                </div>
+                <div class="form-row-grid mb-3">
+                    <div class="form-group">
+                        <label class="form-label"><i class="fa fa-clock"></i> Hora Inicio</label>
+                        <input type="time" class="form-control" id="edit-franja-inicio">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label"><i class="fa fa-clock"></i> Hora Fin</label>
+                        <input type="time" class="form-control" id="edit-franja-fin">
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label"><i class="fa fa-comment"></i> Motivo</label>
+                    <select class="form-control" id="edit-franja-motivo">
+                        <option value="">-- Seleccionar motivo --</option>
+                        <option value="Mantenimiento de equipos">Mantenimiento de equipos</option>
+                        <option value="Mantenimiento edilicio">Mantenimiento edilicio</option>
+                        <option value="Capacitación del personal">Capacitación del personal</option>
+                        <option value="Feriado local">Feriado local</option>
+                        <option value="Evento especial">Evento especial</option>
+                        <option value="Corte de energía programado">Corte de energía programado</option>
+                        <option value="Auditoría / Inspección">Auditoría / Inspección</option>
+                        <option value="Condiciones climáticas">Condiciones climáticas</option>
+                        <option value="Desinfección / Fumigación">Desinfección / Fumigación</option>
+                        <option value="Jornada reducida">Jornada reducida</option>
+                        <option value="Otro">Otro (especificar)</option>
+                    </select>
+                    <input type="text" class="form-control mt-2" id="edit-franja-motivo-otro" placeholder="Especifique el motivo..." style="display: none;">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary btn-sm" onclick="$(this).closest('.modal').modal('hide')">Cancelar</button>
+                <button type="button" class="btn btn-orange btn-sm" onclick="guardarFranja()"><i class="fa fa-save me-1"></i> Guardar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extraJS %}
+<script>
+var csrfToken = '{{ csrf_token }}';
+var DIAS_SEMANA = ['lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado', 'domingo'];
+var DIAS_LABELS = {'lunes': 'Lun', 'martes': 'Mar', 'miercoles': 'Mié', 'jueves': 'Jue', 'viernes': 'Vie', 'sabado': 'Sáb', 'domingo': 'Dom'};
+
+// Datos cargados
+var fechasActuales = [];
+var talleresData = [];
+var tiposData = [];
+var configData = [];
+
+$(document).ready(function() {
+    cargarTalleres();
+
+    // Cargar contenido de cada tab al activarla
+    $('button[data-toggle="tab"]').on('shown.bs.tab', function(e) {
+        var target = $(e.target).data('target');
+        if (target === '#pane-tipos') cargarTipos();
+        else if (target === '#pane-capacidad') cargarConfig();
+        else if (target === '#pane-fechas') cargarFechas();
+        else if (target === '#pane-franjas') cargarFranjas();
+    });
+
+    // Filtros
+    $('#filtro-config-taller').on('change', function() { cargarConfig(); });
+    $('#filtro-fechas-taller').on('change', function() { cargarFechas(); });
+    $('#filtro-franjas-taller').on('change', function() { cargarFranjas(); });
+
+    // Inicializar Select2 en motivo de franja
+    $('#modal-franja').on('shown.bs.modal', function() {
+        $('#edit-franja-motivo').select2({
+            dropdownParent: $('#modal-franja'),
+            placeholder: '-- Seleccionar motivo --',
+            allowClear: true,
+            width: '100%'
+        });
+    });
+
+    // Mostrar/ocultar campo "Otro" en motivo de franja
+    $(document).on('change', '#edit-franja-motivo', function() {
+        if ($(this).val() === 'Otro') {
+            $('#edit-franja-motivo-otro').show().focus();
+        } else {
+            $('#edit-franja-motivo-otro').hide().val('');
+        }
+    });
+});
+
+// =====================================================
+// UTILIDADES
+// =====================================================
+function formatDias(dias) {
+    if (!dias || typeof dias !== 'object') return '<span class="text-muted">Sin configurar</span>';
+    var activos = [];
+    DIAS_SEMANA.forEach(function(d) {
+        if (dias[d]) activos.push('<span class="badge bg-success" style="font-size:0.7rem;">' + DIAS_LABELS[d] + '</span>');
+    });
+    return activos.length ? activos.join(' ') : '<span class="text-muted">Ninguno</span>';
+}
+
+function formatPrecio(val) {
+    return val ? '$ ' + parseFloat(val).toLocaleString('es-AR', {minimumFractionDigits: 2}) : '-';
+}
+
+function showSuccess(msg) {
+    Swal.fire({ icon: 'success', title: 'Guardado', text: msg, confirmButtonColor: '#13304D', timer: 2000, showConfirmButton: false });
+}
+
+function showError(msg) {
+    Swal.fire('Error', msg || 'Ocurrió un error.', 'error');
+}
+
+// =====================================================
+// TALLERES
+// =====================================================
+function cargarTalleres() {
+    $.get('{% url "parametros_talleres_ajax" %}', function(res) {
+        talleresData = res.data;
+        var html = '';
+        res.data.forEach(function(t, idx) {
+            html += '<tr>' +
+                '<td><strong>' + t.nombre + '</strong></td>' +
+                '<td>' + (t.horario_apertura || '-') + '</td>' +
+                '<td>' + (t.horario_cierre || '-') + '</td>' +
+                '<td>' + formatDias(t.dias_atencion) + '</td>' +
+                '<td>' + (t.status ? '<span class="badge-activo">Activo</span>' : '<span class="badge-inactivo">Inactivo</span>') + '</td>' +
+                '<td><button class="btn btn-accion btn-editar" onclick="editarTaller(' + idx + ')"><i class="fa fa-pencil"></i></button></td>' +
+                '</tr>';
+        });
+        if (!res.data.length) html = '<tr><td colspan="6" class="text-center text-muted py-3">No hay talleres configurados</td></tr>';
+        $('#tbody-talleres').html(html);
+    });
+}
+
+function editarTaller(idx) {
+    var t = talleresData[idx];
+    $('#edit-taller-id').val(t.id);
+    $('#edit-taller-apertura').val(t.horario_apertura);
+    $('#edit-taller-cierre').val(t.horario_cierre);
+    $('#edit-taller-email-op').val(t.email_operador);
+    $('#edit-taller-whatsapp').val(t.whatsapp_operador);
+
+    DIAS_SEMANA.forEach(function(d) {
+        $('#dia-' + d).prop('checked', t.dias_atencion && t.dias_atencion[d] === true);
+    });
+
+    $('#modal-taller').modal('show');
+}
+
+function guardarTaller() {
+    var dias = {};
+    DIAS_SEMANA.forEach(function(d) { dias[d] = $('#dia-' + d).is(':checked'); });
+
+    $.post('{% url "parametros_talleres_guardar" %}', {
+        csrfmiddlewaretoken: csrfToken,
+        id: $('#edit-taller-id').val(),
+        horario_apertura: $('#edit-taller-apertura').val(),
+        horario_cierre: $('#edit-taller-cierre').val(),
+        email_operador: $('#edit-taller-email-op').val(),
+        whatsapp_operador: $('#edit-taller-whatsapp').val(),
+        dias_atencion: JSON.stringify(dias),
+    }, function(res) {
+        if (res.success) {
+            $('#modal-taller').modal('hide');
+            showSuccess(res.message);
+            cargarTalleres();
+        } else { showError(res.error); }
+    }).fail(function() { showError(); });
+}
+
+// =====================================================
+// TIPOS DE TRÁMITE
+// =====================================================
+function cargarTipos() {
+    $.get('{% url "parametros_tipos_ajax" %}', function(res) {
+        tiposData = res.data;
+        var html = '';
+        res.data.forEach(function(t, idx) {
+            html += '<tr>' +
+                '<td><code style="background:#f1f5f9; padding:3px 8px; border-radius:4px;">' + t.codigo_tramite + '</code></td>' +
+                '<td>' + t.nombre + '</td>' +
+                '<td>' + formatPrecio(t.precio_provincial) + '</td>' +
+                '<td>' + formatPrecio(t.precio_nacional) + '</td>' +
+                '<td>' + formatPrecio(t.precio_cajutad) + '</td>' +
+                '<td>' + (t.status ? '<span class="badge-activo">Activo</span>' : '<span class="badge-inactivo">Inactivo</span>') + '</td>' +
+                '<td><button class="btn btn-accion btn-editar" onclick="editarTipo(' + idx + ')"><i class="fa fa-pencil"></i></button></td>' +
+                '</tr>';
+        });
+        if (!res.data.length) html = '<tr><td colspan="7" class="text-center text-muted py-3">No hay tipos configurados</td></tr>';
+        $('#tbody-tipos').html(html);
+    });
+}
+
+function editarTipo(idx) {
+    var t = tiposData[idx];
+    $('#edit-tipo-id').val(t.id);
+    $('#edit-tipo-codigo').val(t.codigo_tramite);
+    $('#edit-tipo-provincial').val(t.precio_provincial);
+    $('#edit-tipo-nacional').val(t.precio_nacional);
+    $('#edit-tipo-cajutac').val(t.precio_cajutad);
+    $('#edit-tipo-duracion').val(t.duracion_minutos);
+    $('#modal-tipo').modal('show');
+}
+
+function guardarTipo() {
+    $.post('{% url "parametros_tipos_guardar" %}', {
+        csrfmiddlewaretoken: csrfToken,
+        id: $('#edit-tipo-id').val(),
+        precio_provincial: $('#edit-tipo-provincial').val(),
+        precio_nacional: $('#edit-tipo-nacional').val(),
+        precio_cajutad: $('#edit-tipo-cajutac').val(),
+    }, function(res) {
+        if (res.success) {
+            $('#modal-tipo').modal('hide');
+            showSuccess(res.message);
+            cargarTipos();
+        } else { showError(res.error); }
+    }).fail(function() { showError(); });
+}
+
+// =====================================================
+// CONFIGURACIÓN (CAPACIDAD)
+// =====================================================
+function cargarConfig() {
+    $.get('{% url "parametros_config_ajax" %}', function(res) {
+        var filtro = $('#filtro-config-taller').val();
+        configData = res.data;
+        var data = configData;
+        if (filtro) data = data.filter(function(c) { return c.taller_id == filtro; });
+
+        var html = '';
+        data.forEach(function(c) {
+            // Buscar índice en configData original
+            var idx = configData.indexOf(c);
+            html += '<tr>' +
+                '<td>' + c.taller_nombre + '</td>' +
+                '<td><code style="background:#f1f5f9; padding:3px 8px; border-radius:4px;">' + c.tipo_codigo + '</code> ' + c.tipo_nombre + '</td>' +
+                '<td class="text-center"><strong>' + c.turnos_simultaneos + '</strong></td>' +
+                '<td class="text-center"><strong>' + c.intervalo_minutos + ' min</strong></td>' +
+                '<td>' + (c.status ? '<span class="badge-activo">Activo</span>' : '<span class="badge-inactivo">Inactivo</span>') + '</td>' +
+                '<td><button class="btn btn-accion btn-editar" onclick="editarConfig(' + idx + ')"><i class="fa fa-pencil"></i></button></td>' +
+                '</tr>';
+        });
+        if (!data.length) html = '<tr><td colspan="6" class="text-center text-muted py-3">No hay configuraciones</td></tr>';
+        $('#tbody-config').html(html);
+    });
+}
+
+function editarConfig(idx) {
+    var c = configData[idx];
+    $('#edit-config-id').val(c.id);
+    $('#edit-config-info').html('<strong>' + c.taller_nombre + '</strong> — ' + c.tipo_codigo + ' ' + c.tipo_nombre);
+    $('#edit-config-simultaneos').val(c.turnos_simultaneos);
+    $('#edit-config-intervalo').val(c.intervalo_minutos);
+    $('#modal-config').modal('show');
+}
+
+function guardarConfig() {
+    $.post('{% url "parametros_config_guardar" %}', {
+        csrfmiddlewaretoken: csrfToken,
+        id: $('#edit-config-id').val(),
+        turnos_simultaneos: $('#edit-config-simultaneos').val(),
+        intervalo_minutos: $('#edit-config-intervalo').val(),
+    }, function(res) {
+        if (res.success) {
+            $('#modal-config').modal('hide');
+            showSuccess(res.message);
+            cargarConfig();
+        } else { showError(res.error); }
+    }).fail(function() { showError(); });
+}
+
+// =====================================================
+// FECHAS NO LABORABLES
+// =====================================================
+var MESES_NOMBRE = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+var DIAS_NOMBRE = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+
+// Feriados nacionales argentinos (se calcula el año actual)
+function getFeriadosNacionales() {
+    var anio = new Date().getFullYear();
+    return [
+        { fecha: anio + '-01-01', nombre: 'Año Nuevo' },
+        { fecha: anio + '-02-12', nombre: 'Carnaval' },
+        { fecha: anio + '-02-13', nombre: 'Carnaval' },
+        { fecha: anio + '-03-24', nombre: 'Día de la Memoria' },
+        { fecha: anio + '-04-02', nombre: 'Día del Veterano (Malvinas)' },
+        { fecha: anio + '-05-01', nombre: 'Día del Trabajador' },
+        { fecha: anio + '-05-25', nombre: 'Revolución de Mayo' },
+        { fecha: anio + '-06-17', nombre: 'Paso a la Inmortalidad Güemes' },
+        { fecha: anio + '-06-20', nombre: 'Día de la Bandera' },
+        { fecha: anio + '-07-09', nombre: 'Día de la Independencia' },
+        { fecha: anio + '-08-17', nombre: 'Paso a la Inmortalidad San Martín' },
+        { fecha: anio + '-10-12', nombre: 'Día del Respeto a la Diversidad' },
+        { fecha: anio + '-11-20', nombre: 'Día de la Soberanía Nacional' },
+        { fecha: anio + '-12-08', nombre: 'Inmaculada Concepción' },
+        { fecha: anio + '-12-25', nombre: 'Navidad' },
+    ];
+}
+
+// Motivos almacenados localmente (fecha -> motivo)
+var fechasMotivos = {};
+
+function cargarFechas() {
+    var tallerId = $('#filtro-fechas-taller').val();
+    $.get('{% url "parametros_fechas_ajax" %}', { taller_id: tallerId }, function(res) {
+        if (res.data.length && res.data[0].fechas) {
+            var raw = res.data[0].fechas;
+            fechasActuales = [];
+            fechasMotivos = {};
+            // Soportar formato string simple o {fecha, motivo}
+            raw.forEach(function(item) {
+                if (typeof item === 'string') {
+                    fechasActuales.push(item);
+                } else if (item.fecha) {
+                    fechasActuales.push(item.fecha);
+                    if (item.motivo) fechasMotivos[item.fecha] = item.motivo;
+                }
+            });
+        } else {
+            fechasActuales = [];
+            fechasMotivos = {};
+        }
+        renderFechas();
+        renderFeriadosRapidos();
+    });
+}
+
+function renderFechas() {
+    $('#fechas-count').text(fechasActuales.length);
+
+    if (!fechasActuales.length) {
+        $('#fechas-container').html(
+            '<div class="fechas-vacio">' +
+            '<i class="fa fa-calendar-check"></i>' +
+            '<p>No hay fechas no laborables configuradas para este taller.</p>' +
+            '<p style="font-size:0.8rem; margin-top:5px;">Agregue fechas manualmente o use los feriados rápidos.</p>' +
+            '</div>'
+        );
+        return;
+    }
+
+    // Agrupar por mes
+    fechasActuales.sort();
+    var grupos = {};
+    fechasActuales.forEach(function(f) {
+        var parts = f.split('-');
+        var mesKey = parts[0] + '-' + parts[1];
+        if (!grupos[mesKey]) grupos[mesKey] = [];
+        grupos[mesKey].push(f);
+    });
+
+    var html = '';
+    Object.keys(grupos).sort().forEach(function(mesKey) {
+        var parts = mesKey.split('-');
+        var mesNombre = MESES_NOMBRE[parseInt(parts[1]) - 1] + ' ' + parts[0];
+        var fechasMes = grupos[mesKey];
+
+        html += '<div class="fechas-mes-grupo">';
+        html += '<div class="fechas-mes-header"><i class="fa fa-calendar mr-1"></i> ' + mesNombre +
+                '<span class="mes-count">' + fechasMes.length + '</span></div>';
+        html += '<div class="fechas-mes-body">';
+
+        fechasMes.forEach(function(f) {
+            var p = f.split('-');
+            var dateObj = new Date(parseInt(p[0]), parseInt(p[1]) - 1, parseInt(p[2]));
+            var diaSemana = DIAS_NOMBRE[dateObj.getDay()];
+            var dia = p[2];
+            var motivo = fechasMotivos[f] || '';
+            var idx = fechasActuales.indexOf(f);
+
+            html += '<div class="fecha-item">' +
+                '<div class="fecha-dia">' + parseInt(dia) + '</div>' +
+                '<div class="fecha-info">' +
+                    '<div class="fecha-nombre-dia">' + diaSemana + '</div>' +
+                    '<div class="fecha-completa">' + dia + '/' + p[1] + '/' + p[0] + '</div>' +
+                    (motivo ? '<div class="fecha-motivo"><i class="fa fa-tag mr-1"></i>' + motivo + '</div>' : '') +
+                '</div>' +
+                '<button class="btn-quitar" onclick="quitarFecha(' + idx + ')" title="Quitar fecha"><i class="fa fa-times"></i></button>' +
+                '</div>';
+        });
+
+        html += '</div></div>';
+    });
+
+    $('#fechas-container').html(html);
+}
+
+function renderFeriadosRapidos() {
+    var feriados = getFeriadosNacionales();
+    var html = '';
+    feriados.forEach(function(fer) {
+        var yaAgregado = fechasActuales.indexOf(fer.fecha) !== -1;
+        var parts = fer.fecha.split('-');
+        var display = parts[2] + '/' + parts[1] + '/' + parts[0];
+        html += '<button class="btn-feriado' + (yaAgregado ? ' ya-agregado' : '') + '" ' +
+                (yaAgregado ? 'disabled' : 'onclick="agregarFeriado(\'' + fer.fecha + '\', \'' + fer.nombre + '\')"') + '>' +
+                '<i class="fa ' + (yaAgregado ? 'fa-check' : 'fa-plus') + '"></i> ' +
+                display + ' - ' + fer.nombre +
+                '</button>';
+    });
+    $('#feriados-rapidos').html(html);
+}
+
+function agregarFeriado(fecha, motivo) {
+    if (fechasActuales.indexOf(fecha) !== -1) return;
+    fechasActuales.push(fecha);
+    fechasMotivos[fecha] = motivo;
+    renderFechas();
+    renderFeriadosRapidos();
+}
+
+function agregarFecha() {
+    var fecha = $('#nueva-fecha').val();
+    if (!fecha) { Swal.fire('', 'Seleccione una fecha.', 'warning'); return; }
+    if (fechasActuales.indexOf(fecha) !== -1) { Swal.fire('', 'Esa fecha ya está en la lista.', 'info'); return; }
+    fechasActuales.push(fecha);
+    var motivo = $('#nueva-fecha-motivo').val();
+    if (motivo) fechasMotivos[fecha] = motivo;
+    renderFechas();
+    renderFeriadosRapidos();
+    $('#nueva-fecha').val('');
+    $('#nueva-fecha-motivo').val('');
+}
+
+function quitarFecha(index) {
+    var fecha = fechasActuales[index];
+    delete fechasMotivos[fecha];
+    fechasActuales.splice(index, 1);
+    renderFechas();
+    renderFeriadosRapidos();
+}
+
+function guardarFechas() {
+    var tallerId = $('#filtro-fechas-taller').val();
+    // Guardar como objetos {fecha, motivo} para preservar motivos
+    var fechasConMotivo = fechasActuales.map(function(f) {
+        var motivo = fechasMotivos[f];
+        return motivo ? { fecha: f, motivo: motivo } : f;
+    });
+    $.post('{% url "parametros_fechas_guardar" %}', {
+        csrfmiddlewaretoken: csrfToken,
+        taller_id: tallerId,
+        fechas: JSON.stringify(fechasConMotivo),
+    }, function(res) {
+        if (res.success) { showSuccess(res.message); }
+        else { showError(res.error); }
+    }).fail(function() { showError(); });
+}
+
+// =====================================================
+// FRANJAS ANULADAS
+// =====================================================
+var franjasData = [];
+
+function cargarFranjas() {
+    var tallerId = $('#filtro-franjas-taller').val();
+    $.get('{% url "parametros_franjas_ajax" %}', { taller_id: tallerId }, function(res) {
+        franjasData = res.data;
+        var html = '';
+        res.data.forEach(function(f, idx) {
+            html += '<tr>' +
+                '<td>' + f.taller_nombre + '</td>' +
+                '<td>' + convertirFecha(f.fecha) + '</td>' +
+                '<td>' + f.hora_inicio + '</td>' +
+                '<td>' + f.hora_fin + '</td>' +
+                '<td>' + (f.motivo || '<span class="text-muted">-</span>') + '</td>' +
+                '<td>' + (f.status ? '<span class="badge-activo">Activa</span>' : '<span class="badge-inactivo">Inactiva</span>') + '</td>' +
+                '<td>' +
+                    '<button class="btn btn-accion btn-editar me-1" onclick="editarFranja(' + idx + ')"><i class="fa fa-pencil"></i></button>' +
+                    '<button class="btn btn-accion btn-eliminar" onclick="eliminarFranja(' + f.id + ')"><i class="fa fa-trash"></i></button>' +
+                '</td></tr>';
+        });
+        if (!res.data.length) html = '<tr><td colspan="7" class="text-center text-muted py-3">No hay franjas anuladas</td></tr>';
+        $('#tbody-franjas').html(html);
+    });
+}
+
+function nuevaFranja() {
+    $('#edit-franja-id').val('');
+    $('#edit-franja-taller').val($('#filtro-franjas-taller').val() || $('#edit-franja-taller option:first').val());
+    $('#edit-franja-fecha').val('');
+    $('#edit-franja-inicio').val('');
+    $('#edit-franja-fin').val('');
+    $('#edit-franja-motivo').val('').trigger('change');
+    $('#edit-franja-motivo-otro').val('').hide();
+    $('#modal-franja-titulo').text('Nueva Franja Anulada');
+    $('#modal-franja').modal('show');
+}
+
+function editarFranja(idx) {
+    var f = franjasData[idx];
+    $('#edit-franja-id').val(f.id);
+    $('#edit-franja-taller').val(f.taller_id);
+    $('#edit-franja-fecha').val(f.fecha);
+    $('#edit-franja-inicio').val(f.hora_inicio);
+    $('#edit-franja-fin').val(f.hora_fin);
+
+    // Verificar si el motivo está en las opciones del select
+    var $select = $('#edit-franja-motivo');
+    var existeOpcion = $select.find('option[value="' + f.motivo + '"]').length > 0;
+    if (f.motivo && !existeOpcion) {
+        $select.val('Otro').trigger('change');
+        $('#edit-franja-motivo-otro').val(f.motivo).show();
+    } else {
+        $select.val(f.motivo || '').trigger('change');
+        $('#edit-franja-motivo-otro').val('').hide();
+    }
+
+    $('#modal-franja-titulo').text('Editar Franja Anulada');
+    $('#modal-franja').modal('show');
+}
+
+function guardarFranja() {
+    var fecha = $('#edit-franja-fecha').val();
+    var inicio = $('#edit-franja-inicio').val();
+    var fin = $('#edit-franja-fin').val();
+
+    if (!fecha || !inicio || !fin) {
+        Swal.fire('Campos requeridos', 'Fecha, hora inicio y hora fin son obligatorios.', 'warning');
+        return;
+    }
+
+    $.post('{% url "parametros_franjas_guardar" %}', {
+        csrfmiddlewaretoken: csrfToken,
+        id: $('#edit-franja-id').val(),
+        taller_id: $('#edit-franja-taller').val(),
+        fecha: fecha,
+        hora_inicio: inicio,
+        hora_fin: fin,
+        motivo: $('#edit-franja-motivo').val() === 'Otro' ? $('#edit-franja-motivo-otro').val() : $('#edit-franja-motivo').val(),
+        status: 'true',
+    }, function(res) {
+        if (res.success) {
+            $('#modal-franja').modal('hide');
+            showSuccess(res.message);
+            cargarFranjas();
+        } else { showError(res.error); }
+    }).fail(function() { showError(); });
+}
+
+function eliminarFranja(id) {
+    Swal.fire({
+        title: '¿Eliminar franja?',
+        text: 'Esta acción no se puede deshacer.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#13304D',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar'
+    }).then(function(result) {
+        if (result.isConfirmed) {
+            $.post('{% url "parametros_franjas_eliminar" %}', {
+                csrfmiddlewaretoken: csrfToken,
+                id: id,
+            }, function(res) {
+                if (res.success) { showSuccess(res.message); cargarFranjas(); }
+                else { showError(res.error); }
+            }).fail(function() { showError(); });
+        }
+    });
+}
+</script>
+{% endblock %}
