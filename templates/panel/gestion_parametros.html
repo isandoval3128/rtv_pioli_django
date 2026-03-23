@@ -116,18 +116,27 @@
 .btn-eliminar:hover { background: #fca5a5; color: #991b1b; }
 
 /* =====================================================
-   DIAS ATENCION CHECKS
+   DIAS ATENCION CON HORARIOS
    ===================================================== */
-.dias-grid {
-    display: flex; flex-wrap: wrap; gap: 8px;
+.dias-horarios-grid {
+    display: flex; flex-direction: column; gap: 6px;
 }
-.dia-check {
-    display: flex; align-items: center; gap: 4px;
-    padding: 4px 10px; border-radius: 6px;
-    background: #f1f5f9; font-size: 0.82rem;
+.dia-horario-row {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 12px; border-radius: 8px;
+    background: #f8f9fa; border: 1px solid #e9ecef;
+    transition: all 0.2s;
 }
-.dia-check input { margin: 0; }
-.dia-check label { margin: 0; cursor: pointer; font-size: 0.82rem; color: #475569; }
+.dia-horario-row.activo { background: #f0fdf4; border-color: #86efac; }
+.dia-horario-row .dia-check-box { display: flex; align-items: center; gap: 6px; min-width: 90px; }
+.dia-horario-row .dia-check-box input { margin: 0; }
+.dia-horario-row .dia-check-box label { margin: 0; font-size: 0.85rem; font-weight: 600; color: #334155; cursor: pointer; }
+.dia-horario-row .dia-horario-inputs { display: flex; align-items: center; gap: 6px; flex: 1; }
+.dia-horario-row .dia-horario-inputs input { max-width: 110px; font-size: 0.82rem; padding: 4px 8px; }
+.dia-horario-row .dia-horario-inputs span { font-size: 0.8rem; color: #94a3b8; }
+.dia-horario-row .dia-especial-check { display: flex; align-items: center; gap: 4px; margin-left: auto; }
+.dia-horario-row .dia-especial-check input { margin: 0; }
+.dia-horario-row .dia-especial-check label { margin: 0; font-size: 0.75rem; color: #64748b; cursor: pointer; white-space: nowrap; }
 
 /* =====================================================
    FECHAS NO LABORABLES
@@ -553,21 +562,27 @@
      MODAL: EDITAR TALLER
      ===================================================== -->
 <div class="modal fade" id="modal-taller">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header modal-header-themed">
-                <h6><i class="fa fa-building me-2"></i> Editar Taller</h6>
+                <h6><i class="fa fa-building mr-2"></i> Editar Taller</h6>
                 <button type="button" class="close text-white" onclick="$(this).closest('.modal').modal('hide')"><span>&times;</span></button>
             </div>
             <div class="modal-body">
                 <input type="hidden" id="edit-taller-id">
+
+                <!-- Horario por defecto -->
+                <div class="alert-info-custom mb-3">
+                    <i class="fa fa-info-circle"></i>
+                    El horario por defecto se aplica a todos los días activos. Para un día con horario especial (ej: sábado), active la opción "Horario especial" en ese día.
+                </div>
                 <div class="form-row-grid mb-3">
                     <div class="form-group">
-                        <label class="form-label"><i class="fa fa-clock"></i> Horario Apertura</label>
+                        <label class="form-label"><i class="fa fa-clock"></i> Horario Apertura (por defecto)</label>
                         <input type="time" class="form-control" id="edit-taller-apertura">
                     </div>
                     <div class="form-group">
-                        <label class="form-label"><i class="fa fa-clock"></i> Horario Cierre</label>
+                        <label class="form-label"><i class="fa fa-clock"></i> Horario Cierre (por defecto)</label>
                         <input type="time" class="form-control" id="edit-taller-cierre">
                     </div>
                 </div>
@@ -581,22 +596,15 @@
                         <input type="text" class="form-control" id="edit-taller-whatsapp">
                     </div>
                 </div>
-                <div class="mb-3">
-                    <label class="form-label"><i class="fa fa-calendar-week"></i> Días de Atención</label>
-                    <div class="dias-grid" id="edit-taller-dias">
-                        <div class="dia-check"><input type="checkbox" id="dia-lunes" value="lunes"><label for="dia-lunes">Lun</label></div>
-                        <div class="dia-check"><input type="checkbox" id="dia-martes" value="martes"><label for="dia-martes">Mar</label></div>
-                        <div class="dia-check"><input type="checkbox" id="dia-miercoles" value="miercoles"><label for="dia-miercoles">Mié</label></div>
-                        <div class="dia-check"><input type="checkbox" id="dia-jueves" value="jueves"><label for="dia-jueves">Jue</label></div>
-                        <div class="dia-check"><input type="checkbox" id="dia-viernes" value="viernes"><label for="dia-viernes">Vie</label></div>
-                        <div class="dia-check"><input type="checkbox" id="dia-sabado" value="sabado"><label for="dia-sabado">Sáb</label></div>
-                        <div class="dia-check"><input type="checkbox" id="dia-domingo" value="domingo"><label for="dia-domingo">Dom</label></div>
-                    </div>
+
+                <!-- Días de atención con horarios individuales -->
+                <label class="form-label"><i class="fa fa-calendar-week"></i> Días de Atención y Horarios</label>
+                <div class="dias-horarios-grid" id="edit-taller-dias">
                 </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary btn-sm" onclick="$(this).closest('.modal').modal('hide')">Cancelar</button>
-                <button type="button" class="btn btn-orange btn-sm" onclick="guardarTaller()"><i class="fa fa-save me-1"></i> Guardar</button>
+                <button type="button" class="btn btn-orange btn-sm" onclick="guardarTaller()"><i class="fa fa-save mr-1"></i> Guardar</button>
             </div>
         </div>
     </div>
@@ -697,10 +705,36 @@
                         {% endfor %}
                     </select>
                 </div>
+                <!-- Tipo: fecha específica o recurrente -->
+                <div class="mb-3">
+                    <label class="form-label"><i class="fa fa-repeat"></i> Tipo de Restricción</label>
+                    <div class="form-row-grid">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="franja-tipo" id="franja-tipo-fecha" value="fecha" checked>
+                            <label class="form-check-label" for="franja-tipo-fecha">Fecha específica</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="franja-tipo" id="franja-tipo-recurrente" value="recurrente">
+                            <label class="form-check-label" for="franja-tipo-recurrente">Recurrente (todos los días de la semana elegida)</label>
+                        </div>
+                    </div>
+                </div>
                 <div class="form-row-grid mb-3">
-                    <div class="form-group">
+                    <div class="form-group" id="franja-campo-fecha">
                         <label class="form-label"><i class="fa fa-calendar"></i> Fecha</label>
                         <input type="date" class="form-control" id="edit-franja-fecha">
+                    </div>
+                    <div class="form-group" id="franja-campo-dia" style="display: none;">
+                        <label class="form-label"><i class="fa fa-calendar-week"></i> Día de la Semana</label>
+                        <select class="form-control" id="edit-franja-dia-semana">
+                            <option value="lunes">Lunes</option>
+                            <option value="martes">Martes</option>
+                            <option value="miercoles">Miércoles</option>
+                            <option value="jueves">Jueves</option>
+                            <option value="viernes">Viernes</option>
+                            <option value="sabado">Sábado</option>
+                            <option value="domingo">Domingo</option>
+                        </select>
                     </div>
                 </div>
                 <div class="form-row-grid mb-3">
@@ -789,16 +823,47 @@ $(document).ready(function() {
             $('#edit-franja-motivo-otro').hide().val('');
         }
     });
+
+    // Toggle fecha/recurrente en franjas
+    $('input[name="franja-tipo"]').on('change', function() {
+        if ($(this).val() === 'recurrente') {
+            $('#franja-campo-fecha').hide();
+            $('#franja-campo-dia').show();
+        } else {
+            $('#franja-campo-fecha').show();
+            $('#franja-campo-dia').hide();
+        }
+    });
 });
 
 // =====================================================
 // UTILIDADES
 // =====================================================
-function formatDias(dias) {
+function formatDias(dias, horario_defecto_ap, horario_defecto_ci) {
     if (!dias || typeof dias !== 'object') return '<span class="text-muted">Sin configurar</span>';
     var activos = [];
     DIAS_SEMANA.forEach(function(d) {
-        if (dias[d]) activos.push('<span class="badge bg-success" style="font-size:0.7rem;">' + DIAS_LABELS[d] + '</span>');
+        var config = dias[d];
+        var activo = false;
+        var horario_especial = '';
+        if (typeof config === 'object' && config !== null) {
+            activo = config.activo;
+            if (activo && config.apertura && config.cierre) {
+                // Verificar si es diferente al horario por defecto
+                if (config.apertura !== horario_defecto_ap || config.cierre !== horario_defecto_ci) {
+                    horario_especial = ' ' + config.apertura + '-' + config.cierre;
+                }
+            }
+        } else {
+            activo = !!config;
+        }
+        if (activo) {
+            if (horario_especial) {
+                activos.push('<span class="badge bg-warning text-dark" style="font-size:0.7rem;" title="Horario especial">' + DIAS_LABELS[d] + horario_especial + '</span>');
+            } else {
+                activos.push('<span class="badge bg-success" style="font-size:0.7rem;">' + DIAS_LABELS[d] + '</span>');
+            }
+        }
     });
     return activos.length ? activos.join(' ') : '<span class="text-muted">Ninguno</span>';
 }
@@ -827,7 +892,7 @@ function cargarTalleres() {
                 '<td><strong>' + t.nombre + '</strong></td>' +
                 '<td>' + (t.horario_apertura || '-') + '</td>' +
                 '<td>' + (t.horario_cierre || '-') + '</td>' +
-                '<td>' + formatDias(t.dias_atencion) + '</td>' +
+                '<td>' + formatDias(t.dias_atencion, t.horario_apertura, t.horario_cierre) + '</td>' +
                 '<td>' + (t.status ? '<span class="badge-activo">Activo</span>' : '<span class="badge-inactivo">Inactivo</span>') + '</td>' +
                 '<td><button class="btn btn-accion btn-editar" onclick="editarTaller(' + idx + ')"><i class="fa fa-pencil"></i></button></td>' +
                 '</tr>';
@@ -845,16 +910,72 @@ function editarTaller(idx) {
     $('#edit-taller-email-op').val(t.email_operador);
     $('#edit-taller-whatsapp').val(t.whatsapp_operador);
 
+    // Renderizar grilla de días con horarios
+    var html = '';
+    var DIAS_FULL = {'lunes':'Lunes','martes':'Martes','miercoles':'Miércoles','jueves':'Jueves','viernes':'Viernes','sabado':'Sábado','domingo':'Domingo'};
     DIAS_SEMANA.forEach(function(d) {
-        $('#dia-' + d).prop('checked', t.dias_atencion && t.dias_atencion[d] === true);
+        var config = (t.dias_atencion || {})[d];
+        var activo = false, apertura = '', cierre = '', especial = false;
+
+        if (typeof config === 'object' && config !== null) {
+            activo = config.activo || false;
+            apertura = config.apertura || '';
+            cierre = config.cierre || '';
+            especial = !!(apertura && cierre);
+        } else {
+            activo = !!config;
+        }
+
+        html += '<div class="dia-horario-row' + (activo ? ' activo' : '') + '" id="dia-row-' + d + '">' +
+            '<div class="dia-check-box">' +
+                '<input type="checkbox" id="dia-' + d + '" ' + (activo ? 'checked' : '') + ' onchange="toggleDiaRow(\'' + d + '\')">' +
+                '<label for="dia-' + d + '">' + DIAS_FULL[d] + '</label>' +
+            '</div>' +
+            '<div class="dia-horario-inputs">' +
+                '<input type="time" class="form-control form-control-sm" id="dia-ap-' + d + '" value="' + apertura + '" placeholder="' + (t.horario_apertura || '') + '" ' + (!especial ? 'disabled' : '') + '>' +
+                '<span>a</span>' +
+                '<input type="time" class="form-control form-control-sm" id="dia-ci-' + d + '" value="' + cierre + '" placeholder="' + (t.horario_cierre || '') + '" ' + (!especial ? 'disabled' : '') + '>' +
+            '</div>' +
+            '<div class="dia-especial-check">' +
+                '<input type="checkbox" id="dia-esp-' + d + '" ' + (especial ? 'checked' : '') + ' onchange="toggleHorarioEspecial(\'' + d + '\')">' +
+                '<label for="dia-esp-' + d + '">Horario especial</label>' +
+            '</div>' +
+        '</div>';
     });
+    $('#edit-taller-dias').html(html);
 
     $('#modal-taller').modal('show');
 }
 
+function toggleDiaRow(d) {
+    var activo = $('#dia-' + d).is(':checked');
+    $('#dia-row-' + d).toggleClass('activo', activo);
+}
+
+function toggleHorarioEspecial(d) {
+    var especial = $('#dia-esp-' + d).is(':checked');
+    $('#dia-ap-' + d).prop('disabled', !especial);
+    $('#dia-ci-' + d).prop('disabled', !especial);
+    if (!especial) {
+        $('#dia-ap-' + d).val('');
+        $('#dia-ci-' + d).val('');
+    }
+}
+
 function guardarTaller() {
     var dias = {};
-    DIAS_SEMANA.forEach(function(d) { dias[d] = $('#dia-' + d).is(':checked'); });
+    DIAS_SEMANA.forEach(function(d) {
+        var activo = $('#dia-' + d).is(':checked');
+        var especial = $('#dia-esp-' + d).is(':checked');
+        var apertura = $('#dia-ap-' + d).val();
+        var cierre = $('#dia-ci-' + d).val();
+
+        if (especial && apertura && cierre) {
+            dias[d] = { activo: activo, apertura: apertura, cierre: cierre };
+        } else {
+            dias[d] = { activo: activo };
+        }
+    });
 
     $.post('{% url "parametros_talleres_guardar" %}', {
         csrfmiddlewaretoken: csrfToken,
@@ -1164,15 +1285,21 @@ function cargarFranjas() {
         franjasData = res.data;
         var html = '';
         res.data.forEach(function(f, idx) {
+            var fechaCol = '';
+            if (f.es_recurrente) {
+                fechaCol = '<span class="badge bg-info text-white" style="font-size:0.75rem;"><i class="fa fa-repeat mr-1"></i> Todos los ' + f.dia_semana_display + '</span>';
+            } else {
+                fechaCol = convertirFecha(f.fecha);
+            }
             html += '<tr>' +
                 '<td>' + f.taller_nombre + '</td>' +
-                '<td>' + convertirFecha(f.fecha) + '</td>' +
+                '<td>' + fechaCol + '</td>' +
                 '<td>' + f.hora_inicio + '</td>' +
                 '<td>' + f.hora_fin + '</td>' +
                 '<td>' + (f.motivo || '<span class="text-muted">-</span>') + '</td>' +
                 '<td>' + (f.status ? '<span class="badge-activo">Activa</span>' : '<span class="badge-inactivo">Inactiva</span>') + '</td>' +
                 '<td>' +
-                    '<button class="btn btn-accion btn-editar me-1" onclick="editarFranja(' + idx + ')"><i class="fa fa-pencil"></i></button>' +
+                    '<button class="btn btn-accion btn-editar mr-1" onclick="editarFranja(' + idx + ')"><i class="fa fa-pencil"></i></button>' +
                     '<button class="btn btn-accion btn-eliminar" onclick="eliminarFranja(' + f.id + ')"><i class="fa fa-trash"></i></button>' +
                 '</td></tr>';
         });
@@ -1185,6 +1312,10 @@ function nuevaFranja() {
     $('#edit-franja-id').val('');
     $('#edit-franja-taller').val($('#filtro-franjas-taller').val() || $('#edit-franja-taller option:first').val());
     $('#edit-franja-fecha').val('');
+    $('#edit-franja-dia-semana').val('lunes');
+    $('#franja-tipo-fecha').prop('checked', true).trigger('change');
+    $('#franja-campo-fecha').show();
+    $('#franja-campo-dia').hide();
     $('#edit-franja-inicio').val('');
     $('#edit-franja-fin').val('');
     $('#edit-franja-motivo').val('').trigger('change');
@@ -1197,11 +1328,24 @@ function editarFranja(idx) {
     var f = franjasData[idx];
     $('#edit-franja-id').val(f.id);
     $('#edit-franja-taller').val(f.taller_id);
-    $('#edit-franja-fecha').val(f.fecha);
     $('#edit-franja-inicio').val(f.hora_inicio);
     $('#edit-franja-fin').val(f.hora_fin);
 
-    // Verificar si el motivo está en las opciones del select
+    // Tipo: fecha o recurrente
+    if (f.es_recurrente) {
+        $('#franja-tipo-recurrente').prop('checked', true);
+        $('#franja-campo-fecha').hide();
+        $('#franja-campo-dia').show();
+        $('#edit-franja-dia-semana').val(f.dia_semana);
+        $('#edit-franja-fecha').val('');
+    } else {
+        $('#franja-tipo-fecha').prop('checked', true);
+        $('#franja-campo-fecha').show();
+        $('#franja-campo-dia').hide();
+        $('#edit-franja-fecha').val(f.fecha);
+    }
+
+    // Motivo
     var $select = $('#edit-franja-motivo');
     var existeOpcion = $select.find('option[value="' + f.motivo + '"]').length > 0;
     if (f.motivo && !existeOpcion) {
@@ -1217,20 +1361,34 @@ function editarFranja(idx) {
 }
 
 function guardarFranja() {
-    var fecha = $('#edit-franja-fecha').val();
+    var esRecurrente = $('#franja-tipo-recurrente').is(':checked');
     var inicio = $('#edit-franja-inicio').val();
     var fin = $('#edit-franja-fin').val();
 
-    if (!fecha || !inicio || !fin) {
-        Swal.fire('Campos requeridos', 'Fecha, hora inicio y hora fin son obligatorios.', 'warning');
+    if (!inicio || !fin) {
+        Swal.fire('Campos requeridos', 'Hora inicio y hora fin son obligatorios.', 'warning');
         return;
+    }
+
+    if (esRecurrente) {
+        if (!$('#edit-franja-dia-semana').val()) {
+            Swal.fire('Campo requerido', 'Seleccione un día de la semana.', 'warning');
+            return;
+        }
+    } else {
+        if (!$('#edit-franja-fecha').val()) {
+            Swal.fire('Campo requerido', 'Seleccione una fecha.', 'warning');
+            return;
+        }
     }
 
     $.post('{% url "parametros_franjas_guardar" %}', {
         csrfmiddlewaretoken: csrfToken,
         id: $('#edit-franja-id').val(),
         taller_id: $('#edit-franja-taller').val(),
-        fecha: fecha,
+        es_recurrente: esRecurrente ? 'true' : 'false',
+        dia_semana: esRecurrente ? $('#edit-franja-dia-semana').val() : '',
+        fecha: esRecurrente ? '' : $('#edit-franja-fecha').val(),
         hora_inicio: inicio,
         hora_fin: fin,
         motivo: $('#edit-franja-motivo').val() === 'Otro' ? $('#edit-franja-motivo-otro').val() : $('#edit-franja-motivo').val(),

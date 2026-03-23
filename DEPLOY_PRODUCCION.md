@@ -1,20 +1,31 @@
 # Guia de Despliegue a Produccion - RTV Pioli Django
 
-## Resumen de Cambios Implementados (v1.4)
+## Resumen de Cambios Implementados (v1.6)
 
-### Nuevas Funcionalidades:
-1. **Flujo de 4 pasos** - Reducido de 5 a 4 pasos. La seleccion de planta y tramite se realiza en la pagina de inicio (pre-paso)
+### Nuevas Funcionalidades (v1.6):
+1. **Gestion Sitio** - Panel con 9 pestanas para configurar el sitio web publico (general, hero, header, fondo, contacto, servicios, redes sociales, tipografia, footer)
+2. **Configuraciones del Turnero** - Panel con 5 pestanas para parametrizar talleres, tipos de tramite, capacidad, fechas no laborables y franjas anuladas
+3. **Feriados nacionales rapidos** - Botones para agregar feriados argentinos con un click
+4. **Motivos predefinidos en franjas anuladas** - Select2 con opciones comunes (mantenimiento, capacitacion, etc.)
+5. **Reorganizacion de menus** - Configuraciones movido al menu Turnos, Configuracion IA al final de su menu
+6. **Fix menu lateral** - Desactivacion de metisMenu para evitar bloqueo de clicks
+
+### Funcionalidades Anteriores (v1.4-v1.5):
+1. **Flujo de 4 pasos** - Reducido de 5 a 4 pasos
 2. **2 tipos de tramite** - Unificados a Vehiculos Livianos y Vehiculos Pesados
 3. **Intervalos diferenciados** - Livianos: 10 min / 2 simultaneos. Pesados: 20 min / 1 simultaneo
-4. **Franjas horarias anuladas** - Nuevo modelo FranjaAnulada para bloquear rangos de horarios especificos por dia y taller
-5. **Soporte DNI/CUIT** - Busqueda y registro de clientes por DNI (7-8 digitos) o CUIT (11 digitos)
-6. **Patentes de motos** - Formatos 123ABC (viejo) y A123BCD (Mercosur moto)
-7. **Leyendas condicionales** - Informacion especifica por planta y tipo de tramite al seleccionar
-8. **KB Asistente IA** - Documentos de tarifas y horarios en base de conocimiento, system prompt actualizado
-9. **Email mejorado** - Headers optimizados para entregabilidad en Hotmail/Outlook (Message-ID, X-Mailer, Precedence)
-10. **Logo en comprobante** - Logo RTV Pioli en el header del comprobante de impresion
-11. **Sistema de Reserva Temporal de Horarios** - Evita conflictos cuando multiples usuarios seleccionan el mismo horario
-12. **Pagina de Impresion de Turnos Publica** - `/turnero/imprimir/<codigo>/`
+4. **Franjas horarias anuladas** - Bloqueo de rangos de horarios especificos por dia y taller
+5. **Soporte DNI/CUIT** - Busqueda y registro de clientes por DNI o CUIT
+6. **KB Asistente IA** - Base de conocimiento con tarifas y horarios
+7. **Sistema de Reserva Temporal de Horarios** - Evita conflictos de seleccion simultanea
+
+### Pasos Post-Deploy:
+```bash
+python manage.py makemigrations
+python manage.py migrate
+python manage.py inicializar_menu_produccion --force
+sudo systemctl restart gunicorn
+```
 
 ---
 

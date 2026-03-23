@@ -891,17 +891,26 @@ def obtener_horarios_disponibles_ajax(request):
         hoy = ahora.date()
         hora_actual_sistema = ahora.time()
 
-        # Obtener franjas anuladas activas para esta fecha y taller
+        # Obtener horario del día específico
+        dia_nombre = ['lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado', 'domingo'][fecha.weekday()]
+        horario_apertura, horario_cierre = taller.get_horario_dia(dia_nombre)
+
+        if not horario_apertura or not horario_cierre:
+            return JsonResponse({'horarios': [], 'message': 'El taller no atiende este día'})
+
+        # Obtener franjas anuladas activas para esta fecha y taller (específicas + recurrentes)
         franjas_anuladas = FranjaAnulada.objects.filter(
             taller=taller,
-            fecha=fecha,
             status=True
+        ).filter(
+            Q(fecha=fecha, es_recurrente=False) |
+            Q(es_recurrente=True, dia_semana=dia_nombre)
         )
 
         # Generar horarios disponibles
         horarios = []
-        hora_actual = datetime.combine(fecha, taller.horario_apertura)
-        hora_cierre = datetime.combine(fecha, taller.horario_cierre)
+        hora_actual = datetime.combine(fecha, horario_apertura)
+        hora_cierre = datetime.combine(fecha, horario_cierre)
 
         while hora_actual < hora_cierre:
             hora_time = hora_actual.time()
@@ -1067,15 +1076,18 @@ def obtener_fechas_disponibles_ajax(request):
             fecha = hoy + timedelta(days=i)
             dia_nombre = ['lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado', 'domingo'][fecha.weekday()]
 
+            # Obtener horario del día (soporta horarios diferenciados)
+            horario_apertura_dia, horario_cierre_dia = taller.get_horario_dia(dia_nombre)
+
             # Deshabilitar si no atiende ese día de la semana
-            if not dias_atencion.get(dia_nombre, False):
+            if not horario_apertura_dia or not horario_cierre_dia:
                 fechas_deshabilitadas.append(fecha.isoformat())
                 continue
 
             # Si es hoy, verificar si aún quedan horarios disponibles
             if fecha == hoy:
                 # Si ya pasó el horario de cierre, deshabilitar hoy
-                if hora_actual >= taller.horario_cierre:
+                if hora_actual >= horario_cierre_dia:
                     fechas_deshabilitadas.append(fecha.isoformat())
                     continue
 
@@ -1086,8 +1098,8 @@ def obtener_fechas_disponibles_ajax(request):
                     config = ConfiguracionTaller.objects.get(taller=taller, tipo_vehiculo=tipo_vehiculo)
 
                     # Buscar el próximo horario disponible
-                    hora_iteracion = datetime.combine(fecha, taller.horario_apertura)
-                    hora_cierre = datetime.combine(fecha, taller.horario_cierre)
+                    hora_iteracion = datetime.combine(fecha, horario_apertura_dia)
+                    hora_cierre = datetime.combine(fecha, horario_cierre_dia)
                     hay_horarios_disponibles = False
 
                     while hora_iteracion < hora_cierre:

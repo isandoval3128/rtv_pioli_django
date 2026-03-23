@@ -55,12 +55,12 @@ class Taller(models.Model):
         verbose_name="Longitud"
     )
 
-    # Horarios de atención
-    horario_apertura = models.TimeField(verbose_name="Hora de Apertura")
-    horario_cierre = models.TimeField(verbose_name="Hora de Cierre")
+    # Horarios de atención (por defecto para todos los días)
+    horario_apertura = models.TimeField(verbose_name="Hora de Apertura (por defecto)")
+    horario_cierre = models.TimeField(verbose_name="Hora de Cierre (por defecto)")
     dias_atencion = models.JSONField(
         default=dict,
-        help_text='Formato: {"lunes": true, "martes": true, "miercoles": true, ...}',
+        help_text='Formato: {"lunes": {"activo": true, "apertura": "08:00", "cierre": "17:00"}, ...} o formato legacy {"lunes": true, ...}',
         verbose_name="Días de Atención"
     )
 
@@ -131,6 +131,49 @@ class Taller(models.Model):
         if self.planta:
             return self.planta.longitud
         return self.longitud
+
+    def dia_esta_activo(self, dia_nombre):
+        """Verifica si un día de la semana está activo para atención"""
+        dias = self.dias_atencion or {}
+        config_dia = dias.get(dia_nombre, False)
+        if isinstance(config_dia, dict):
+            return config_dia.get('activo', False)
+        return bool(config_dia)
+
+    def get_horario_dia(self, dia_nombre):
+        """
+        Retorna (apertura, cierre) para un día específico.
+        Si el día tiene horario personalizado, lo usa.
+        Si no, usa los horarios por defecto del taller.
+        Retorna (None, None) si el día no está activo.
+        """
+        from datetime import time as dt_time
+
+        dias = self.dias_atencion or {}
+        config_dia = dias.get(dia_nombre, False)
+
+        # Formato nuevo: {"activo": true, "apertura": "08:00", "cierre": "12:00"}
+        if isinstance(config_dia, dict):
+            if not config_dia.get('activo', False):
+                return (None, None)
+            apertura_str = config_dia.get('apertura', '')
+            cierre_str = config_dia.get('cierre', '')
+            if apertura_str and cierre_str:
+                try:
+                    h, m = map(int, apertura_str.split(':'))
+                    apertura = dt_time(h, m)
+                    h, m = map(int, cierre_str.split(':'))
+                    cierre = dt_time(h, m)
+                    return (apertura, cierre)
+                except (ValueError, AttributeError):
+                    pass
+            # Si tiene formato nuevo pero sin horarios, usa los por defecto
+            return (self.horario_apertura, self.horario_cierre)
+
+        # Formato legacy: true/false
+        if not config_dia:
+            return (None, None)
+        return (self.horario_apertura, self.horario_cierre)
 
 
 class TipoVehiculo(models.Model):
@@ -312,14 +355,31 @@ class ConfiguracionTaller(models.Model):
 
 
 class FranjaAnulada(models.Model):
-    """Franjas horarias anuladas para un taller en una fecha especifica"""
+    """Franjas horarias anuladas para un taller, por fecha específica o recurrente por día de semana"""
+
+    DIA_SEMANA_CHOICES = [
+        ('lunes', 'Lunes'),
+        ('martes', 'Martes'),
+        ('miercoles', 'Miércoles'),
+        ('jueves', 'Jueves'),
+        ('viernes', 'Viernes'),
+        ('sabado', 'Sábado'),
+        ('domingo', 'Domingo'),
+    ]
+
     taller = models.ForeignKey(
         Taller,
         on_delete=models.CASCADE,
         related_name='franjas_anuladas',
         verbose_name="Taller"
     )
-    fecha = models.DateField(verbose_name="Fecha")
+    fecha = models.DateField(null=True, blank=True, verbose_name="Fecha",
+        help_text="Solo para franjas de fecha específica")
+    es_recurrente = models.BooleanField(default=False, verbose_name="Recurrente",
+        help_text="Si es True, se aplica todos los días de la semana indicada")
+    dia_semana = models.CharField(max_length=10, blank=True, choices=DIA_SEMANA_CHOICES,
+        verbose_name="Día de la semana",
+        help_text="Solo para franjas recurrentes")
     hora_inicio = models.TimeField(verbose_name="Hora inicio")
     hora_fin = models.TimeField(verbose_name="Hora fin")
     motivo = models.CharField(max_length=200, blank=True, verbose_name="Motivo")
@@ -329,10 +389,22 @@ class FranjaAnulada(models.Model):
     class Meta:
         verbose_name = "Franja Horaria Anulada"
         verbose_name_plural = "Franjas Horarias Anuladas"
-        ordering = ['fecha', 'hora_inicio']
+        ordering = ['-es_recurrente', 'dia_semana', 'fecha', 'hora_inicio']
 
     def __str__(self):
+        if self.es_recurrente:
+            return f"{self.taller.get_nombre()} - Todos los {self.get_dia_semana_display()} {self.hora_inicio}-{self.hora_fin}"
         return f"{self.taller.get_nombre()} - {self.fecha} {self.hora_inicio}-{self.hora_fin}"
+
+    def aplica_en_fecha(self, fecha):
+        """Verifica si esta franja aplica en una fecha dada"""
+        if not self.status:
+            return False
+        if self.es_recurrente:
+            dias = ['lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado', 'domingo']
+            dia_nombre = dias[fecha.weekday()]
+            return dia_nombre == self.dia_semana
+        return self.fecha == fecha
 
 
 class Vehiculo(models.Model):

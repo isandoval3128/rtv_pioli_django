@@ -256,7 +256,7 @@ def parametros_fechas_guardar(request):
 def parametros_franjas_ajax(request):
     """Lista de franjas anuladas"""
     taller_id = request.GET.get('taller_id')
-    franjas = FranjaAnulada.objects.select_related('taller').all().order_by('-fecha', 'hora_inicio')
+    franjas = FranjaAnulada.objects.select_related('taller').all().order_by('-es_recurrente', 'dia_semana', '-fecha', 'hora_inicio')
     if taller_id:
         franjas = franjas.filter(taller_id=taller_id)
 
@@ -267,6 +267,9 @@ def parametros_franjas_ajax(request):
             'taller_id': f.taller_id,
             'taller_nombre': f.taller.get_nombre(),
             'fecha': f.fecha.strftime('%Y-%m-%d') if f.fecha else '',
+            'es_recurrente': f.es_recurrente,
+            'dia_semana': f.dia_semana or '',
+            'dia_semana_display': f.get_dia_semana_display() if f.dia_semana else '',
             'hora_inicio': f.hora_inicio.strftime('%H:%M') if f.hora_inicio else '',
             'hora_fin': f.hora_fin.strftime('%H:%M') if f.hora_fin else '',
             'motivo': f.motivo or '',
@@ -293,7 +296,13 @@ def parametros_franjas_guardar(request):
         return JsonResponse({'success': False, 'error': 'Taller requerido'}, status=400)
 
     franja.taller_id = taller_id
-    franja.fecha = request.POST.get('fecha') or None
+    franja.es_recurrente = request.POST.get('es_recurrente') == 'true'
+    if franja.es_recurrente:
+        franja.dia_semana = request.POST.get('dia_semana', '')
+        franja.fecha = None
+    else:
+        franja.dia_semana = ''
+        franja.fecha = request.POST.get('fecha') or None
     franja.hora_inicio = request.POST.get('hora_inicio') or None
     franja.hora_fin = request.POST.get('hora_fin') or None
     franja.motivo = request.POST.get('motivo', '')
