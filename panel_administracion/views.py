@@ -1876,6 +1876,92 @@ def dashboard_turnos_ajax(request):
     })
 
 
+@login_required(login_url='/panel/login/')
+def dashboard_turnos_drilldown(request):
+    """Retorna datos de detalle al hacer click en un gráfico del dashboard de turnos"""
+    if request.method != 'POST':
+        return JsonResponse({'error': 'Método no permitido'}, status=400)
+
+    chart = request.POST.get('chart', '')
+    value = request.POST.get('value', '')
+    periodo = request.POST.get('periodo', 'mes')
+    fecha_desde_str = request.POST.get('fecha_desde', '')
+    fecha_hasta_str = request.POST.get('fecha_hasta', '')
+
+    hoy = timezone.localdate()
+    if periodo == 'hoy':
+        fecha_desde, fecha_hasta = hoy, hoy
+    elif periodo == 'semana':
+        fecha_desde, fecha_hasta = hoy - timedelta(days=7), hoy
+    elif periodo == 'custom' and fecha_desde_str and fecha_hasta_str:
+        fecha_desde = datetime.strptime(fecha_desde_str, '%Y-%m-%d').date()
+        fecha_hasta = datetime.strptime(fecha_hasta_str, '%Y-%m-%d').date()
+    else:
+        fecha_desde, fecha_hasta = hoy - timedelta(days=30), hoy
+
+    turnos = Turno.objects.filter(fecha__gte=fecha_desde, fecha__lte=fecha_hasta)
+    rows = []
+    title = value
+    summary = {}
+
+    def turno_to_row(t):
+        return {
+            'codigo': t.codigo,
+            'cliente': str(t.cliente) if t.cliente else '-',
+            'vehiculo': t.vehiculo.dominio if t.vehiculo else '-',
+            'fecha': t.fecha.strftime('%d/%m/%Y') if t.fecha else '-',
+            'hora': t.hora_inicio.strftime('%H:%M') if t.hora_inicio else '-',
+            'estado': t.estado,
+            'taller': t.taller.get_nombre() if t.taller else '-',
+        }
+
+    if chart == 'turnosDia':
+        parts = value.split('/')
+        if len(parts) == 2:
+            dia, mes = int(parts[0]), int(parts[1])
+            year = fecha_hasta.year if mes <= fecha_hasta.month else fecha_hasta.year - 1
+            from datetime import date
+            target_date = date(year, mes, dia)
+            qs = turnos.filter(fecha=target_date).select_related('cliente', 'vehiculo', 'taller').order_by('hora_inicio')
+            summary = {'total': qs.count(), 'label': f'Turnos del {value}'}
+            rows = [turno_to_row(t) for t in qs[:50]]
+            title = f'Turnos del {value}'
+
+    elif chart == 'estados':
+        estado_map = {'Pendiente': 'PENDIENTE', 'Confirmado': 'CONFIRMADO', 'Cancelado': 'CANCELADO', 'Vencido': 'VENCIDO'}
+        estado = estado_map.get(value, value)
+        qs = turnos.filter(estado=estado).select_related('cliente', 'vehiculo', 'taller').order_by('-fecha', '-hora_inicio')
+        summary = {'total': qs.count(), 'label': f'Estado: {value}'}
+        rows = [turno_to_row(t) for t in qs[:50]]
+        title = f'Turnos {value}'
+
+    elif chart == 'talleres':
+        qs = turnos.filter(taller__nombre=value).select_related('cliente', 'vehiculo', 'taller').order_by('-fecha', '-hora_inicio')
+        summary = {'total': qs.count(), 'label': f'Taller: {value}'}
+        rows = [turno_to_row(t) for t in qs[:50]]
+        title = f'Turnos en {value}'
+
+    elif chart == 'tipos':
+        qs = turnos.filter(tipo_vehiculo__nombre=value).select_related('cliente', 'vehiculo', 'taller').order_by('-fecha', '-hora_inicio')
+        summary = {'total': qs.count(), 'label': f'Tipo: {value}'}
+        rows = [turno_to_row(t) for t in qs[:50]]
+        title = f'Turnos tipo {value}'
+
+    elif chart == 'horarios':
+        hora = int(value.replace(':00', ''))
+        qs = turnos.filter(hora_inicio__hour=hora).select_related('cliente', 'vehiculo', 'taller').order_by('-fecha')
+        summary = {'total': qs.count(), 'label': f'Turnos a las {value}'}
+        rows = [turno_to_row(t) for t in qs[:50]]
+        title = f'Turnos a las {value}'
+
+    return JsonResponse({
+        'title': title,
+        'summary': summary,
+        'rows': rows,
+        'total': len(rows),
+    })
+
+
 # ============================================
 # GESTIÓN DEL SITIO WEB
 # ============================================

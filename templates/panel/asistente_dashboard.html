@@ -1,166 +1,474 @@
 {% extends "panel/base.html" %}
 {% block extraCss %}
 <style>
-    html, body { overflow-x: hidden; max-width: 100%; }
+/* ══════════════════════════════════════════════════
+   DASHBOARD ASISTENTE IA — HIGH IMPACT DESIGN
+   ECharts + Spotlight + Semantic Colors
+   ══════════════════════════════════════════════════ */
 
-    /* Cards resumen - comunes */
-    .stat-card {
-        background: #fff; border-radius: 12px; padding: 18px 20px;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.06); border: 1px solid #eef2f7;
-        position: relative; overflow: hidden;
-    }
-    .stat-card::before {
-        content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%;
-        border-radius: 12px 0 0 12px;
-    }
-    .stat-card-label { font-size: 12px; color: #6c757d; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px; }
-    .stat-card-value { font-size: 28px; font-weight: 700; color: #13304D; margin: 4px 0 2px; }
-    .stat-card-desc { font-size: 11px; color: #9ca3af; font-weight: 400; margin: 0; }
-    .stat-card-icon { position: absolute; top: 16px; right: 16px; font-size: 24px; opacity: 0.15; color: #13304D; }
+:root {
+    --navy-900: #0a1628;
+    --navy-800: #0f2137;
+    --navy-700: #13304D;
+    --navy-600: #1a4166;
+    --navy-500: #245580;
+    --surface-bg: #f0f2f7;
+    --surface-card: #ffffff;
+    --accent-money: #10b981;
+    --accent-money-bg: #ecfdf5;
+    --accent-count: #3b82f6;
+    --accent-count-bg: #eff6ff;
+    --accent-time: #8b5cf6;
+    --accent-time-bg: #f5f3ff;
+    --accent-alert: #f59e0b;
+    --accent-alert-bg: #fffbeb;
+    --accent-danger: #ef4444;
+    --accent-danger-bg: #fef2f2;
+    --accent-geo: #06b6d4;
+    --accent-geo-bg: #ecfeff;
+    --chart-1: #3b82f6;
+    --chart-2: #10b981;
+    --chart-3: #8b5cf6;
+    --chart-4: #f59e0b;
+    --chart-5: #ef4444;
+    --chart-6: #06b6d4;
+    --shadow-1: 0 1px 3px rgba(10,22,40,0.06), 0 1px 2px rgba(10,22,40,0.04);
+    --shadow-2: 0 4px 16px rgba(10,22,40,0.08), 0 2px 4px rgba(10,22,40,0.04);
+    --shadow-3: 0 12px 32px rgba(10,22,40,0.12), 0 4px 8px rgba(10,22,40,0.06);
+}
 
-    /* Fila principal: 4 KPIs */
-    .stat-cards-primary { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 16px; }
-    .stat-cards-primary .stat-card:nth-child(1)::before { background: linear-gradient(180deg, #003466, #0056b3); }
-    .stat-cards-primary .stat-card:nth-child(2)::before { background: linear-gradient(180deg, #0056b3, #2196F3); }
-    .stat-cards-primary .stat-card:nth-child(3)::before { background: linear-gradient(180deg, #28a745, #4CAF50); }
-    .stat-cards-primary .stat-card:nth-child(4)::before { background: linear-gradient(180deg, #ffc107, #ff9800); }
+html, body { overflow-x: hidden; max-width: 100%; }
 
-    /* Fila secundaria: 2 KPIs técnicos */
-    .stat-cards-secondary { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px; }
-    .stat-cards-secondary .stat-card { background: #f9fbfd; }
-    .stat-cards-secondary .stat-card-value { font-size: 22px; }
-    .stat-cards-secondary .stat-card-icon { font-size: 20px; }
-    .stat-cards-secondary .stat-card:nth-child(1)::before { background: linear-gradient(180deg, #17a2b8, #00bcd4); }
-    .stat-cards-secondary .stat-card:nth-child(2)::before { background: linear-gradient(180deg, #6f42c1, #9c27b0); }
-    .stat-cards-secondary .stat-card:nth-child(3)::before { background: linear-gradient(180deg, #e67e22, #f39c12); }
+/* ── Dashboard Header (inside card) ── */
+.dash-header {
+    background: linear-gradient(135deg, var(--navy-900) 0%, var(--navy-700) 60%, var(--navy-600) 100%);
+    padding: 24px 28px;
+    color: white;
+    position: relative;
+    overflow: hidden;
+    border-radius: 12px;
+    margin-bottom: 20px;
+}
+.dash-header::before {
+    content: '';
+    position: absolute;
+    top: -50%; right: -10%;
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(139,92,246,0.06) 0%, transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+}
+.dash-header-top {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 20px; position: relative; z-index: 2;
+}
+.dash-title { font-size: 20px; font-weight: 700; letter-spacing: -0.3px; }
+.dash-title i { margin-right: 10px; opacity: 0.7; }
+.dash-subtitle { font-size: 12px; color: rgba(255,255,255,0.5); margin-top: 2px; }
 
-    /* Periodo selector - Card contenedora */
-    .periodo-card {
-        background: #fff; border-radius: 12px; padding: 16px 20px;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.06); border: 1px solid #eef2f7;
-        margin-bottom: 20px;
-    }
-    .periodo-header {
-        display: flex; align-items: center; justify-content: space-between;
-        gap: 12px; flex-wrap: wrap;
-    }
-    .periodo-header-left {
-        display: flex; align-items: center; gap: 10px;
-    }
-    .periodo-icon {
-        width: 36px; height: 36px; border-radius: 8px;
-        background: linear-gradient(135deg, #003466, #0056b3);
-        display: flex; align-items: center; justify-content: center;
-        color: #fff; font-size: 14px; flex-shrink: 0;
-    }
-    .periodo-title {
-        font-size: 14px; font-weight: 600; color: #13304D; line-height: 1.2;
-    }
-    .periodo-subtitle {
-        font-size: 11px; color: #9ca3af; font-weight: 400;
-    }
-    .periodo-controls {
-        display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
-    }
-    .periodo-presets {
-        display: flex; gap: 4px; background: #f4f6f9; border-radius: 8px; padding: 3px;
-    }
-    .periodo-btn {
-        padding: 6px 14px; border-radius: 6px; border: none;
-        background: transparent; cursor: pointer; font-size: 12px; font-weight: 600;
-        color: #6c757d; transition: all 0.2s; white-space: nowrap;
-    }
-    .periodo-btn:hover { color: #003466; background: rgba(0,52,102,0.06); }
-    .periodo-btn.active { background: #003466; color: #fff; box-shadow: 0 2px 6px rgba(0,52,102,0.25); }
-    .periodo-divider {
-        width: 1px; height: 28px; background: #dee2e6; margin: 0 6px;
-    }
-    .periodo-custom {
-        display: flex; gap: 4px; align-items: center; flex-wrap: wrap;
-    }
-    .periodo-custom input {
-        font-size: 12px; padding: 6px 10px; border-radius: 6px; border: 1px solid #dee2e6;
-        max-width: 130px; color: #495057; background: #f9fbfd; transition: border-color 0.2s;
-    }
-    .periodo-custom input:focus { outline: none; border-color: #003466; background: #fff; }
-    .periodo-custom-separator { font-size: 12px; color: #adb5bd; font-weight: 500; }
-    .periodo-btn-aplicar {
-        padding: 6px 14px; border-radius: 6px; border: 1px solid #003466;
-        background: transparent; cursor: pointer; font-size: 12px; font-weight: 600;
-        color: #003466; transition: all 0.2s; white-space: nowrap;
-    }
-    .periodo-btn-aplicar:hover { background: #003466; color: #fff; }
-    .periodo-rango-activo {
-        display: none; font-size: 11px; color: #003466; font-weight: 500;
-        background: #e8f0fe; padding: 3px 10px; border-radius: 12px;
-    }
-    .periodo-rango-activo.visible { display: inline-flex; align-items: center; gap: 4px; }
+/* ── KPI Strip (glassmorphism) ── */
+.kpi-strip {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    position: relative;
+    z-index: 1;
+}
+.kpi-item {
+    background: rgba(255,255,255,0.07);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 12px;
+    padding: 16px 18px;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+    cursor: default;
+}
+.kpi-item:hover {
+    background: rgba(255,255,255,0.12);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+}
+.kpi-item::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 3px;
+}
+.kpi-item[data-semantic="count"]::after { background: var(--accent-count); }
+.kpi-item[data-semantic="money"]::after { background: var(--accent-money); }
+.kpi-item[data-semantic="alert"]::after { background: var(--accent-alert); }
+.kpi-item[data-semantic="time"]::after  { background: var(--accent-time); }
+.kpi-item[data-semantic="geo"]::after   { background: var(--accent-geo); }
+.kpi-item[data-semantic="danger"]::after { background: var(--accent-danger); }
 
-    /* Charts grid */
-    .charts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 24px; }
-    .chart-card {
-        background: #fff; border-radius: 12px; padding: 20px;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.06); border: 1px solid #eef2f7;
-    }
-    .chart-card-title { font-size: 14px; font-weight: 600; color: #13304D; margin-bottom: 16px; }
-    .chart-card canvas { max-height: 280px; width: 100% !important; }
-    .chart-card-full { grid-column: 1 / -1; }
+.kpi-item[data-semantic="count"] .kpi-icon { background: rgba(59,130,246,0.15); color: var(--accent-count); }
+.kpi-item[data-semantic="money"] .kpi-icon { background: rgba(16,185,129,0.15); color: var(--accent-money); }
+.kpi-item[data-semantic="alert"] .kpi-icon { background: rgba(245,158,11,0.15); color: var(--accent-alert); }
+.kpi-item[data-semantic="time"] .kpi-icon  { background: rgba(139,92,246,0.15); color: var(--accent-time); }
+.kpi-item[data-semantic="geo"] .kpi-icon   { background: rgba(6,182,212,0.15); color: var(--accent-geo); }
+.kpi-item[data-semantic="danger"] .kpi-icon { background: rgba(239,68,68,0.15); color: var(--accent-danger); }
 
-    /* Botón enviar resumen inline */
-    .chart-title-row { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+.kpi-icon {
+    width: 34px; height: 34px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; margin-bottom: 10px;
+    background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.7);
+}
+.kpi-label {
+    font-size: 10px; font-weight: 500; color: rgba(255,255,255,0.5);
+    text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 4px;
+}
+.kpi-value {
+    font-size: 24px; font-weight: 800; color: white;
+    line-height: 1.1; letter-spacing: -0.5px;
+}
+.kpi-desc {
+    font-size: 10px; color: rgba(255,255,255,0.35); margin-top: 4px;
+}
 
-    /* Sugerencias ranking */
-    .sug-ranking { list-style: none; padding: 0; margin: 0; }
-    .sug-ranking-item {
-        display: flex; align-items: center; gap: 12px; padding: 10px 0;
-        border-bottom: 1px solid #f0f0f0;
-    }
-    .sug-ranking-item:last-child { border-bottom: none; }
-    .sug-ranking-pos { width: 28px; height: 28px; border-radius: 50%; background: #e8f0fe; color: #003466; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 12px; flex-shrink: 0; }
-    .sug-ranking-pos.top3 { background: linear-gradient(135deg, #003466, #0056b3); color: #fff; }
-    .sug-ranking-tema { flex: 1; font-size: 13px; }
-    .sug-ranking-count { font-weight: 700; font-size: 14px; color: #13304D; }
-    .sug-ranking-bar { width: 60px; height: 6px; background: #eef2f7; border-radius: 3px; overflow: hidden; }
-    .sug-ranking-bar-fill { height: 100%; border-radius: 3px; background: linear-gradient(90deg, #003466, #0056b3); }
+/* ── Period Selector (filter bar style) ── */
+.filter-bar {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+.filter-bar-label {
+    font-size: 12px; font-weight: 600; color: var(--navy-700);
+    text-transform: uppercase; letter-spacing: 0.5px;
+    display: flex; align-items: center; gap: 6px; flex-shrink: 0;
+}
+.periodo-presets {
+    display: flex; gap: 4px; background: #f1f5f9; border-radius: 8px; padding: 3px;
+}
+.periodo-btn {
+    padding: 6px 14px; border-radius: 6px; border: none;
+    background: transparent; cursor: pointer; font-size: 12px; font-weight: 600;
+    color: #64748b; transition: all 0.2s; white-space: nowrap;
+}
+.periodo-btn:hover { color: var(--navy-700); background: rgba(19,48,77,0.06); }
+.periodo-btn.active { background: var(--navy-700); color: #fff; box-shadow: 0 2px 6px rgba(19,48,77,0.25); }
+.filter-divider { width: 1px; height: 28px; background: #e2e8f0; }
+.periodo-custom {
+    display: flex; gap: 4px; align-items: center; flex-wrap: wrap;
+}
+.periodo-custom input {
+    font-size: 12px; padding: 6px 10px; border-radius: 6px; border: 1px solid #e2e8f0;
+    max-width: 130px; color: #475569; background: #f9fbfd; transition: border-color 0.2s;
+}
+.periodo-custom input:focus { outline: none; border-color: var(--navy-700); background: #fff; }
+.periodo-custom-separator { font-size: 12px; color: #94a3b8; font-weight: 500; }
+.periodo-btn-aplicar {
+    padding: 6px 14px; border-radius: 6px; border: 1px solid var(--navy-700);
+    background: transparent; cursor: pointer; font-size: 12px; font-weight: 600;
+    color: var(--navy-700); transition: all 0.2s; white-space: nowrap;
+}
+.periodo-btn-aplicar:hover { background: var(--navy-700); color: #fff; }
+.periodo-rango-activo {
+    display: none; font-size: 11px; color: var(--navy-700); font-weight: 500;
+    background: var(--accent-count-bg); padding: 3px 10px; border-radius: 12px;
+}
+.periodo-rango-activo.visible { display: inline-flex; align-items: center; gap: 4px; }
 
-    /* Loading */
-    .dashboard-loading { text-align: center; padding: 60px; color: #6c757d; }
-    .dashboard-loading i { font-size: 32px; margin-bottom: 12px; }
+/* ── KPI Strip Secondary (white cards) ── */
+.kpi-strip-secondary {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    padding: 20px 0 0;
+}
+.kpi-secondary {
+    background: var(--surface-card);
+    border-radius: 12px;
+    padding: 16px 18px;
+    box-shadow: var(--shadow-1);
+    border: 1px solid rgba(0,0,0,0.04);
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+.kpi-secondary:hover {
+    box-shadow: var(--shadow-2);
+    transform: translateY(-2px);
+}
+.kpi-secondary .kpi-sec-icon {
+    width: 42px; height: 42px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; flex-shrink: 0;
+}
+.kpi-secondary .kpi-sec-label { font-size: 11px; color: #64748b; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; }
+.kpi-secondary .kpi-sec-value { font-size: 22px; font-weight: 800; color: var(--navy-900); letter-spacing: -0.5px; }
+.kpi-secondary .kpi-sec-desc { font-size: 10px; color: #94a3b8; margin-top: 2px; }
 
-    @media (max-width: 992px) {
-        .stat-cards-primary { grid-template-columns: repeat(2, 1fr); }
-        .stat-cards-secondary { grid-template-columns: repeat(2, 1fr); }
-    }
-    @media (max-width: 768px) {
-        .charts-grid { grid-template-columns: 1fr; }
-        .stat-cards-primary { grid-template-columns: repeat(2, 1fr); }
-        .stat-cards-secondary { grid-template-columns: 1fr; }
-        .stat-card-value { font-size: 22px; }
-        .stat-card-desc { font-size: 10px; }
-        .chart-card { padding: 14px; }
-        .chart-card canvas { max-height: 220px; }
-        .chart-title-row { flex-direction: column; align-items: flex-start; gap: 8px; }
-        .periodo-header { flex-direction: column; align-items: flex-start; }
-        .periodo-controls { width: 100%; }
-        .periodo-divider { display: none; }
-        .periodo-custom { width: 100%; }
-        .periodo-custom input { flex: 1; min-width: 0; }
-        .sug-ranking-bar { width: 40px; }
-        .sug-ranking-item { gap: 8px; }
-        .sug-ranking-tema { font-size: 12px; }
-    }
-    @media (max-width: 480px) {
-        .stat-cards-primary { grid-template-columns: 1fr; }
-        .stat-cards-secondary { grid-template-columns: 1fr; }
-        .stat-card { padding: 14px 16px; }
-        .stat-card-value { font-size: 20px; }
-        .stat-card-icon { font-size: 20px; top: 12px; right: 12px; }
-        .periodo-btn { padding: 5px 10px; font-size: 11px; }
-        .periodo-presets { flex-wrap: wrap; }
-        .periodo-header-left { display: none; }
-        .chart-card-title { font-size: 13px; }
-        .sug-ranking-bar { display: none; }
-    }
+/* ── Charts Area ── */
+.charts-area {
+    padding: 20px 0;
+}
+.charts-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+}
+
+/* ── Chart Card v2 ── */
+.chart-card {
+    background: var(--surface-card);
+    border-radius: 14px;
+    box-shadow: var(--shadow-1);
+    overflow: hidden;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(0,0,0,0.04);
+    position: relative;
+    cursor: pointer;
+}
+.chart-card:hover {
+    box-shadow: var(--shadow-2);
+    transform: translateY(-2px);
+}
+.chart-card-full { grid-column: 1 / -1; }
+.chart-card-header {
+    padding: 16px 20px 8px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+}
+.chart-card-title {
+    font-size: 14px; font-weight: 700; color: var(--navy-800); line-height: 1.3;
+}
+.chart-card-badge {
+    font-size: 10px; font-weight: 600; padding: 3px 8px; border-radius: 6px;
+    text-transform: uppercase; letter-spacing: 0.5px; flex-shrink: 0;
+}
+.chart-card-badge.bar { background: var(--accent-count-bg); color: var(--accent-count); }
+.chart-card-badge.line { background: var(--accent-time-bg); color: var(--accent-time); }
+.chart-card-badge.pie { background: var(--accent-money-bg); color: var(--accent-money); }
+.chart-card-badge.ranking { background: var(--accent-alert-bg); color: #d97706; }
+
+.chart-card-body {
+    padding: 8px 20px 16px;
+    min-height: 280px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.chart-card-body > div {
+    width: 100%;
+    height: 280px;
+}
+.chart-card-hint {
+    padding: 0 20px 12px;
+    font-size: 10px;
+    color: #94a3b8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+}
+.chart-card-hint i { color: var(--accent-count); font-size: 11px; }
+
+/* ── Spotlight (expanded chart) ── */
+.spotlight-backdrop {
+    position: fixed; inset: 0;
+    background: rgba(10,22,40,0.65);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    z-index: 9990;
+    opacity: 0; pointer-events: none; display: none;
+    transition: opacity 0.35s ease;
+    cursor: pointer;
+}
+.spotlight-backdrop.active { opacity: 1; pointer-events: auto; }
+
+.spotlight-chart {
+    position: fixed;
+    z-index: 9991;
+    background: var(--surface-card);
+    border-radius: 16px;
+    box-shadow: 0 20px 60px rgba(10,22,40,0.35);
+    overflow: hidden;
+    display: none;
+    transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+    transform: scale(0.85);
+    opacity: 0;
+    left: 12.5vw; top: 5vh;
+    width: 75vw; height: 85vh;
+}
+.spotlight-chart.active { transform: scale(1); opacity: 1; }
+
+.spotlight-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px 24px;
+    background: linear-gradient(135deg, var(--navy-900), var(--navy-700));
+    color: #fff;
+}
+.spotlight-header h6 {
+    margin: 0; font-size: 15px; font-weight: 600;
+    display: flex; align-items: center; gap: 8px;
+}
+.spotlight-header .spotlight-badge {
+    font-size: 10px; padding: 3px 8px; border-radius: 6px;
+    background: rgba(255,255,255,0.15); font-weight: 500;
+    text-transform: uppercase; letter-spacing: 0.5px;
+}
+.spotlight-close {
+    background: rgba(255,255,255,0.12); border: none; color: #fff;
+    width: 34px; height: 34px; border-radius: 8px; cursor: pointer;
+    font-size: 14px; display: flex; align-items: center; justify-content: center;
+    transition: background 0.2s;
+}
+.spotlight-close:hover { background: rgba(255,255,255,0.25); }
+.spotlight-body { padding: 16px 24px 20px; position: relative; }
+.spotlight-body > div { width: 100%; height: calc(85vh - 120px); }
+.spotlight-hint {
+    text-align: center; padding: 0 24px 14px;
+    font-size: 11px; color: #94a3b8;
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+}
+.spotlight-hint i { font-size: 13px; color: var(--accent-count); }
+
+/* ── Sugerencias Ranking ── */
+.sug-ranking { list-style: none; padding: 0; margin: 0; }
+.sug-ranking-item {
+    display: flex; align-items: center; gap: 12px; padding: 12px 0;
+    border-bottom: 1px solid #f1f5f9; transition: background 0.2s;
+}
+.sug-ranking-item:last-child { border-bottom: none; }
+.sug-ranking-item:hover { background: #f8fafc; margin: 0 -20px; padding: 12px 20px; border-radius: 8px; }
+.sug-ranking-pos {
+    width: 28px; height: 28px; border-radius: 8px;
+    background: #f1f5f9; color: var(--navy-700);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 12px; flex-shrink: 0;
+}
+.sug-ranking-pos.top3 { background: linear-gradient(135deg, var(--navy-700), var(--navy-600)); color: #fff; }
+.sug-ranking-tema { flex: 1; font-size: 13px; color: #334155; }
+.sug-ranking-count { font-weight: 800; font-size: 14px; color: var(--navy-900); min-width: 30px; text-align: right; }
+.sug-ranking-bar { width: 60px; height: 6px; background: #e2e8f0; border-radius: 3px; overflow: hidden; }
+.sug-ranking-bar-fill { height: 100%; border-radius: 3px; background: linear-gradient(90deg, var(--accent-count), var(--accent-time)); }
+
+/* ── Btn enviar resumen ── */
+.btn-resumen {
+    padding: 6px 14px; border-radius: 6px; border: 1px solid var(--navy-700);
+    background: transparent; cursor: pointer; font-size: 11px; font-weight: 600;
+    color: var(--navy-700); transition: all 0.2s; white-space: nowrap;
+}
+.btn-resumen:hover { background: var(--navy-700); color: #fff; }
+
+/* ── Detail Popover (drill-down) ── */
+.detail-popover {
+    position: fixed;
+    z-index: 9995;
+    background: var(--surface-card);
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    box-shadow: 0 12px 40px rgba(10,22,40,0.2);
+    padding: 0;
+    min-width: 320px;
+    max-width: 580px;
+    max-height: 70vh;
+    overflow: hidden;
+    display: none;
+    animation: detailPop 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+}
+@keyframes detailPop {
+    from { opacity: 0; transform: translateY(8px) scale(0.95); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+.detail-popover-header {
+    padding: 14px 18px;
+    background: linear-gradient(135deg, var(--navy-900), var(--navy-700));
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.detail-popover-header h6 {
+    margin: 0; font-size: 13px; font-weight: 600;
+    display: flex; align-items: center; gap: 8px;
+}
+.detail-popover-close {
+    background: rgba(255,255,255,0.12); border: none; color: #fff;
+    width: 28px; height: 28px; border-radius: 6px; cursor: pointer;
+    font-size: 12px; display: flex; align-items: center; justify-content: center;
+}
+.detail-popover-close:hover { background: rgba(255,255,255,0.25); }
+.detail-popover-summary {
+    padding: 12px 18px;
+    background: #f8fafc;
+    border-bottom: 1px solid #e2e8f0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.detail-popover-count {
+    font-size: 28px; font-weight: 800; color: var(--navy-900);
+    letter-spacing: -0.5px; line-height: 1;
+}
+.detail-popover-count-label {
+    font-size: 12px; color: #64748b;
+}
+.detail-popover-body {
+    padding: 0;
+    max-height: calc(70vh - 120px);
+    overflow-y: auto;
+}
+.detail-table {
+    width: 100%; font-size: 12px; border-collapse: collapse;
+}
+.detail-table thead th {
+    padding: 8px 14px; font-weight: 600; color: var(--navy-700);
+    border-bottom: 2px solid #e2e8f0; text-align: left;
+    font-size: 10px; text-transform: uppercase; letter-spacing: 0.3px;
+    position: sticky; top: 0; background: white; z-index: 1;
+}
+.detail-table tbody td {
+    padding: 8px 14px; border-bottom: 1px solid #f1f5f9; color: #475569;
+    max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.detail-table tbody tr:hover { background: #f8fafc; }
+.detail-popover-empty {
+    text-align: center; padding: 30px; color: #94a3b8; font-size: 13px;
+}
+.detail-popover-loading {
+    text-align: center; padding: 30px; color: #94a3b8;
+}
+
+/* Loading */
+.dashboard-loading { text-align: center; padding: 60px; color: #94a3b8; }
+.dashboard-loading i { font-size: 32px; margin-bottom: 12px; }
+
+/* ── Responsive ── */
+@media (max-width: 1200px) {
+    .kpi-strip { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 992px) {
+    .kpi-strip-secondary { grid-template-columns: repeat(2, 1fr); }
+    .charts-grid { grid-template-columns: 1fr; }
+    .spotlight-chart { left: 2vw !important; top: 2vh !important; width: 96vw !important; height: 90vh !important; }
+}
+@media (max-width: 768px) {
+    .dash-header { padding: 18px 16px; }
+    .filter-bar { flex-direction: column; align-items: flex-start; }
+    .kpi-strip { grid-template-columns: 1fr 1fr; gap: 8px; }
+    .kpi-strip-secondary { grid-template-columns: 1fr; }
+    .kpi-value { font-size: 20px; }
+    .chart-card-body > div { height: 220px; }
+    .sug-ranking-bar { width: 40px; }
+}
+@media (max-width: 480px) {
+    .kpi-strip { grid-template-columns: 1fr; }
+    .periodo-presets { flex-wrap: wrap; }
+    .spotlight-chart { left: 0 !important; top: 0 !important; width: 100vw !important; height: 100vh !important; border-radius: 0; }
+}
 </style>
 {% endblock %}
 
@@ -185,134 +493,200 @@
 
         <div class="row clearfix">
             <div class="col-lg-12 col-md-12">
-                <div class="card">
-                    <div class="card-body">
 
-                        <!-- Selector de periodo -->
-                        <div class="periodo-card">
-                            <div class="periodo-header">
-                                <div class="periodo-header-left">
-                                    <div class="periodo-icon"><i class="fa fa-calendar"></i></div>
-                                    <div>
-                                        <div class="periodo-title">Periodo de analisis</div>
-                                        <div class="periodo-subtitle">Filtra las estadisticas por rango de fechas</div>
-                                    </div>
-                                </div>
-                                <div class="periodo-controls">
-                                    <div class="periodo-presets">
-                                        <button class="periodo-btn" data-periodo="hoy">Hoy</button>
-                                        <button class="periodo-btn" data-periodo="semana">7 dias</button>
-                                        <button class="periodo-btn active" data-periodo="mes">30 dias</button>
-                                    </div>
-                                    <div class="periodo-divider"></div>
-                                    <div class="periodo-custom">
-                                        <input type="date" id="periodo-desde" title="Fecha desde">
-                                        <span class="periodo-custom-separator">a</span>
-                                        <input type="date" id="periodo-hasta" title="Fecha hasta">
-                                        <button class="periodo-btn-aplicar" data-periodo="custom"><i class="fa fa-search"></i> Aplicar</button>
-                                    </div>
-                                    <span class="periodo-rango-activo" id="periodo-rango-label"></span>
-                                </div>
-                            </div>
-                        </div>
+        <!-- ══ Header con KPIs glassmorphism ══ -->
+        <div class="dash-header">
+            <div class="dash-header-top">
+                <div>
+                    <div class="dash-title"><i class="fa fa-bar-chart"></i> Dashboard Asistente IA</div>
+                    <div class="dash-subtitle">Metricas y estadisticas del asistente virtual</div>
+                </div>
+            </div>
 
-                        <!-- Cards principales -->
-                        <div class="stat-cards-primary">
-                            <div class="stat-card">
-                                <div class="stat-card-label">Conversaciones</div>
-                                <div class="stat-card-value" id="card-conversaciones">-</div>
-                                <div class="stat-card-desc">Sesiones de chat iniciadas</div>
-                                <i class="fa fa-comments stat-card-icon"></i>
-                            </div>
-                            <div class="stat-card">
-                                <div class="stat-card-label">Mensajes</div>
-                                <div class="stat-card-value" id="card-mensajes">-</div>
-                                <div class="stat-card-desc">Total enviados y recibidos</div>
-                                <i class="fa fa-envelope stat-card-icon"></i>
-                            </div>
-                            <div class="stat-card">
-                                <div class="stat-card-label">Tasa Resolucion</div>
-                                <div class="stat-card-value" id="card-resolucion">-</div>
-                                <div class="stat-card-desc">Resueltas por IA sin operador</div>
-                                <i class="fa fa-check-circle stat-card-icon"></i>
-                            </div>
-                            <div class="stat-card">
-                                <div class="stat-card-label">Derivaciones</div>
-                                <div class="stat-card-value" id="card-derivaciones">-</div>
-                                <div class="stat-card-desc">Escaladas a operador humano</div>
-                                <i class="fa fa-share stat-card-icon"></i>
-                            </div>
-                        </div>
+            <div class="kpi-strip">
+                <div class="kpi-item" data-semantic="count">
+                    <div class="kpi-icon"><i class="fa fa-comments"></i></div>
+                    <div class="kpi-label">Conversaciones</div>
+                    <div class="kpi-value" id="card-conversaciones">-</div>
+                    <div class="kpi-desc">Sesiones de chat iniciadas</div>
+                </div>
+                <div class="kpi-item" data-semantic="time">
+                    <div class="kpi-icon"><i class="fa fa-envelope"></i></div>
+                    <div class="kpi-label">Mensajes</div>
+                    <div class="kpi-value" id="card-mensajes">-</div>
+                    <div class="kpi-desc">Total enviados y recibidos</div>
+                </div>
+                <div class="kpi-item" data-semantic="money">
+                    <div class="kpi-icon"><i class="fa fa-check-circle"></i></div>
+                    <div class="kpi-label">Tasa Resolucion</div>
+                    <div class="kpi-value" id="card-resolucion">-</div>
+                    <div class="kpi-desc">Resueltas por IA sin operador</div>
+                </div>
+                <div class="kpi-item" data-semantic="alert">
+                    <div class="kpi-icon"><i class="fa fa-share"></i></div>
+                    <div class="kpi-label">Derivaciones</div>
+                    <div class="kpi-value" id="card-derivaciones">-</div>
+                    <div class="kpi-desc">Escaladas a operador humano</div>
+                </div>
+            </div>
+        </div>
 
-                        <!-- Cards técnicos -->
-                        <div class="stat-cards-secondary">
-                            <div class="stat-card">
-                                <div class="stat-card-label">Cache Hit Rate</div>
-                                <div class="stat-card-value" id="card-cache">-</div>
-                                <div class="stat-card-desc">Respuestas desde cache y FAQs</div>
-                                <i class="fa fa-database stat-card-icon"></i>
-                            </div>
-                            <div class="stat-card">
-                                <div class="stat-card-label">Llamadas IA</div>
-                                <div class="stat-card-value" id="card-llamadas-ia">-</div>
-                                <div class="stat-card-desc">Consultas enviadas a Gemini</div>
-                                <i class="fa fa-bolt stat-card-icon"></i>
-                            </div>
-                            <div class="stat-card">
-                                <div class="stat-card-label">Documentos KB</div>
-                                <div class="stat-card-value" id="card-docs-kb">-</div>
-                                <div class="stat-card-desc">Base de Conocimiento activa</div>
-                                <i class="fa fa-book stat-card-icon"></i>
-                            </div>
-                        </div>
+        <!-- ══ Filter Bar (period selector) ══ -->
+        <div class="filter-bar">
+            <div class="filter-bar-label"><i class="fa fa-calendar"></i> Periodo</div>
+            <div class="periodo-presets">
+                <button class="periodo-btn" data-periodo="hoy">Hoy</button>
+                <button class="periodo-btn" data-periodo="semana">7 dias</button>
+                <button class="periodo-btn active" data-periodo="mes">30 dias</button>
+            </div>
+            <div class="filter-divider"></div>
+            <div class="periodo-custom">
+                <input type="date" id="periodo-desde" title="Desde">
+                <span class="periodo-custom-separator">a</span>
+                <input type="date" id="periodo-hasta" title="Hasta">
+                <button class="periodo-btn-aplicar" data-periodo="custom"><i class="fa fa-search"></i> Aplicar</button>
+            </div>
+            <span class="periodo-rango-activo" id="periodo-rango-label"></span>
+        </div>
 
-                        <!-- Gráficos -->
-                        <div class="charts-grid">
-                            <div class="chart-card chart-card-full">
-                                <div class="chart-card-title">Conversaciones por dia</div>
-                                <canvas id="chart-conv-dia"></canvas>
-                            </div>
-                            <div class="chart-card">
-                                <div class="chart-card-title">Intents mas consultados</div>
-                                <canvas id="chart-intents"></canvas>
-                            </div>
-                            <div class="chart-card">
-                                <div class="chart-card-title">Fuente de respuestas</div>
-                                <canvas id="chart-sources"></canvas>
-                            </div>
-                            <div class="chart-card">
-                                <div class="chart-card-title">Derivaciones por canal</div>
-                                <canvas id="chart-derivaciones"></canvas>
-                            </div>
-                            <div class="chart-card">
-                                <div class="chart-card-title">Horarios pico de consultas</div>
-                                <canvas id="chart-horarios"></canvas>
-                            </div>
-                            <div class="chart-card chart-card-full">
-                                <div class="chart-card-title chart-title-row">
-                                    <span>Top sugerencias no resueltas</span>
-                                    <button class="periodo-btn-aplicar" id="btn-enviar-resumen" title="Envia el resumen semanal de sugerencias por email">
-                                        <i class="fa fa-envelope"></i> Enviar resumen ahora
-                                    </button>
-                                </div>
-                                <ul class="sug-ranking" id="sug-ranking">
-                                    <li class="dashboard-loading"><i class="fa fa-spinner fa-spin"></i><p>Cargando...</p></li>
-                                </ul>
-                            </div>
-                        </div>
+        <!-- ══ KPIs Secundarios (white cards) ══ -->
+        <div class="kpi-strip-secondary">
+            <div class="kpi-secondary">
+                <div class="kpi-sec-icon" style="background: var(--accent-geo-bg); color: var(--accent-geo);"><i class="fa fa-database"></i></div>
+                <div>
+                    <div class="kpi-sec-label">Cache Hit Rate</div>
+                    <div class="kpi-sec-value" id="card-cache">-</div>
+                    <div class="kpi-sec-desc">Respuestas desde cache y FAQs</div>
+                </div>
+            </div>
+            <div class="kpi-secondary">
+                <div class="kpi-sec-icon" style="background: var(--accent-time-bg); color: var(--accent-time);"><i class="fa fa-bolt"></i></div>
+                <div>
+                    <div class="kpi-sec-label">Llamadas IA</div>
+                    <div class="kpi-sec-value" id="card-llamadas-ia">-</div>
+                    <div class="kpi-sec-desc">Consultas enviadas a Gemini</div>
+                </div>
+            </div>
+            <div class="kpi-secondary">
+                <div class="kpi-sec-icon" style="background: var(--accent-alert-bg); color: #d97706;"><i class="fa fa-book"></i></div>
+                <div>
+                    <div class="kpi-sec-label">Documentos KB</div>
+                    <div class="kpi-sec-value" id="card-docs-kb">-</div>
+                    <div class="kpi-sec-desc">Base de Conocimiento activa</div>
+                </div>
+            </div>
+        </div>
 
+        <!-- ══ Charts Grid ══ -->
+        <div class="charts-area">
+            <div class="charts-grid">
+                <!-- Conversaciones por dia (full width) -->
+                <div class="chart-card chart-card-full" onclick="openSpotlight('convDia', 'Conversaciones por dia', 'bar')">
+                    <div class="chart-card-header">
+                        <span class="chart-card-title">Conversaciones por dia</span>
+                        <span class="chart-card-badge bar">Barras</span>
+                    </div>
+                    <div class="chart-card-body"><div id="chart-conv-dia"></div></div>
+                    <div class="chart-card-hint"><i class="fa fa-expand"></i> Clic para expandir y ver detalle</div>
+                </div>
+
+                <!-- Intents -->
+                <div class="chart-card" onclick="openSpotlight('intents', 'Intents mas consultados', 'bar')">
+                    <div class="chart-card-header">
+                        <span class="chart-card-title">Intents mas consultados</span>
+                        <span class="chart-card-badge bar">Barras</span>
+                    </div>
+                    <div class="chart-card-body"><div id="chart-intents"></div></div>
+                    <div class="chart-card-hint"><i class="fa fa-expand"></i> Clic para expandir y ver detalle</div>
+                </div>
+
+                <!-- Fuentes -->
+                <div class="chart-card" onclick="openSpotlight('sources', 'Fuente de respuestas', 'pie')">
+                    <div class="chart-card-header">
+                        <span class="chart-card-title">Fuente de respuestas</span>
+                        <span class="chart-card-badge pie">Dona</span>
+                    </div>
+                    <div class="chart-card-body"><div id="chart-sources"></div></div>
+                    <div class="chart-card-hint"><i class="fa fa-expand"></i> Clic para expandir y ver detalle</div>
+                </div>
+
+                <!-- Derivaciones -->
+                <div class="chart-card" onclick="openSpotlight('derivaciones', 'Derivaciones por canal', 'pie')">
+                    <div class="chart-card-header">
+                        <span class="chart-card-title">Derivaciones por canal</span>
+                        <span class="chart-card-badge pie">Dona</span>
+                    </div>
+                    <div class="chart-card-body"><div id="chart-derivaciones"></div></div>
+                    <div class="chart-card-hint"><i class="fa fa-expand"></i> Clic para expandir y ver detalle</div>
+                </div>
+
+                <!-- Horarios pico -->
+                <div class="chart-card" onclick="openSpotlight('horarios', 'Horarios pico de consultas', 'bar')">
+                    <div class="chart-card-header">
+                        <span class="chart-card-title">Horarios pico de consultas</span>
+                        <span class="chart-card-badge bar">Barras</span>
+                    </div>
+                    <div class="chart-card-body"><div id="chart-horarios"></div></div>
+                    <div class="chart-card-hint"><i class="fa fa-expand"></i> Clic para expandir y ver detalle</div>
+                </div>
+
+                <!-- Top sugerencias (full width, no spotlight) -->
+                <div class="chart-card chart-card-full" style="cursor: default;" onclick="event.stopPropagation()">
+                    <div class="chart-card-header">
+                        <span class="chart-card-title">Top sugerencias no resueltas</span>
+                        <button class="btn-resumen" id="btn-enviar-resumen"><i class="fa fa-envelope"></i> Enviar resumen</button>
+                    </div>
+                    <div style="padding: 0 20px 16px;">
+                        <ul class="sug-ranking" id="sug-ranking">
+                            <li class="dashboard-loading"><i class="fa fa-spinner fa-spin"></i><p>Cargando...</p></li>
+                        </ul>
                     </div>
                 </div>
             </div>
         </div>
+
+            </div><!-- /col-lg-12 -->
+        </div><!-- /row -->
+    </div><!-- /container-fluid -->
+</div><!-- /main-content -->
+
+<!-- ══ Spotlight Modal ══ -->
+<div class="spotlight-backdrop" id="spotlight-backdrop" onclick="closeSpotlight()"></div>
+<div class="spotlight-chart" id="spotlight-chart">
+    <div class="spotlight-header">
+        <h6><i class="fa fa-bar-chart"></i> <span id="spotlight-title">-</span> <span class="spotlight-badge" id="spotlight-badge">-</span></h6>
+        <button class="spotlight-close" onclick="closeSpotlight()"><i class="fa fa-times"></i></button>
+    </div>
+    <div class="spotlight-body"><div id="spotlight-echart"></div></div>
+    <div class="spotlight-hint"><i class="fa fa-hand-pointer-o"></i> Hace clic en una barra o sector del grafico para ver detalle</div>
+</div>
+
+<!-- ══ Detail Popover ══ -->
+<div class="detail-popover" id="detail-popover">
+    <div class="detail-popover-header">
+        <h6><i class="fa fa-table"></i> <span id="detail-title">-</span></h6>
+        <button class="detail-popover-close" onclick="closeDetail()"><i class="fa fa-times"></i></button>
+    </div>
+    <div class="detail-popover-summary">
+        <div>
+            <div class="detail-popover-count" id="detail-count">-</div>
+            <div class="detail-popover-count-label" id="detail-label">registros</div>
+        </div>
+    </div>
+    <div class="detail-popover-body" id="detail-body">
+        <div class="detail-popover-loading"><i class="fa fa-spinner fa-spin"></i> Cargando detalle...</div>
     </div>
 </div>
 
 {% endblock %}
 
 {% block extraJS %}
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
 <script>
+var CHART_PALETTE = ['#3b82f6','#10b981','#8b5cf6','#f59e0b','#ef4444','#06b6d4','#ec4899','#14b8a6','#f97316','#6366f1'];
+var chartInstances = {};
+var chartOptions = {};
+
 $(document).ready(function(){
     cargarDashboard('mes');
 
@@ -328,7 +702,7 @@ $(document).ready(function(){
         var desde = $('#periodo-desde').val();
         var hasta = $('#periodo-hasta').val();
         if (!desde || !hasta) {
-            Swal.fire({ title: 'Fechas requeridas', text: 'Selecciona fecha desde y hasta', icon: 'warning', confirmButtonColor: '#003466' });
+            Swal.fire({ title: 'Fechas requeridas', text: 'Selecciona fecha desde y hasta', icon: 'warning', confirmButtonColor: '#13304D' });
             return;
         }
         $('.periodo-presets .periodo-btn').removeClass('active');
@@ -337,14 +711,15 @@ $(document).ready(function(){
         cargarDashboard('custom');
     });
 
-    $('#btn-enviar-resumen').on('click', function(){
+    $('#btn-enviar-resumen').on('click', function(e){
+        e.stopPropagation();
         var $btn = $(this);
         Swal.fire({
             title: 'Enviar resumen',
             text: 'Enviar resumen semanal de sugerencias por email?',
             icon: 'question',
             showCancelButton: true,
-            confirmButtonColor: '#003466',
+            confirmButtonColor: '#13304D',
             cancelButtonColor: '#6c757d',
             confirmButtonText: 'Si, enviar',
             cancelButtonText: 'Cancelar'
@@ -356,32 +731,41 @@ $(document).ready(function(){
                 type: "POST",
                 data: { csrfmiddlewaretoken: '{{ csrf_token }}' },
                 success: function(res) {
-                    $btn.prop('disabled', false).html('<i class="fa fa-envelope"></i> Enviar resumen ahora');
-                    Swal.fire({ title: 'Resultado', text: res.message, icon: res.success ? 'success' : 'warning', confirmButtonColor: '#003466' });
+                    $btn.prop('disabled', false).html('<i class="fa fa-envelope"></i> Enviar resumen');
+                    Swal.fire({ title: 'Resultado', text: res.message, icon: res.success ? 'success' : 'warning', confirmButtonColor: '#13304D' });
                 },
                 error: function() {
-                    $btn.prop('disabled', false).html('<i class="fa fa-envelope"></i> Enviar resumen ahora');
-                    Swal.fire({ title: 'Error', text: 'Error al enviar resumen', icon: 'error', confirmButtonColor: '#003466' });
+                    $btn.prop('disabled', false).html('<i class="fa fa-envelope"></i> Enviar resumen');
+                    Swal.fire('Error', 'Error al enviar resumen', 'error');
                 }
             });
         });
     });
+
+    // Cerrar spotlight con ESC
+    $(document).on('keydown', function(e) {
+        if (e.key === 'Escape') closeSpotlight();
+    });
+
+    // Resize charts on window resize
+    $(window).on('resize', function() {
+        Object.values(chartInstances).forEach(function(c) { if (c) c.resize(); });
+    });
 });
 
-var charts = {};
-
+// ══════════════════════════════════════════
+// DATA LOADING
+// ══════════════════════════════════════════
 function cargarDashboard(periodo) {
-    var datos = {
-        csrfmiddlewaretoken: '{{ csrf_token }}',
-        periodo: periodo,
-        fecha_desde: $('#periodo-desde').val() || '',
-        fecha_hasta: $('#periodo-hasta').val() || ''
-    };
-
     $.ajax({
         url: "{% url 'asistente_dashboard_ajax' %}",
         type: "POST",
-        data: datos,
+        data: {
+            csrfmiddlewaretoken: '{{ csrf_token }}',
+            periodo: periodo,
+            fecha_desde: $('#periodo-desde').val() || '',
+            fecha_hasta: $('#periodo-hasta').val() || ''
+        },
         success: function(res) {
             renderCards(res.cards);
             renderChartConvDia(res.chart_conv_dia);
@@ -392,7 +776,7 @@ function cargarDashboard(periodo) {
             renderSugerencias(res.top_sugerencias);
         },
         error: function() {
-            Swal.fire({ title: 'Error', text: 'Error al cargar datos del dashboard', icon: 'error', confirmButtonColor: '#003466' });
+            Swal.fire('Error', 'Error al cargar datos del dashboard', 'error');
         }
     });
 }
@@ -407,145 +791,137 @@ function renderCards(cards) {
     $('#card-docs-kb').text(cards.docs_kb_activos || 0);
 }
 
-function destroyChart(key) {
-    if (charts[key]) { charts[key].destroy(); charts[key] = null; }
+// ══════════════════════════════════════════
+// ECHARTS RENDERING
+// ══════════════════════════════════════════
+function getOrCreateChart(containerId) {
+    if (chartInstances[containerId]) {
+        chartInstances[containerId].dispose();
+    }
+    var dom = document.getElementById(containerId);
+    if (!dom) return null;
+    var chart = echarts.init(dom);
+    chartInstances[containerId] = chart;
+    return chart;
 }
 
 function renderChartConvDia(data) {
-    destroyChart('convDia');
-    var ctx = document.getElementById('chart-conv-dia').getContext('2d');
-    charts['convDia'] = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: data.labels,
-            datasets: [{
-                label: 'Conversaciones',
-                data: data.data,
-                backgroundColor: 'rgba(0, 52, 102, 0.7)',
-                borderColor: '#003466',
-                borderWidth: 1,
-                borderRadius: 4,
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: { legend: { display: false } },
-            scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
-        }
-    });
+    var chart = getOrCreateChart('chart-conv-dia');
+    if (!chart) return;
+    var option = {
+        tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, backgroundColor: 'rgba(15,33,55,0.95)', borderColor: 'transparent', textStyle: { color: '#fff', fontSize: 12 } },
+        grid: { left: 40, right: 20, top: 10, bottom: 30 },
+        xAxis: { type: 'category', data: data.labels, axisLabel: { fontSize: 10, color: '#94a3b8' }, axisLine: { lineStyle: { color: '#e2e8f0' } } },
+        yAxis: { type: 'value', minInterval: 1, axisLabel: { fontSize: 10, color: '#94a3b8' }, splitLine: { lineStyle: { color: '#f1f5f9' } } },
+        series: [{
+            type: 'bar',
+            data: data.data,
+            itemStyle: { color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{ offset: 0, color: '#3b82f6' }, { offset: 1, color: '#1d4ed8' }]), borderRadius: [4, 4, 0, 0] },
+            emphasis: { itemStyle: { color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{ offset: 0, color: '#60a5fa' }, { offset: 1, color: '#3b82f6' }]) } },
+            barMaxWidth: 32,
+        }]
+    };
+    chart.setOption(option);
+    chartOptions['convDia'] = option;
 }
 
 function renderChartIntents(data) {
-    destroyChart('intents');
-    var ctx = document.getElementById('chart-intents').getContext('2d');
-    var colors = ['#003466','#0056b3','#2196F3','#42A5F5','#64B5F6','#90CAF9','#BBDEFB','#1976D2','#1565C0','#0D47A1'];
-    charts['intents'] = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: data.labels,
-            datasets: [{
-                data: data.data,
-                backgroundColor: colors.slice(0, data.labels.length),
-                borderWidth: 0,
-                borderRadius: 4,
-            }]
-        },
-        options: {
-            indexAxis: 'y',
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: { legend: { display: false } },
-            scales: { x: { beginAtZero: true, ticks: { stepSize: 1 } } }
-        }
-    });
+    var chart = getOrCreateChart('chart-intents');
+    if (!chart) return;
+    var option = {
+        tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, backgroundColor: 'rgba(15,33,55,0.95)', borderColor: 'transparent', textStyle: { color: '#fff', fontSize: 12 } },
+        grid: { left: 10, right: 40, top: 10, bottom: 10, containLabel: true },
+        xAxis: { type: 'value', minInterval: 1, axisLabel: { fontSize: 10, color: '#94a3b8' }, splitLine: { lineStyle: { color: '#f1f5f9' } } },
+        yAxis: { type: 'category', data: data.labels, axisLabel: { fontSize: 11, color: '#475569', width: 120, overflow: 'truncate' }, axisLine: { show: false } },
+        series: [{
+            type: 'bar',
+            data: data.data.map(function(v, i) { return { value: v, itemStyle: { color: CHART_PALETTE[i % CHART_PALETTE.length], borderRadius: [0, 4, 4, 0] } }; }),
+            barMaxWidth: 20,
+            emphasis: { itemStyle: { shadowBlur: 10, shadowColor: 'rgba(0,0,0,0.15)' } },
+        }]
+    };
+    chart.setOption(option);
+    chartOptions['intents'] = option;
 }
 
 function renderChartSources(data) {
-    destroyChart('sources');
-    var ctx = document.getElementById('chart-sources').getContext('2d');
-    var colorMap = {
-        'faq': '#28a745', 'cache': '#17a2b8', 'db': '#0056b3',
-        'ai': '#6f42c1', 'hardcoded': '#6c757d', 'needs_ai': '#ffc107'
-    };
-    var labelMap = {
-        'faq': 'FAQs', 'cache': 'Cache', 'db': 'Base de datos',
-        'ai': 'Gemini IA', 'hardcoded': 'Respuestas fijas', 'needs_ai': 'IA (pendiente)'
-    };
-    var friendlyLabels = data.labels.map(function(l) { return labelMap[l] || l; });
-    charts['sources'] = new Chart(ctx, {
-        type: 'doughnut',
-        data: {
-            labels: friendlyLabels,
-            datasets: [{
-                data: data.data,
-                backgroundColor: data.labels.map(function(l) { return colorMap[l] || '#adb5bd'; }),
-                borderWidth: 2,
-                borderColor: '#fff',
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: { legend: { position: 'bottom', labels: { font: { size: 11 } } } }
-        }
+    var chart = getOrCreateChart('chart-sources');
+    if (!chart) return;
+    var labelMap = { 'faq': 'FAQs', 'cache': 'Cache', 'db': 'Base de datos', 'ai': 'Gemini IA', 'hardcoded': 'Fijas', 'needs_ai': 'IA (pend.)' };
+    var colorMap = { 'faq': '#10b981', 'cache': '#06b6d4', 'db': '#3b82f6', 'ai': '#8b5cf6', 'hardcoded': '#94a3b8', 'needs_ai': '#f59e0b' };
+    var pieData = data.labels.map(function(l, i) {
+        return { name: labelMap[l] || l, value: data.data[i], itemStyle: { color: colorMap[l] || CHART_PALETTE[i] } };
     });
+    var option = {
+        tooltip: { trigger: 'item', backgroundColor: 'rgba(15,33,55,0.95)', borderColor: 'transparent', textStyle: { color: '#fff', fontSize: 12 }, formatter: '{b}: {c} ({d}%)' },
+        legend: { bottom: 0, itemWidth: 10, itemHeight: 10, textStyle: { fontSize: 11, color: '#64748b' }, itemGap: 12 },
+        series: [{
+            type: 'pie',
+            radius: ['45%', '75%'],
+            center: ['50%', '45%'],
+            data: pieData,
+            label: { show: false },
+            emphasis: {
+                scale: true, scaleSize: 8,
+                itemStyle: { shadowBlur: 20, shadowColor: 'rgba(0,0,0,0.15)' }
+            },
+            animationType: 'scale',
+        }]
+    };
+    chart.setOption(option);
+    chartOptions['sources'] = option;
 }
 
 function renderChartDerivaciones(data) {
-    destroyChart('derivaciones');
-    var ctx = document.getElementById('chart-derivaciones').getContext('2d');
-    charts['derivaciones'] = new Chart(ctx, {
-        type: 'doughnut',
-        data: {
-            labels: data.labels,
-            datasets: [{
-                data: data.data,
-                backgroundColor: ['#25D366', '#0056b3'],
-                borderWidth: 2,
-                borderColor: '#fff',
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: { legend: { position: 'bottom', labels: { font: { size: 11 } } } }
-        }
+    var chart = getOrCreateChart('chart-derivaciones');
+    if (!chart) return;
+    var colors = ['#10b981', '#3b82f6', '#8b5cf6', '#f59e0b'];
+    var pieData = data.labels.map(function(l, i) {
+        return { name: l, value: data.data[i], itemStyle: { color: colors[i % colors.length] } };
     });
+    var option = {
+        tooltip: { trigger: 'item', backgroundColor: 'rgba(15,33,55,0.95)', borderColor: 'transparent', textStyle: { color: '#fff', fontSize: 12 }, formatter: '{b}: {c} ({d}%)' },
+        legend: { bottom: 0, itemWidth: 10, itemHeight: 10, textStyle: { fontSize: 11, color: '#64748b' }, itemGap: 12 },
+        series: [{
+            type: 'pie',
+            radius: ['45%', '75%'],
+            center: ['50%', '45%'],
+            data: pieData,
+            label: { show: false },
+            emphasis: { scale: true, scaleSize: 8, itemStyle: { shadowBlur: 20, shadowColor: 'rgba(0,0,0,0.15)' } },
+        }]
+    };
+    chart.setOption(option);
+    chartOptions['derivaciones'] = option;
 }
 
 function renderChartHorarios(data) {
-    destroyChart('horarios');
-    var ctx = document.getElementById('chart-horarios').getContext('2d');
-    charts['horarios'] = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: data.labels,
-            datasets: [{
-                label: 'Consultas',
-                data: data.data,
-                backgroundColor: function(context) {
-                    var v = context.raw;
-                    var max = Math.max.apply(null, data.data) || 1;
-                    var opacity = 0.3 + (v / max) * 0.7;
-                    return 'rgba(0, 52, 102, ' + opacity + ')';
-                },
-                borderRadius: 3,
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: { legend: { display: false } },
-            scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
-        }
-    });
+    var chart = getOrCreateChart('chart-horarios');
+    if (!chart) return;
+    var maxVal = Math.max.apply(null, data.data) || 1;
+    var option = {
+        tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, backgroundColor: 'rgba(15,33,55,0.95)', borderColor: 'transparent', textStyle: { color: '#fff', fontSize: 12 } },
+        grid: { left: 40, right: 20, top: 10, bottom: 30 },
+        xAxis: { type: 'category', data: data.labels, axisLabel: { fontSize: 10, color: '#94a3b8' }, axisLine: { lineStyle: { color: '#e2e8f0' } } },
+        yAxis: { type: 'value', minInterval: 1, axisLabel: { fontSize: 10, color: '#94a3b8' }, splitLine: { lineStyle: { color: '#f1f5f9' } } },
+        series: [{
+            type: 'bar',
+            data: data.data.map(function(v) {
+                var intensity = 0.3 + (v / maxVal) * 0.7;
+                return { value: v, itemStyle: { color: 'rgba(139, 92, 246, ' + intensity + ')', borderRadius: [3, 3, 0, 0] } };
+            }),
+            barMaxWidth: 24,
+            emphasis: { itemStyle: { color: '#8b5cf6' } },
+        }]
+    };
+    chart.setOption(option);
+    chartOptions['horarios'] = option;
 }
 
 function renderSugerencias(data) {
     var container = $('#sug-ranking');
     if (!data || data.length === 0) {
-        container.html('<li style="text-align:center; padding:30px; color:#6c757d;">No hay sugerencias pendientes</li>');
+        container.html('<li style="text-align:center; padding:30px; color:#94a3b8;">No hay sugerencias pendientes</li>');
         return;
     }
     var maxCount = data[0].veces_detectada || 1;
@@ -562,5 +938,247 @@ function renderSugerencias(data) {
     });
     container.html(html);
 }
+
+// ══════════════════════════════════════════
+// SPOTLIGHT
+// ══════════════════════════════════════════
+var spotlightChart = null;
+var spotlightKey = null;
+
+function openSpotlight(key, title, tipo) {
+    spotlightKey = key;
+    $('#spotlight-title').text(title);
+    $('#spotlight-badge').text(tipo === 'bar' ? 'Barras' : tipo === 'pie' ? 'Dona' : tipo);
+
+    var $backdrop = $('#spotlight-backdrop');
+    var $chart = $('#spotlight-chart');
+
+    $backdrop.css('display', 'block');
+    $chart.css('display', 'block');
+
+    setTimeout(function() {
+        $backdrop.addClass('active');
+        $chart.addClass('active');
+
+        // Render chart in spotlight
+        if (spotlightChart) { spotlightChart.dispose(); }
+        spotlightChart = echarts.init(document.getElementById('spotlight-echart'));
+
+        var option = chartOptions[key];
+        if (option) {
+            var expanded = JSON.parse(JSON.stringify(option));
+            // Larger fonts for spotlight
+            if (expanded.xAxis) { expanded.xAxis.axisLabel = expanded.xAxis.axisLabel || {}; expanded.xAxis.axisLabel.fontSize = 12; }
+            if (expanded.yAxis) { expanded.yAxis.axisLabel = expanded.yAxis.axisLabel || {}; expanded.yAxis.axisLabel.fontSize = 12; }
+            if (expanded.series && expanded.series[0] && expanded.series[0].type === 'pie') {
+                expanded.series[0].label = { show: true, fontSize: 12, formatter: '{b}: {d}%' };
+                expanded.series[0].radius = ['35%', '65%'];
+            }
+            spotlightChart.setOption(expanded);
+        }
+
+        // Attach drill-down after chart is fully rendered
+        setTimeout(function() {
+            if (spotlightChart) {
+                attachDrilldown(key, spotlightChart);
+                console.log('Drilldown attached to spotlight:', key);
+            }
+        }, 300);
+    }, 50);
+}
+
+function closeSpotlight() {
+    closeDetail();
+    var $backdrop = $('#spotlight-backdrop');
+    var $chart = $('#spotlight-chart');
+
+    $backdrop.removeClass('active');
+    $chart.removeClass('active');
+
+    setTimeout(function() {
+        $backdrop.css('display', 'none');
+        $chart.css('display', 'none');
+        if (spotlightChart) { spotlightChart.dispose(); spotlightChart = null; }
+    }, 400);
+}
+
+// ══════════════════════════════════════════
+// DRILL-DOWN (detail popover)
+// ══════════════════════════════════════════
+var currentPeriodo = 'mes';
+
+// Attach click handlers to charts after rendering
+function attachDrilldown(chartKey, chartInstance) {
+    // Store reference for pie click detection
+    chartInstance._drilldownKey = chartKey;
+
+    // For bar charts: use getZr
+    chartInstance.getZr().off('click');
+    chartInstance.getZr().on('click', function(e) {
+        var option = chartInstance.getOption();
+        if (option.series && option.series[0] && option.series[0].type === 'pie') return;
+
+        var pointInPixel = [e.offsetX, e.offsetY];
+        if (chartInstance.containPixel('grid', pointInPixel)) {
+            var clickedValue = '';
+            var idx = chartInstance.convertFromPixel({seriesIndex: 0}, pointInPixel);
+            if (idx !== undefined && option.xAxis && option.xAxis[0] && option.xAxis[0].data) {
+                clickedValue = option.xAxis[0].data[idx[0]];
+            } else if (option.yAxis && option.yAxis[0] && option.yAxis[0].data) {
+                clickedValue = option.yAxis[0].data[idx[1]];
+            }
+            if (clickedValue) showDrilldownPopover(chartKey, clickedValue);
+        }
+    });
+}
+
+// Global handler for pie charts - ECharts renders pie on canvas,
+// so we detect click via mouseover tracking + click
+var lastHoveredPieName = null;
+
+$(document).ready(function() {
+    // Track which pie sector is being hovered via tooltip
+    // This works because ECharts always knows what's under the cursor
+    setInterval(function() {
+        if (!spotlightChart) return;
+        var option = spotlightChart.getOption();
+        if (!option || !option.series || !option.series[0] || option.series[0].type !== 'pie') return;
+
+        // Check current tooltip content
+        var dom = spotlightChart.getDom();
+        var tooltipDom = dom.querySelector('.ec-tooltip');
+        // Not reliable, use alternative approach
+    }, 100);
+});
+
+// Better approach: listen for click on the spotlight echart div
+// and use dispatchAction to detect pie sector
+$('#spotlight-echart').on('mousedown', function(e) {
+    if (!spotlightChart) return;
+    var option = spotlightChart.getOption();
+    if (!option || !option.series || !option.series[0] || option.series[0].type !== 'pie') return;
+
+    // Calculate position relative to the chart
+    var rect = this.getBoundingClientRect();
+    var x = e.clientX - rect.left;
+    var y = e.clientY - rect.top;
+
+    // Use ECharts internal method to find data
+    var seriesData = option.series[0].data || [];
+    var center = option.series[0].center || ['50%', '45%'];
+    var radius = option.series[0].radius || ['45%', '75%'];
+
+    var cx = rect.width * (parseInt(center[0]) / 100);
+    var cy = rect.height * (parseInt(center[1]) / 100);
+    var outerR = Math.min(rect.width, rect.height) * (parseInt(radius[1]) / 100) / 2;
+    var innerR = Math.min(rect.width, rect.height) * (parseInt(radius[0]) / 100) / 2;
+
+    var dx = x - cx;
+    var dy = y - cy;
+    var dist = Math.sqrt(dx * dx + dy * dy);
+
+    // Check if click is within the donut ring
+    if (dist < innerR || dist > outerR) return;
+
+    // Calculate angle
+    var angle = Math.atan2(dy, dx) * 180 / Math.PI;
+    angle = (angle + 90 + 360) % 360; // ECharts starts from top (90 offset)
+
+    // Calculate total and find which sector
+    var total = 0;
+    seriesData.forEach(function(d) { total += (d.value || 0); });
+    if (total === 0) return;
+
+    var cumAngle = 0;
+    for (var i = 0; i < seriesData.length; i++) {
+        var sliceAngle = (seriesData[i].value / total) * 360;
+        if (angle >= cumAngle && angle < cumAngle + sliceAngle) {
+            var chartKey = spotlightChart._drilldownKey || '';
+            console.log('Pie click:', chartKey, seriesData[i].name);
+            showDrilldownPopover(chartKey, seriesData[i].name);
+            return;
+        }
+        cumAngle += sliceAngle;
+    }
+});
+
+function showDrilldownPopover(chartKey, clickedValue) {
+    currentPeriodo = $('.periodo-presets .periodo-btn.active').data('periodo') || 'mes';
+
+    var $pop = $('#detail-popover');
+    $pop.css({
+        display: 'block',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        'z-index': 99999
+    });
+    $('#detail-title').text('Cargando...');
+    $('#detail-count').text('-');
+    $('#detail-label').text('registros');
+    $('#detail-body').html('<div class="detail-popover-loading"><i class="fa fa-spinner fa-spin"></i> Cargando detalle...</div>');
+
+    $.ajax({
+        url: "{% url 'asistente_dashboard_drilldown' %}",
+        type: "POST",
+        data: {
+            csrfmiddlewaretoken: '{{ csrf_token }}',
+            chart: chartKey,
+            value: clickedValue,
+            periodo: currentPeriodo,
+            fecha_desde: $('#periodo-desde').val() || '',
+            fecha_hasta: $('#periodo-hasta').val() || ''
+        },
+        success: function(res) {
+            $('#detail-title').text(res.title);
+            $('#detail-count').text(res.summary && res.summary.total != null ? res.summary.total : 0);
+            $('#detail-label').text(res.summary && res.summary.label ? res.summary.label : 'registros');
+
+            if (!res.rows || res.rows.length === 0) {
+                $('#detail-body').html('<div class="detail-popover-empty"><i class="fa fa-inbox"></i><br>Sin datos para mostrar</div>');
+                return;
+            }
+
+            var keys = Object.keys(res.rows[0]);
+            var headerLabels = {
+                'hora': 'Hora', 'fecha': 'Fecha', 'mensajes': 'Msgs', 'ultima_pregunta': 'Ultima Pregunta',
+                'ip': 'IP', 'pregunta': 'Pregunta', 'respuesta': 'Respuesta', 'fuente': 'Fuente',
+                'intent': 'Intent', 'tiempo_ms': 'ms', 'taller': 'Taller', 'motivo': 'Motivo',
+                'celular': 'Celular', 'contenido': 'Contenido'
+            };
+
+            var html = '<table class="detail-table"><thead><tr>';
+            keys.forEach(function(k) {
+                html += '<th>' + (headerLabels[k] || k) + '</th>';
+            });
+            html += '</tr></thead><tbody>';
+            res.rows.forEach(function(row) {
+                html += '<tr>';
+                keys.forEach(function(k) {
+                    html += '<td title="' + (row[k] != null ? row[k] : '').toString().replace(/"/g, '&quot;') + '">' + (row[k] != null ? row[k] : '-') + '</td>';
+                });
+                html += '</tr>';
+            });
+            html += '</tbody></table>';
+            $('#detail-body').html(html);
+        },
+        error: function() {
+            $('#detail-body').html('<div class="detail-popover-empty">Error al cargar datos</div>');
+        }
+    });
+}
+
+function closeDetail() {
+    $('#detail-popover').css('display', 'none');
+}
+
+// Close detail popover when clicking outside (but not on spotlight chart area)
+$(document).on('click', function(e) {
+    if ($('#detail-popover').css('display') !== 'none' &&
+        !$(e.target).closest('#detail-popover').length &&
+        !$(e.target).closest('.spotlight-body').length) {
+        closeDetail();
+    }
+});
 </script>
 {% endblock %}

@@ -1045,6 +1045,154 @@ def asistente_dashboard_ajax(request):
 
 
 @login_required(login_url='/panel/login/')
+def asistente_dashboard_drilldown(request):
+    """Retorna datos de detalle al hacer click en un gráfico del dashboard"""
+    if request.method != 'POST':
+        return JsonResponse({'error': 'Método no permitido'}, status=400)
+
+    from datetime import datetime
+
+    chart = request.POST.get('chart', '')
+    value = request.POST.get('value', '')
+    periodo = request.POST.get('periodo', 'mes')
+    fecha_desde_str = request.POST.get('fecha_desde', '')
+    fecha_hasta_str = request.POST.get('fecha_hasta', '')
+
+    hoy = timezone.localdate()
+    if periodo == 'hoy':
+        fecha_desde, fecha_hasta = hoy, hoy
+    elif periodo == 'semana':
+        fecha_desde, fecha_hasta = hoy - timedelta(days=7), hoy
+    elif periodo == 'custom' and fecha_desde_str and fecha_hasta_str:
+        fecha_desde = datetime.strptime(fecha_desde_str, '%Y-%m-%d').date()
+        fecha_hasta = datetime.strptime(fecha_hasta_str, '%Y-%m-%d').date()
+    else:
+        fecha_desde, fecha_hasta = hoy - timedelta(days=30), hoy
+
+    mensajes = ChatMessage.objects.filter(
+        created_at__date__gte=fecha_desde,
+        created_at__date__lte=fecha_hasta
+    )
+    msgs_asistente = mensajes.filter(rol='assistant')
+
+    rows = []
+    title = value
+    summary = {}
+
+    if chart == 'convDia':
+        # Conversaciones de un día específico
+        parts = value.split('/')
+        if len(parts) == 2:
+            dia, mes = int(parts[0]), int(parts[1])
+            year = fecha_hasta.year if mes <= fecha_hasta.month else fecha_hasta.year - 1
+            from datetime import date
+            target_date = date(year, mes, dia)
+            sessions = ChatSession.objects.filter(inicio__date=target_date)
+            summary = {
+                'total': sessions.count(),
+                'label': f'Conversaciones del {value}'
+            }
+            for s in sessions.order_by('-inicio')[:50]:
+                msg_count = s.mensajes.count()
+                last_msg = s.mensajes.order_by('-created_at').first()
+                rows.append({
+                    'hora': s.inicio.strftime('%H:%M'),
+                    'mensajes': msg_count,
+                    'ultima_pregunta': last_msg.contenido[:80] + '...' if last_msg and last_msg.contenido and len(last_msg.contenido) > 80 else (last_msg.contenido if last_msg else '-'),
+                    'ip': s.ip_address or '-',
+                })
+            title = f'Conversaciones del {value}'
+
+    elif chart == 'intents':
+        # Mensajes con un intent específico
+        msgs = msgs_asistente.filter(intent=value)
+        summary = {
+            'total': msgs.count(),
+            'label': f'Intent: {value}'
+        }
+        for m in msgs.order_by('-created_at')[:50]:
+            user_msg = ChatMessage.objects.filter(
+                session=m.session, rol='user', created_at__lt=m.created_at
+            ).order_by('-created_at').first()
+            rows.append({
+                'fecha': m.created_at.strftime('%d/%m %H:%M'),
+                'pregunta': user_msg.contenido[:80] if user_msg else '-',
+                'respuesta': m.contenido[:100] + '...' if len(m.contenido) > 100 else m.contenido,
+                'fuente': m.get_source_display() if m.source else '-',
+            })
+        title = f'Intent: {value}'
+
+    elif chart == 'sources':
+        # Mapa de labels amigables a valores internos
+        source_map = {
+            'FAQs': 'faq', 'Cache': 'cache', 'Base de datos': 'db',
+            'Gemini IA': 'ai', 'Fijas': 'hardcoded', 'IA (pend.)': 'needs_ai',
+            'Base de Conocimiento + IA': 'kb+ai',
+        }
+        source_val = source_map.get(value, value)
+        msgs = msgs_asistente.filter(source=source_val)
+        summary = {
+            'total': msgs.count(),
+            'label': f'Fuente: {value}'
+        }
+        for m in msgs.order_by('-created_at')[:50]:
+            user_msg = ChatMessage.objects.filter(
+                session=m.session, rol='user', created_at__lt=m.created_at
+            ).order_by('-created_at').first()
+            rows.append({
+                'fecha': m.created_at.strftime('%d/%m %H:%M'),
+                'pregunta': user_msg.contenido[:80] if user_msg else '-',
+                'intent': m.intent or '-',
+                'tiempo_ms': m.tiempo_respuesta_ms,
+            })
+        title = f'Fuente: {value}'
+
+    elif chart == 'derivaciones':
+        canal_map = {'WhatsApp': 'whatsapp', 'Email': 'email'}
+        canal_val = canal_map.get(value, value)
+        derivaciones = Derivacion.objects.filter(
+            created_at__date__gte=fecha_desde,
+            created_at__date__lte=fecha_hasta,
+            canal=canal_val
+        )
+        summary = {
+            'total': derivaciones.count(),
+            'label': f'Derivaciones por {value}'
+        }
+        for d in derivaciones.order_by('-created_at')[:50]:
+            rows.append({
+                'fecha': d.created_at.strftime('%d/%m %H:%M'),
+                'taller': d.taller.get_nombre() if d.taller else '-',
+                'motivo': d.motivo[:100] if d.motivo else '-',
+                'celular': d.celular_cliente or '-',
+            })
+        title = f'Derivaciones: {value}'
+
+    elif chart == 'horarios':
+        # Mensajes de una hora específica
+        hora = int(value.replace(':00', ''))
+        msgs = mensajes.filter(rol='user', created_at__hour=hora)
+        summary = {
+            'total': msgs.count(),
+            'label': f'Consultas a las {value}'
+        }
+        for m in msgs.order_by('-created_at')[:50]:
+            rows.append({
+                'fecha': m.created_at.strftime('%d/%m'),
+                'hora': m.created_at.strftime('%H:%M'),
+                'contenido': m.contenido[:100] + '...' if len(m.contenido) > 100 else m.contenido,
+            })
+        title = f'Consultas a las {value}'
+
+    return JsonResponse({
+        'title': title,
+        'summary': summary,
+        'rows': rows,
+        'total': len(rows),
+    })
+
+
+@login_required(login_url='/panel/login/')
 def asistente_enviar_resumen(request):
     """Envía manualmente el resumen semanal de sugerencias"""
     if request.method != 'POST':

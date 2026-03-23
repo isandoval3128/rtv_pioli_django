@@ -34,6 +34,7 @@ urlpatterns = [
     # Dashboard de Turnos
     path('turnos/dashboard/', views.dashboard_turnos, name='dashboard_turnos'),
     path('turnos/dashboard/ajax/', views.dashboard_turnos_ajax, name='dashboard_turnos_ajax'),
+    path('turnos/dashboard/drilldown/', views.dashboard_turnos_drilldown, name='dashboard_turnos_drilldown'),
 
     # Gestión del Sitio Web
     path('sitio/', views.gestion_sitio, name='gestion_sitio'),
@@ -111,6 +112,7 @@ urlpatterns = [
     # Dashboard
     path('asistente/dashboard/', views_asistente.asistente_dashboard, name='asistente_dashboard'),
     path('asistente/dashboard/ajax/', views_asistente.asistente_dashboard_ajax, name='asistente_dashboard_ajax'),
+    path('asistente/dashboard/drilldown/', views_asistente.asistente_dashboard_drilldown, name='asistente_dashboard_drilldown'),
 
     # Sugerencias
     path('asistente/sugerencias/', views_asistente.asistente_sugerencias, name='asistente_sugerencias'),
