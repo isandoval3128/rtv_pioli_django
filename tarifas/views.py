@@ -3,7 +3,7 @@ from .models import Tarifa
 from .utils import excel_to_html
 
 def tarifas_view(request):
-    tarifa = Tarifa.objects.first()
+    tarifa = Tarifa.objects.filter(status=True).first()
     tabla_html = None
     tarifas_list = []
     if tarifa and tarifa.archivo_excel:
