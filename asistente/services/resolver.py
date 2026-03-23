@@ -799,15 +799,24 @@ def resolver_horarios(texto, intent, confidence):
     dias_display = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo']
 
     for taller in talleres:
-        horario = f"- {taller.get_nombre()}: {taller.horario_apertura.strftime('%H:%M')} a {taller.horario_cierre.strftime('%H:%M')}"
+        horario_default = f"- {taller.get_nombre()}: {taller.horario_apertura.strftime('%H:%M')} a {taller.horario_cierre.strftime('%H:%M')}"
 
-        # Días de atención
-        dias = taller.dias_atencion or {}
-        dias_activos = [dias_display[i] for i, d in enumerate(dias_semana) if dias.get(d, False)]
-        if dias_activos:
-            horario += f" ({', '.join(dias_activos)})"
+        # Días de atención con horarios diferenciados
+        dias_info = []
+        for i, d in enumerate(dias_semana):
+            apertura, cierre = taller.get_horario_dia(d)
+            if apertura and cierre:
+                horario_dia = f"{apertura.strftime('%H:%M')}-{cierre.strftime('%H:%M')}"
+                # Si es distinto al horario por defecto, mostrarlo
+                if apertura != taller.horario_apertura or cierre != taller.horario_cierre:
+                    dias_info.append(f"{dias_display[i]} {horario_dia}")
+                else:
+                    dias_info.append(dias_display[i])
 
-        datos_horarios.append(horario)
+        if dias_info:
+            horario_default += f" ({', '.join(dias_info)})"
+
+        datos_horarios.append(horario_default)
 
     datos = "Horarios de atención:\n" + "\n".join(datos_horarios)
 
