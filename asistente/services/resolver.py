@@ -359,20 +359,41 @@ def resolver_tarifas(texto, intent, confidence):
             confidence=confidence,
         )
 
-    datos_tarifas = []
+    # Formatear tarifas directamente (sin pasar por IA para evitar que altere precios)
+    lineas = []
     for item in tarifas_list:
-        partes = []
+        nombre = ''
+        precios = []
         for key, value in item.items():
-            partes.append(f"{key}: {value}")
-        datos_tarifas.append("- " + " | ".join(partes))
+            val_str = str(value).strip()
+            if not val_str:
+                continue
+            key_upper = key.upper()
+            if key_upper in ('LISTA DE PRECIOS', 'DESCRIPCION', 'TRAMITE', 'CONCEPTO'):
+                nombre = val_str
+            elif key_upper == 'TARIFA':
+                continue  # Omitir número de tarifa
+            elif key_upper in ('PROVINCIAL', 'NACIONAL', 'CAJUTAC') and val_str:
+                precios.append(f"{key}: **{val_str}**")
+            elif val_str:
+                precios.append(f"{key}: **{val_str}**")
 
-    datos = f"Tarifas vigentes ({tarifa.titulo}):\n" + "\n".join(datos_tarifas)
+        if nombre and precios:
+            lineas.append(f"- **{nombre}**: {' | '.join(precios)}")
+        elif nombre:
+            lineas.append(f"- **{nombre}**")
+
+    # Filtrar líneas vacías o informativas
+    lineas_filtradas = [l for l in lineas if l.strip() and 'PRECIOS INCLUYEN' not in l and 'PRECIOS VIGENTES' not in l]
+
+    respuesta = "💰 **Tarifas vigentes** (precios con IVA incluido):\n\n" + "\n".join(lineas_filtradas)
 
     return ResolverResult(
         intent=intent,
-        datos=datos,
+        datos=respuesta,
         source='db',
-        necesita_humanizar=True,
+        necesita_humanizar=False,
+        respuesta_fija=respuesta,
         confidence=confidence,
         acciones=[
             {'texto': 'Ver tarifas completas', 'scroll_to': '#tarifas'},
