@@ -36,6 +36,7 @@ class Command(BaseCommand):
         grupos_config = [
             {'name': 'Administración'},
             {'name': 'Turnos'},
+            {'name': 'Asistente IA'},
         ]
 
         grupos_creados = {}
@@ -59,11 +60,19 @@ class Command(BaseCommand):
                 'grupo_name': 'Administración',
                 'icon': 'icon-settings',
                 'home': '/panel/',
+                'orden': 1,
+            },
+            {
+                'grupo_name': 'Asistente IA',
+                'icon': 'icon-bubbles',
+                'home': '/panel/asistente/config/',
+                'orden': 2,
             },
             {
                 'grupo_name': 'Turnos',
                 'icon': 'icon-calendar',
                 'home': '/panel/turnos/',
+                'orden': 3,
             },
         ]
 
@@ -76,6 +85,7 @@ class Command(BaseCommand):
                 if created or force:
                     profile.icon = perfil_data['icon']
                     profile.home = perfil_data['home']
+                    profile.orden = perfil_data.get('orden', 0)
                     profile.save()
 
                     if created:
@@ -97,22 +107,22 @@ class Command(BaseCommand):
         self.stdout.write(self.style.NOTICE('Paso 3: Creando menús...'))
 
         menus_config = [
-            # Menús para grupo "Turnos"
-            {
-                'grupo_name': 'Turnos',
-                'nombre': 'Gestión Turnos',
-                'url': '/panel/turnos/',
-                'orden': 1,
-                'status': True,
-            },
-            # Menús para grupo "Administración" (agregar más según necesidad)
-            # {
-            #     'grupo_name': 'Administración',
-            #     'nombre': 'Dashboard',
-            #     'url': '/panel/',
-            #     'orden': 1,
-            #     'status': True,
-            # },
+            # --- Administración ---
+            {'grupo_name': 'Administración', 'nombre': 'Gestión Usuarios', 'url': '/panel/usuarios/', 'orden': 1, 'status': True},
+            {'grupo_name': 'Administración', 'nombre': 'Gestión Sitio', 'url': '/panel/sitio/', 'orden': 2, 'status': True},
+            # --- Asistente IA ---
+            {'grupo_name': 'Asistente IA', 'nombre': 'Dashboard', 'url': '/panel/asistente/dashboard/', 'orden': 1, 'status': True},
+            {'grupo_name': 'Asistente IA', 'nombre': 'Preguntas Frecuentes', 'url': '/panel/asistente/faqs/', 'orden': 2, 'status': True},
+            {'grupo_name': 'Asistente IA', 'nombre': 'Base de Conocimiento', 'url': '/panel/asistente/kb/', 'orden': 3, 'status': True},
+            {'grupo_name': 'Asistente IA', 'nombre': 'Conversaciones', 'url': '/panel/asistente/conversaciones/', 'orden': 4, 'status': True},
+            {'grupo_name': 'Asistente IA', 'nombre': 'Sugerencias', 'url': '/panel/asistente/sugerencias/', 'orden': 5, 'status': True},
+            {'grupo_name': 'Asistente IA', 'nombre': 'Uso IA / Costos', 'url': '/panel/asistente/uso-ia/', 'orden': 6, 'status': True},
+            {'grupo_name': 'Asistente IA', 'nombre': 'Configuración', 'url': '/panel/asistente/config/', 'orden': 7, 'status': True},
+            # --- Turnos ---
+            {'grupo_name': 'Turnos', 'nombre': 'Dashboard', 'url': '/panel/turnos/dashboard/', 'orden': 1, 'status': True},
+            {'grupo_name': 'Turnos', 'nombre': 'Gestión Turnos', 'url': '/panel/turnos/', 'orden': 2, 'status': True},
+            {'grupo_name': 'Turnos', 'nombre': 'Escanear Turno', 'url': '/panel/turnos/escanear/', 'orden': 3, 'status': True},
+            {'grupo_name': 'Turnos', 'nombre': 'Configuraciones', 'url': '/panel/parametros/', 'orden': 4, 'status': True},
         ]
 
         for menu_data in menus_config:
