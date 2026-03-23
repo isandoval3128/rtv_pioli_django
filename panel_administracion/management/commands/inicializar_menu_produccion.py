@@ -127,37 +127,40 @@ class Command(BaseCommand):
 
         for menu_data in menus_config:
             grupo = grupos_creados.get(menu_data['grupo_name'])
-            if grupo:
-                # Buscar si existe un menú con el mismo nombre y grupo
-                menu_existente = MenuGrupo.objects.filter(
-                    grupo=grupo,
-                    nombre=menu_data['nombre']
-                ).first()
+            if not grupo:
+                self.stdout.write(self.style.WARNING(
+                    f'  ! Grupo "{menu_data["grupo_name"]}" no encontrado, saltando menú "{menu_data["nombre"]}"'
+                ))
+                continue
 
-                if menu_existente:
-                    if force:
-                        menu_existente.url = menu_data['url']
-                        menu_existente.orden = menu_data['orden']
-                        menu_existente.status = menu_data['status']
-                        menu_existente.save()
-                        self.stdout.write(self.style.SUCCESS(
-                            f'  ✓ Menú "{menu_data["nombre"]}" ({grupo.name}) actualizado'
-                        ))
-                    else:
-                        self.stdout.write(
-                            f'  - Menú "{menu_data["nombre"]}" ({grupo.name}) ya existe'
-                        )
-                else:
-                    MenuGrupo.objects.create(
-                        grupo=grupo,
-                        nombre=menu_data['nombre'],
-                        url=menu_data['url'],
-                        orden=menu_data['orden'],
-                        status=menu_data['status'],
-                    )
+            # Buscar por URL (es más confiable que por nombre)
+            menu_existente = MenuGrupo.objects.filter(url=menu_data['url']).first()
+
+            if menu_existente:
+                if force:
+                    menu_existente.grupo = grupo
+                    menu_existente.nombre = menu_data['nombre']
+                    menu_existente.orden = menu_data['orden']
+                    menu_existente.status = menu_data['status']
+                    menu_existente.save()
                     self.stdout.write(self.style.SUCCESS(
-                        f'  ✓ Menú "{menu_data["nombre"]}" ({grupo.name}) creado'
+                        f'  ✓ Menú "{menu_data["nombre"]}" ({grupo.name}) actualizado'
                     ))
+                else:
+                    self.stdout.write(
+                        f'  - Menú "{menu_data["nombre"]}" ({grupo.name}) ya existe'
+                    )
+            else:
+                MenuGrupo.objects.create(
+                    grupo=grupo,
+                    nombre=menu_data['nombre'],
+                    url=menu_data['url'],
+                    orden=menu_data['orden'],
+                    status=menu_data['status'],
+                )
+                self.stdout.write(self.style.SUCCESS(
+                    f'  ✓ Menú "{menu_data["nombre"]}" ({grupo.name}) creado'
+                ))
 
         self.stdout.write('')
 
