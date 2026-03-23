@@ -145,6 +145,7 @@ class MenuGrupoAdmin(admin.ModelAdmin):
             'orden': 1,
             'menus': [
                 {'nombre': 'Gestión Usuarios', 'url': '/panel/usuarios/', 'orden': 1},
+                {'nombre': 'Gestión Sitio', 'url': '/panel/sitio/', 'orden': 2},
             ],
         },
         {
@@ -154,12 +155,12 @@ class MenuGrupoAdmin(admin.ModelAdmin):
             'orden': 2,
             'menus': [
                 {'nombre': 'Dashboard', 'url': '/panel/asistente/dashboard/', 'orden': 1},
-                {'nombre': 'Configuración', 'url': '/panel/asistente/config/', 'orden': 2},
-                {'nombre': 'Preguntas Frecuentes', 'url': '/panel/asistente/faqs/', 'orden': 3},
-                {'nombre': 'Base de Conocimiento', 'url': '/panel/asistente/kb/', 'orden': 4},
-                {'nombre': 'Conversaciones', 'url': '/panel/asistente/conversaciones/', 'orden': 5},
-                {'nombre': 'Sugerencias', 'url': '/panel/asistente/sugerencias/', 'orden': 6},
-                {'nombre': 'Uso IA / Costos', 'url': '/panel/asistente/uso-ia/', 'orden': 7, 'permission': 'Acceso Uso IA'},
+                {'nombre': 'Preguntas Frecuentes', 'url': '/panel/asistente/faqs/', 'orden': 2},
+                {'nombre': 'Base de Conocimiento', 'url': '/panel/asistente/kb/', 'orden': 3},
+                {'nombre': 'Conversaciones', 'url': '/panel/asistente/conversaciones/', 'orden': 4},
+                {'nombre': 'Sugerencias', 'url': '/panel/asistente/sugerencias/', 'orden': 5},
+                {'nombre': 'Uso IA / Costos', 'url': '/panel/asistente/uso-ia/', 'orden': 6, 'permission': 'Acceso Uso IA'},
+                {'nombre': 'Configuración', 'url': '/panel/asistente/config/', 'orden': 7},
             ],
         },
         {
@@ -171,6 +172,7 @@ class MenuGrupoAdmin(admin.ModelAdmin):
                 {'nombre': 'Dashboard', 'url': '/panel/turnos/dashboard/', 'orden': 1},
                 {'nombre': 'Gestión Turnos', 'url': '/panel/turnos/', 'orden': 2},
                 {'nombre': 'Escanear Turno', 'url': '/panel/turnos/escanear/', 'orden': 3},
+                {'nombre': 'Configuraciones', 'url': '/panel/parametros/', 'orden': 4},
             ],
         },
     ]

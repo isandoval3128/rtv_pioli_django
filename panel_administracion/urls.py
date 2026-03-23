@@ -2,6 +2,7 @@ from django.urls import path
 from django.contrib.auth import views as auth_views
 from . import views
 from . import views_asistente
+from . import views_parametros
 
 urlpatterns = [
     # Autenticación
@@ -33,6 +34,24 @@ urlpatterns = [
     # Dashboard de Turnos
     path('turnos/dashboard/', views.dashboard_turnos, name='dashboard_turnos'),
     path('turnos/dashboard/ajax/', views.dashboard_turnos_ajax, name='dashboard_turnos_ajax'),
+
+    # Gestión del Sitio Web
+    path('sitio/', views.gestion_sitio, name='gestion_sitio'),
+    path('sitio/guardar/', views.gestion_sitio_guardar, name='gestion_sitio_guardar'),
+
+    # Gestión de Parámetros del Turnero
+    path('parametros/', views_parametros.gestion_parametros, name='gestion_parametros'),
+    path('parametros/talleres/ajax/', views_parametros.parametros_talleres_ajax, name='parametros_talleres_ajax'),
+    path('parametros/talleres/guardar/', views_parametros.parametros_talleres_guardar, name='parametros_talleres_guardar'),
+    path('parametros/tipos/ajax/', views_parametros.parametros_tipos_ajax, name='parametros_tipos_ajax'),
+    path('parametros/tipos/guardar/', views_parametros.parametros_tipos_guardar, name='parametros_tipos_guardar'),
+    path('parametros/config/ajax/', views_parametros.parametros_config_ajax, name='parametros_config_ajax'),
+    path('parametros/config/guardar/', views_parametros.parametros_config_guardar, name='parametros_config_guardar'),
+    path('parametros/fechas/ajax/', views_parametros.parametros_fechas_ajax, name='parametros_fechas_ajax'),
+    path('parametros/fechas/guardar/', views_parametros.parametros_fechas_guardar, name='parametros_fechas_guardar'),
+    path('parametros/franjas/ajax/', views_parametros.parametros_franjas_ajax, name='parametros_franjas_ajax'),
+    path('parametros/franjas/guardar/', views_parametros.parametros_franjas_guardar, name='parametros_franjas_guardar'),
+    path('parametros/franjas/eliminar/', views_parametros.parametros_franjas_eliminar, name='parametros_franjas_eliminar'),
 
     # Gestión de Usuarios
     path('usuarios/', views.gestion_usuarios, name='gestion_usuarios'),

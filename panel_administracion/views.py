@@ -13,6 +13,7 @@ from turnero.models import Turno, HistorialTurno
 from clientes.models import Cliente
 from talleres.models import Taller, TipoVehiculo, Vehiculo, ConfiguracionTaller
 from .models import UserProfile, Sector, UserPermission, PasswordResetToken
+from core.models import SiteConfiguration
 
 
 def get_user_sector(user):
@@ -1873,3 +1874,120 @@ def dashboard_turnos_ajax(request):
         'chart_horarios': chart_horarios,
         'top_atencion': top_atencion,
     })
+
+
+# ============================================
+# GESTIÓN DEL SITIO WEB
+# ============================================
+
+@login_required(login_url='/panel/login/')
+def gestion_sitio(request):
+    """Vista de gestión del sitio web público"""
+    config = SiteConfiguration.get_config()
+    context = {
+        'config': config,
+        'font_choices': SiteConfiguration.FONT_CHOICES,
+    }
+    return render(request, 'panel/gestion_sitio.html', context)
+
+
+@login_required(login_url='/panel/login/')
+def gestion_sitio_guardar(request):
+    """Guardar configuración del sitio web"""
+    if request.method != 'POST':
+        return JsonResponse({'success': False, 'error': 'Método no permitido'}, status=405)
+
+    config = SiteConfiguration.get_config()
+
+    # --- Información General ---
+    config.site_title = request.POST.get('site_title', config.site_title)
+    config.primary_color = request.POST.get('primary_color', config.primary_color)
+    config.secondary_color = request.POST.get('secondary_color', config.secondary_color)
+
+    # Logo (archivo)
+    if 'site_logo' in request.FILES:
+        config.site_logo = request.FILES['site_logo']
+
+    # --- Hero Section ---
+    config.show_hero_title = request.POST.get('show_hero_title') == 'on'
+    config.show_hero_subtitle = request.POST.get('show_hero_subtitle') == 'on'
+    config.hero_title = request.POST.get('hero_title', config.hero_title)
+    config.hero_subtitle = request.POST.get('hero_subtitle', config.hero_subtitle)
+    config.hero_button_text = request.POST.get('hero_button_text', config.hero_button_text)
+    config.hero_card_bg_color = request.POST.get('hero_card_bg_color', config.hero_card_bg_color)
+    config.hero_card_bg_opacity = float(request.POST.get('hero_card_bg_opacity', config.hero_card_bg_opacity) or config.hero_card_bg_opacity)
+    config.hero_card_elevation = request.POST.get('hero_card_elevation', config.hero_card_elevation)
+    config.hero_card_hover_elevation = request.POST.get('hero_card_hover_elevation', config.hero_card_hover_elevation)
+    if 'hero_card_bg_image' in request.FILES:
+        config.hero_card_bg_image = request.FILES['hero_card_bg_image']
+
+    # --- Header / Navegación ---
+    config.navbar_bg_color_scrolled = request.POST.get('navbar_bg_color_scrolled', config.navbar_bg_color_scrolled)
+    config.header_btn1_text = request.POST.get('header_btn1_text', config.header_btn1_text)
+    config.header_btn1_url = request.POST.get('header_btn1_url', config.header_btn1_url)
+    config.header_btn2_text = request.POST.get('header_btn2_text', config.header_btn2_text)
+    config.header_btn2_url = request.POST.get('header_btn2_url', config.header_btn2_url)
+    config.header_btn_bgcolor = request.POST.get('header_btn_bgcolor', config.header_btn_bgcolor)
+    config.header_btns_text = request.POST.get('header_btns_text', config.header_btns_text)
+    config.header_btns_text_color = request.POST.get('header_btns_text_color', config.header_btns_text_color)
+    if 'header_btns_video' in request.FILES:
+        config.header_btns_video = request.FILES['header_btns_video']
+
+    # --- Fondo del Header ---
+    if 'header_background' in request.FILES:
+        config.header_background = request.FILES['header_background']
+    if 'header_background_video' in request.FILES:
+        config.header_background_video = request.FILES['header_background_video']
+    config.header_video_width = request.POST.get('header_video_width', config.header_video_width)
+    config.header_video_height = request.POST.get('header_video_height', config.header_video_height)
+    config.header_video_brightness = float(request.POST.get('header_video_brightness', config.header_video_brightness) or config.header_video_brightness)
+    config.header_video_contrast = float(request.POST.get('header_video_contrast', config.header_video_contrast) or config.header_video_contrast)
+
+    # --- Contacto ---
+    config.contact_email = request.POST.get('contact_email', config.contact_email)
+    config.contact_phone = request.POST.get('contact_phone', config.contact_phone)
+    config.contact_address = request.POST.get('contact_address', config.contact_address)
+    config.contact_btn_text = request.POST.get('contact_btn_text', config.contact_btn_text)
+    config.contact_btn_bgcolor = request.POST.get('contact_btn_bgcolor', config.contact_btn_bgcolor)
+    config.contact_btn_fgcolor = request.POST.get('contact_btn_fgcolor', config.contact_btn_fgcolor)
+    config.contact_btn_hover_bgcolor = request.POST.get('contact_btn_hover_bgcolor', config.contact_btn_hover_bgcolor)
+    config.contact_section_bg_color = request.POST.get('contact_section_bg_color', config.contact_section_bg_color)
+    config.contact_section_bg_opacity = float(request.POST.get('contact_section_bg_opacity', config.contact_section_bg_opacity) or config.contact_section_bg_opacity)
+    if 'contact_section_bg_image' in request.FILES:
+        config.contact_section_bg_image = request.FILES['contact_section_bg_image']
+    if 'contact_section_bg_video' in request.FILES:
+        config.contact_section_bg_video = request.FILES['contact_section_bg_video']
+
+    # --- Portfolio y Servicios ---
+    config.portfolio_hover_bgcolor = request.POST.get('portfolio_hover_bgcolor', config.portfolio_hover_bgcolor)
+    config.service_icon_bgcolor = request.POST.get('service_icon_bgcolor', config.service_icon_bgcolor)
+    config.service_icon_fgcolor = request.POST.get('service_icon_fgcolor', config.service_icon_fgcolor)
+
+    # --- Redes Sociales ---
+    config.facebook_url = request.POST.get('facebook_url', config.facebook_url)
+    config.instagram_url = request.POST.get('instagram_url', config.instagram_url)
+    config.twitter_url = request.POST.get('twitter_url', config.twitter_url)
+    config.linkedin_url = request.POST.get('linkedin_url', config.linkedin_url)
+
+    # --- Tipografía ---
+    config.font_family = request.POST.get('font_family', config.font_family)
+    base_font_size = request.POST.get('base_font_size')
+    if base_font_size:
+        try:
+            config.base_font_size = int(base_font_size)
+        except (ValueError, TypeError):
+            pass
+    for h in ['h1', 'h2', 'h3', 'h4']:
+        val = request.POST.get(f'heading_font_size_{h}')
+        if val:
+            try:
+                setattr(config, f'heading_font_size_{h}', int(val))
+            except (ValueError, TypeError):
+                pass
+
+    # --- Footer ---
+    config.footer_copyright = request.POST.get('footer_copyright', config.footer_copyright)
+
+    config.save()
+
+    return JsonResponse({'success': True, 'message': 'Configuración guardada correctamente.'})

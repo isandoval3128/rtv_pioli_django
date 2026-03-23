@@ -212,8 +212,14 @@ $(document).ready(function() {
         }
     });
 
-    // Fix para conflicto entre metisMenu y Bootstrap collapse
+    // Desactivar completamente metisMenu para evitar conflictos
+    if ($.fn.metisMenu) {
+        try { $('#main-menu').metisMenu('dispose'); } catch(ex) {}
+    }
     $('#main-menu').off('click.metisMenu');
+    $('#main-menu').off('click');
+    // Quitar handlers de metisMenu en los enlaces
+    $('#main-menu a.has-arrow').off();
 
     $('#main-menu').on('click', 'a.has-arrow', function(e) {
         e.preventDefault();
