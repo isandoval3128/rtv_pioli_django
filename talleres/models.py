@@ -309,7 +309,8 @@ class TipoVehiculo(models.Model):
         # Si cambió el status, actualizar ConfiguracionTaller
         if status_cambio:
             ConfiguracionTaller.objects.filter(tipo_vehiculo=self).update(status=self.status)
-            print(f"Status de ConfiguracionTaller actualizado para {self.nombre}: {self.status}")
+            import logging
+            logging.getLogger(__name__).info(f"Status de ConfiguracionTaller actualizado para {self.nombre}: {self.status}")
 
 
 class ConfiguracionTaller(models.Model):

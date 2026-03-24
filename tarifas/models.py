@@ -72,27 +72,29 @@ class Tarifa(models.Model):
         """
         from talleres.utils import importar_tramites_desde_excel, crear_configuraciones_taller
         import os
+        import logging
+        logger = logging.getLogger(__name__)
 
         if not self.archivo_excel:
-            print("No hay archivo Excel para importar")
+            logger.warning("No hay archivo Excel para importar")
             return
 
         archivo_path = self.archivo_excel.path
         if not os.path.exists(archivo_path):
-            print(f"Archivo no encontrado: {archivo_path}")
+            logger.error(f"Archivo no encontrado: {archivo_path}")
             return
 
-        print(f"Importando trámites desde: {archivo_path}")
+        logger.info(f"Importando trámites desde: {archivo_path}")
         creados, errores, lista_errores = importar_tramites_desde_excel(archivo_path)
 
-        print(f"Importación completada: {creados} trámites creados, {errores} errores")
+        logger.info(f"Importación completada: {creados} trámites creados, {errores} errores")
         if lista_errores:
             for error in lista_errores:
-                print(f"  - {error}")
+                logger.warning(f"  - {error}")
 
         # Crear configuraciones de taller automáticamente
-        print("\nCreando configuraciones de taller...")
+        logger.info("Creando configuraciones de taller...")
         configs_creadas = crear_configuraciones_taller()
-        print(f"Configuraciones creadas: {configs_creadas}")
+        logger.info(f"Configuraciones creadas: {configs_creadas}")
 
         return (creados, errores, lista_errores)

@@ -328,7 +328,9 @@ def _corregir_ortografia(texto):
 
     try:
         config = AsistenteConfigModel.get_config()
-        if not config.ai_api_key:
+        from django.conf import settings
+        api_key = getattr(settings, 'GEMINI_API_KEY', '') or config.ai_api_key
+        if not api_key:
             return texto
 
         ai_client = get_ai_client(config)
