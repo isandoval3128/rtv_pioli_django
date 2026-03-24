@@ -830,8 +830,11 @@ def asistente_kb_guardar(request):
         if keywords_raw:
             doc.palabras_clave = [k.strip() for k in keywords_raw.split(',') if k.strip()]
 
-        # Archivo
-        archivo = request.FILES.get('archivo')
+        # Archivo (con validación)
+        from core.validators import validar_upload_seguro
+        archivo, err = validar_upload_seguro(request.FILES, 'archivo', 'document')
+        if err:
+            return JsonResponse({'success': False, 'error': err})
         if archivo:
             doc.archivo = archivo
 
