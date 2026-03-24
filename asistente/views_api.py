@@ -117,6 +117,11 @@ def api_mensaje(request):
     if not session_key or not mensaje:
         return JsonResponse({'error': 'Faltan parámetros requeridos'}, status=400)
 
+    # Limitar largo del mensaje (prevenir prompt injection con textos gigantes)
+    MAX_MSG_LENGTH = 500
+    if len(mensaje) > MAX_MSG_LENGTH:
+        mensaje = mensaje[:MAX_MSG_LENGTH]
+
     # Obtener sesión
     try:
         session = ChatSession.objects.get(session_key=session_key, activa=True)
