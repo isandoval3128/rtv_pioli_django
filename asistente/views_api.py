@@ -1,5 +1,6 @@
 """
 API endpoints públicos del chat (sin login requerido).
+Incluye rate limiting por IP para prevenir abuso.
 """
 import json
 import time
@@ -8,16 +9,55 @@ import uuid
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST, require_GET
+from django.core.cache import cache
 
 from .models import AsistenteConfigModel, ChatSession, ChatMessage
 from .services.resolver import resolver_mensaje
 from .services.humanizer import humanizar_respuesta
 
 
+# ── Rate Limiting ──
+# Límites por IP (sin dependencias externas, usa cache de Django)
+RATE_LIMITS = {
+    'session': {'max': 10, 'window': 60},       # 10 sesiones por minuto
+    'mensaje': {'max': 30, 'window': 60},        # 30 mensajes por minuto
+    'mensaje_dia': {'max': 500, 'window': 86400}, # 500 mensajes por día
+}
+
+
+def _check_rate_limit(ip, action):
+    """
+    Verifica rate limit por IP y acción.
+    Retorna (permitido, info) donde info es dict con detalles.
+    """
+    limit_config = RATE_LIMITS.get(action)
+    if not limit_config:
+        return True, {}
+
+    cache_key = f"ratelimit:{action}:{ip}"
+    current = cache.get(cache_key, 0)
+
+    if current >= limit_config['max']:
+        return False, {
+            'error': 'Demasiadas solicitudes. Por favor esperá un momento.',
+            'retry_after': limit_config['window'],
+        }
+
+    cache.set(cache_key, current + 1, limit_config['window'])
+    return True, {}
+
+
 @csrf_exempt
 @require_POST
 def api_session(request):
     """Crear nueva sesión de chat y retornar mensaje de bienvenida"""
+    ip = _get_client_ip(request)
+
+    # Rate limiting
+    allowed, info = _check_rate_limit(ip, 'session')
+    if not allowed:
+        return JsonResponse(info, status=429)
+
     config = AsistenteConfigModel.get_config()
 
     if not config.habilitado:
@@ -27,9 +67,6 @@ def api_session(request):
 
     # Generar session_key única
     session_key = str(uuid.uuid4())
-
-    # Obtener IP
-    ip = _get_client_ip(request)
 
     # Crear sesión
     session = ChatSession.objects.create(
@@ -57,6 +94,16 @@ def api_session(request):
 @require_POST
 def api_mensaje(request):
     """Recibir mensaje del usuario y retornar respuesta del asistente"""
+    ip = _get_client_ip(request)
+
+    # Rate limiting (por minuto y por día)
+    allowed, info = _check_rate_limit(ip, 'mensaje')
+    if not allowed:
+        return JsonResponse(info, status=429)
+    allowed_dia, info_dia = _check_rate_limit(ip, 'mensaje_dia')
+    if not allowed_dia:
+        return JsonResponse(info_dia, status=429)
+
     start_time = time.time()
 
     try:
@@ -356,8 +403,18 @@ def _render_token_page(titulo, mensaje, tipo='info'):
 
 
 def _get_client_ip(request):
-    """Obtiene la IP del cliente"""
+    """
+    Obtiene la IP del cliente.
+    Confía en X-Forwarded-For solo si viene de Nginx (proxy local).
+    """
+    # En producción, Nginx agrega X-Real-IP que es más confiable
+    real_ip = request.META.get('HTTP_X_REAL_IP')
+    if real_ip:
+        return real_ip.strip()
+
     x_forwarded = request.META.get('HTTP_X_FORWARDED_FOR')
     if x_forwarded:
+        # Tomar solo la primera IP (la del cliente original)
         return x_forwarded.split(',')[0].strip()
-    return request.META.get('REMOTE_ADDR')
+
+    return request.META.get('REMOTE_ADDR', '0.0.0.0')

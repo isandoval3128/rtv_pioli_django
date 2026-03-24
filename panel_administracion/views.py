@@ -1646,10 +1646,10 @@ def password_reset_confirm(request):
                 'error': 'Las contraseñas no coinciden'
             })
 
-        if len(password) < 6:
+        if len(password) < 8:
             return JsonResponse({
                 'success': False,
-                'error': 'La contraseña debe tener al menos 6 caracteres'
+                'error': 'La contraseña debe tener al menos 8 caracteres'
             })
 
         try:
