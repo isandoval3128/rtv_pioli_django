@@ -72,7 +72,7 @@ def excel_to_html(file_path):
             index=False,
             border=0,
             justify='center',
-            escape=False
+            escape=True
         )
         # Solo devuelve la tabla, sin scripts ni links
         return mark_safe(html)

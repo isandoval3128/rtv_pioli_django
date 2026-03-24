@@ -14,6 +14,7 @@ from clientes.models import Cliente
 from talleres.models import Taller, TipoVehiculo, Vehiculo, ConfiguracionTaller
 from .models import UserProfile, Sector, UserPermission, PasswordResetToken
 from core.models import SiteConfiguration
+from core.validators import validar_upload_seguro
 
 
 def get_user_sector(user):
@@ -1601,6 +1602,18 @@ Sistema RTV Pioli
 
 def password_reset_form(request, token):
     """Muestra el formulario para crear nueva contraseña"""
+    # Rate limiting: máximo 10 intentos por IP por hora
+    from django.core.cache import cache
+    ip = request.META.get('HTTP_X_REAL_IP', request.META.get('REMOTE_ADDR', '0.0.0.0'))
+    cache_key = f"password_reset:{ip}"
+    intentos = cache.get(cache_key, 0)
+    if intentos >= 10:
+        return render(request, 'panel/password_reset_form.html', {
+            'error': 'Demasiados intentos. Intenta nuevamente en una hora.',
+            'token_invalido': True
+        })
+    cache.set(cache_key, intentos + 1, 3600)
+
     # Validar token
     reset_token = PasswordResetToken.validate_token(token)
 
@@ -1646,10 +1659,10 @@ def password_reset_confirm(request):
                 'error': 'Las contraseñas no coinciden'
             })
 
-        if len(password) < 6:
+        if len(password) < 8:
             return JsonResponse({
                 'success': False,
-                'error': 'La contraseña debe tener al menos 6 caracteres'
+                'error': 'La contraseña debe tener al menos 8 caracteres'
             })
 
         try:
@@ -1990,9 +2003,12 @@ def gestion_sitio_guardar(request):
     config.primary_color = request.POST.get('primary_color', config.primary_color)
     config.secondary_color = request.POST.get('secondary_color', config.secondary_color)
 
-    # Logo (archivo)
-    if 'site_logo' in request.FILES:
-        config.site_logo = request.FILES['site_logo']
+    # Logo (archivo con validación)
+    logo, err = validar_upload_seguro(request.FILES, 'site_logo', 'image')
+    if err:
+        return JsonResponse({'success': False, 'error': err})
+    if logo:
+        config.site_logo = logo
 
     # --- Hero Section ---
     config.show_hero_title = request.POST.get('show_hero_title') == 'on'
@@ -2004,8 +2020,11 @@ def gestion_sitio_guardar(request):
     config.hero_card_bg_opacity = float(request.POST.get('hero_card_bg_opacity', config.hero_card_bg_opacity) or config.hero_card_bg_opacity)
     config.hero_card_elevation = request.POST.get('hero_card_elevation', config.hero_card_elevation)
     config.hero_card_hover_elevation = request.POST.get('hero_card_hover_elevation', config.hero_card_hover_elevation)
-    if 'hero_card_bg_image' in request.FILES:
-        config.hero_card_bg_image = request.FILES['hero_card_bg_image']
+    img, err = validar_upload_seguro(request.FILES, 'hero_card_bg_image', 'image')
+    if err:
+        return JsonResponse({'success': False, 'error': err})
+    if img:
+        config.hero_card_bg_image = img
 
     # --- Header / Navegación ---
     config.navbar_bg_color_scrolled = request.POST.get('navbar_bg_color_scrolled', config.navbar_bg_color_scrolled)
@@ -2016,14 +2035,23 @@ def gestion_sitio_guardar(request):
     config.header_btn_bgcolor = request.POST.get('header_btn_bgcolor', config.header_btn_bgcolor)
     config.header_btns_text = request.POST.get('header_btns_text', config.header_btns_text)
     config.header_btns_text_color = request.POST.get('header_btns_text_color', config.header_btns_text_color)
-    if 'header_btns_video' in request.FILES:
-        config.header_btns_video = request.FILES['header_btns_video']
+    vid, err = validar_upload_seguro(request.FILES, 'header_btns_video', 'video')
+    if err:
+        return JsonResponse({'success': False, 'error': err})
+    if vid:
+        config.header_btns_video = vid
 
     # --- Fondo del Header ---
-    if 'header_background' in request.FILES:
-        config.header_background = request.FILES['header_background']
-    if 'header_background_video' in request.FILES:
-        config.header_background_video = request.FILES['header_background_video']
+    img, err = validar_upload_seguro(request.FILES, 'header_background', 'image')
+    if err:
+        return JsonResponse({'success': False, 'error': err})
+    if img:
+        config.header_background = img
+    vid, err = validar_upload_seguro(request.FILES, 'header_background_video', 'video')
+    if err:
+        return JsonResponse({'success': False, 'error': err})
+    if vid:
+        config.header_background_video = vid
     config.header_video_width = request.POST.get('header_video_width', config.header_video_width)
     config.header_video_height = request.POST.get('header_video_height', config.header_video_height)
     config.header_video_brightness = float(request.POST.get('header_video_brightness', config.header_video_brightness) or config.header_video_brightness)
@@ -2039,10 +2067,16 @@ def gestion_sitio_guardar(request):
     config.contact_btn_hover_bgcolor = request.POST.get('contact_btn_hover_bgcolor', config.contact_btn_hover_bgcolor)
     config.contact_section_bg_color = request.POST.get('contact_section_bg_color', config.contact_section_bg_color)
     config.contact_section_bg_opacity = float(request.POST.get('contact_section_bg_opacity', config.contact_section_bg_opacity) or config.contact_section_bg_opacity)
-    if 'contact_section_bg_image' in request.FILES:
-        config.contact_section_bg_image = request.FILES['contact_section_bg_image']
-    if 'contact_section_bg_video' in request.FILES:
-        config.contact_section_bg_video = request.FILES['contact_section_bg_video']
+    img, err = validar_upload_seguro(request.FILES, 'contact_section_bg_image', 'image')
+    if err:
+        return JsonResponse({'success': False, 'error': err})
+    if img:
+        config.contact_section_bg_image = img
+    vid, err = validar_upload_seguro(request.FILES, 'contact_section_bg_video', 'video')
+    if err:
+        return JsonResponse({'success': False, 'error': err})
+    if vid:
+        config.contact_section_bg_video = vid
 
     # --- Portfolio y Servicios ---
     config.portfolio_hover_bgcolor = request.POST.get('portfolio_hover_bgcolor', config.portfolio_hover_bgcolor)

@@ -26,7 +26,10 @@ class GeminiProvider:
     def _get_client(self):
         if self._client is None:
             import google.generativeai as genai
-            genai.configure(api_key=self.config.ai_api_key)
+            from django.conf import settings
+            # Priorizar API key desde credenciales.py (más seguro que la BD)
+            api_key = getattr(settings, 'GEMINI_API_KEY', '') or self.config.ai_api_key
+            genai.configure(api_key=api_key)
             self._client = genai.GenerativeModel(
                 model_name=self.model_name,
                 generation_config={

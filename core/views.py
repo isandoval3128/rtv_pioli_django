@@ -3,6 +3,9 @@ from django.contrib import messages
 from .models import Service, PortfolioItem, TimelineEvent, TeamMember, SiteConfiguration
 from .forms import ContactForm
 import json
+import logging
+
+logger = logging.getLogger(__name__)
 from .models import AboutSection
 from tarifas.models import Tarifa
 from tarifas.utils import excel_to_html
@@ -97,10 +100,12 @@ def contact_submit(request):
         if form.is_valid():
             data = form.cleaned_data
 
-            subject = f"Nuevo mensaje RTV Pioli Web de {data['name']}"
+            # Sanitizar: quitar saltos de línea del subject para prevenir email injection
+            nombre_limpio = data['name'].replace('\n', ' ').replace('\r', ' ').strip()[:100]
+            subject = f"Nuevo mensaje RTV Pioli Web de {nombre_limpio}"
             body = (
                 f"Has recibido un nuevo mensaje de contacto desde la web:\n\n"
-                f"Nombre: {data['name']}\n"
+                f"Nombre: {nombre_limpio}\n"
                 f"Email: {data['email']}\n"
                 f"Teléfono: {data['phone']}\n"
                 f"Mensaje:\n{data['message']}\n"
@@ -108,24 +113,13 @@ def contact_submit(request):
             sent_successfully = False
             error_message = ""
             try:
-                print("=" * 80)
-                print("[DEBUG] Iniciando proceso de envío de correo")
-
                 email_config = EmailConfig.objects.first()
 
                 if email_config:
-                    print(f"[DEBUG] Configuración de correo encontrada:")
-                    print(f"  - Host: {email_config.email_host}")
-                    print(f"  - Puerto: {email_config.email_port}")
-                    print(f"  - Usuario: {email_config.email_host_user}")
-                    print(f"  - Contraseña: {'*' * len(email_config.email_host_password) if email_config.email_host_password else 'NO CONFIGURADA'}")
-                    print(f"  - Use TLS: {email_config.email_use_tls}")
-                    print(f"  - From Email: {email_config.default_from_email}")
-                    print(f"  - Admin Email: {email_config.contact_admin_email}")
+                    logger.info(f"Enviando email de contacto desde {data['email']}")
 
                     from django.core.mail import EmailMessage, get_connection
 
-                    print("[DEBUG] Creando conexión SMTP...")
                     connection = get_connection(
                         backend='django.core.mail.backends.smtp.EmailBackend',
                         host=email_config.email_host,
@@ -137,7 +131,6 @@ def contact_submit(request):
 
                     # 1. Enviar mensaje del usuario al administrador
                     admin_email = email_config.contact_admin_email or email_config.email_host_user
-                    print(f"[DEBUG] Preparando email al administrador: {admin_email}")
 
                     email_admin = EmailMessage(
                         subject,
@@ -146,19 +139,17 @@ def contact_submit(request):
                         [admin_email],
                         connection=connection
                     )
-
-                    print("[DEBUG] Enviando email al administrador...")
                     email_admin.send(fail_silently=False)
-                    print("[DEBUG] Email al administrador enviado exitosamente!")
+                    logger.info("Email al administrador enviado")
+
                     # 2. Enviar mensaje de confirmación al usuario
                     confirm_subject = "RTV Pioli - Confirmación de contacto"
                     confirm_body = (
-                        f"Estimado/a {data['name']},\n\n"
+                        f"Estimado/a {nombre_limpio},\n\n"
                         f"RTV Pioli recibió su mensaje. Le estaremos respondiendo a la brevedad.\n\n"
                         f"Gracias por contactarnos."
                     )
 
-                    print(f"[DEBUG] Preparando email de confirmación al usuario: {data['email']}")
                     email_user = EmailMessage(
                         confirm_subject,
                         confirm_body,
@@ -166,27 +157,17 @@ def contact_submit(request):
                         [data['email']],
                         connection=connection
                     )
-
-                    print("[DEBUG] Enviando email de confirmación al usuario...")
                     email_user.send(fail_silently=False)
-                    print("[DEBUG] Email de confirmación enviado exitosamente!")
+                    logger.info("Email de confirmación al usuario enviado")
 
                     sent_successfully = True
-                    print("[DEBUG] ✓ Proceso completado exitosamente")
-                    print("=" * 80)
                     messages.success(request, '¡Gracias por contactarnos! Tu mensaje fue enviado correctamente.')
                 else:
                     error_message = 'No hay configuración de correo definida.'
-                    print(f"[ERROR] {error_message}")
-                    print("=" * 80)
+                    logger.warning(error_message)
             except Exception as e:
                 error_message = str(e)
-                print(f"[ERROR] Error al enviar correo: {error_message}")
-                print(f"[ERROR] Tipo de error: {type(e).__name__}")
-                import traceback
-                print(f"[ERROR] Traceback completo:")
-                traceback.print_exc()
-                print("=" * 80)
+                logger.error(f"Error al enviar correo de contacto: {error_message}", exc_info=True)
                 # Guardar el mensaje en el modelo si falla el envío
                 
                 ContactMessage.objects.create(
