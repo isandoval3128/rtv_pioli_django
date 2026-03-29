@@ -20,7 +20,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
-    path('admin/panel-administrativo/', admin.site.urls),
+    path('admin/panel_administrativo/', admin.site.urls),
     path('', include('core.urls')),
     path('', include('tarifas.urls')),
     # Sistema de turnos RTV

@@ -102,7 +102,14 @@ class UserProfile(models.Model):
         on_delete=models.SET_NULL,
         blank=True,
         null=True,
-        verbose_name="Permiso"
+        verbose_name="Permiso (legacy)"
+    )
+    menus_permitidos = models.ManyToManyField(
+        'MenuGrupo',
+        blank=True,
+        related_name='usuarios_permitidos',
+        verbose_name="Submenús Permitidos",
+        help_text="Submenús específicos a los que el usuario tiene acceso"
     )
 
     class Meta:

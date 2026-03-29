@@ -248,10 +248,10 @@ $(function() {
 $(document).ready(function() {
     var currentPath = window.location.pathname;
 
-    // Buscar el enlace activo basado en la URL actual
+    // Buscar el enlace activo basado en la URL actual (coincidencia exacta)
     $('#main-menu a').each(function() {
         var href = $(this).attr('href');
-        if (href && href !== 'javascript:;' && currentPath.indexOf(href) !== -1) {
+        if (href && href !== 'javascript:;' && currentPath === href) {
             $(this).closest('li').addClass('active');
             $(this).closest('ul.collapse').addClass('in').closest('li').addClass('active');
         }

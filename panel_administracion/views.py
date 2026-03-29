@@ -32,22 +32,8 @@ def get_user_sector(user):
 
 @login_required(login_url='/panel/login/')
 def home(request):
-    """Vista principal del panel de administración"""
-    from turnero.models import Turno
-    from clientes.models import Cliente
-    from talleres.models import Taller
-
-    # Estadísticas básicas
-    hoy = timezone.localtime().date()
-
-    context = {
-        'turnos_pendientes': Turno.objects.filter(estado='PENDIENTE').count(),
-        'turnos_hoy': Turno.objects.filter(fecha=hoy).count(),
-        'clientes_total': Cliente.objects.count(),
-        'talleres_activos': Taller.objects.filter(status=True).count(),
-    }
-
-    return render(request, 'panel/home.html', context)
+    """Vista principal del panel - Dashboards en pestañas"""
+    return render(request, 'panel/home.html')
 
 
 def logout_view(request):
@@ -1333,12 +1319,37 @@ def gestion_usuarios_form(request):
         if pk:
             usuario = get_object_or_404(User, pk=pk)
 
+        # Construir JSON de submenús por grupo para los checkboxes dinámicos
+        import json
+        grupos = Group.objects.all().order_by('name')
+        grupos_submenus = {}
+        for g in grupos:
+            profile = getattr(g, 'panel_profile', None)
+            menus = []
+            for m in g.menugrupo_set.filter(status=True).order_by('orden'):
+                menus.append({
+                    'id': m.id,
+                    'nombre': m.nombre,
+                })
+            grupos_submenus[str(g.id)] = {
+                'name': g.name,
+                'icon': profile.icon if profile else 'icon-folder',
+                'menus': menus,
+            }
+
+        # IDs de menús permitidos del usuario (para marcar checkboxes)
+        menus_permitidos_ids = []
+        if usuario and hasattr(usuario, 'panel_profile') and usuario.panel_profile:
+            menus_permitidos_ids = list(usuario.panel_profile.menus_permitidos.values_list('id', flat=True))
+
         context = {
             'titulo': 'Editar Usuario' if usuario else 'Nuevo Usuario',
             'usuario': usuario,
-            'grupos': Group.objects.all().order_by('name'),
+            'grupos': grupos,
             'sectores': Sector.objects.filter(status=True).order_by('nombre'),
             'origenes': UserProfile.ORIGEN_CHOICES,
+            'grupos_submenus_json': json.dumps(grupos_submenus),
+            'menus_permitidos_ids_json': json.dumps(menus_permitidos_ids),
         }
 
         html_form = render_to_string('panel/gestion_usuarios_Form.html', context, request=request)
@@ -1379,6 +1390,7 @@ def gestion_usuarios_guardar(request):
         grupos_ids = request.POST.getlist('grupos')  # Múltiples grupos
         sector_id = request.POST.get('sector', '')
         origen = request.POST.get('origen', 'GENERAL')
+        menus_permitidos_ids = request.POST.getlist('menus_permitidos')
 
         # Validaciones
         if not username:
@@ -1424,6 +1436,13 @@ def gestion_usuarios_guardar(request):
                 profile.sector_id = sector_id if sector_id else None
                 profile.save()
 
+                # Actualizar submenús permitidos
+                from .models import MenuGrupo
+                profile.menus_permitidos.clear()
+                if menus_permitidos_ids:
+                    menus = MenuGrupo.objects.filter(pk__in=menus_permitidos_ids)
+                    profile.menus_permitidos.add(*menus)
+
                 return JsonResponse({'success': True, 'message': 'Usuario actualizado correctamente'})
             else:
                 # Verificar si ya existe un usuario con el mismo username
@@ -1461,6 +1480,12 @@ def gestion_usuarios_guardar(request):
                 profile.origen = origen
                 profile.sector_id = sector_id if sector_id else None
                 profile.save()
+
+                # Asignar submenús permitidos
+                from .models import MenuGrupo
+                if menus_permitidos_ids:
+                    menus = MenuGrupo.objects.filter(pk__in=menus_permitidos_ids)
+                    profile.menus_permitidos.add(*menus)
 
                 return JsonResponse({'success': True, 'message': 'Usuario creado correctamente'})
 
