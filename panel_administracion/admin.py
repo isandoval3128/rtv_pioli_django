@@ -107,9 +107,6 @@ class CustomUserAdmin(UserAdmin):
           - Chats, cache, derivaciones, sugerencias, logs IA del asistente
           - Sesiones de Django
         """
-        from turnero.models import Turno, HistorialTurno, ReservaTemporal
-        from talleres.models import Vehiculo
-        from clientes.models import Cliente
         from asistente.models import ChatSession, ChatMessage, CachedResponse, Derivacion
         from asistente.models import SugerenciaAsistente, SugerenciaToken, AIUsageLog
 
@@ -131,22 +128,8 @@ class CustomUserAdmin(UserAdmin):
         count = AIUsageLog.objects.all().delete()[0]
         mensajes.append(f'Eliminados {count} registros de uso IA')
 
-        # Eliminar turnos y relacionados
-        count = HistorialTurno.objects.all().delete()[0]
-        mensajes.append(f'Eliminados {count} registros de historial de turnos')
-        count = ReservaTemporal.objects.all().delete()[0]
-        mensajes.append(f'Eliminadas {count} reservas temporales')
-        count = Turno.objects.all().delete()[0]
-        mensajes.append(f'Eliminados {count} turnos')
-
-        # Eliminar vehiculos y clientes (NO talleres, tipos ni configuraciones)
-        count = Vehiculo.objects.all().delete()[0]
-        mensajes.append(f'Eliminados {count} vehiculos')
-        count = Cliente.objects.all().delete()[0]
-        mensajes.append(f'Eliminados {count} clientes')
-
-        # NO se eliminan: usuarios, perfiles, grupos, menús, sectores, permisos
-        mensajes.append('Usuarios y configuracion de acceso preservados')
+        # NO se eliminan: turnos, clientes, vehiculos, usuarios, talleres, etc.
+        mensajes.append('Turnos, clientes, vehiculos y usuarios preservados')
 
         # Limpiar sesiones de Django
         from django.contrib.sessions.models import Session
