@@ -917,6 +917,12 @@
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const tallerId = {{ taller_preseleccionado.id }};
+        const tallerNombre = "{{ taller_preseleccionado.get_nombre|escapejs }}";
+
+        // Abrir modal de tipo de trámite automáticamente
+        setTimeout(function() {
+            abrirModalTiposTramite(tallerId, tallerNombre);
+        }, 500);
 
         // Cargar tipos de trámite directamente
         fetch(`{% url 'turnero:tipos_tramite_taller_ajax' %}?taller_id=${tallerId}`)
