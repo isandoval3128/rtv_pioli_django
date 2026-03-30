@@ -1,0 +1,11 @@
+{% extends "admin/change_list.html" %}
+{% load i18n static %}
+
+{% block object-tools-items %}
+{{ block.super }}
+<li>
+    <a href="{% url 'admin:panel_administracion_iniciar_sistema' %}" class="addlink" style="background: #417690; padding-left: 10px;">
+        Iniciar Sistema
+    </a>
+</li>
+{% endblock %}

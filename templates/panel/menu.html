@@ -8,12 +8,10 @@
             </a>
             <ul class="collapse">
                 {% for menu in grupo.menugrupo_set.all|dictsort:"orden" %}
-                    {% if menu.userPermission %}
-                        {% if request.user.panel_profile and menu.userPermission == request.user.panel_profile.userPermission %}
+                    {% if menu.status %}
+                        {% if request.user.is_superuser or menu in request.user.panel_profile.menus_permitidos.all %}
                             <li><a href="{{ menu.url }}"><i class="fa fa-angle-right me-1" style="font-size: 0.7rem; opacity: 0.7;"></i> {{ menu.nombre }}</a></li>
                         {% endif %}
-                    {% else %}
-                        <li><a href="{{ menu.url }}"><i class="fa fa-angle-right me-1" style="font-size: 0.7rem; opacity: 0.7;"></i> {{ menu.nombre }}</a></li>
                     {% endif %}
                 {% endfor %}
             </ul>

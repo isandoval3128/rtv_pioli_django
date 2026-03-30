@@ -23,12 +23,22 @@
 html, body { overflow-x: hidden; max-width: 100%; }
 
 /* ── Header ── */
-.dash-header { background: linear-gradient(135deg, var(--navy-900) 0%, var(--navy-700) 60%, var(--navy-600) 100%); padding: 24px 28px; color: white; position: relative; overflow: hidden; border-radius: 12px; margin-bottom: 20px; }
-.dash-header::before { content: ''; position: absolute; top: -50%; right: -10%; width: 400px; height: 400px; background: radial-gradient(circle, rgba(59,130,246,0.06) 0%, transparent 70%); border-radius: 50%; pointer-events: none; }
+.dash-header { background: linear-gradient(135deg, var(--navy-900) 0%, var(--navy-700) 40%, var(--navy-600) 100%); padding: 24px 28px; color: white; position: relative; overflow: hidden; border-radius: 16px; margin-bottom: 20px; min-height: 120px; display: flex; flex-direction: column; }
+#neuralCanvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0.2; z-index: 0; }
+.glow-orb { position: absolute; border-radius: 50%; filter: blur(60px); opacity: 0.1; z-index: 0; pointer-events: none; }
+.orb-1 { width: 200px; height: 200px; background: rgba(59,130,246,0.5); top: -50px; left: 10%; animation: orbFloat 6s ease-in-out infinite; }
+.orb-2 { width: 150px; height: 150px; background: rgba(139,92,246,0.4); bottom: -30px; right: 15%; animation: orbFloat 8s ease-in-out infinite reverse; }
+.orb-3 { width: 120px; height: 120px; background: rgba(16,185,129,0.3); top: 20%; right: 5%; animation: orbFloat 7s ease-in-out infinite 1s; }
+@keyframes orbFloat { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(15px, -10px); } }
 .dash-header-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; position: relative; z-index: 2; }
-.dash-title { font-size: 20px; font-weight: 700; letter-spacing: -0.3px; }
-.dash-title i { margin-right: 10px; opacity: 0.7; }
+.dash-title { font-size: 20px; font-weight: 700; letter-spacing: -0.3px; display: flex; align-items: center; gap: 10px; }
+.dash-title i { opacity: 0.7; color: rgba(147,197,253,0.9); }
 .dash-subtitle { font-size: 12px; color: rgba(255,255,255,0.5); margin-top: 2px; }
+.dash-breadcrumb { display: flex; gap: 8px; font-size: 11px; color: rgba(255,255,255,0.4); margin-top: 6px; }
+.dash-breadcrumb a { color: rgba(147,197,253,0.7); text-decoration: none; }
+.dash-breadcrumb a:hover { color: #fff; }
+.dash-header-right { position: relative; z-index: 1; text-align: right; }
+.dash-header-right .ultima-act { color: rgba(255,255,255,0.5); font-size: 11px; }
 
 /* ── KPI Strip ── */
 .kpi-strip { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; position: relative; z-index: 1; }
@@ -151,28 +161,29 @@ html, body { overflow-x: hidden; max-width: 100%; }
 {% load static %}
 <div id="main-content" class="profilepage_2 blog-page">
     <div class="container-fluid">
-        <div class="block-header">
-            <div class="row g-3">
-                <div class="col-lg-5 col-md-8 col-sm-12">
-                    <h2><a href="javascript:void(0);" class="btn btn-xs btn-link btn-toggle-fullwidth"><i class="fa fa-arrow-right"></i></a> {{ titulo }}</h2>
-                    <ul class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="{% url 'panel_home' %}"><i class="icon-home text-orange"></i></a></li>
-                        <li class="breadcrumb-item">Turnos</li>
-                        <li class="breadcrumb-item active">{{ titulo }}</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-
         <div class="row clearfix">
-            <div class="col-lg-12 col-md-12">
+            <div class="col-lg-12 col-md-12" style="padding-top: 15px;">
 
         <!-- Header + KPIs -->
         <div class="dash-header">
+            <canvas id="neuralCanvas"></canvas>
+            <div class="glow-orb orb-1"></div>
+            <div class="glow-orb orb-2"></div>
+            <div class="glow-orb orb-3"></div>
             <div class="dash-header-top">
                 <div>
                     <div class="dash-title"><i class="fa fa-calendar"></i> Dashboard de Turnos</div>
                     <div class="dash-subtitle">Metricas y estadisticas del sistema de turnos</div>
+                    <div class="dash-breadcrumb">
+                        <a href="{% url 'panel_home' %}"><i class="icon-home"></i> Inicio</a>
+                        <span>/</span>
+                        <span>Dashboard Turnos</span>
+                    </div>
+                </div>
+                <div class="dash-header-right">
+                    <span class="ultima-act">
+                        <i class="fa fa-clock-o me-1"></i> Ultima actualizacion: <span id="ultima-actualizacion">--</span>
+                    </span>
                 </div>
             </div>
             <div class="kpi-strip">
@@ -399,6 +410,9 @@ function cargarDashboard(periodo) {
             renderChartTipos(res.chart_tipos);
             renderChartHorarios(res.chart_horarios);
             renderRanking(res.top_atencion);
+            // Actualizar timestamp
+            var now = new Date();
+            $('#ultima-actualizacion').text(now.toLocaleString('es-AR', {day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'}));
         },
         error: function() { Swal.fire('Error', 'Error al cargar datos', 'error'); }
     });
@@ -595,5 +609,31 @@ function showDrilldownPopover(chartKey, clickedValue) {
 }
 
 function closeDetail() { $('#detail-popover').css('display', 'none'); }
+
+// Neural Network Animation
+(function() {
+    var canvas = document.getElementById('neuralCanvas');
+    if (!canvas) return;
+    var ctx = canvas.getContext('2d');
+    var nodes = [], N = 30, maxDist = 120;
+    function resize() { canvas.width = canvas.offsetWidth; canvas.height = canvas.offsetHeight; }
+    resize(); window.addEventListener('resize', resize);
+    for (var i = 0; i < N; i++) nodes.push({ x: Math.random() * canvas.width, y: Math.random() * canvas.height, vx: (Math.random() - 0.5) * 0.4, vy: (Math.random() - 0.5) * 0.4 });
+    function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        nodes.forEach(function(n) {
+            n.x += n.vx; n.y += n.vy;
+            if (n.x < 0 || n.x > canvas.width) n.vx *= -1;
+            if (n.y < 0 || n.y > canvas.height) n.vy *= -1;
+        });
+        for (var i = 0; i < N; i++) for (var j = i + 1; j < N; j++) {
+            var dx = nodes[i].x - nodes[j].x, dy = nodes[i].y - nodes[j].y, d = Math.sqrt(dx*dx + dy*dy);
+            if (d < maxDist) { ctx.beginPath(); ctx.moveTo(nodes[i].x, nodes[i].y); ctx.lineTo(nodes[j].x, nodes[j].y); ctx.strokeStyle = 'rgba(147,197,253,' + (1 - d/maxDist) * 0.5 + ')'; ctx.lineWidth = 0.8; ctx.stroke(); }
+        }
+        nodes.forEach(function(n) { ctx.beginPath(); ctx.arc(n.x, n.y, 2, 0, Math.PI*2); ctx.fillStyle = 'rgba(147,197,253,0.6)'; ctx.fill(); });
+        requestAnimationFrame(animate);
+    }
+    animate();
+})();
 </script>
 {% endblock %}

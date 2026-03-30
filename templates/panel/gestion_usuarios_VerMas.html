@@ -448,19 +448,35 @@
 
                 <div class="divider"></div>
 
-                <!-- Grupos -->
+                <!-- Grupos y Submenus -->
                 <div class="section">
                     <div class="section-header">
-                        <i class="fa fa-users"></i> Grupos
+                        <i class="fa fa-users"></i> Menus y Submenus
                     </div>
                     {% if usuario.groups.exists %}
-                    <div class="grupos-list">
                         {% for grupo in usuario.groups.all %}
-                        <span class="grupo-badge">
-                            <i class="fa fa-users me-1"></i>{{ grupo.name }}
-                        </span>
+                        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 0.75rem; margin-bottom: 0.5rem;">
+                            <div style="font-size: 0.8rem; font-weight: 600; color: #475569; margin-bottom: 0.5rem;">
+                                <i class="{% if grupo.panel_profile %}{{ grupo.panel_profile.icon }}{% else %}icon-folder{% endif %} me-1"></i>
+                                {{ grupo.name }}
+                            </div>
+                            <div style="display: flex; flex-wrap: wrap; gap: 0.4rem;">
+                                {% for menu in grupo.menugrupo_set.all %}
+                                    {% if menu.status %}
+                                        {% if usuario.is_superuser or menu in usuario.panel_profile.menus_permitidos.all %}
+                                        <span style="background: #d1fae5; color: #065f46; padding: 0.25rem 0.6rem; border-radius: 12px; font-size: 0.75rem; font-weight: 500;">
+                                            <i class="fa fa-check me-1"></i>{{ menu.nombre }}
+                                        </span>
+                                        {% else %}
+                                        <span style="background: #fee2e2; color: #991b1b; padding: 0.25rem 0.6rem; border-radius: 12px; font-size: 0.75rem; font-weight: 500;">
+                                            <i class="fa fa-times me-1"></i>{{ menu.nombre }}
+                                        </span>
+                                        {% endif %}
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
                         {% endfor %}
-                    </div>
                     {% else %}
                     <div class="data-value muted">Sin grupos asignados</div>
                     {% endif %}
@@ -490,6 +506,18 @@
                         <span class="label"><i class="fa fa-star"></i>Superusuario</span>
                         <span class="badge {% if usuario.is_superuser %}info{% else %}warning{% endif %}">
                             {% if usuario.is_superuser %}Si{% else %}No{% endif %}
+                        </span>
+                    </div>
+                    <div class="info-row-compact">
+                        <span class="label"><i class="fa fa-list"></i>Submenus</span>
+                        <span class="badge info">
+                            {% if usuario.is_superuser %}
+                                Todos (superusuario)
+                            {% elif usuario.panel_profile %}
+                                {{ usuario.panel_profile.menus_permitidos.count }} asignados
+                            {% else %}
+                                0
+                            {% endif %}
                         </span>
                     </div>
                 </div>

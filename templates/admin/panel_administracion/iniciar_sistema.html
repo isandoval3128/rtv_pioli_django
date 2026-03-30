@@ -1,0 +1,104 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+    <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+    &rsaquo; <a href="{% url 'admin:auth_user_changelist' %}">Usuarios</a>
+    &rsaquo; Iniciar Sistema
+</div>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <h1>Iniciar Sistema</h1>
+
+    {% if resultado %}
+    {# ===== Resultado de la inicialización ===== #}
+    <div style="background: #d4edda; padding: 20px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #28a745;">
+        <h2 style="margin-top: 0; color: #155724;">{{ resultado.titulo }}</h2>
+    </div>
+
+    {% for seccion in resultado.secciones %}
+    <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+        <h3 style="margin-top: 0; color: #417690;">{{ seccion.titulo }}</h3>
+        <ul style="margin: 0; padding-left: 20px;">
+            {% for msg in seccion.mensajes %}
+            <li style="padding: 3px 0; {% if 'creado' in msg|lower or 'creada' in msg|lower %}color: #28a745; font-weight: bold;{% elif 'eliminado' in msg|lower or 'limpiado' in msg|lower %}color: #dc3545;{% elif 'actualizado' in msg|lower %}color: #fd7e14;{% endif %}">
+                {{ msg }}
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endfor %}
+
+    <div class="submit-row">
+        <a href="{% url 'admin:auth_user_changelist' %}" class="button" style="background: #417690; color: white;">Volver a Usuarios</a>
+        <a href="/panel/login/" class="button" style="background: #28a745; color: white; margin-left: 10px;">Ir al Panel</a>
+    </div>
+
+    {% else %}
+    {# ===== Pantalla de selección ===== #}
+    <div style="background: #fff3cd; padding: 15px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #ffc107;">
+        <p style="margin: 0;">
+            <strong>ADVERTENCIA:</strong> Estas acciones limpian la base de datos (usuarios, turnos, clientes, vehiculos, talleres, etc.) y crean datos nuevos. Esta operacion no se puede deshacer.
+        </p>
+    </div>
+
+    <div style="display: flex; gap: 30px; flex-wrap: wrap; margin-bottom: 30px;">
+        {# Opción 1: Producción #}
+        <div style="flex: 1; min-width: 350px; background: #f8f9fa; padding: 25px; border-radius: 10px; border: 2px solid #417690;">
+            <h2 style="margin-top: 0; color: #417690;">Iniciar Produccion</h2>
+            <p style="color: #555; line-height: 1.6;">
+                Prepara el sistema para uso en produccion. Limpia todos los datos y crea:
+            </p>
+            <ul style="color: #555; line-height: 1.8;">
+                <li>2 usuarios superadministradores (staff)</li>
+                <li>Sectores: Administracion y Taller</li>
+                <li>Todos los grupos y menus del sistema</li>
+                <li>Ambos usuarios con acceso completo a todos los menus</li>
+            </ul>
+            <div style="background: #e7f3ff; padding: 10px; border-radius: 6px; margin: 15px 0; font-size: 0.9em;">
+                <strong>Usuarios creados:</strong><br>
+                <code>20371056255</code> / <code>Pastillas992$</code><br>
+                <code>admin</code> / <code>Pioli2026$</code>
+            </div>
+            <form method="post" onsubmit="return confirm('Esta seguro? Se eliminaran TODOS los datos actuales.');">
+                {% csrf_token %}
+                <input type="hidden" name="modo" value="produccion">
+                <input type="submit" value="Iniciar Produccion" class="default" style="background: #417690; padding: 10px 30px; font-size: 1.1em; cursor: pointer;">
+            </form>
+        </div>
+
+        {# Opción 2: Datos de Prueba #}
+        <div style="flex: 1; min-width: 350px; background: #f8f9fa; padding: 25px; border-radius: 10px; border: 2px solid #28a745;">
+            <h2 style="margin-top: 0; color: #28a745;">Iniciar con Datos de Prueba</h2>
+            <p style="color: #555; line-height: 1.6;">
+                Prepara el sistema con datos de ejemplo para testing. Incluye todo lo de produccion mas:
+            </p>
+            <ul style="color: #555; line-height: 1.8;">
+                <li>Usuarios de prueba (administracion y taller)</li>
+                <li>Talleres con configuracion</li>
+                <li>Tipos de tramite con precios</li>
+                <li>Clientes y vehiculos de prueba</li>
+                <li>Turnos en distintos estados (con circuito completo)</li>
+            </ul>
+            <div style="background: #e7f3ff; padding: 10px; border-radius: 6px; margin: 15px 0; font-size: 0.9em;">
+                <strong>Usuarios adicionales:</strong><br>
+                <code>operador_admin</code> - Sector Administracion<br>
+                <code>operador_taller</code> - Sector Taller
+            </div>
+            <form method="post" onsubmit="return confirm('Esta seguro? Se eliminaran TODOS los datos actuales y se crearan datos de prueba.');">
+                {% csrf_token %}
+                <input type="hidden" name="modo" value="prueba">
+                <input type="submit" value="Iniciar con Datos de Prueba" class="default" style="background: #28a745; padding: 10px 30px; font-size: 1.1em; cursor: pointer;">
+            </form>
+        </div>
+    </div>
+
+    <div class="submit-row">
+        <a href="{% url 'admin:auth_user_changelist' %}" class="button cancel-link">Cancelar</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

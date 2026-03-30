@@ -561,6 +561,12 @@
                             </select>
                             <span class="form-text"><i class="fa fa-info-circle"></i> Seleccione los menus a los que tendra acceso el usuario</span>
                         </div>
+                    </div>
+
+                    <!-- Checkboxes de submenús por grupo -->
+                    <div id="submenus-checkboxes" style="margin-top: 0.75rem;"></div>
+
+                    <div class="form-row" style="margin-top: 1rem;">
                         <div class="form-group">
                             <label class="form-label">
                                 <i class="fa fa-building"></i>
@@ -635,8 +641,76 @@
 </div>
 
 <script>
+// Datos de submenús por grupo (inyectados desde Django)
+var gruposSubmenus = {{ grupos_submenus_json|safe }};
+var menusPermitidosIds = {{ menus_permitidos_ids_json|safe }};
+
 // Cargar Select2
 cargarSelect2("#modal-lg");
+
+// Actualizar checkboxes de submenús al cambiar grupos
+function actualizarSubmenusCheckboxes() {
+    var selectedGrupos = $("#grupos").val() || [];
+    var container = $("#submenus-checkboxes");
+    container.empty();
+
+    if (selectedGrupos.length === 0) {
+        container.html('<div style="color: #94a3b8; font-size: 0.8rem; font-style: italic; padding: 0.5rem 0;">Seleccione un grupo para configurar sus submenus</div>');
+        return;
+    }
+
+    selectedGrupos.forEach(function(grupoId) {
+        var grupo = gruposSubmenus[grupoId];
+        if (!grupo) return;
+
+        var html = '<div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 0.75rem; margin-bottom: 0.5rem;">';
+        html += '<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">';
+        html += '<span style="font-size: 0.8rem; font-weight: 600; color: #475569;"><i class="' + grupo.icon + ' me-1"></i> ' + grupo.name + '</span>';
+        html += '<a href="javascript:;" onclick="toggleAllSubmenus(this, \'' + grupoId + '\')" style="font-size: 0.7rem; color: var(--theme-primary); text-decoration: none;">Marcar/Desmarcar todos</a>';
+        html += '</div>';
+        html += '<div style="display: flex; flex-wrap: wrap; gap: 0.4rem;">';
+
+        grupo.menus.forEach(function(menu) {
+            var checked = menusPermitidosIds.indexOf(menu.id) !== -1;
+            var checkedAttr = checked ? 'checked' : '';
+            var bgColor = checked ? '#d1fae5' : '#f1f5f9';
+            var textColor = checked ? '#065f46' : '#64748b';
+            var icon = checked ? 'fa-check' : 'fa-times';
+
+            html += '<label style="background: ' + bgColor + '; color: ' + textColor + '; padding: 0.3rem 0.7rem; border-radius: 12px; font-size: 0.78rem; font-weight: 500; cursor: pointer; display: inline-flex; align-items: center; gap: 0.35rem; transition: all 0.2s; border: 1px solid transparent;" class="submenu-label" data-grupo="' + grupoId + '">';
+            html += '<input type="checkbox" name="menus_permitidos" value="' + menu.id + '" ' + checkedAttr + ' style="display:none;" onchange="toggleSubmenuStyle(this)">';
+            html += '<i class="fa ' + icon + '" style="font-size: 0.7rem;"></i> ' + menu.nombre + '</label>';
+        });
+
+        html += '</div></div>';
+        container.append(html);
+    });
+}
+
+function toggleSubmenuStyle(checkbox) {
+    var label = $(checkbox).closest('.submenu-label');
+    var icon = label.find('i');
+    if (checkbox.checked) {
+        label.css({'background': '#d1fae5', 'color': '#065f46'});
+        icon.removeClass('fa-times').addClass('fa-check');
+    } else {
+        label.css({'background': '#f1f5f9', 'color': '#64748b'});
+        icon.removeClass('fa-check').addClass('fa-times');
+    }
+}
+
+function toggleAllSubmenus(link, grupoId) {
+    var labels = $(".submenu-label[data-grupo='" + grupoId + "']");
+    var checkboxes = labels.find("input[type='checkbox']");
+    var allChecked = checkboxes.length === checkboxes.filter(":checked").length;
+    checkboxes.prop("checked", !allChecked).each(function() { toggleSubmenuStyle(this); });
+}
+
+// Escuchar cambios en grupos
+$("#grupos").on("change", actualizarSubmenusCheckboxes);
+
+// Ejecutar al cargar
+actualizarSubmenusCheckboxes();
 
 // Toggle de checkboxes
 $(".checkbox-item input[type='checkbox']").on("change", function() {
