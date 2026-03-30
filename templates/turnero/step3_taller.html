@@ -929,8 +929,6 @@
     let talleres = [];
     let mapaInicializado = false;
     let coordenadasPendientes = null;
-
-    }); // Fin DOMContentLoaded mapa
 </script>
 {% endif %}
 
@@ -1190,6 +1188,7 @@
 
     // Esperar a que el DOM esté listo
     document.addEventListener('DOMContentLoaded', function() {
+        {% if not taller_preseleccionado %}
         // Cargar datos de talleres
         talleres = [
             {% for taller in talleres %}
@@ -1207,32 +1206,31 @@
         ];
 
         // Inicializar mapa cuando se abre el modal
-        const mapaModal = document.getElementById('mapaModal');
-        mapaModal.addEventListener('shown.bs.modal', function() {
-            inicializarMapa();
-        });
+        var mapaModal = document.getElementById('mapaModal');
+        if (mapaModal) {
+            mapaModal.addEventListener('shown.bs.modal', function() {
+                inicializarMapa();
+            });
+        }
 
         // Click en card de taller - abre modal de tipos de trámite
         document.querySelectorAll('.taller-card').forEach(card => {
             card.addEventListener('click', function(e) {
-                // No abrir modal si se hizo click en el botón de mapa
-                if (e.target.closest('.btn-ver-mapa')) {
-                    return;
-                }
-
+                if (e.target.closest('.btn-ver-mapa')) return;
                 const tallerId = this.getAttribute('data-taller-id');
                 const tallerNombre = this.querySelector('.taller-nombre').textContent.trim();
                 abrirModalTiposTramite(tallerId, tallerNombre);
             });
         });
+        {% endif %}
 
-        // Botón confirmar del modal de tipos de trámite
+        // Botón confirmar del modal de tipos de trámite (siempre)
         document.getElementById('btnConfirmarTramite').addEventListener('click', confirmarSeleccion);
 
-        // Validación del formulario
+        // Validación del formulario (siempre)
         document.getElementById('form_taller').addEventListener('submit', function(e) {
-            const tallerSeleccionado = document.getElementById('taller_selected').value;
-            const tipoVehiculoSeleccionado = document.getElementById('tipo_vehiculo_selected').value;
+            var tallerSeleccionado = document.getElementById('taller_selected').value;
+            var tipoVehiculoSeleccionado = document.getElementById('tipo_vehiculo_selected').value;
 
             if (!tallerSeleccionado || !tipoVehiculoSeleccionado) {
                 e.preventDefault();
@@ -1242,12 +1240,10 @@
 
         // Scroll al inicio en modo embebido
         if (document.body.classList.contains('embedded-mode')) {
-            setTimeout(function() {
-                window.scrollTo(0, 0);
-            }, 100);
+            setTimeout(function() { window.scrollTo(0, 0); }, 100);
         }
 
-
+    }); // Fin DOMContentLoaded
 </script>
 
 {% if taller_preseleccionado %}
