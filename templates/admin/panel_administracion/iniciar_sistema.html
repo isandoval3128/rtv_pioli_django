@@ -51,20 +51,20 @@
         <div style="flex: 1; min-width: 350px; background: #f8f9fa; padding: 25px; border-radius: 10px; border: 2px solid #417690;">
             <h2 style="margin-top: 0; color: #417690;">Iniciar Produccion</h2>
             <p style="color: #555; line-height: 1.6;">
-                Prepara el sistema para uso en produccion. Limpia todos los datos y crea:
+                Prepara el sistema para uso en produccion:
             </p>
             <ul style="color: #555; line-height: 1.8;">
-                <li>2 usuarios superadministradores (staff)</li>
-                <li>Sectores: Administracion y Taller</li>
-                <li>Todos los grupos y menus del sistema</li>
-                <li>Ambos usuarios con acceso completo a todos los menus</li>
+                <li><strong style="color: #dc3545;">Elimina</strong> turnos, clientes, vehiculos y chats del asistente</li>
+                <li>Crea/actualiza superusuarios y menus del sistema</li>
+                <li>Sincroniza permisos de todos los usuarios existentes</li>
+                <li><strong>No toca:</strong> usuarios, talleres, config sitio/email/IA</li>
             </ul>
             <div style="background: #e7f3ff; padding: 10px; border-radius: 6px; margin: 15px 0; font-size: 0.9em;">
                 <strong>Usuarios creados:</strong><br>
                 <code>20371056255</code> / <code>Pastillas992$</code><br>
                 <code>admin</code> / <code>Pioli2026$</code>
             </div>
-            <form method="post" onsubmit="return confirm('Esta seguro? Se eliminaran TODOS los datos actuales.');">
+            <form method="post" onsubmit="return confirm('Esta seguro? Se eliminaran turnos, clientes, vehiculos y chats del asistente.');">
                 {% csrf_token %}
                 <input type="hidden" name="modo" value="produccion">
                 <input type="submit" value="Iniciar Produccion" class="default" style="background: #417690; padding: 10px 30px; font-size: 1.1em; cursor: pointer;">
@@ -75,7 +75,7 @@
         <div style="flex: 1; min-width: 350px; background: #f8f9fa; padding: 25px; border-radius: 10px; border: 2px solid #28a745;">
             <h2 style="margin-top: 0; color: #28a745;">Iniciar con Datos de Prueba</h2>
             <p style="color: #555; line-height: 1.6;">
-                Prepara el sistema con datos de ejemplo para testing. Incluye todo lo de produccion mas:
+                Prepara el sistema con datos de ejemplo para testing. Limpia turnos, clientes y vehiculos existentes y crea:
             </p>
             <ul style="color: #555; line-height: 1.8;">
                 <li>Usuarios de prueba (administracion y taller)</li>
@@ -89,7 +89,7 @@
                 <code>operador_admin</code> - Sector Administracion<br>
                 <code>operador_taller</code> - Sector Taller
             </div>
-            <form method="post" onsubmit="return confirm('Esta seguro? Se eliminaran TODOS los datos actuales y se crearan datos de prueba.');">
+            <form method="post" onsubmit="return confirm('Esta seguro? Se eliminaran turnos, clientes, vehiculos y chats del asistente, y se crearan datos de prueba.');">
                 {% csrf_token %}
                 <input type="hidden" name="modo" value="prueba">
                 <input type="submit" value="Iniciar con Datos de Prueba" class="default" style="background: #28a745; padding: 10px 30px; font-size: 1.1em; cursor: pointer;">
