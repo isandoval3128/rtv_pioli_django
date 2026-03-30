@@ -92,20 +92,9 @@ class CustomUserAdmin(UserAdmin):
         }
         return render(request, 'admin/panel_administracion/iniciar_sistema.html', context)
 
-    def _limpiar_base_datos(self):
+    def _limpiar_base_datos(self, limpiar_turnos=False):
         """Limpia datos transaccionales del sistema.
-        PROTEGE (no se toca):
-          - Usuarios, perfiles, grupos, permisos, sectores (se crean/actualizan sin borrar)
-          - Talleres, TipoVehiculo, ConfiguracionTaller, FranjaAnulada
-          - EmailConfig, SiteConfiguration, WhatsAppConfig
-          - AsistenteConfigModel, FAQ, DocumentoKB
-          - Tarifa, Territorios, Ubicacion
-          - Contenido del sitio (Service, Portfolio, Timeline, Team, About)
-        LIMPIA:
-          - Turnos, historial, reservas temporales
-          - Clientes, vehiculos
-          - Chats, cache, derivaciones, sugerencias, logs IA del asistente
-          - Sesiones de Django
+        limpiar_turnos=True: también elimina turnos, clientes y vehiculos (para producción).
         """
         from asistente.models import ChatSession, ChatMessage, CachedResponse, Derivacion
         from asistente.models import SugerenciaAsistente, SugerenciaToken, AIUsageLog
@@ -128,8 +117,24 @@ class CustomUserAdmin(UserAdmin):
         count = AIUsageLog.objects.all().delete()[0]
         mensajes.append(f'Eliminados {count} registros de uso IA')
 
-        # NO se eliminan: turnos, clientes, vehiculos, usuarios, talleres, etc.
-        mensajes.append('Turnos, clientes, vehiculos y usuarios preservados')
+        # Limpiar turnos, clientes y vehiculos solo si se solicita (producción)
+        if limpiar_turnos:
+            from turnero.models import Turno, HistorialTurno, ReservaTemporal
+            from talleres.models import Vehiculo
+            from clientes.models import Cliente
+
+            count = HistorialTurno.objects.all().delete()[0]
+            mensajes.append(f'Eliminados {count} registros de historial de turnos')
+            count = ReservaTemporal.objects.all().delete()[0]
+            mensajes.append(f'Eliminadas {count} reservas temporales')
+            count = Turno.objects.all().delete()[0]
+            mensajes.append(f'Eliminados {count} turnos')
+            count = Vehiculo.objects.all().delete()[0]
+            mensajes.append(f'Eliminados {count} vehiculos')
+            count = Cliente.objects.all().delete()[0]
+            mensajes.append(f'Eliminados {count} clientes')
+        else:
+            mensajes.append('Turnos, clientes y vehiculos preservados')
 
         # Limpiar sesiones de Django
         from django.contrib.sessions.models import Session
@@ -318,8 +323,8 @@ class CustomUserAdmin(UserAdmin):
         """Inicializa el sistema para producción."""
         secciones = []
 
-        # 1. Limpiar BD
-        msgs = self._limpiar_base_datos()
+        # 1. Limpiar BD (incluye turnos, clientes y vehiculos)
+        msgs = self._limpiar_base_datos(limpiar_turnos=True)
         secciones.append({'titulo': 'Limpieza de Base de Datos', 'mensajes': msgs})
 
         # 2. Crear sectores
@@ -351,8 +356,8 @@ class CustomUserAdmin(UserAdmin):
 
         secciones = []
 
-        # 1. Limpiar BD
-        msgs = self._limpiar_base_datos()
+        # 1. Limpiar BD (incluye turnos, clientes y vehiculos)
+        msgs = self._limpiar_base_datos(limpiar_turnos=True)
         secciones.append({'titulo': 'Limpieza de Base de Datos', 'mensajes': msgs})
 
         # 2. Crear sectores

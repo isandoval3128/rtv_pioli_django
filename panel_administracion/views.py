@@ -32,8 +32,12 @@ def get_user_sector(user):
 
 @login_required(login_url='/panel/login/')
 def home(request):
-    """Vista principal del panel - Dashboards en pestañas"""
-    return render(request, 'panel/home.html')
+    """Vista principal del panel - redirige según rol del usuario"""
+    from django.shortcuts import redirect
+    # Operadores van a Gestión Turnos, admins/superusuarios al Dashboard
+    if not request.user.is_superuser and not request.user.groups.filter(name='Administración').exists():
+        return redirect('gestion_turnos')
+    return redirect('dashboard_turnos')
 
 
 def logout_view(request):
