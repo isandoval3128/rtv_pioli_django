@@ -428,27 +428,22 @@ class Step5ConfirmacionView(View):
     template_name = 'turnero/step5_confirmacion.html'
 
     def generar_captcha(self):
-        """Genera una pregunta matemática simple para el CAPTCHA"""
+        """Genera una pregunta matemática muy sencilla para el CAPTCHA"""
         import random
         operaciones = [
             ('+', lambda a, b: a + b),
             ('-', lambda a, b: a - b),
-            ('×', lambda a, b: a * b),
         ]
         operacion, func = random.choice(operaciones)
 
-        if operacion == '×':
-            # Para multiplicación usamos números más pequeños
-            num1 = random.randint(2, 9)
-            num2 = random.randint(2, 9)
-        elif operacion == '-':
-            # Para resta, aseguramos resultado positivo
-            num1 = random.randint(10, 20)
-            num2 = random.randint(1, num1 - 1)
+        if operacion == '-':
+            # Resta simple, resultado positivo
+            num1 = random.randint(5, 10)
+            num2 = random.randint(1, 4)
         else:
-            # Para suma
-            num1 = random.randint(5, 15)
-            num2 = random.randint(5, 15)
+            # Suma simple
+            num1 = random.randint(1, 8)
+            num2 = random.randint(1, 5)
 
         respuesta = func(num1, num2)
         pregunta = f"¿Cuánto es {num1} {operacion} {num2}?"

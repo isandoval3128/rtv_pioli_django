@@ -7,9 +7,9 @@
     .cliente-info {
         background: #f8f9fa;
         border-left: 4px solid var(--primary-color);
-        padding: 1rem 1.5rem;
+        padding: 0.75rem 1.25rem;
         border-radius: 10px;
-        margin-bottom: 2rem;
+        margin-bottom: 1rem;
         display: flex;
         align-items: center;
         gap: 0.75rem;
@@ -359,89 +359,115 @@
         }
 
         #map {
-            height: 350px;
-        }
-
-        .taller-card {
-            padding: 1rem;
-        }
-
-        .taller-nombre {
-            font-size: 1rem;
-        }
-
-        .taller-info {
-            font-size: 0.9rem;
-        }
-
-        .taller-horario {
-            font-size: 0.85rem;
-            padding: 0.4rem 0.8rem;
-        }
-
-        .taller-card .row {
-            flex-direction: column;
-        }
-
-        /* Badge siempre visible en móvil (sin hover) */
-        .taller-card:not(.selected) .seleccionar-badge {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        .search-title {
-            font-size: 1.1rem;
-        }
-
-        .cliente-info {
-            padding: 0.85rem 1rem;
-            font-size: 0.9rem;
-        }
-    }
-
-    /* Responsive - Móviles pequeños */
-    @media (max-width: 576px) {
-        #map {
             height: 300px;
         }
 
         .taller-card {
-            padding: 0.9rem;
-            border-radius: 10px;
+            padding: 0.85rem;
+            border-radius: 12px;
         }
 
         .taller-nombre {
             font-size: 0.95rem;
         }
 
-        .taller-nombre i {
-            font-size: 0.85rem;
-        }
-
         .taller-info {
-            font-size: 0.85rem;
-            margin-bottom: 0.4rem !important;
+            font-size: 0.8rem;
+            margin-bottom: 0.35rem !important;
         }
 
         .taller-horario {
             font-size: 0.8rem;
+            padding: 0.3rem 0.6rem;
         }
 
-        .seleccionar-badge {
-            font-size: 0.7rem;
-            padding: 0.25rem 0.6rem;
+        .taller-card .row {
+            flex-direction: column;
+        }
+
+        .taller-card:not(.selected) .seleccionar-badge {
+            opacity: 1;
+            transform: translateY(0);
+            padding: 0.4rem;
+            border-radius: 50%;
+            font-size: 0;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: pulseBadge 1.5s ease-in-out infinite;
+        }
+
+        .taller-card:not(.selected) .seleccionar-badge i {
+            font-size: 0.85rem;
+        }
+
+        @keyframes pulseBadge {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(19,48,77,0.4); }
+            50% { transform: scale(1.1); box-shadow: 0 0 0 8px rgba(19,48,77,0); }
         }
 
         .search-title {
-            font-size: 1rem;
+            font-size: 0.95rem;
         }
 
         .cliente-info {
-            padding: 0.75rem 1rem;
+            padding: 0.6rem 1rem;
             font-size: 0.85rem;
+        }
+    }
+
+    /* Responsive - Móviles pequeños */
+    @media (max-width: 576px) {
+        #map {
+            height: 250px;
+        }
+
+        .taller-card {
+            padding: 0.75rem;
+            border-radius: 10px;
+        }
+
+        .taller-nombre {
+            font-size: 0.9rem;
+        }
+
+        .taller-nombre i {
+            font-size: 0.8rem;
+        }
+
+        .taller-info {
+            font-size: 0.78rem;
+            margin-bottom: 0.3rem !important;
+        }
+
+        .taller-horario {
+            font-size: 0.75rem;
+            padding: 0.25rem 0.5rem;
+        }
+
+        .taller-card:not(.selected) .seleccionar-badge {
+            width: 28px;
+            height: 28px;
+            top: 0.6rem;
+            right: 0.6rem;
+        }
+
+        .taller-card:not(.selected) .seleccionar-badge i {
+            font-size: 0.75rem;
+        }
+
+        .search-title {
+            font-size: 0.9rem;
+        }
+
+        .cliente-info {
+            padding: 0.6rem 0.85rem;
+            font-size: 0.8rem;
             flex-direction: column;
             align-items: flex-start;
-            gap: 0.25rem;
+            gap: 0.2rem;
         }
 
         .cliente-info i {
@@ -450,12 +476,12 @@
 
         .cliente-info span {
             width: 100%;
-            line-height: 1.5;
+            line-height: 1.4;
         }
 
         .alert-seleccionar {
-            padding: 0.85rem 1rem;
-            font-size: 0.9rem;
+            padding: 0.75rem 0.85rem;
+            font-size: 0.85rem;
         }
 
         .alert-seleccionar i {

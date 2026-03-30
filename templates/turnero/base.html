@@ -457,20 +457,199 @@
 
         /* ========== Footer ========== */
         .footer-custom {
-            background: var(--primary-color);
+            background: linear-gradient(135deg, #0a1628 0%, var(--primary-color) 100%);
             color: white;
-            padding: 1.5rem 0;
+            padding: 0;
             margin-left: var(--sidebar-width);
         }
 
-        .footer-custom a {
-            color: rgba(255, 255, 255, 0.8);
+        .footer-top {
+            padding: 2rem 0 1.5rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .footer-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-brand-icon {
+            width: 36px;
+            height: 36px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+        }
+
+        .footer-brand-text {
+            font-size: 1rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .footer-desc {
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.5);
+            max-width: 300px;
+            line-height: 1.5;
+        }
+
+        .footer-links-title {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: rgba(255,255,255,0.4);
+            margin-bottom: 0.75rem;
+            font-weight: 600;
+        }
+
+        .footer-links {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.4rem;
+        }
+
+        .footer-links a {
+            color: rgba(255,255,255,0.65);
             text-decoration: none;
-            transition: all 0.3s ease;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .footer-links a:hover {
+            color: white;
+            transform: translateX(3px);
+        }
+
+        .footer-links a i {
+            font-size: 0.75rem;
+            width: 16px;
+        }
+
+        .footer-contact-item {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            margin-bottom: 0.5rem;
+            font-size: 0.85rem;
+            color: rgba(255,255,255,0.65);
+        }
+
+        .footer-contact-item i {
+            width: 16px;
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.4);
+        }
+
+        .footer-bottom {
+            padding: 1rem 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .footer-copy {
+            font-size: 0.75rem;
+            color: rgba(255,255,255,0.35);
+        }
+
+        .footer-badge {
+            font-size: 0.7rem;
+            color: rgba(255,255,255,0.3);
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+        }
+
+        .footer-badge i {
+            color: rgba(255,255,255,0.2);
+        }
+
+        .footer-custom a {
+            color: rgba(255,255,255,0.65);
+            text-decoration: none;
+            transition: all 0.2s;
         }
 
         .footer-custom a:hover {
             color: white;
+        }
+
+        @media (max-width: 768px) {
+            .footer-top {
+                padding: 1.25rem 0 0.75rem;
+                text-align: center;
+            }
+            .footer-brand {
+                justify-content: center;
+                margin-bottom: 0.25rem;
+            }
+            .footer-brand-icon {
+                width: 28px;
+                height: 28px;
+                font-size: 0.8rem;
+                border-radius: 7px;
+            }
+            .footer-brand-text {
+                font-size: 0.85rem;
+            }
+            .footer-desc {
+                display: none;
+            }
+            .footer-links-title {
+                margin-top: 0.75rem;
+                margin-bottom: 0.4rem;
+                font-size: 0.65rem;
+            }
+            .footer-links li {
+                margin-bottom: 0.2rem;
+            }
+            .footer-links a {
+                font-size: 0.8rem;
+                justify-content: center;
+            }
+            .footer-links {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 0.5rem 1rem;
+            }
+            .footer-links li {
+                margin-bottom: 0;
+            }
+            .footer-contact-item {
+                justify-content: center;
+                font-size: 0.8rem;
+                margin-bottom: 0.25rem;
+            }
+            .footer-contact-item i {
+                font-size: 0.7rem;
+            }
+            .footer-bottom {
+                justify-content: center;
+                text-align: center;
+                padding: 0.75rem 0;
+            }
+            .footer-copy {
+                font-size: 0.7rem;
+            }
+            .footer-badge {
+                font-size: 0.65rem;
+            }
         }
 
         /* ========== Sin Sidebar (paginas sin pasos) ========== */
@@ -544,6 +723,7 @@
                 left: auto;
                 bottom: auto;
                 padding: 1.25rem;
+                overflow: visible;
             }
 
             .sidebar-header {
@@ -554,8 +734,9 @@
                 display: flex;
                 justify-content: space-between;
                 padding-left: 0;
-                overflow-x: auto;
+                overflow: visible;
                 gap: 0.5rem;
+                padding-top: 4px;
             }
 
             .step-item-v {
@@ -609,41 +790,11 @@
             }
 
             .card-body-custom {
-                padding: 1.5rem;
+                padding: 1.25rem;
             }
 
             .card-header-custom {
-                padding: 1.25rem 1.5rem;
-            }
-
-            .card-header-custom h3 {
-                font-size: 1.25rem;
-            }
-
-            .card-header-custom h3 i {
-                width: 38px;
-                height: 38px;
-            }
-
-            .card-header-custom p {
-                padding-left: 3rem;
-                font-size: 0.85rem;
-            }
-        }
-
-        @media (max-width: 576px) {
-            .step-item-v {
-                min-width: 55px;
-            }
-
-            .step-number-v {
-                width: 30px;
-                height: 30px;
-                font-size: 0.75rem;
-            }
-
-            .step-title-v {
-                font-size: 0.6rem;
+                padding: 1rem 1.25rem;
             }
 
             .card-header-custom h3 {
@@ -652,9 +803,54 @@
             }
 
             .card-header-custom h3 i {
-                width: 32px;
-                height: 32px;
+                width: 34px;
+                height: 34px;
                 font-size: 0.9rem;
+            }
+
+            .card-header-custom p {
+                padding-left: 0;
+                font-size: 0.8rem;
+                margin-top: 0.35rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .step-item-v {
+                min-width: 50px;
+            }
+
+            .step-number-v {
+                width: 28px;
+                height: 28px;
+                font-size: 0.7rem;
+            }
+
+            .step-title-v {
+                font-size: 0.55rem;
+            }
+
+            .main-content {
+                padding: 1rem 0.75rem;
+            }
+
+            .card-body-custom {
+                padding: 1rem;
+            }
+
+            .card-header-custom {
+                padding: 0.85rem 1rem;
+            }
+
+            .card-header-custom h3 {
+                font-size: 1rem;
+                gap: 0.4rem;
+            }
+
+            .card-header-custom h3 i {
+                width: 28px;
+                height: 28px;
+                font-size: 0.8rem;
             }
 
             .card-header-custom p {
@@ -908,20 +1104,45 @@
     <!-- Footer -->
     <footer class="footer-custom">
         <div class="container-fluid px-4">
-            <div class="row align-items-center">
-                <div class="col-md-6 text-center text-md-start">
-                    <small>
-                        <i class="fas fa-car me-1"></i> Sistema de Turnos RTV - Jujuy
-                        <span class="mx-2">|</span>
-                        2025
-                    </small>
+            <div class="footer-top">
+                <div class="row">
+                    <div class="col-md-4 mb-3 mb-md-0">
+                        <div class="footer-brand">
+                            <div class="footer-brand-icon">
+                                <i class="fas fa-car-side"></i>
+                            </div>
+                            <span class="footer-brand-text">RTV Pioli S.R.L.</span>
+                        </div>
+                        <p class="footer-desc">Sistema de turnos para Revision Tecnica Vehicular. Reserva tu turno online de forma rapida y segura.</p>
+                    </div>
+                    <div class="col-md-4 mb-3 mb-md-0">
+                        <div class="footer-links-title">Enlaces</div>
+                        <ul class="footer-links">
+                            <li><a href="{% url 'turnero:home' %}"><i class="fas fa-calendar-check"></i> Solicitar Turno</a></li>
+                            <li><a href="{% url 'turnero:consultar_turno' %}"><i class="fas fa-search"></i> Consultar Turno</a></li>
+                            <li><a href="{% url 'home' %}"><i class="fas fa-globe"></i> Sitio Web</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="footer-links-title">Contacto</div>
+                        <div class="footer-contact-item">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>Jujuy, Argentina</span>
+                        </div>
+                        <div class="footer-contact-item">
+                            <i class="fas fa-envelope"></i>
+                            <span>info@rtvpioli.com.ar</span>
+                        </div>
+                        <div class="footer-contact-item">
+                            <i class="fas fa-globe"></i>
+                            <span>www.rtvpioli.com.ar</span>
+                        </div>
+                    </div>
                 </div>
-                <div class="col-md-6 text-center text-md-end">
-                    <small>
-                        <a href="#" class="me-3"><i class="fas fa-phone me-1"></i>Contacto</a>
-                        <a href="#"><i class="fas fa-info-circle me-1"></i>Ayuda</a>
-                    </small>
-                </div>
+            </div>
+            <div class="footer-bottom">
+                <span class="footer-copy">&copy; {{ current_year|default:"2026" }} RTV Pioli S.R.L. Todos los derechos reservados.</span>
+                <span class="footer-badge"><i class="fas fa-shield-alt"></i> Sistema seguro</span>
             </div>
         </div>
     </footer>
