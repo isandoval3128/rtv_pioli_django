@@ -95,13 +95,13 @@ class CustomUserAdmin(UserAdmin):
     def _limpiar_base_datos(self):
         """Limpia datos transaccionales del sistema.
         PROTEGE (no se toca):
+          - Usuarios, perfiles, grupos, permisos, sectores (se crean/actualizan sin borrar)
           - Talleres, TipoVehiculo, ConfiguracionTaller, FranjaAnulada
           - EmailConfig, SiteConfiguration, WhatsAppConfig
           - AsistenteConfigModel, FAQ, DocumentoKB
           - Tarifa, Territorios, Ubicacion
           - Contenido del sitio (Service, Portfolio, Timeline, Team, About)
         LIMPIA:
-          - Usuarios, grupos, perfiles, menus, sectores, permisos
           - Turnos, historial, reservas temporales
           - Clientes, vehiculos
           - Chats, cache, derivaciones, sugerencias, logs IA del asistente
@@ -145,23 +145,8 @@ class CustomUserAdmin(UserAdmin):
         count = Cliente.objects.all().delete()[0]
         mensajes.append(f'Eliminados {count} clientes')
 
-        # Eliminar menús, perfiles y grupos
-        count = MenuGrupo.objects.all().delete()[0]
-        mensajes.append(f'Eliminados {count} menus de grupo')
-        count = GroupProfile.objects.all().delete()[0]
-        mensajes.append(f'Eliminados {count} perfiles de grupo')
-        count = UserProfile.objects.all().delete()[0]
-        mensajes.append(f'Eliminados {count} perfiles de usuario')
-        count = UserPermission.objects.all().delete()[0]
-        mensajes.append(f'Eliminados {count} permisos de usuario')
-        count = Sector.objects.all().delete()[0]
-        mensajes.append(f'Eliminados {count} sectores')
-
-        # Eliminar usuarios y grupos
-        count = User.objects.all().delete()[0]
-        mensajes.append(f'Eliminados {count} usuarios')
-        count = Group.objects.all().delete()[0]
-        mensajes.append(f'Eliminados {count} grupos')
+        # NO se eliminan: usuarios, perfiles, grupos, menús, sectores, permisos
+        mensajes.append('Usuarios y configuracion de acceso preservados')
 
         # Limpiar sesiones de Django
         from django.contrib.sessions.models import Session
