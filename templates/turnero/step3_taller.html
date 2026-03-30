@@ -1053,10 +1053,17 @@
         // Cerrar modal
         tiposTramiteModal.hide();
 
+        // Si viene con taller preseleccionado, enviar formulario automáticamente
+        {% if taller_preseleccionado %}
+        setTimeout(function() {
+            document.getElementById('form_taller').submit();
+        }, 300);
+        {% else %}
         // Mostrar leyenda según tipo de trámite
         setTimeout(function() {
             mostrarLeyendaTramite(tipoTramiteSeleccionadoNombre);
         }, 300);
+        {% endif %}
     }
 
     // Selección de taller desde el mapa (definida globalmente)
