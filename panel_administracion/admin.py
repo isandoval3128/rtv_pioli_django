@@ -259,6 +259,53 @@ class CustomUserAdmin(UserAdmin):
         mensajes.append(f'Todos los grupos y submenus asignados a {len(usuarios)} usuarios')
         return mensajes
 
+    def _sincronizar_usuarios_existentes(self):
+        """Sincroniza menus_permitidos y grupo Inicio para TODOS los usuarios existentes."""
+        mensajes = []
+
+        grupo_inicio = Group.objects.filter(name='Inicio').first()
+        grupo_turnos = Group.objects.filter(name='Turnos').first()
+        todos_menus = MenuGrupo.objects.filter(status=True)
+
+        # Menús para operadores de taller: solo Dashboard Turnos + Gestión Turnos + Escanear Turno
+        menus_operador = MenuGrupo.objects.filter(
+            status=True,
+            grupo__name__in=['Inicio', 'Turnos'],
+            nombre__in=['Dashboard Turnos', 'Gestión Turnos', 'Escanear Turno']
+        )
+
+        for user in User.objects.all():
+            profile, _ = UserProfile.objects.get_or_create(user=user)
+
+            if user.is_superuser:
+                # Superusuarios: todos los grupos y todos los submenús
+                for g in Group.objects.all():
+                    user.groups.add(g)
+                profile.menus_permitidos.add(*todos_menus)
+                mensajes.append(f'{user.username}: superusuario -> todos los menus ({todos_menus.count()})')
+
+            elif user.groups.filter(name='Administración').exists():
+                # Usuarios admin (no super): todos los grupos y todos los submenús de sus grupos
+                if grupo_inicio:
+                    user.groups.add(grupo_inicio)
+                menus_usuario = MenuGrupo.objects.filter(
+                    grupo__in=user.groups.all(), status=True
+                )
+                profile.menus_permitidos.add(*menus_usuario)
+                mensajes.append(f'{user.username}: admin -> {menus_usuario.count()} submenus')
+
+            elif user.groups.filter(name='Turnos').exists():
+                # Operadores de taller: solo menús operativos
+                if grupo_inicio:
+                    user.groups.add(grupo_inicio)
+                profile.menus_permitidos.add(*menus_operador)
+                mensajes.append(f'{user.username}: operador -> {menus_operador.count()} submenus (Dashboard Turnos, Gestion, Escanear)')
+
+            else:
+                mensajes.append(f'{user.username}: sin grupos, no se asignaron submenus')
+
+        return mensajes
+
     def _iniciar_produccion(self):
         """Inicializa el sistema para producción."""
         secciones = []
@@ -275,9 +322,13 @@ class CustomUserAdmin(UserAdmin):
         user1, user2, msgs = self._crear_superusuarios(sector_admin)
         secciones.append({'titulo': 'Superusuarios', 'mensajes': msgs})
 
-        # 4. Sincronizar menús y asignar
+        # 4. Sincronizar menús y asignar a superusuarios
         msgs = self._sincronizar_menus_y_asignar([user1, user2])
         secciones.append({'titulo': 'Menus y Grupos', 'mensajes': msgs})
+
+        # 5. Sincronizar menus_permitidos de TODOS los usuarios existentes
+        msgs = self._sincronizar_usuarios_existentes()
+        secciones.append({'titulo': 'Sincronizacion de Usuarios Existentes', 'mensajes': msgs})
 
         return {
             'titulo': 'Sistema iniciado para PRODUCCION correctamente',
@@ -632,6 +683,10 @@ class CustomUserAdmin(UserAdmin):
             'operador_taller / Test1234$ (Taller)',
         ]
         secciones.append({'titulo': 'Credenciales', 'mensajes': msgs_resumen})
+
+        # Sincronizar menus_permitidos de TODOS los usuarios existentes
+        msgs = self._sincronizar_usuarios_existentes()
+        secciones.append({'titulo': 'Sincronizacion de Usuarios Existentes', 'mensajes': msgs})
 
         return {
             'titulo': 'Sistema iniciado con DATOS DE PRUEBA correctamente',
