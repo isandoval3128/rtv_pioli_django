@@ -246,6 +246,14 @@ class CustomUserAdmin(UserAdmin):
                 )
                 mensajes.append(f'Menu "{menu_cfg["nombre"]}" creado en {grupo.name}')
 
+            # Desactivar menús que ya no están en MENU_CONFIG para este grupo
+            nombres_config = [m['nombre'] for m in grupo_cfg['menus']]
+            obsoletos = MenuGrupo.objects.filter(grupo=grupo).exclude(nombre__in=nombres_config)
+            if obsoletos.exists():
+                nombres_obs = list(obsoletos.values_list('nombre', flat=True))
+                obsoletos.delete()
+                mensajes.append(f'Eliminados menus obsoletos en {grupo.name}: {nombres_obs}')
+
             # Asignar grupo a todos los usuarios indicados
             for user in usuarios:
                 user.groups.add(grupo)
