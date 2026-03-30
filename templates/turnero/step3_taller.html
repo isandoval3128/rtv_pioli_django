@@ -813,7 +813,7 @@
 {% endif %}
 
 {% if not taller_preseleccionado %}
-<!-- Modal del Mapa -->
+<!-- Modal del Mapa (solo si no hay taller preseleccionado) -->
 <div class="modal fade" id="mapaModal" tabindex="-1" aria-labelledby="mapaModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
@@ -830,7 +830,9 @@
     </div>
 </div>
 
-<!-- Modal de Tipos de Trámite -->
+{% endif %}
+
+<!-- Modal de Tipos de Trámite (siempre disponible) -->
 <div class="modal fade" id="tiposTramiteModal" tabindex="-1" aria-labelledby="tiposTramiteModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content">
@@ -889,7 +891,6 @@
         </div>
     </div>
 </div>
-{% endif %}
 {% endblock %}
 
 {% block extra_js %}
@@ -913,81 +914,14 @@
         });
     }
 </script>
-{% if taller_preseleccionado %}
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const tallerId = {{ taller_preseleccionado.id }};
-        const tallerNombre = "{{ taller_preseleccionado.get_nombre|escapejs }}";
-
-        // Abrir modal de tipo de trámite automáticamente
-        setTimeout(function() {
-            abrirModalTiposTramite(tallerId, tallerNombre);
-        }, 500);
-
-        // Cargar tipos de trámite directamente
-        fetch(`{% url 'turnero:tipos_tramite_taller_ajax' %}?taller_id=${tallerId}`)
-            .then(response => response.json())
-            .then(data => {
-                document.getElementById('loadingTipos').style.display = 'none';
-
-                if (data.success && data.tipos_tramite && data.tipos_tramite.length > 0) {
-                    const container = document.getElementById('tiposTramiteListDirecto');
-                    container.style.display = 'flex';
-                    container.innerHTML = '';
-
-                    data.tipos_tramite.forEach(function(tipo) {
-                        const card = document.createElement('div');
-                        card.className = 'tipo-tramite-card';
-                        card.dataset.tipoId = tipo.id;
-                        card.innerHTML = `
-                            <div class="tipo-tramite-header">
-                                <div class="tipo-tramite-icon">
-                                    <i class="fas fa-clipboard-check"></i>
-                                </div>
-                                <div>
-                                    <div class="tipo-tramite-nombre">${tipo.nombre}</div>
-                                </div>
-                            </div>
-                        `;
-
-                        card.addEventListener('click', function() {
-                            document.querySelectorAll('.tipo-tramite-card').forEach(function(c) {
-                                c.classList.remove('selected');
-                            });
-                            this.classList.add('selected');
-                            document.getElementById('tipo_vehiculo_selected').value = tipo.id;
-                            document.getElementById('btnContinuarDirecto').disabled = false;
-
-                            // Mostrar leyenda según tipo de trámite
-                            mostrarLeyendaTramite(tipo.nombre);
-                        });
-
-                        container.appendChild(card);
-                    });
-                } else {
-                    document.getElementById('tiposTramiteDirecto').innerHTML =
-                        '<div class="alert alert-warning"><i class="fas fa-exclamation-triangle me-2"></i>No hay tipos de tramite disponibles para esta planta.</div>';
-                }
-            })
-            .catch(function(error) {
-                document.getElementById('loadingTipos').style.display = 'none';
-                document.getElementById('tiposTramiteDirecto').innerHTML =
-                    '<div class="alert alert-danger"><i class="fas fa-times-circle me-2"></i>Error al cargar tipos de tramite.</div>';
-            });
-
-        // Validación del formulario
-        document.getElementById('form_taller').addEventListener('submit', function(e) {
-            const tipoSeleccionado = document.getElementById('tipo_vehiculo_selected').value;
-            if (!tipoSeleccionado) {
-                e.preventDefault();
-                if (typeof showWarning === 'function') {
-                    showWarning('Por favor, seleccioná un tipo de tramite antes de continuar', 'Selección Requerida');
-                }
-            }
-        });
-    });
+    // Variables para el modal de tipos de trámite (siempre disponibles)
+    let tallerSeleccionadoId = null;
+    let tipoTramiteSeleccionadoId = null;
+    let tipoTramiteSeleccionadoNombre = null;
+    let tiposTramiteModal = null;
 </script>
-{% else %}
+{% if not taller_preseleccionado %}
 <script>
     // Variables globales para el mapa
     let map = null;
@@ -996,13 +930,12 @@
     let mapaInicializado = false;
     let coordenadasPendientes = null;
 
-    // Variables para el modal de tipos de trámite
-    let tallerSeleccionadoId = null;
-    let tipoTramiteSeleccionadoId = null;
-    let tipoTramiteSeleccionadoNombre = null;
-    let tiposTramiteModal = null;
+    }); // Fin DOMContentLoaded mapa
+</script>
+{% endif %}
 
-    // Abrir modal de tipos de trámite al seleccionar taller
+<script>
+    // Funciones del modal de tipos de trámite (siempre disponibles)
     function abrirModalTiposTramite(tallerId, tallerNombre) {
         tallerSeleccionadoId = tallerId;
 
@@ -1314,7 +1247,17 @@
             }, 100);
         }
 
-    }); // Fin DOMContentLoaded
+
+</script>
+
+{% if taller_preseleccionado %}
+<script>
+    // Auto-abrir modal de tipo de trámite cuando el taller viene preseleccionado
+    document.addEventListener('DOMContentLoaded', function() {
+        setTimeout(function() {
+            abrirModalTiposTramite({{ taller_preseleccionado.id }}, "{{ taller_preseleccionado.get_nombre|escapejs }}");
+        }, 500);
+    });
 </script>
 {% endif %}
 {% endblock %}
