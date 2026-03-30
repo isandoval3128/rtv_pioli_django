@@ -95,21 +95,18 @@ class CustomUserAdmin(UserAdmin):
     def _limpiar_base_datos(self):
         """Limpia datos transaccionales del sistema.
         PROTEGE (no se toca):
+          - Usuarios, perfiles, grupos, permisos, sectores (se crean/actualizan sin borrar)
           - Talleres, TipoVehiculo, ConfiguracionTaller, FranjaAnulada
           - EmailConfig, SiteConfiguration, WhatsAppConfig
           - AsistenteConfigModel, FAQ, DocumentoKB
           - Tarifa, Territorios, Ubicacion
           - Contenido del sitio (Service, Portfolio, Timeline, Team, About)
         LIMPIA:
-          - Usuarios, grupos, perfiles, menus, sectores, permisos
           - Turnos, historial, reservas temporales
           - Clientes, vehiculos
           - Chats, cache, derivaciones, sugerencias, logs IA del asistente
           - Sesiones de Django
         """
-        from turnero.models import Turno, HistorialTurno, ReservaTemporal
-        from talleres.models import Vehiculo
-        from clientes.models import Cliente
         from asistente.models import ChatSession, ChatMessage, CachedResponse, Derivacion
         from asistente.models import SugerenciaAsistente, SugerenciaToken, AIUsageLog
 
@@ -131,37 +128,8 @@ class CustomUserAdmin(UserAdmin):
         count = AIUsageLog.objects.all().delete()[0]
         mensajes.append(f'Eliminados {count} registros de uso IA')
 
-        # Eliminar turnos y relacionados
-        count = HistorialTurno.objects.all().delete()[0]
-        mensajes.append(f'Eliminados {count} registros de historial de turnos')
-        count = ReservaTemporal.objects.all().delete()[0]
-        mensajes.append(f'Eliminadas {count} reservas temporales')
-        count = Turno.objects.all().delete()[0]
-        mensajes.append(f'Eliminados {count} turnos')
-
-        # Eliminar vehiculos y clientes (NO talleres, tipos ni configuraciones)
-        count = Vehiculo.objects.all().delete()[0]
-        mensajes.append(f'Eliminados {count} vehiculos')
-        count = Cliente.objects.all().delete()[0]
-        mensajes.append(f'Eliminados {count} clientes')
-
-        # Eliminar menús, perfiles y grupos
-        count = MenuGrupo.objects.all().delete()[0]
-        mensajes.append(f'Eliminados {count} menus de grupo')
-        count = GroupProfile.objects.all().delete()[0]
-        mensajes.append(f'Eliminados {count} perfiles de grupo')
-        count = UserProfile.objects.all().delete()[0]
-        mensajes.append(f'Eliminados {count} perfiles de usuario')
-        count = UserPermission.objects.all().delete()[0]
-        mensajes.append(f'Eliminados {count} permisos de usuario')
-        count = Sector.objects.all().delete()[0]
-        mensajes.append(f'Eliminados {count} sectores')
-
-        # Eliminar usuarios y grupos
-        count = User.objects.all().delete()[0]
-        mensajes.append(f'Eliminados {count} usuarios')
-        count = Group.objects.all().delete()[0]
-        mensajes.append(f'Eliminados {count} grupos')
+        # NO se eliminan: turnos, clientes, vehiculos, usuarios, talleres, etc.
+        mensajes.append('Turnos, clientes, vehiculos y usuarios preservados')
 
         # Limpiar sesiones de Django
         from django.contrib.sessions.models import Session
@@ -291,6 +259,53 @@ class CustomUserAdmin(UserAdmin):
         mensajes.append(f'Todos los grupos y submenus asignados a {len(usuarios)} usuarios')
         return mensajes
 
+    def _sincronizar_usuarios_existentes(self):
+        """Sincroniza menus_permitidos y grupo Inicio para TODOS los usuarios existentes."""
+        mensajes = []
+
+        grupo_inicio = Group.objects.filter(name='Inicio').first()
+        grupo_turnos = Group.objects.filter(name='Turnos').first()
+        todos_menus = MenuGrupo.objects.filter(status=True)
+
+        # Menús para operadores de taller: solo Dashboard Turnos + Gestión Turnos + Escanear Turno
+        menus_operador = MenuGrupo.objects.filter(
+            status=True,
+            grupo__name__in=['Inicio', 'Turnos'],
+            nombre__in=['Dashboard Turnos', 'Gestión Turnos', 'Escanear Turno']
+        )
+
+        for user in User.objects.all():
+            profile, _ = UserProfile.objects.get_or_create(user=user)
+
+            if user.is_superuser:
+                # Superusuarios: todos los grupos y todos los submenús
+                for g in Group.objects.all():
+                    user.groups.add(g)
+                profile.menus_permitidos.add(*todos_menus)
+                mensajes.append(f'{user.username}: superusuario -> todos los menus ({todos_menus.count()})')
+
+            elif user.groups.filter(name='Administración').exists():
+                # Usuarios admin (no super): todos los grupos y todos los submenús de sus grupos
+                if grupo_inicio:
+                    user.groups.add(grupo_inicio)
+                menus_usuario = MenuGrupo.objects.filter(
+                    grupo__in=user.groups.all(), status=True
+                )
+                profile.menus_permitidos.add(*menus_usuario)
+                mensajes.append(f'{user.username}: admin -> {menus_usuario.count()} submenus')
+
+            elif user.groups.filter(name='Turnos').exists():
+                # Operadores de taller: solo menús operativos
+                if grupo_inicio:
+                    user.groups.add(grupo_inicio)
+                profile.menus_permitidos.add(*menus_operador)
+                mensajes.append(f'{user.username}: operador -> {menus_operador.count()} submenus (Dashboard Turnos, Gestion, Escanear)')
+
+            else:
+                mensajes.append(f'{user.username}: sin grupos, no se asignaron submenus')
+
+        return mensajes
+
     def _iniciar_produccion(self):
         """Inicializa el sistema para producción."""
         secciones = []
@@ -307,9 +322,13 @@ class CustomUserAdmin(UserAdmin):
         user1, user2, msgs = self._crear_superusuarios(sector_admin)
         secciones.append({'titulo': 'Superusuarios', 'mensajes': msgs})
 
-        # 4. Sincronizar menús y asignar
+        # 4. Sincronizar menús y asignar a superusuarios
         msgs = self._sincronizar_menus_y_asignar([user1, user2])
         secciones.append({'titulo': 'Menus y Grupos', 'mensajes': msgs})
+
+        # 5. Sincronizar menus_permitidos de TODOS los usuarios existentes
+        msgs = self._sincronizar_usuarios_existentes()
+        secciones.append({'titulo': 'Sincronizacion de Usuarios Existentes', 'mensajes': msgs})
 
         return {
             'titulo': 'Sistema iniciado para PRODUCCION correctamente',
@@ -664,6 +683,10 @@ class CustomUserAdmin(UserAdmin):
             'operador_taller / Test1234$ (Taller)',
         ]
         secciones.append({'titulo': 'Credenciales', 'mensajes': msgs_resumen})
+
+        # Sincronizar menus_permitidos de TODOS los usuarios existentes
+        msgs = self._sincronizar_usuarios_existentes()
+        secciones.append({'titulo': 'Sincronizacion de Usuarios Existentes', 'mensajes': msgs})
 
         return {
             'titulo': 'Sistema iniciado con DATOS DE PRUEBA correctamente',
