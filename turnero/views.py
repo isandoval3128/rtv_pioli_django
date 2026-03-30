@@ -266,20 +266,26 @@ class Step3TallerView(View):
             except Taller.DoesNotExist:
                 del request.session['taller_id']
 
-        # Obtener todos los talleres activos que tienen configuración de trámites
-        # Ordenar: Palpalá (ID=1) primero, luego Libertador (ID=2)
-        talleres = Taller.objects.filter(
+        # Obtener talleres activos que tienen configuración de trámites
+        talleres_qs = Taller.objects.filter(
             status=True,
             configuraciones__status=True,
             configuraciones__tipo_vehiculo__status=True
-        ).distinct().annotate(
-            orden_personalizado=Case(
-                When(id=1, then=Value(1)),  # Palpalá
-                When(id=2, then=Value(2)),  # Libertador
-                default=Value(3),
-                output_field=IntegerField()
-            )
-        ).order_by('orden_personalizado', 'nombre')
+        ).distinct()
+
+        # Si viene preseleccionado desde la página principal, solo mostrar ese taller
+        if taller_preseleccionado:
+            talleres = talleres_qs.filter(id=taller_preseleccionado.id)
+        else:
+            # Ordenar: Palpalá (ID=1) primero, luego Libertador (ID=2)
+            talleres = talleres_qs.annotate(
+                orden_personalizado=Case(
+                    When(id=1, then=Value(1)),
+                    When(id=2, then=Value(2)),
+                    default=Value(3),
+                    output_field=IntegerField()
+                )
+            ).order_by('orden_personalizado', 'nombre')
 
         form = Step3TallerForm()
         form.fields['taller'].queryset = talleres
@@ -422,27 +428,22 @@ class Step5ConfirmacionView(View):
     template_name = 'turnero/step5_confirmacion.html'
 
     def generar_captcha(self):
-        """Genera una pregunta matemática simple para el CAPTCHA"""
+        """Genera una pregunta matemática muy sencilla para el CAPTCHA"""
         import random
         operaciones = [
             ('+', lambda a, b: a + b),
             ('-', lambda a, b: a - b),
-            ('×', lambda a, b: a * b),
         ]
         operacion, func = random.choice(operaciones)
 
-        if operacion == '×':
-            # Para multiplicación usamos números más pequeños
-            num1 = random.randint(2, 9)
-            num2 = random.randint(2, 9)
-        elif operacion == '-':
-            # Para resta, aseguramos resultado positivo
-            num1 = random.randint(10, 20)
-            num2 = random.randint(1, num1 - 1)
+        if operacion == '-':
+            # Resta simple, resultado positivo
+            num1 = random.randint(5, 10)
+            num2 = random.randint(1, 4)
         else:
-            # Para suma
-            num1 = random.randint(5, 15)
-            num2 = random.randint(5, 15)
+            # Suma simple
+            num1 = random.randint(1, 8)
+            num2 = random.randint(1, 5)
 
         respuesta = func(num1, num2)
         pregunta = f"¿Cuánto es {num1} {operacion} {num2}?"

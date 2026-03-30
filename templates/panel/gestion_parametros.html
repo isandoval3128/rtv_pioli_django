@@ -247,15 +247,329 @@
 /* =====================================================
    RESPONSIVE
    ===================================================== */
+@media (max-width: 992px) {
+    .nav-tabs-admin .nav-link {
+        padding: 10px 14px;
+        font-size: 0.82rem;
+        gap: 6px;
+    }
+
+    .dia-horario-row {
+        flex-wrap: wrap;
+        gap: 6px;
+        padding: 6px 10px;
+    }
+
+    .dia-horario-row .dia-horario-inputs input {
+        max-width: 90px;
+    }
+}
+
 @media (max-width: 768px) {
-    .param-table { font-size: 0.8rem; }
-    .param-table thead th { padding: 8px 6px; font-size: 0.7rem; }
-    .param-table tbody td { padding: 8px 6px; }
-    .nav-tabs-admin .nav-link { padding: 10px 12px; font-size: 0.8rem; }
-    .form-row-grid { grid-template-columns: 1fr; }
-    .feriados-grid { gap: 6px; }
-    .btn-feriado { font-size: 0.75rem; padding: 5px 10px; }
-    .fecha-item .fecha-dia { min-width: 34px; height: 34px; font-size: 0.95rem; }
+    .card-body {
+        padding: 12px !important;
+    }
+
+    /* Tablas a Cards */
+    .param-table thead {
+        display: none;
+    }
+
+    .param-table tbody tr {
+        display: block;
+        background: white;
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        margin-bottom: 10px;
+        padding: 10px 12px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    }
+
+    .param-table tbody tr:nth-child(even) {
+        background: white;
+    }
+
+    .param-table tbody tr:hover {
+        transform: none;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    }
+
+    .param-table tbody td {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 5px 0;
+        border-bottom: 1px solid #f5f5f5;
+        font-size: 0.8rem;
+    }
+
+    .param-table tbody td:last-child {
+        border-bottom: none;
+        justify-content: flex-end;
+        padding-top: 8px;
+    }
+
+    .param-table tbody td::before {
+        content: attr(data-label);
+        font-size: 0.7rem;
+        font-weight: 600;
+        color: #94a3b8;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+        flex-shrink: 0;
+        margin-right: 8px;
+    }
+
+    .param-table tbody td:last-child::before {
+        display: none;
+    }
+
+    /* Forzar que el contenido no desborde */
+    .param-table tbody td {
+        word-break: break-word;
+        overflow-wrap: break-word;
+        max-width: 100%;
+    }
+
+    /* Celda con badges (días) - layout en columna */
+    .param-table tbody td[data-label="Días"] {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+    }
+
+    .param-table tbody td[data-label="Días"]::before {
+        margin-bottom: 2px;
+    }
+
+    /* Badges de días en wrap */
+    .param-table tbody td .badge {
+        margin-bottom: 2px;
+        display: inline-block;
+        font-size: 0.65rem !important;
+    }
+
+    /* Nombres largos de trámite */
+    .param-table tbody td code {
+        font-size: 0.7rem !important;
+        padding: 2px 5px !important;
+    }
+
+    /* Celda de trámite largo */
+    .param-table tbody td[data-label="Trámite"] {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 2px;
+    }
+
+    .table-responsive {
+        border: none;
+        overflow: visible;
+    }
+
+    /* Prevenir scroll horizontal */
+    .tab-content,
+    .tab-pane {
+        overflow-x: hidden;
+        max-width: 100%;
+    }
+
+    /* Tabs como scroll horizontal */
+    .nav-tabs-admin {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        gap: 0;
+    }
+
+    .nav-tabs-admin::-webkit-scrollbar {
+        display: none;
+    }
+
+    .nav-tabs-admin .nav-link {
+        padding: 8px 12px;
+        font-size: 0.75rem;
+        gap: 5px;
+        flex-shrink: 0;
+    }
+
+    .nav-tabs-admin .nav-link i {
+        font-size: 0.8rem;
+    }
+
+    /* Secciones */
+    .section-header {
+        padding: 0.65rem 1rem;
+        gap: 8px;
+    }
+
+    .section-icon {
+        width: 30px;
+        height: 30px;
+        font-size: 0.8rem;
+        border-radius: 6px;
+    }
+
+    .section-title {
+        font-size: 0.85rem;
+    }
+
+    .section-body {
+        padding: 0.85rem;
+    }
+
+    /* Tablas */
+    .param-table {
+        font-size: 0.78rem;
+    }
+
+    .param-table thead th {
+        padding: 8px 6px;
+        font-size: 0.65rem;
+        letter-spacing: 0.3px;
+    }
+
+    .param-table tbody td {
+        padding: 7px 6px;
+    }
+
+    .param-table .form-control-sm {
+        font-size: 0.78rem;
+        padding: 0.25rem 0.4rem;
+    }
+
+    /* Botones acción */
+    .btn-accion {
+        width: 28px;
+        height: 28px;
+        font-size: 0.7rem;
+        border-radius: 6px;
+    }
+
+    /* Badges */
+    .badge-activo, .badge-inactivo {
+        padding: 3px 8px;
+        font-size: 0.65rem;
+    }
+
+    /* Días de atención */
+    .dia-horario-row {
+        flex-wrap: wrap;
+        gap: 4px;
+        padding: 6px 8px;
+        font-size: 0.8rem;
+    }
+
+    .dia-horario-row .dia-check-box {
+        min-width: 80px;
+    }
+
+    .dia-horario-row .dia-check-box label {
+        font-size: 0.78rem;
+    }
+
+    .dia-horario-row .dia-horario-inputs {
+        width: 100%;
+    }
+
+    .dia-horario-row .dia-horario-inputs input {
+        max-width: 85px;
+        font-size: 0.78rem;
+    }
+
+    .dia-horario-row .dia-especial-check label {
+        font-size: 0.7rem;
+    }
+
+    /* Formularios */
+    .form-row-grid {
+        grid-template-columns: 1fr;
+    }
+
+    /* Fechas */
+    .feriados-grid { gap: 4px; }
+    .btn-feriado { font-size: 0.72rem; padding: 4px 8px; }
+    .fecha-item { padding: 8px 10px; }
+    .fecha-item .fecha-dia { min-width: 32px; height: 32px; font-size: 0.9rem; margin-right: 8px; }
+    .fecha-item .fecha-nombre-dia { font-size: 0.78rem; }
+    .fecha-item .fecha-completa { font-size: 0.7rem; }
+    .fecha-item .fecha-motivo { font-size: 0.72rem; }
+    .fecha-item .btn-quitar { width: 26px; height: 26px; font-size: 0.65rem; }
+    .fechas-mes-header { font-size: 0.75rem; padding: 6px 10px; }
+    .fechas-vacio { padding: 25px 15px; }
+    .fechas-vacio i { font-size: 2rem; }
+    .fechas-vacio p { font-size: 0.8rem; }
+
+    /* Filtros */
+    .filtro-taller {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
+    }
+
+    .filtro-taller select {
+        max-width: 100%;
+        width: 100%;
+    }
+
+    /* Alertas */
+    .alert-info-custom {
+        font-size: 0.75rem;
+        padding: 8px 10px;
+        gap: 6px;
+        line-height: 1.4;
+        flex-wrap: wrap;
+    }
+
+    .alert-info-custom i {
+        font-size: 0.85rem;
+        flex-shrink: 0;
+    }
+
+    /* Franjas anuladas */
+    .fechas-counter {
+        font-size: 0.78rem;
+        padding: 6px 12px;
+    }
+}
+
+@media (max-width: 576px) {
+    .nav-tabs-admin .nav-link {
+        padding: 7px 10px;
+        font-size: 0.7rem;
+    }
+
+    .section-body {
+        padding: 0.65rem;
+    }
+
+    .param-table {
+        font-size: 0.72rem;
+    }
+
+    .param-table thead th {
+        padding: 6px 4px;
+        font-size: 0.6rem;
+    }
+
+    .param-table tbody td {
+        padding: 6px 4px;
+    }
+
+    .dia-horario-row .dia-check-box {
+        min-width: 70px;
+    }
+
+    .dia-horario-row .dia-check-box label {
+        font-size: 0.72rem;
+    }
+
+    .dia-horario-row .dia-horario-inputs input {
+        max-width: 75px;
+        font-size: 0.72rem;
+        padding: 3px 6px;
+    }
 }
 </style>
 {% endblock %}
@@ -889,11 +1203,11 @@ function cargarTalleres() {
         var html = '';
         res.data.forEach(function(t, idx) {
             html += '<tr>' +
-                '<td><strong>' + t.nombre + '</strong></td>' +
-                '<td>' + (t.horario_apertura || '-') + '</td>' +
-                '<td>' + (t.horario_cierre || '-') + '</td>' +
-                '<td>' + formatDias(t.dias_atencion, t.horario_apertura, t.horario_cierre) + '</td>' +
-                '<td>' + (t.status ? '<span class="badge-activo">Activo</span>' : '<span class="badge-inactivo">Inactivo</span>') + '</td>' +
+                '<td data-label="Taller"><strong>' + t.nombre + '</strong></td>' +
+                '<td data-label="Apertura">' + (t.horario_apertura || '-') + '</td>' +
+                '<td data-label="Cierre">' + (t.horario_cierre || '-') + '</td>' +
+                '<td data-label="Días">' + formatDias(t.dias_atencion, t.horario_apertura, t.horario_cierre) + '</td>' +
+                '<td data-label="Estado">' + (t.status ? '<span class="badge-activo">Activo</span>' : '<span class="badge-inactivo">Inactivo</span>') + '</td>' +
                 '<td><button class="btn btn-accion btn-editar" onclick="editarTaller(' + idx + ')"><i class="fa fa-pencil"></i></button></td>' +
                 '</tr>';
         });
@@ -1003,12 +1317,12 @@ function cargarTipos() {
         var html = '';
         res.data.forEach(function(t, idx) {
             html += '<tr>' +
-                '<td><code style="background:#f1f5f9; padding:3px 8px; border-radius:4px;">' + t.codigo_tramite + '</code></td>' +
-                '<td>' + t.nombre + '</td>' +
-                '<td>' + formatPrecio(t.precio_provincial) + '</td>' +
-                '<td>' + formatPrecio(t.precio_nacional) + '</td>' +
-                '<td>' + formatPrecio(t.precio_cajutad) + '</td>' +
-                '<td>' + (t.status ? '<span class="badge-activo">Activo</span>' : '<span class="badge-inactivo">Inactivo</span>') + '</td>' +
+                '<td data-label="Código"><code style="background:#f1f5f9; padding:3px 8px; border-radius:4px;">' + t.codigo_tramite + '</code></td>' +
+                '<td data-label="Trámite">' + t.nombre + '</td>' +
+                '<td data-label="Provincial">' + formatPrecio(t.precio_provincial) + '</td>' +
+                '<td data-label="Nacional">' + formatPrecio(t.precio_nacional) + '</td>' +
+                '<td data-label="CAJUTAC">' + formatPrecio(t.precio_cajutad) + '</td>' +
+                '<td data-label="Estado">' + (t.status ? '<span class="badge-activo">Activo</span>' : '<span class="badge-inactivo">Inactivo</span>') + '</td>' +
                 '<td><button class="btn btn-accion btn-editar" onclick="editarTipo(' + idx + ')"><i class="fa fa-pencil"></i></button></td>' +
                 '</tr>';
         });
@@ -1059,11 +1373,11 @@ function cargarConfig() {
             // Buscar índice en configData original
             var idx = configData.indexOf(c);
             html += '<tr>' +
-                '<td>' + c.taller_nombre + '</td>' +
-                '<td><code style="background:#f1f5f9; padding:3px 8px; border-radius:4px;">' + c.tipo_codigo + '</code> ' + c.tipo_nombre + '</td>' +
-                '<td class="text-center"><strong>' + c.turnos_simultaneos + '</strong></td>' +
-                '<td class="text-center"><strong>' + c.intervalo_minutos + ' min</strong></td>' +
-                '<td>' + (c.status ? '<span class="badge-activo">Activo</span>' : '<span class="badge-inactivo">Inactivo</span>') + '</td>' +
+                '<td data-label="Taller">' + c.taller_nombre + '</td>' +
+                '<td data-label="Trámite"><code style="background:#f1f5f9; padding:3px 8px; border-radius:4px;">' + c.tipo_codigo + '</code> ' + c.tipo_nombre + '</td>' +
+                '<td data-label="Simultáneos" class="text-center"><strong>' + c.turnos_simultaneos + '</strong></td>' +
+                '<td data-label="Intervalo" class="text-center"><strong>' + c.intervalo_minutos + ' min</strong></td>' +
+                '<td data-label="Estado">' + (c.status ? '<span class="badge-activo">Activo</span>' : '<span class="badge-inactivo">Inactivo</span>') + '</td>' +
                 '<td><button class="btn btn-accion btn-editar" onclick="editarConfig(' + idx + ')"><i class="fa fa-pencil"></i></button></td>' +
                 '</tr>';
         });
@@ -1292,12 +1606,12 @@ function cargarFranjas() {
                 fechaCol = convertirFecha(f.fecha);
             }
             html += '<tr>' +
-                '<td>' + f.taller_nombre + '</td>' +
-                '<td>' + fechaCol + '</td>' +
-                '<td>' + f.hora_inicio + '</td>' +
-                '<td>' + f.hora_fin + '</td>' +
-                '<td>' + (f.motivo || '<span class="text-muted">-</span>') + '</td>' +
-                '<td>' + (f.status ? '<span class="badge-activo">Activa</span>' : '<span class="badge-inactivo">Inactiva</span>') + '</td>' +
+                '<td data-label="Taller">' + f.taller_nombre + '</td>' +
+                '<td data-label="Fecha/Día">' + fechaCol + '</td>' +
+                '<td data-label="Desde">' + f.hora_inicio + '</td>' +
+                '<td data-label="Hasta">' + f.hora_fin + '</td>' +
+                '<td data-label="Motivo">' + (f.motivo || '<span class="text-muted">-</span>') + '</td>' +
+                '<td data-label="Estado">' + (f.status ? '<span class="badge-activo">Activa</span>' : '<span class="badge-inactivo">Inactiva</span>') + '</td>' +
                 '<td>' +
                     '<button class="btn btn-accion btn-editar mr-1" onclick="editarFranja(' + idx + ')"><i class="fa fa-pencil"></i></button>' +
                     '<button class="btn btn-accion btn-eliminar" onclick="eliminarFranja(' + f.id + ')"><i class="fa fa-trash"></i></button>' +

@@ -384,16 +384,20 @@ class SiteConfiguration(models.Model):
         max_length=100,
         default='Turno Planta Palpalá',
         verbose_name='Texto botón 1')
-    header_btn1_url = models.URLField(
-        default='https://turnos.redsoft.com.ar/agen',
-        verbose_name='URL botón 1')
+    header_btn1_url = models.CharField(
+        max_length=500,
+        default='/turnero/paso-1/?taller=1',
+        verbose_name='URL botón 1',
+        help_text='URL interna (ej: /turnero/paso-1/?taller=1) o externa (ej: https://turnos.redsoft.com.ar/...)')
     header_btn2_text = models.CharField(
         max_length=100,
         default='Turno Planta Libertador',
         verbose_name='Texto botón 2')
-    header_btn2_url = models.URLField(
-        default='https://turnos.redsoft.com.ar/agenda/calendario',
-        verbose_name='URL botón 2')
+    header_btn2_url = models.CharField(
+        max_length=500,
+        default='/turnero/paso-1/?taller=2',
+        verbose_name='URL botón 2',
+        help_text='URL interna (ej: /turnero/paso-1/?taller=2) o externa (ej: https://turnos.redsoft.com.ar/...)')
     header_btn_bgcolor = models.CharField(
         max_length=7,
         default='#02197A',

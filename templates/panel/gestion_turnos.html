@@ -883,10 +883,19 @@
     /* Asegurar que el card con dropdown abierto tenga z-index alto */
     .turno-card {
         position: relative;
+        z-index: 1;
     }
 
-    .turno-card .dropdown.show {
+    .turno-card:has(.dropdown-menu.show) {
         z-index: 9999;
+    }
+
+    .turno-card .dropdown {
+        position: static;
+    }
+
+    .turno-card .dropdown-menu {
+        z-index: 99999;
     }
 
     .dropdown-acciones .dropdown-item {
@@ -940,39 +949,195 @@
             display: block !important;
         }
 
-        /* Ocultar botones de DataTables en móvil */
         .dt-buttons {
             display: none !important;
+        }
+
+        .card .card-body {
+            padding: 12px;
+            overflow: visible !important;
+        }
+
+        .turnos-cards-container {
+            overflow: visible !important;
+        }
+
+        .turno-card-footer {
+            overflow: visible !important;
+        }
+
+        .block-header h2 {
+            font-size: 1.1rem;
+        }
+
+        .mobile-header {
+            margin-bottom: 10px;
+        }
+
+        .mobile-header .btn-nuevo {
+            padding: 8px 14px;
+            font-size: 13px;
+        }
+
+        .turnos-cards-container {
+            gap: 10px;
+        }
+
+        .turno-card-header {
+            padding: 10px 12px;
+        }
+
+        .turno-card-codigo {
+            font-size: 11px;
+            padding: 3px 6px;
+        }
+
+        .turno-card-body {
+            padding: 12px;
+        }
+
+        .turno-card-cliente {
+            font-size: 13px;
+            margin-bottom: 2px;
+        }
+
+        .turno-card-dni {
+            font-size: 11px;
+            margin-bottom: 10px;
+        }
+
+        .turno-card-info {
+            gap: 8px 12px;
+        }
+
+        .turno-card-info-item .label {
+            font-size: 9px;
+            margin-bottom: 1px;
+        }
+
+        .turno-card-info-item .value {
+            font-size: 12px;
+        }
+
+        .turno-card-footer {
+            padding: 10px 12px;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .turno-card-footer .btn {
+            padding: 7px 12px;
+            font-size: 12px;
+            gap: 4px;
+        }
+
+        /* En mobile: ocultar dropdown y mostrar botones inline */
+        .turno-card-footer .dropdown-acciones {
+            display: none !important;
+        }
+
+        .turno-card-footer .mobile-actions {
+            display: flex !important;
+            gap: 4px;
+        }
+
+        .mobile-action-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            border: 1px solid #e2e8f0;
+            background: white;
+            color: #64748b;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .mobile-action-btn:hover {
+            background: #f1f5f9;
+            border-color: #94a3b8;
+        }
+
+        .mobile-action-btn.btn-edit { color: #3b82f6; }
+        .mobile-action-btn.btn-email { color: #06b6d4; }
+        .mobile-action-btn.btn-print { color: #64748b; }
+        .mobile-action-btn.btn-cancel { color: #ef4444; }
+
+        .badge-estado {
+            padding: 4px 8px;
+            font-size: 10px;
         }
     }
 
     @media (max-width: 576px) {
         .filtros-row {
             grid-template-columns: 1fr;
-            gap: 12px;
+            gap: 10px;
         }
 
         .filtros-container {
-            padding: 12px;
+            padding: 10px;
         }
 
         .btn-toggle-filtros {
             width: 100%;
             justify-content: center;
+            padding: 7px 14px;
+            font-size: 12px;
+        }
+
+        .card .card-body {
+            padding: 10px;
+        }
+
+        .turno-card-header {
+            padding: 8px 10px;
+        }
+
+        .turno-card-body {
+            padding: 10px;
+        }
+
+        .turno-card-cliente {
+            font-size: 12px;
         }
 
         .turno-card-info {
-            grid-template-columns: 1fr;
-            gap: 8px;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px 10px;
+        }
+
+        .turno-card-info-item .value {
+            font-size: 11px;
+        }
+
+        .turno-card-info-item .value.dominio {
+            font-size: 11px;
+            padding: 1px 4px;
         }
 
         .turno-card-footer {
-            flex-direction: column;
+            padding: 8px 10px;
+            gap: 6px;
         }
 
         .turno-card-footer .btn {
-            width: 100%;
-            justify-content: center;
+            padding: 6px 10px;
+            font-size: 11px;
+            border-radius: 6px;
+        }
+
+        .turno-card-footer .btn i {
+            font-size: 11px;
+        }
+
+        .mobile-header .btn-nuevo {
+            padding: 7px 12px;
+            font-size: 12px;
+            border-radius: 6px;
         }
     }
 
@@ -1592,35 +1757,40 @@ function renderCards() {
         html += '      </div>';
         html += '    </div>';
         html += '  </div>';
+        var esTaller = (userOrigen === 'TALLER');
+
         html += '  <div class="turno-card-footer">';
         html += '    <button type="button" class="btn btn-ver" onclick="verTurno(' + turno.id + ')"><i class="fa fa-eye"></i> Ver</button>';
+
+        // Botones inline para mobile
+        html += '    <div class="mobile-actions" style="display:none;">';
+        if (!esTaller && turno.estado === 'PENDIENTE') {
+            html += '      <button class="mobile-action-btn btn-edit" onclick="gestionTurno(' + turno.id + ')" title="Editar"><i class="fa fa-edit"></i></button>';
+            html += '      <button class="mobile-action-btn btn-email" onclick="reenviarEmail(' + turno.id + ')" title="Email"><i class="fa fa-envelope"></i></button>';
+        }
+        html += '      <button class="mobile-action-btn btn-print" onclick="imprimirTurno(' + turno.id + ')" title="Imprimir"><i class="fa fa-print"></i></button>';
+        if (!esTaller && turno.estado === 'PENDIENTE') {
+            html += '      <button class="mobile-action-btn btn-cancel" onclick="eliminarTurno(' + turno.id + ')" title="Cancelar"><i class="fa fa-trash"></i></button>';
+        }
+        html += '    </div>';
+
+        // Dropdown para desktop
         html += '    <div class="dropdown dropdown-acciones">';
         html += '      <button type="button" class="btn btn-acciones dropdown-toggle" id="dropdownTurno' + turno.id + '" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">';
         html += '        <i class="fa fa-ellipsis-v"></i>';
         html += '      </button>';
         html += '      <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownTurno' + turno.id + '">';
 
-        var esTaller = (userOrigen === 'TALLER');
-
-        // Editar - Solo ADMINISTRACION y si está pendiente
         if (!esTaller && turno.estado === 'PENDIENTE') {
             html += '        <a class="dropdown-item" href="javascript:void(0)" onclick="gestionTurno(' + turno.id + ')"><i class="fa fa-edit text-primary"></i> Editar</a>';
         }
-
-        // Email - Solo ADMINISTRACION y si está pendiente
         if (!esTaller && turno.estado === 'PENDIENTE') {
             html += '        <a class="dropdown-item" href="javascript:void(0)" onclick="reenviarEmail(' + turno.id + ')"><i class="fa fa-envelope text-info"></i> Enviar Email</a>';
         }
-
-        // WhatsApp - Solo ADMINISTRACION y si está pendiente (deshabilitado temporalmente)
         if (!esTaller && turno.estado === 'PENDIENTE') {
             html += '        <a class="dropdown-item disabled" href="javascript:void(0)" style="opacity: 0.5; pointer-events: none;"><i class="fa fa-whatsapp text-success"></i> WhatsApp (próximamente)</a>';
         }
-
-        // Imprimir - Siempre disponible
         html += '        <a class="dropdown-item" href="javascript:void(0)" onclick="imprimirTurno(' + turno.id + ')"><i class="fa fa-print text-secondary"></i> Imprimir</a>';
-
-        // Cancelar - Solo ADMINISTRACION y si está pendiente
         if (!esTaller && turno.estado === 'PENDIENTE') {
             html += '        <div class="dropdown-divider"></div>';
             html += '        <a class="dropdown-item" href="javascript:void(0)" onclick="eliminarTurno(' + turno.id + ')"><i class="fa fa-trash text-danger"></i> Cancelar</a>';

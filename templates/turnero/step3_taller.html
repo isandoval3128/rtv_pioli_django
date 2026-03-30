@@ -7,9 +7,9 @@
     .cliente-info {
         background: #f8f9fa;
         border-left: 4px solid var(--primary-color);
-        padding: 1rem 1.5rem;
+        padding: 0.75rem 1.25rem;
         border-radius: 10px;
-        margin-bottom: 2rem;
+        margin-bottom: 1rem;
         display: flex;
         align-items: center;
         gap: 0.75rem;
@@ -359,89 +359,115 @@
         }
 
         #map {
-            height: 350px;
-        }
-
-        .taller-card {
-            padding: 1rem;
-        }
-
-        .taller-nombre {
-            font-size: 1rem;
-        }
-
-        .taller-info {
-            font-size: 0.9rem;
-        }
-
-        .taller-horario {
-            font-size: 0.85rem;
-            padding: 0.4rem 0.8rem;
-        }
-
-        .taller-card .row {
-            flex-direction: column;
-        }
-
-        /* Badge siempre visible en móvil (sin hover) */
-        .taller-card:not(.selected) .seleccionar-badge {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        .search-title {
-            font-size: 1.1rem;
-        }
-
-        .cliente-info {
-            padding: 0.85rem 1rem;
-            font-size: 0.9rem;
-        }
-    }
-
-    /* Responsive - Móviles pequeños */
-    @media (max-width: 576px) {
-        #map {
             height: 300px;
         }
 
         .taller-card {
-            padding: 0.9rem;
-            border-radius: 10px;
+            padding: 0.85rem;
+            border-radius: 12px;
         }
 
         .taller-nombre {
             font-size: 0.95rem;
         }
 
-        .taller-nombre i {
-            font-size: 0.85rem;
-        }
-
         .taller-info {
-            font-size: 0.85rem;
-            margin-bottom: 0.4rem !important;
+            font-size: 0.8rem;
+            margin-bottom: 0.35rem !important;
         }
 
         .taller-horario {
             font-size: 0.8rem;
+            padding: 0.3rem 0.6rem;
         }
 
-        .seleccionar-badge {
-            font-size: 0.7rem;
-            padding: 0.25rem 0.6rem;
+        .taller-card .row {
+            flex-direction: column;
+        }
+
+        .taller-card:not(.selected) .seleccionar-badge {
+            opacity: 1;
+            transform: translateY(0);
+            padding: 0.4rem;
+            border-radius: 50%;
+            font-size: 0;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: pulseBadge 1.5s ease-in-out infinite;
+        }
+
+        .taller-card:not(.selected) .seleccionar-badge i {
+            font-size: 0.85rem;
+        }
+
+        @keyframes pulseBadge {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(19,48,77,0.4); }
+            50% { transform: scale(1.1); box-shadow: 0 0 0 8px rgba(19,48,77,0); }
         }
 
         .search-title {
-            font-size: 1rem;
+            font-size: 0.95rem;
         }
 
         .cliente-info {
-            padding: 0.75rem 1rem;
+            padding: 0.6rem 1rem;
             font-size: 0.85rem;
+        }
+    }
+
+    /* Responsive - Móviles pequeños */
+    @media (max-width: 576px) {
+        #map {
+            height: 250px;
+        }
+
+        .taller-card {
+            padding: 0.75rem;
+            border-radius: 10px;
+        }
+
+        .taller-nombre {
+            font-size: 0.9rem;
+        }
+
+        .taller-nombre i {
+            font-size: 0.8rem;
+        }
+
+        .taller-info {
+            font-size: 0.78rem;
+            margin-bottom: 0.3rem !important;
+        }
+
+        .taller-horario {
+            font-size: 0.75rem;
+            padding: 0.25rem 0.5rem;
+        }
+
+        .taller-card:not(.selected) .seleccionar-badge {
+            width: 28px;
+            height: 28px;
+            top: 0.6rem;
+            right: 0.6rem;
+        }
+
+        .taller-card:not(.selected) .seleccionar-badge i {
+            font-size: 0.75rem;
+        }
+
+        .search-title {
+            font-size: 0.9rem;
+        }
+
+        .cliente-info {
+            padding: 0.6rem 0.85rem;
+            font-size: 0.8rem;
             flex-direction: column;
             align-items: flex-start;
-            gap: 0.25rem;
+            gap: 0.2rem;
         }
 
         .cliente-info i {
@@ -450,12 +476,12 @@
 
         .cliente-info span {
             width: 100%;
-            line-height: 1.5;
+            line-height: 1.4;
         }
 
         .alert-seleccionar {
-            padding: 0.85rem 1rem;
-            font-size: 0.9rem;
+            padding: 0.75rem 0.85rem;
+            font-size: 0.85rem;
         }
 
         .alert-seleccionar i {
@@ -813,7 +839,7 @@
 {% endif %}
 
 {% if not taller_preseleccionado %}
-<!-- Modal del Mapa -->
+<!-- Modal del Mapa (solo si no hay taller preseleccionado) -->
 <div class="modal fade" id="mapaModal" tabindex="-1" aria-labelledby="mapaModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
@@ -830,7 +856,9 @@
     </div>
 </div>
 
-<!-- Modal de Tipos de Trámite -->
+{% endif %}
+
+<!-- Modal de Tipos de Trámite (siempre disponible) -->
 <div class="modal fade" id="tiposTramiteModal" tabindex="-1" aria-labelledby="tiposTramiteModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content">
@@ -889,7 +917,6 @@
         </div>
     </div>
 </div>
-{% endif %}
 {% endblock %}
 
 {% block extra_js %}
@@ -913,75 +940,14 @@
         });
     }
 </script>
-{% if taller_preseleccionado %}
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const tallerId = {{ taller_preseleccionado.id }};
-
-        // Cargar tipos de trámite directamente
-        fetch(`{% url 'turnero:tipos_tramite_taller_ajax' %}?taller_id=${tallerId}`)
-            .then(response => response.json())
-            .then(data => {
-                document.getElementById('loadingTipos').style.display = 'none';
-
-                if (data.success && data.tipos_tramite && data.tipos_tramite.length > 0) {
-                    const container = document.getElementById('tiposTramiteListDirecto');
-                    container.style.display = 'flex';
-                    container.innerHTML = '';
-
-                    data.tipos_tramite.forEach(function(tipo) {
-                        const card = document.createElement('div');
-                        card.className = 'tipo-tramite-card';
-                        card.dataset.tipoId = tipo.id;
-                        card.innerHTML = `
-                            <div class="tipo-tramite-header">
-                                <div class="tipo-tramite-icon">
-                                    <i class="fas fa-clipboard-check"></i>
-                                </div>
-                                <div>
-                                    <div class="tipo-tramite-nombre">${tipo.nombre}</div>
-                                </div>
-                            </div>
-                        `;
-
-                        card.addEventListener('click', function() {
-                            document.querySelectorAll('.tipo-tramite-card').forEach(function(c) {
-                                c.classList.remove('selected');
-                            });
-                            this.classList.add('selected');
-                            document.getElementById('tipo_vehiculo_selected').value = tipo.id;
-                            document.getElementById('btnContinuarDirecto').disabled = false;
-
-                            // Mostrar leyenda según tipo de trámite
-                            mostrarLeyendaTramite(tipo.nombre);
-                        });
-
-                        container.appendChild(card);
-                    });
-                } else {
-                    document.getElementById('tiposTramiteDirecto').innerHTML =
-                        '<div class="alert alert-warning"><i class="fas fa-exclamation-triangle me-2"></i>No hay tipos de tramite disponibles para esta planta.</div>';
-                }
-            })
-            .catch(function(error) {
-                document.getElementById('loadingTipos').style.display = 'none';
-                document.getElementById('tiposTramiteDirecto').innerHTML =
-                    '<div class="alert alert-danger"><i class="fas fa-times-circle me-2"></i>Error al cargar tipos de tramite.</div>';
-            });
-
-        // Validación del formulario
-        document.getElementById('form_taller').addEventListener('submit', function(e) {
-            const tipoSeleccionado = document.getElementById('tipo_vehiculo_selected').value;
-            if (!tipoSeleccionado) {
-                e.preventDefault();
-                if (typeof showWarning === 'function') {
-                    showWarning('Por favor, seleccioná un tipo de tramite antes de continuar', 'Selección Requerida');
-                }
-            }
-        });
-    });
+    // Variables para el modal de tipos de trámite (siempre disponibles)
+    let tallerSeleccionadoId = null;
+    let tipoTramiteSeleccionadoId = null;
+    let tipoTramiteSeleccionadoNombre = null;
+    let tiposTramiteModal = null;
 </script>
-{% else %}
+{% if not taller_preseleccionado %}
 <script>
     // Variables globales para el mapa
     let map = null;
@@ -989,14 +955,11 @@
     let talleres = [];
     let mapaInicializado = false;
     let coordenadasPendientes = null;
+</script>
+{% endif %}
 
-    // Variables para el modal de tipos de trámite
-    let tallerSeleccionadoId = null;
-    let tipoTramiteSeleccionadoId = null;
-    let tipoTramiteSeleccionadoNombre = null;
-    let tiposTramiteModal = null;
-
-    // Abrir modal de tipos de trámite al seleccionar taller
+<script>
+    // Funciones del modal de tipos de trámite (siempre disponibles)
     function abrirModalTiposTramite(tallerId, tallerNombre) {
         tallerSeleccionadoId = tallerId;
 
@@ -1116,10 +1079,17 @@
         // Cerrar modal
         tiposTramiteModal.hide();
 
+        // Si viene con taller preseleccionado, enviar formulario automáticamente
+        {% if taller_preseleccionado %}
+        setTimeout(function() {
+            document.getElementById('form_taller').submit();
+        }, 300);
+        {% else %}
         // Mostrar leyenda según tipo de trámite
         setTimeout(function() {
             mostrarLeyendaTramite(tipoTramiteSeleccionadoNombre);
         }, 300);
+        {% endif %}
     }
 
     // Selección de taller desde el mapa (definida globalmente)
@@ -1251,6 +1221,7 @@
 
     // Esperar a que el DOM esté listo
     document.addEventListener('DOMContentLoaded', function() {
+        {% if not taller_preseleccionado %}
         // Cargar datos de talleres
         talleres = [
             {% for taller in talleres %}
@@ -1268,32 +1239,31 @@
         ];
 
         // Inicializar mapa cuando se abre el modal
-        const mapaModal = document.getElementById('mapaModal');
-        mapaModal.addEventListener('shown.bs.modal', function() {
-            inicializarMapa();
-        });
+        var mapaModal = document.getElementById('mapaModal');
+        if (mapaModal) {
+            mapaModal.addEventListener('shown.bs.modal', function() {
+                inicializarMapa();
+            });
+        }
 
         // Click en card de taller - abre modal de tipos de trámite
         document.querySelectorAll('.taller-card').forEach(card => {
             card.addEventListener('click', function(e) {
-                // No abrir modal si se hizo click en el botón de mapa
-                if (e.target.closest('.btn-ver-mapa')) {
-                    return;
-                }
-
+                if (e.target.closest('.btn-ver-mapa')) return;
                 const tallerId = this.getAttribute('data-taller-id');
                 const tallerNombre = this.querySelector('.taller-nombre').textContent.trim();
                 abrirModalTiposTramite(tallerId, tallerNombre);
             });
         });
+        {% endif %}
 
-        // Botón confirmar del modal de tipos de trámite
+        // Botón confirmar del modal de tipos de trámite (siempre)
         document.getElementById('btnConfirmarTramite').addEventListener('click', confirmarSeleccion);
 
-        // Validación del formulario
+        // Validación del formulario (siempre)
         document.getElementById('form_taller').addEventListener('submit', function(e) {
-            const tallerSeleccionado = document.getElementById('taller_selected').value;
-            const tipoVehiculoSeleccionado = document.getElementById('tipo_vehiculo_selected').value;
+            var tallerSeleccionado = document.getElementById('taller_selected').value;
+            var tipoVehiculoSeleccionado = document.getElementById('tipo_vehiculo_selected').value;
 
             if (!tallerSeleccionado || !tipoVehiculoSeleccionado) {
                 e.preventDefault();
@@ -1303,12 +1273,20 @@
 
         // Scroll al inicio en modo embebido
         if (document.body.classList.contains('embedded-mode')) {
-            setTimeout(function() {
-                window.scrollTo(0, 0);
-            }, 100);
+            setTimeout(function() { window.scrollTo(0, 0); }, 100);
         }
 
     }); // Fin DOMContentLoaded
+</script>
+
+{% if taller_preseleccionado %}
+<script>
+    // Auto-abrir modal de tipo de trámite cuando el taller viene preseleccionado
+    document.addEventListener('DOMContentLoaded', function() {
+        setTimeout(function() {
+            abrirModalTiposTramite({{ taller_preseleccionado.id }}, "{{ taller_preseleccionado.get_nombre|escapejs }}");
+        }, 500);
+    });
 </script>
 {% endif %}
 {% endblock %}

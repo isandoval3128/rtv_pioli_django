@@ -91,59 +91,79 @@
 
     /* Responsive - Móviles */
     @media (max-width: 767px) {
+        .search-section, .form-section {
+            padding: 1rem;
+            margin-top: 1rem;
+        }
+
+        .search-section {
+            margin-bottom: 1rem;
+        }
+
+        .search-title {
+            font-size: 0.95rem;
+            margin-bottom: 1rem;
+        }
+
         .btn-search {
             margin-top: 0.5rem;
         }
 
-        .search-section {
-            padding: 1.25rem;
-        }
-
-        .form-section {
-            padding: 1.25rem;
-        }
-
-        .search-title {
-            font-size: 1rem;
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 0.25rem;
+        .divider {
+            margin: 1.25rem 0;
         }
 
         .divider-text {
-            font-size: 0.85rem;
+            font-size: 0.8rem;
         }
 
         .result-info {
-            padding: 1rem;
+            padding: 0.85rem 1rem;
         }
 
         .result-info h5 {
-            font-size: 1rem;
+            font-size: 0.95rem;
+            margin-bottom: 0.35rem;
+        }
+
+        .result-info p {
+            font-size: 0.85rem;
+        }
+
+        .form-label {
+            font-size: 0.85rem;
+        }
+
+        .form-control {
+            font-size: 0.9rem;
         }
     }
 
     /* Responsive - Móviles pequeños */
     @media (max-width: 576px) {
-        .search-section {
-            padding: 1rem;
-        }
-
-        .form-section {
-            padding: 1rem;
+        .search-section, .form-section {
+            padding: 0.85rem;
         }
 
         .search-title {
-            font-size: 0.95rem;
+            font-size: 0.9rem;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.15rem;
         }
 
         .input-icon i {
-            font-size: 0.9rem;
+            font-size: 0.85rem;
         }
 
         .btn-search {
-            padding: 0.65rem 1rem;
+            padding: 0.6rem 0.85rem;
+            font-size: 0.85rem;
+        }
+
+        .btn-primary-custom.btn-lg {
             font-size: 0.9rem;
+            padding: 0.65rem 1.25rem;
         }
     }
 
