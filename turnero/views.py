@@ -266,20 +266,26 @@ class Step3TallerView(View):
             except Taller.DoesNotExist:
                 del request.session['taller_id']
 
-        # Obtener todos los talleres activos que tienen configuración de trámites
-        # Ordenar: Palpalá (ID=1) primero, luego Libertador (ID=2)
-        talleres = Taller.objects.filter(
+        # Obtener talleres activos que tienen configuración de trámites
+        talleres_qs = Taller.objects.filter(
             status=True,
             configuraciones__status=True,
             configuraciones__tipo_vehiculo__status=True
-        ).distinct().annotate(
-            orden_personalizado=Case(
-                When(id=1, then=Value(1)),  # Palpalá
-                When(id=2, then=Value(2)),  # Libertador
-                default=Value(3),
-                output_field=IntegerField()
-            )
-        ).order_by('orden_personalizado', 'nombre')
+        ).distinct()
+
+        # Si viene preseleccionado desde la página principal, solo mostrar ese taller
+        if taller_preseleccionado:
+            talleres = talleres_qs.filter(id=taller_preseleccionado.id)
+        else:
+            # Ordenar: Palpalá (ID=1) primero, luego Libertador (ID=2)
+            talleres = talleres_qs.annotate(
+                orden_personalizado=Case(
+                    When(id=1, then=Value(1)),
+                    When(id=2, then=Value(2)),
+                    default=Value(3),
+                    output_field=IntegerField()
+                )
+            ).order_by('orden_personalizado', 'nombre')
 
         form = Step3TallerForm()
         form.fields['taller'].queryset = talleres
