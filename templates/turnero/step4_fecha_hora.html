@@ -650,10 +650,21 @@
     });
 
     // Cargar fechas deshabilitadas
+    var fechasDeshabilitadasSet = new Set();
     fetch(`{% url 'turnero:fechas_disponibles_ajax' %}?taller_id={{ taller.id }}&tipo_vehiculo_id={{ tipo_vehiculo.id }}`)
         .then(response => response.json())
         .then(data => {
-            picker.set('disable', data.fechas_deshabilitadas);
+            // Guardar en Set para busqueda rapida
+            (data.fechas_deshabilitadas || []).forEach(function(f) {
+                fechasDeshabilitadasSet.add(f);
+            });
+            // Usar funcion disable para que aplique al navegar entre meses
+            picker.set('disable', [function(date) {
+                var y = date.getFullYear();
+                var m = String(date.getMonth() + 1).padStart(2, '0');
+                var d = String(date.getDate()).padStart(2, '0');
+                return fechasDeshabilitadasSet.has(y + '-' + m + '-' + d);
+            }]);
         })
         .catch(error => {
             console.error('Error al cargar fechas:', error);
