@@ -454,6 +454,43 @@ def gestion_turnos_reenviar_email(request):
 
 
 @login_required(login_url='/panel/login/')
+def gestion_turnos_reprogramar(request):
+    """Envía email de reprogramación al cliente desde el panel de administración."""
+    if request.method == 'POST':
+        pk = request.POST.get('pk', '')
+        turno = get_object_or_404(Turno, pk=pk)
+
+        if turno.estado not in ('PENDIENTE', 'CONFIRMADO'):
+            return JsonResponse({'success': False, 'error': 'Solo se pueden reprogramar turnos pendientes o confirmados'})
+
+        try:
+            from turnero.views_cancelacion import enviar_email_reprogramacion
+
+            # Generar token de reprogramación
+            token = turno.generar_token_reprogramacion()
+
+            # Enviar email
+            exito = enviar_email_reprogramacion(turno, token)
+
+            if exito:
+                HistorialTurno.objects.create(
+                    turno=turno,
+                    accion='Reprogramacion solicitada',
+                    descripcion=f'Email de reprogramacion enviado por {request.user.username} a {turno.cliente.email}',
+                    usuario=request.user,
+                    ip_address=get_client_ip(request)
+                )
+                return JsonResponse({'success': True, 'message': f'Email de reprogramacion enviado a {turno.cliente.email}'})
+            else:
+                return JsonResponse({'success': False, 'error': 'Error al enviar el email. Verifique la configuracion de correo.'})
+
+        except Exception as e:
+            return JsonResponse({'success': False, 'error': str(e)})
+
+    return JsonResponse({'error': 'Método no permitido'}, status=405)
+
+
+@login_required(login_url='/panel/login/')
 def gestion_turnos_whatsapp(request):
     """Genera el enlace de WhatsApp para el turno"""
     if request.method == 'POST':

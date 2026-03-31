@@ -972,10 +972,11 @@
             margin-bottom: 0;
         }
         .excel-table-responsive table thead th {
-            background-color: #003466;
-            color: #fff;
+            background-color: #13304D !important;
+            background-image: none !important;
+            color: #fff !important;
             font-weight: bold;
-            border: 1px solid #003466;
+            border: 1px solid #13304D;
             text-align: center;
             font-size: 1.05em;
             padding: 0.6em 0.4em;
@@ -1944,11 +1945,7 @@
 <section
     class="page-section contact-section"
     id="contact"
-    data-bg-color="{{ site_config.contact_section_bg_color }}"
-    data-bg-opacity="{{ site_config.contact_section_bg_opacity|stringformat:'f' }}"
-    {% if site_config.contact_section_bg_image %}
-        data-bg-image="{{ site_config.contact_section_bg_image.url }}"
-    {% endif %}
+    style="background: linear-gradient(135deg, #0a1628 0%, #13304D 100%) !important;"
     >
     {% include 'includes/contact.html' %}
 </section>
@@ -2239,6 +2236,181 @@
         console.log('✨ Sistema de animaciones premium cargado');
     });
 </script>
+
+<!-- Footer -->
+<style>
+.site-footer {
+    background: linear-gradient(135deg, #0a1628 0%, #13304D 100%);
+    color: white;
+    padding: 0;
+    margin-top: 0;
+}
+.footer-top {
+    padding: 2rem 0 1.5rem;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+.footer-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 0.5rem;
+}
+.footer-brand-icon {
+    width: 36px;
+    height: 36px;
+    background: rgba(255,255,255,0.1);
+    border: 1.5px solid rgba(255,255,255,0.2);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+}
+.footer-brand-text {
+    font-size: 1.1rem;
+    font-weight: 800;
+    letter-spacing: 2px;
+}
+.footer-brand-sub {
+    font-size: 0.65rem;
+    color: rgba(255,255,255,0.5);
+}
+.footer-desc {
+    font-size: 0.8rem;
+    color: rgba(255,255,255,0.5);
+    max-width: 300px;
+    line-height: 1.5;
+}
+.footer-links-title {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: rgba(255,255,255,0.4);
+    margin-bottom: 0.75rem;
+    font-weight: 600;
+}
+.footer-links {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+.footer-links li {
+    margin-bottom: 0.4rem;
+}
+.footer-links a {
+    color: rgba(255,255,255,0.65);
+    text-decoration: none;
+    font-size: 0.85rem;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+.footer-links a:hover {
+    color: white;
+    transform: translateX(3px);
+}
+.footer-links a i {
+    font-size: 0.75rem;
+    width: 16px;
+}
+.footer-contact-item {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-bottom: 0.5rem;
+    font-size: 0.85rem;
+    color: rgba(255,255,255,0.65);
+}
+.footer-contact-item i {
+    width: 16px;
+    font-size: 0.8rem;
+    color: rgba(255,255,255,0.4);
+}
+.footer-bottom {
+    padding: 1rem 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+.footer-copy {
+    font-size: 0.75rem;
+    color: rgba(255,255,255,0.35);
+}
+.footer-badge {
+    font-size: 0.7rem;
+    color: rgba(255,255,255,0.3);
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+.footer-badge i {
+    color: rgba(255,255,255,0.2);
+}
+@media (max-width: 768px) {
+    .footer-top { padding: 1.25rem 0 0.75rem; text-align: center; }
+    .footer-brand { justify-content: center; }
+    .footer-desc { display: none; }
+    .footer-links-title { margin-top: 0.75rem; margin-bottom: 0.4rem; font-size: 0.65rem; }
+    .footer-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.5rem 1rem; }
+    .footer-links li { margin-bottom: 0; }
+    .footer-links a { font-size: 0.8rem; justify-content: center; }
+    .footer-contact-item { justify-content: center; font-size: 0.8rem; margin-bottom: 0.25rem; }
+    .footer-contact-item i { font-size: 0.7rem; }
+    .footer-bottom { justify-content: center; text-align: center; padding: 0.75rem 0; }
+    .footer-copy { font-size: 0.7rem; }
+    .footer-badge { font-size: 0.65rem; }
+}
+</style>
+<footer class="site-footer">
+    <div class="container">
+        <div class="footer-top">
+            <div class="row">
+                <div class="col-md-4 mb-3 mb-md-0">
+                    <div class="footer-brand">
+                        <div class="footer-brand-icon">
+                            <i class="fas fa-car-side"></i>
+                        </div>
+                        <div>
+                            <div class="footer-brand-text">RTV</div>
+                            <div class="footer-brand-sub">Pioli S.R.L.</div>
+                        </div>
+                    </div>
+                    <p class="footer-desc">Revision Tecnica Vehicular. Reserva tu turno online de forma rapida y segura.</p>
+                </div>
+                <div class="col-md-4 mb-3 mb-md-0">
+                    <div class="footer-links-title">Enlaces</div>
+                    <ul class="footer-links">
+                        <li><a href="/turnero/"><i class="fas fa-calendar-check"></i> Solicitar Turno</a></li>
+                        <li><a href="/turnero/consultar/"><i class="fas fa-search"></i> Consultar Turno</a></li>
+                        <li><a href="/tarifas/"><i class="fas fa-file-invoice-dollar"></i> Tarifas</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <div class="footer-links-title">Contacto</div>
+                    <div class="footer-contact-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span>Jujuy, Argentina</span>
+                    </div>
+                    <div class="footer-contact-item">
+                        <i class="fas fa-envelope"></i>
+                        <span>info@rtvpioli.com.ar</span>
+                    </div>
+                    <div class="footer-contact-item">
+                        <i class="fas fa-globe"></i>
+                        <span>www.rtvpioli.com.ar</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <span class="footer-copy">&copy; 2026 RTV Pioli S.R.L. Todos los derechos reservados.</span>
+            <span class="footer-badge"><i class="fas fa-shield-alt"></i> Sistema seguro</span>
+        </div>
+    </div>
+</footer>
 
 {% endblock %}
 

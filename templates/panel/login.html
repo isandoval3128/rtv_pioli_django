@@ -35,7 +35,7 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        background: linear-gradient(135deg, #0a1929 0%, var(--primary) 40%, #1a5276 100%);
+        background: var(--primary, #13304D);
         position: relative;
         overflow: hidden;
     }
@@ -68,15 +68,15 @@
     /* Header con logo */
     .login-header {
         text-align: center;
-        padding: 40px 40px 30px;
+        padding: 20px 30px 10px;
         background: white;
         border-radius: 16px 16px 0 0;
     }
 
     .login-logo {
-        max-width: 280px;
+        max-width: 180px;
         height: auto;
-        margin-bottom: 20px;
+        margin-bottom: 8px;
         transition: transform 0.3s ease;
     }
 
@@ -87,7 +87,7 @@
     .login-divider {
         width: 60px;
         height: 3px;
-        background: linear-gradient(90deg, var(--primary), var(--accent));
+        background: var(--primary, #13304D);
         border-radius: 3px;
         margin: 0 auto 16px;
     }
@@ -212,7 +212,7 @@
         padding: 13px;
         border: none;
         border-radius: 10px;
-        background: linear-gradient(135deg, var(--primary), var(--primary-light));
+        background: var(--primary, #13304D);
         color: white;
         font-size: 0.95rem;
         font-weight: 600;
@@ -226,7 +226,7 @@
     }
 
     .btn-login:hover {
-        background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+        background: var(--primary-dark, #0d2339);
         transform: translateY(-2px);
         box-shadow: 0 8px 25px rgba(var(--primary-rgb), 0.4);
     }
@@ -264,8 +264,6 @@
         <!-- Header con logo -->
         <div class="login-header">
             <img class="login-logo" src="{% static 'assets/img/navbar-logo-custom.png' %}" alt="RTV Pioli S.R.L.">
-            <div class="login-divider"></div>
-            <p class="login-subtitle">Panel de Administracion</p>
         </div>
 
         <!-- Formulario -->

@@ -4,8 +4,8 @@ $(function() {
     initSparkline();
     
     setTimeout(function() {
-        $('.page-loader-wrapper').fadeOut();
-    }, 50);
+        $('.page-loader-wrapper').fadeOut(800);
+    }, 1200);
 });
 
 // Sparkline
