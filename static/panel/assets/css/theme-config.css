@@ -1251,3 +1251,15 @@ a:not(.btn):not(.nav-link):not(.dropdown-item):not(.btn-volver):hover {
         box-shadow: inset 3px 0 0 var(--theme-primary, #13304D);
     }
 }
+
+/* =====================================================
+   CABECERAS DE TABLAS - Color sólido (global)
+   ===================================================== */
+thead th,
+.table thead th,
+.dataTable thead th,
+#data_table_ajax thead th,
+.param-table thead th {
+    background: var(--theme-primary, #13304D) !important;
+    color: #fff !important;
+}

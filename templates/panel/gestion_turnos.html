@@ -1609,9 +1609,9 @@ function cargarTabla(){
                         html += '<button type="button" class="btn btn-accion btn-reenviar-email" title="Reenviar Email" value="' + data.id + '"><i class="fa fa-envelope"></i></button>';
                     }
 
-                    // Botón Reenviar WhatsApp - Solo ADMINISTRACION y si está pendiente (desactivado temporalmente)
+                    // Botón Reprogramar - Solo ADMINISTRACION y si está pendiente
                     if (!esTaller && data.estado === 'PENDIENTE') {
-                        html += '<button type="button" class="btn btn-accion btn-reenviar-whatsapp" title="WhatsApp (próximamente)" value="' + data.id + '" disabled style="opacity: 0.5; cursor: not-allowed;"><i class="fa fa-whatsapp"></i></button>';
+                        html += '<button type="button" class="btn btn-accion btn-reprogramar" title="Reprogramar (email)" value="' + data.id + '" style="color:#f59e0b;border-color:#f59e0b"><i class="fa fa-calendar"></i></button>';
                     }
 
                     html += '</div>';
@@ -1876,9 +1876,9 @@ $('#data_table_ajax').on('click', '.btn-reenviar-email', function() {
     reenviarEmail(id);
 });
 
-$('#data_table_ajax').on('click', '.btn-reenviar-whatsapp', function() {
+$('#data_table_ajax').on('click', '.btn-reprogramar', function() {
     var id = $(this).val();
-    reenviarWhatsapp(id);
+    enviarReprogramacion(id);
 });
 
 $('#data_table_ajax').on('click', '.btn-imprimir', function() {

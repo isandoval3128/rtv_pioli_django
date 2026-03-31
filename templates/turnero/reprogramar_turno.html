@@ -20,10 +20,9 @@
     .reprogramar-hero {
         background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 50%, #fcd34d 100%);
         color: white;
-        padding: 2.5rem 2rem;
-        border-radius: 20px;
-        text-align: center;
-        margin-bottom: 1.5rem;
+        padding: 1rem 1.5rem;
+        border-radius: 14px;
+        margin-bottom: 1rem;
         position: relative;
         overflow: hidden;
     }
@@ -40,15 +39,15 @@
     }
 
     .reprogramar-hero-icon {
-        width: 60px;
-        height: 60px;
-        background: rgba(255, 255, 255, 0.2);
-        border-radius: 16px;
+        width: 42px;
+        height: 42px;
+        background: rgba(255, 255, 255, 0.25);
+        border-radius: 12px;
         display: flex;
         align-items: center;
         justify-content: center;
-        margin: 0 auto 1rem;
-        font-size: 1.5rem;
+        font-size: 1.2rem;
+        flex-shrink: 0;
     }
 
     .reprogramar-hero h2 {
@@ -146,23 +145,23 @@
     /* ========== Step Sections ========== */
     .step-section {
         background: white;
-        border-radius: 16px;
-        padding: 1.5rem;
-        margin-bottom: 1.25rem;
+        border-radius: 12px;
+        padding: 1rem 1.25rem;
+        margin-bottom: 0.75rem;
         border: 1px solid rgba(19, 48, 77, 0.08);
-        box-shadow: 0 4px 15px rgba(19, 48, 77, 0.08);
+        box-shadow: 0 2px 8px rgba(19, 48, 77, 0.06);
     }
 
     .step-header {
         display: flex;
         align-items: center;
-        gap: 0.75rem;
-        margin-bottom: 1.25rem;
+        gap: 0.6rem;
+        margin-bottom: 0.75rem;
     }
 
     .step-number {
-        width: 32px;
-        height: 32px;
+        width: 26px;
+        height: 26px;
         background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
         border-radius: 50%;
         display: flex;
@@ -170,14 +169,14 @@
         justify-content: center;
         color: white;
         font-weight: 700;
-        font-size: 0.9rem;
+        font-size: 0.75rem;
     }
 
     .step-header h5 {
         margin: 0;
         color: #13304D;
         font-weight: 700;
-        font-size: 1rem;
+        font-size: 0.9rem;
     }
 
     /* ========== Taller Options ========== */
@@ -241,18 +240,10 @@
     /* ========== Calendar Container ========== */
     .calendar-wrapper {
         display: flex;
-        justify-content: center;
+        flex-direction: column;
         align-items: center;
         width: 100%;
         padding: 1rem 0;
-    }
-
-    #calendar_container {
-        display: flex;
-        justify-content: center;
-        width: 100%;
-        max-width: 420px;
-        margin: 0 auto;
     }
 
     /* Flatpickr Custom Styles */
@@ -261,12 +252,7 @@
         border: 2px solid #e2e8f0 !important;
         border-radius: 20px !important;
         overflow: hidden !important;
-        width: 100% !important;
-        max-width: 420px !important;
         margin: 0 auto !important;
-        position: relative !important;
-        left: auto !important;
-        right: auto !important;
     }
 
     .flatpickr-calendar.inline .flatpickr-months {
@@ -310,27 +296,13 @@
         font-size: 0.85rem !important;
     }
 
-    .flatpickr-calendar.inline .flatpickr-innerContainer,
-    .flatpickr-calendar.inline .flatpickr-rContainer {
-        width: 100% !important;
-    }
-
-    .flatpickr-calendar.inline .dayContainer {
-        padding: 8px 10px !important;
-        min-width: 100% !important;
-        max-width: 100% !important;
-    }
-
     .flatpickr-day {
         border-radius: 10px !important;
         color: #13304D !important;
         font-weight: 600 !important;
         font-size: 0.95rem !important;
-        height: 46px !important;
-        line-height: 46px !important;
-        max-width: 46px !important;
-        margin: 3px !important;
-        flex-basis: calc(14.285% - 6px) !important;
+        height: 42px !important;
+        line-height: 42px !important;
     }
 
     .flatpickr-day.selected {
@@ -350,8 +322,11 @@
         border-color: #f59e0b !important;
     }
 
-    .flatpickr-day.disabled {
+    .flatpickr-day.flatpickr-disabled {
         color: #cbd5e1 !important;
+        opacity: 0.4 !important;
+        cursor: not-allowed !important;
+        text-decoration: line-through !important;
     }
 
     /* ========== Fecha Seleccionada ========== */
@@ -583,236 +558,127 @@
     /* ========== Responsive - Tablets ========== */
     @media (max-width: 768px) {
         .reprogramar-hero {
-            padding: 1.75rem 1.25rem;
-            border-radius: 16px;
-            margin-bottom: 1rem;
+            padding: 0.85rem 1rem;
+            border-radius: 12px;
         }
 
         .reprogramar-hero-icon {
-            width: 50px;
-            height: 50px;
-            border-radius: 12px;
-            font-size: 1.25rem;
-            margin-bottom: 0.75rem;
+            width: 34px;
+            height: 34px;
+            font-size: 1rem;
         }
 
         .reprogramar-hero h2 {
-            font-size: 1.4rem;
-        }
-
-        .reprogramar-hero p {
-            font-size: 0.9rem;
-        }
-
-        .turno-actual-card {
-            padding: 1rem;
-            border-radius: 14px;
-            margin-bottom: 1rem;
-        }
-
-        .turno-actual-grid {
-            grid-template-columns: 1fr;
-            gap: 0.5rem;
-        }
-
-        .turno-actual-header {
-            flex-wrap: wrap;
-        }
-
-        .turno-actual-header .codigo {
-            margin-left: 0;
-            margin-top: 0.5rem;
-            width: 100%;
-            text-align: center;
+            font-size: 1rem !important;
         }
 
         .step-section {
-            padding: 1.25rem;
-            border-radius: 14px;
-            margin-bottom: 1rem;
+            padding: 0.85rem 1rem;
+            border-radius: 10px;
+            margin-bottom: 0.6rem;
         }
 
-        /* Calendario: centrado y expandido en mobile */
-        #calendar_container {
-            max-width: 100%;
+        .step-header {
+            margin-bottom: 0.5rem;
         }
 
-        .flatpickr-calendar.inline {
-            max-width: 100% !important;
-            border-radius: 16px !important;
+        .step-header h5 {
+            font-size: 0.82rem;
+        }
+
+        .step-number {
+            width: 22px;
+            height: 22px;
+            font-size: 0.65rem;
         }
 
         .flatpickr-day {
-            height: 42px !important;
-            line-height: 42px !important;
-            max-width: 42px !important;
-            font-size: 0.9rem !important;
-            margin: 2.5px !important;
-            flex-basis: calc(14.285% - 5px) !important;
-        }
-
-        .flatpickr-calendar.inline .flatpickr-months {
-            padding: 14px 10px !important;
-        }
-
-        .horarios-tabs {
-            gap: 0.4rem;
-        }
-
-        .horarios-tab {
-            padding: 0.7rem 0.5rem;
-            font-size: 0.85rem;
-            border-radius: 10px;
+            height: 36px !important;
+            line-height: 36px !important;
+            font-size: 0.8rem !important;
         }
 
         .horarios-grid {
-            gap: 0.4rem;
+            gap: 0.35rem;
         }
 
         .horario-btn {
-            min-width: 80px;
-            padding: 0.6rem 0.75rem;
+            min-width: 70px;
+            padding: 0.5rem 0.6rem;
             border-radius: 8px;
+            font-size: 0.85rem;
         }
 
         .btn-actions {
             flex-direction: column;
-            gap: 0.5rem;
+            gap: 0.4rem;
         }
 
         .btn-cancelar-repro,
         .btn-confirmar-repro {
             width: 100%;
             justify-content: center;
-            padding: 0.85rem 1.5rem;
+            padding: 0.75rem 1rem;
+            font-size: 0.85rem;
         }
     }
 
     /* ========== Responsive - Móviles pequeños ========== */
     @media (max-width: 480px) {
         .reprogramar-hero {
-            padding: 1.5rem 1rem;
-            border-radius: 14px;
+            padding: 0.75rem;
         }
 
         .reprogramar-hero-icon {
-            width: 44px;
-            height: 44px;
-            font-size: 1.1rem;
+            width: 30px;
+            height: 30px;
+            font-size: 0.85rem;
         }
 
         .reprogramar-hero h2 {
-            font-size: 1.25rem;
-        }
-
-        .turno-actual-card {
-            padding: 0.85rem;
-        }
-
-        .turno-actual-item {
-            padding: 0.4rem 0.6rem;
-            font-size: 0.8rem;
-        }
-
-        .turno-actual-item strong {
-            font-size: 0.8rem;
+            font-size: 0.9rem !important;
         }
 
         .step-section {
-            padding: 1rem;
-        }
-
-        .step-header h5 {
-            font-size: 0.9rem;
-        }
-
-        .step-number {
-            width: 28px;
-            height: 28px;
-            font-size: 0.8rem;
+            padding: 0.75rem;
         }
 
         .flatpickr-day {
-            height: 38px !important;
-            line-height: 38px !important;
-            max-width: 38px !important;
-            font-size: 0.85rem !important;
-            margin: 2px !important;
-            border-radius: 8px !important;
-            flex-basis: calc(14.285% - 4px) !important;
-        }
-
-        .flatpickr-calendar.inline .dayContainer {
-            padding: 6px 6px !important;
+            height: 32px !important;
+            line-height: 32px !important;
+            font-size: 0.75rem !important;
+            border-radius: 6px !important;
         }
 
         .flatpickr-calendar.inline .flatpickr-weekday {
-            font-size: 0.75rem !important;
-        }
-
-        .flatpickr-calendar.inline .flatpickr-current-month {
-            font-size: 1rem !important;
+            font-size: 0.7rem !important;
         }
 
         .horario-btn {
-            min-width: 70px;
-            padding: 0.5rem 0.5rem;
-        }
-
-        .horario-btn .hora {
-            font-size: 0.9rem;
-        }
-
-        .fecha-seleccionada {
-            padding: 0.6rem 0.75rem;
-        }
-
-        .fecha-seleccionada strong {
-            font-size: 0.85rem;
+            min-width: 65px;
+            padding: 0.45rem 0.4rem;
+            font-size: 0.8rem;
         }
     }
 </style>
 {% endblock %}
 
 {% block content %}
-<!-- Hero Section -->
-<div class="reprogramar-hero" data-aos="fade-down">
-    <div class="reprogramar-hero-icon">
-        <i class="fas fa-calendar-alt"></i>
-    </div>
-    <h2>Reprogramar Turno</h2>
-    <p>Elegí una nueva fecha y horario para tu turno</p>
-</div>
-
-<!-- Turno Actual -->
-<div class="turno-actual-card" data-aos="fade-up">
-    <div class="turno-actual-header">
-        <div class="turno-actual-icon">
-            <i class="fas fa-ticket-alt"></i>
+<!-- Hero compacto + datos del turno actual -->
+<div class="reprogramar-hero">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
+        <div style="display:flex;align-items:center;gap:12px">
+            <div class="reprogramar-hero-icon"><i class="fas fa-calendar-alt"></i></div>
+            <div>
+                <h2 style="margin:0;font-size:1.2rem">Reprogramar Turno</h2>
+                <p style="margin:0;font-size:0.8rem;opacity:0.85">Elegi una nueva fecha y horario</p>
+            </div>
         </div>
-        <h5>Turno Actual</h5>
-        <span class="codigo">{{ turno.codigo }}</span>
-    </div>
-    <div class="turno-actual-grid">
-        <div class="turno-actual-item">
-            <i class="fas fa-car"></i>
-            <span>Vehículo</span>
-            <strong>{{ turno.vehiculo.dominio }}</strong>
-        </div>
-        <div class="turno-actual-item">
-            <i class="fas fa-clipboard-check"></i>
-            <span>Trámite</span>
-            <strong>{{ turno.tipo_vehiculo.nombre }}</strong>
-        </div>
-        <div class="turno-actual-item">
-            <i class="fas fa-calendar"></i>
-            <span>Fecha</span>
-            <strong>{{ turno.fecha|date:"d/m/Y" }}</strong>
-        </div>
-        <div class="turno-actual-item">
-            <i class="fas fa-clock"></i>
-            <span>Hora</span>
-            <strong>{{ turno.hora_inicio|time:"H:i" }} hs</strong>
+        <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center">
+            <span style="background:rgba(255,255,255,0.2);padding:4px 12px;border-radius:8px;font-size:0.8rem;font-weight:700;letter-spacing:1px">{{ turno.codigo }}</span>
+            <span style="font-size:0.78rem;opacity:0.9"><i class="fas fa-car" style="margin-right:4px"></i>{{ turno.vehiculo.dominio }}</span>
+            <span style="font-size:0.78rem;opacity:0.9"><i class="fas fa-calendar" style="margin-right:4px"></i>{{ turno.fecha|date:"d/m/Y" }} {{ turno.hora_inicio|time:"H:i" }}hs</span>
+            <span style="font-size:0.78rem;opacity:0.9"><i class="fas fa-building" style="margin-right:4px"></i>{{ turno.taller.get_nombre }}</span>
         </div>
     </div>
 </div>
@@ -956,7 +822,13 @@
         fetch(`{% url 'turnero:fechas_disponibles_ajax' %}?taller_id=${tallerSeleccionado}&tipo_vehiculo_id={{ tipo_vehiculo.id }}`)
             .then(response => response.json())
             .then(data => {
-                picker.set('disable', data.fechas_deshabilitadas);
+                var fechasSet = new Set(data.fechas_deshabilitadas || []);
+                picker.set('disable', [function(date) {
+                    var y = date.getFullYear();
+                    var m = String(date.getMonth() + 1).padStart(2, '0');
+                    var d = String(date.getDate()).padStart(2, '0');
+                    return fechasSet.has(y + '-' + m + '-' + d);
+                }]);
             })
             .catch(error => console.error('Error al cargar fechas:', error));
     }
