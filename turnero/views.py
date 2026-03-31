@@ -915,11 +915,11 @@ def obtener_horarios_disponibles_ajax(request):
             return JsonResponse({'horarios': [], 'message': 'El taller no atiende este día'})
 
         # Verificar si es fecha no laborable (feriado)
-        if taller.fechas_no_laborables:
-            fechas_no_lab = taller.fechas_no_laborables
-            if isinstance(fechas_no_lab, list):
-                if fecha.isoformat() in fechas_no_lab or fecha.strftime('%Y-%m-%d') in fechas_no_lab:
-                    return JsonResponse({'horarios': [], 'message': 'El taller no atiende este día (feriado/no laborable)'})
+        if taller.fechas_no_laborables and isinstance(taller.fechas_no_laborables, list):
+            for item in taller.fechas_no_laborables:
+                f_str = item.get('fecha', '') if isinstance(item, dict) else str(item)
+                if f_str == fecha.isoformat() or f_str == fecha.strftime('%Y-%m-%d'):
+                    return JsonResponse({'horarios': [], 'message': 'El taller no atiende este dia (feriado/no laborable)'})
 
         # Obtener franjas anuladas activas para esta fecha y taller (específicas + recurrentes)
         franjas_anuladas = FranjaAnulada.objects.filter(
@@ -1145,16 +1145,19 @@ def obtener_fechas_disponibles_ajax(request):
 
         # Agregar fechas no laborables (feriados, vacaciones, etc.)
         if taller.fechas_no_laborables:
-            for fecha_str in taller.fechas_no_laborables:
-                # Validar que la fecha esté en el rango de los próximos 60 días
+            for item in taller.fechas_no_laborables:
                 try:
                     from datetime import datetime
+                    # Soportar formato string "YYYY-MM-DD" o dict {"fecha": "YYYY-MM-DD", "motivo": "..."}
+                    if isinstance(item, dict):
+                        fecha_str = item.get('fecha', '')
+                    else:
+                        fecha_str = str(item)
                     fecha_no_lab = datetime.strptime(fecha_str, '%Y-%m-%d').date()
                     if hoy <= fecha_no_lab <= (hoy + timedelta(days=60)):
                         if fecha_no_lab.isoformat() not in fechas_deshabilitadas:
                             fechas_deshabilitadas.append(fecha_no_lab.isoformat())
-                except ValueError:
-                    # Si el formato de fecha es inválido, ignorar
+                except (ValueError, TypeError):
                     pass
 
         return JsonResponse({
