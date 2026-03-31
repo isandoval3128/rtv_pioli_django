@@ -544,6 +544,21 @@ class Step5ConfirmacionView(View):
             # Limpiar reservas temporales expiradas
             ReservaTemporal.limpiar_expiradas()
 
+            # Verificar que no sea fecha no laborable (feriado)
+            if taller.fechas_no_laborables:
+                fechas_no_lab = taller.fechas_no_laborables
+                if isinstance(fechas_no_lab, list):
+                    if fecha.isoformat() in fechas_no_lab or fecha.strftime('%Y-%m-%d') in fechas_no_lab:
+                        from django.contrib import messages as django_messages
+                        return render(request, self.template_name, {
+                            'form': form, 'step': 5, 'progress': 100,
+                            'cliente': cliente, 'vehiculo': vehiculo,
+                            'taller': taller, 'tipo_vehiculo': tipo_vehiculo,
+                            'fecha': fecha, 'hora_inicio': hora_inicio,
+                            'captcha_pregunta': captcha_pregunta,
+                            'captcha_error': 'La fecha seleccionada es un feriado o dia no laborable. Por favor seleccione otra fecha.',
+                        })
+
             # Verificar disponibilidad final antes de crear el turno
             try:
                 config = ConfiguracionTaller.objects.get(taller=taller, tipo_vehiculo=tipo_vehiculo)
@@ -898,6 +913,13 @@ def obtener_horarios_disponibles_ajax(request):
 
         if not horario_apertura or not horario_cierre:
             return JsonResponse({'horarios': [], 'message': 'El taller no atiende este día'})
+
+        # Verificar si es fecha no laborable (feriado)
+        if taller.fechas_no_laborables:
+            fechas_no_lab = taller.fechas_no_laborables
+            if isinstance(fechas_no_lab, list):
+                if fecha.isoformat() in fechas_no_lab or fecha.strftime('%Y-%m-%d') in fechas_no_lab:
+                    return JsonResponse({'horarios': [], 'message': 'El taller no atiende este día (feriado/no laborable)'})
 
         # Obtener franjas anuladas activas para esta fecha y taller (específicas + recurrentes)
         franjas_anuladas = FranjaAnulada.objects.filter(
