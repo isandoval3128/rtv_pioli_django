@@ -1767,6 +1767,7 @@ function renderCards() {
         if (!esTaller && turno.estado === 'PENDIENTE') {
             html += '      <button class="mobile-action-btn btn-edit" onclick="gestionTurno(' + turno.id + ')" title="Editar"><i class="fa fa-edit"></i></button>';
             html += '      <button class="mobile-action-btn btn-email" onclick="reenviarEmail(' + turno.id + ')" title="Email"><i class="fa fa-envelope"></i></button>';
+            html += '      <button class="mobile-action-btn" onclick="enviarReprogramacion(' + turno.id + ')" title="Reprogramar" style="color:#f59e0b"><i class="fa fa-calendar"></i></button>';
         }
         html += '      <button class="mobile-action-btn btn-print" onclick="imprimirTurno(' + turno.id + ')" title="Imprimir"><i class="fa fa-print"></i></button>';
         if (!esTaller && turno.estado === 'PENDIENTE') {
@@ -1788,7 +1789,7 @@ function renderCards() {
             html += '        <a class="dropdown-item" href="javascript:void(0)" onclick="reenviarEmail(' + turno.id + ')"><i class="fa fa-envelope text-info"></i> Enviar Email</a>';
         }
         if (!esTaller && turno.estado === 'PENDIENTE') {
-            html += '        <a class="dropdown-item disabled" href="javascript:void(0)" style="opacity: 0.5; pointer-events: none;"><i class="fa fa-whatsapp text-success"></i> WhatsApp (próximamente)</a>';
+            html += '        <a class="dropdown-item" href="javascript:void(0)" onclick="enviarReprogramacion(' + turno.id + ')"><i class="fa fa-calendar text-warning"></i> Reprogramar (email)</a>';
         }
         html += '        <a class="dropdown-item" href="javascript:void(0)" onclick="imprimirTurno(' + turno.id + ')"><i class="fa fa-print text-secondary"></i> Imprimir</a>';
         if (!esTaller && turno.estado === 'PENDIENTE') {
@@ -2079,6 +2080,44 @@ function reenviarWhatsapp(pk) {
 }
 
 // Función para imprimir turno
+function enviarReprogramacion(pk) {
+    Swal.fire({
+        title: 'Enviar email de reprogramacion',
+        text: 'Se enviara un email al cliente con un link para que reprograme su turno a otra fecha y horario.',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#f59e0b',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: '<i class="fa fa-calendar"></i> Enviar Email',
+        cancelButtonText: 'Cancelar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: "{% url 'gestion_turnos_reprogramar' %}",
+                type: "POST",
+                data: { 'pk': pk, 'csrfmiddlewaretoken': '{{ csrf_token }}' },
+                beforeSend: function() {
+                    Swal.fire({
+                        title: 'Enviando email...',
+                        html: '<i class="fa fa-calendar fa-2x fa-spin" style="color: #f59e0b;"></i>',
+                        showConfirmButton: false, allowOutsideClick: false
+                    });
+                },
+                success: function(data) {
+                    if (data.success) {
+                        Swal.fire({ title: 'Enviado', text: data.message, icon: 'success', confirmButtonColor: '#f59e0b' });
+                    } else {
+                        Swal.fire({ title: 'Error', text: data.error, icon: 'error', confirmButtonColor: '#d33' });
+                    }
+                },
+                error: function() {
+                    Swal.fire({ title: 'Error', text: 'Error de conexion', icon: 'error' });
+                }
+            });
+        }
+    });
+}
+
 function imprimirTurno(pk) {
     window.open("{% url 'gestion_turnos_imprimir' 0 %}".replace("0", pk), '_blank');
 }

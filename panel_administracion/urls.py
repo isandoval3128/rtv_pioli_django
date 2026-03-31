@@ -23,6 +23,7 @@ urlpatterns = [
     path('turnos/guardar/', views.gestion_turnos_guardar, name='gestion_turnos_guardar'),
     path('turnos/cancelar/', views.gestion_turnos_cancelar, name='gestion_turnos_cancelar'),
     path('turnos/reenviar-email/', views.gestion_turnos_reenviar_email, name='gestion_turnos_reenviar_email'),
+    path('turnos/reprogramar/', views.gestion_turnos_reprogramar, name='gestion_turnos_reprogramar'),
     path('turnos/whatsapp/', views.gestion_turnos_whatsapp, name='gestion_turnos_whatsapp'),
     path('turnos/imprimir/<int:pk>/', views.gestion_turnos_imprimir, name='gestion_turnos_imprimir'),
 
