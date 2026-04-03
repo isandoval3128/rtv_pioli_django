@@ -47,7 +47,7 @@
         /* Gradientes premium */
         --gradient-primary: linear-gradient(135deg, var(--primary-700) 0%, var(--primary-500) 50%, var(--primary-400) 100%);
         --gradient-premium: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        --gradient-subtle: linear-gradient(180deg, #f8fafc 0%, #eef4fb 50%, #e8f0f8 100%);
+        --gradient-subtle: #ffffff;
         --gradient-glass: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.7) 100%);
         --gradient-shine: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.4) 50%, transparent 100%);
 
@@ -507,15 +507,15 @@
     ======================================== */
     .scroll-indicator {
         position: absolute;
-        bottom: 40px;
+        bottom: 20px;
         left: 0;
         right: 0;
         width: 100%;
         display: flex;
         justify-content: center;
         z-index: 10;
-        animation: float 2s ease-in-out infinite;
-        transition: opacity var(--transition-base);
+        animation: none;
+        transition: none;
     }
 
     .scroll-indicator a {
@@ -545,7 +545,6 @@
         width: 1.25rem;
         height: 1.25rem;
         filter: drop-shadow(0 2px 8px rgba(0,0,0,0.3));
-        animation: bounceDown 1.5s ease-in-out infinite;
     }
 
     .scroll-indicator span {
@@ -554,11 +553,6 @@
         letter-spacing: 0.12em;
         text-transform: uppercase;
         opacity: 0.95;
-    }
-
-    @keyframes bounceDown {
-        0%, 100% { transform: translateY(0); }
-        50% { transform: translateY(4px); }
     }
 
     /* ========================================
@@ -1661,7 +1655,7 @@
                 </div>
             </div>
             <!-- Indicador de scroll animado premium -->
-            <div class="scroll-indicator d-none d-md-block">
+            <div class="scroll-indicator">
                 <a href="#services">
                     <span>Descubrí más</span>
                     <i class="fas fa-chevron-down"></i>
@@ -1734,7 +1728,7 @@
             </div>
         </div>
         <!-- Indicador de scroll animado premium -->
-        <div class="scroll-indicator d-none d-md-block">
+        <div class="scroll-indicator">
             <a href="#services">
                 <span>Descubrí más</span>
                 <i class="fas fa-chevron-down"></i>
@@ -1808,7 +1802,7 @@
 
         </div>
         <!-- Indicador de scroll animado premium -->
-        <div class="scroll-indicator d-none d-md-block">
+        <div class="scroll-indicator">
             <a href="#services" style="color: var(--primary-700);">
                 <span style="color: var(--primary-700);">Descubrí más</span>
                 <i class="fas fa-chevron-down"></i>
@@ -1880,7 +1874,7 @@
             </div>
         </div>
         <!-- Indicador de scroll animado premium -->
-        <div class="scroll-indicator d-none d-md-block">
+        <div class="scroll-indicator">
             <a href="#services" style="color: var(--primary-700);">
                 <span style="color: var(--primary-700);">Descubrí más</span>
                 <i class="fas fa-chevron-down"></i>
@@ -2148,39 +2142,7 @@
             });
         });
 
-        // ========================================
-        // Indicador de scroll con fade progresivo
-        // ========================================
-        const scrollIndicator = document.querySelector('.scroll-indicator');
-        if (scrollIndicator) {
-            let ticking = false;
-            window.addEventListener('scroll', function() {
-                if (!ticking) {
-                    window.requestAnimationFrame(function() {
-                        const scrollY = window.scrollY;
-                        const fadeStart = 50;
-                        const fadeEnd = 200;
-
-                        if (scrollY <= fadeStart) {
-                            scrollIndicator.style.opacity = '1';
-                            scrollIndicator.style.transform = 'translateY(0)';
-                            scrollIndicator.style.pointerEvents = 'auto';
-                        } else if (scrollY >= fadeEnd) {
-                            scrollIndicator.style.opacity = '0';
-                            scrollIndicator.style.transform = 'translateY(20px)';
-                            scrollIndicator.style.pointerEvents = 'none';
-                        } else {
-                            const progress = (scrollY - fadeStart) / (fadeEnd - fadeStart);
-                            scrollIndicator.style.opacity = String(1 - progress);
-                            scrollIndicator.style.transform = 'translateY(' + (progress * 20) + 'px)';
-                            scrollIndicator.style.pointerEvents = 'auto';
-                        }
-                        ticking = false;
-                    });
-                    ticking = true;
-                }
-            });
-        }
+        // Indicador de scroll - estático (sin animación)
 
         // ========================================
         // Efecto parallax suave para formas flotantes
