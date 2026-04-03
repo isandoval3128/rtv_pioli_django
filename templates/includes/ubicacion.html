@@ -8,53 +8,41 @@
 <div class="container">
     <!-- Header de sección con diseño moderno -->
     <div class="ubicacion-header text-center mb-5">
-        <span class="section-badge" data-aos="fade-down" data-aos-delay="50">Nuestras Sedes</span>
+        <span class="section-badge d-none" data-aos="fade-down" data-aos-delay="50">Nuestras Sedes</span>
         <h2 class="section-heading text-uppercase" data-aos="fade-up" data-aos-delay="100">¿Dónde Encontrarnos?</h2>
-        <p class="section-subheading" data-aos="fade-up" data-aos-delay="150">Visitanos en nuestras ubicaciones estratégicas</p>
-        <div class="divider-dots" data-aos="fade-up" data-aos-delay="200">
+        <p class="section-subheading" data-aos="fade-up" data-aos-delay="150">Visitanos en nuestras ubicaciones</p>
+        <div class="divider-dots d-none" data-aos="fade-up" data-aos-delay="200">
             <span></span>
             <span></span>
             <span></span>
         </div>
     </div>
 
-    <!-- Grid de ubicaciones con layout moderno -->
-    <div class="ubicaciones-container">
+    <!-- Desktop: Grid de ubicaciones -->
+    <div class="ubicaciones-container d-none d-md-grid-ubicaciones">
         {% for ubicacion in ubicaciones %}
         <div class="ubicacion-card-wrapper"
              data-aos="fade-up"
              data-aos-delay="{{ forloop.counter0|add:1 }}50">
-
             <div class="ubicacion-card-premium">
-                <!-- Header de la card con gradiente -->
                 <div class="ubicacion-card-header">
-                    <div class="ubicacion-icon-float">
-                        <i class="fas fa-map-marker-alt"></i>
-                    </div>
+                    <div class="ubicacion-icon-float"><i class="fas fa-map-marker-alt"></i></div>
                     <div class="ubicacion-number">{{ forloop.counter }}</div>
                     <h4 class="ubicacion-nombre">{{ ubicacion.nombre }}</h4>
                     <div class="header-decoration"></div>
                 </div>
-
-                <!-- Cuerpo de la card -->
                 <div class="ubicacion-card-body">
-                    <!-- Información de contacto con iconos modernos -->
                     <div class="ubicacion-info-list">
                         <div class="ubicacion-info-item">
-                            <div class="info-icon">
-                                <i class="fas fa-location-dot"></i>
-                            </div>
+                            <div class="info-icon"><i class="fas fa-location-dot"></i></div>
                             <div class="info-content">
                                 <span class="info-label">Dirección</span>
                                 <span class="info-value">{{ ubicacion.direccion }}</span>
                             </div>
                         </div>
-
                         {% if ubicacion.localidad %}
                         <div class="ubicacion-info-item">
-                            <div class="info-icon">
-                                <i class="fas fa-city"></i>
-                            </div>
+                            <div class="info-icon"><i class="fas fa-city"></i></div>
                             <div class="info-content">
                                 <span class="info-label">Localidad</span>
                                 <span class="info-value">{{ ubicacion.localidad.nombre_completo }}</span>
@@ -62,45 +50,34 @@
                         </div>
                         {% elif ubicacion.provincia %}
                         <div class="ubicacion-info-item">
-                            <div class="info-icon">
-                                <i class="fas fa-map"></i>
-                            </div>
+                            <div class="info-icon"><i class="fas fa-map"></i></div>
                             <div class="info-content">
                                 <span class="info-label">Provincia</span>
                                 <span class="info-value">{{ ubicacion.provincia }}</span>
                             </div>
                         </div>
                         {% endif %}
-
                         {% if ubicacion.telefono %}
                         <div class="ubicacion-info-item">
-                            <div class="info-icon phone">
-                                <i class="fas fa-phone"></i>
-                            </div>
+                            <div class="info-icon phone"><i class="fas fa-phone"></i></div>
                             <div class="info-content">
                                 <span class="info-label">Teléfono</span>
                                 <a href="tel:{{ ubicacion.telefono }}" class="info-value info-link">{{ ubicacion.telefono }}</a>
                             </div>
                         </div>
                         {% endif %}
-
                         {% if ubicacion.email %}
                         <div class="ubicacion-info-item">
-                            <div class="info-icon email">
-                                <i class="fas fa-envelope"></i>
-                            </div>
+                            <div class="info-icon email"><i class="fas fa-envelope"></i></div>
                             <div class="info-content">
                                 <span class="info-label">Email</span>
                                 <a href="mailto:{{ ubicacion.email }}" class="info-value info-link">{{ ubicacion.email }}</a>
                             </div>
                         </div>
                         {% endif %}
-
                         {% if ubicacion.horario %}
                         <div class="ubicacion-info-item">
-                            <div class="info-icon clock">
-                                <i class="fas fa-clock"></i>
-                            </div>
+                            <div class="info-icon clock"><i class="fas fa-clock"></i></div>
                             <div class="info-content">
                                 <span class="info-label">Horario</span>
                                 <span class="info-value">{{ ubicacion.horario }}</span>
@@ -108,40 +85,112 @@
                         </div>
                         {% endif %}
                     </div>
-
-                    <!-- Botones de navegación -->
                     <div class="ubicacion-actions">
-                        <a class="btn-nav google"
-                           href="https://www.google.com/maps/dir/?api=1&destination={{ ubicacion.latitud|stringformat:'f' }},{{ ubicacion.longitud|stringformat:'f' }}"
-                           target="_blank"
-                           rel="noopener noreferrer">
-                            <i class="fab fa-google"></i>
-                            <span>Google Maps</span>
-                            <div class="btn-shine"></div>
+                        <a class="btn-nav google" href="https://www.google.com/maps/dir/?api=1&destination={{ ubicacion.latitud|stringformat:'f' }},{{ ubicacion.longitud|stringformat:'f' }}" target="_blank" rel="noopener noreferrer">
+                            <i class="fab fa-google"></i><span>Google Maps</span><div class="btn-shine"></div>
                         </a>
-                        <a class="btn-nav waze"
-                           href="https://waze.com/ul?ll={{ ubicacion.latitud|stringformat:'f' }},{{ ubicacion.longitud|stringformat:'f' }}&navigate=yes"
-                           target="_blank"
-                           rel="noopener noreferrer">
-                            <i class="fab fa-waze"></i>
-                            <span>Waze</span>
-                            <div class="btn-shine"></div>
+                        <a class="btn-nav waze" href="https://waze.com/ul?ll={{ ubicacion.latitud|stringformat:'f' }},{{ ubicacion.longitud|stringformat:'f' }}&navigate=yes" target="_blank" rel="noopener noreferrer">
+                            <i class="fab fa-waze"></i><span>Waze</span><div class="btn-shine"></div>
                         </a>
                     </div>
                 </div>
-
-                <!-- Decoración de fondo -->
                 <div class="ubicacion-bg-pattern"></div>
             </div>
         </div>
         {% empty %}
-        <div class="col-12">
-            <div class="empty-state">
-                <i class="fas fa-map-marked-alt"></i>
-                <p>No hay ubicaciones disponibles.</p>
-            </div>
-        </div>
+        <div class="col-12"><div class="empty-state"><i class="fas fa-map-marked-alt"></i><p>No hay ubicaciones disponibles.</p></div></div>
         {% endfor %}
+    </div>
+
+    <!-- Mobile: Carrusel de ubicaciones -->
+    <div id="ubicacionesCarousel" class="carousel slide d-md-none" data-bs-ride="carousel" data-bs-interval="5000">
+        <div class="carousel-inner">
+            {% for ubicacion in ubicaciones %}
+            <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                <div class="ubicacion-carousel-wrapper">
+                    <div class="ubicacion-card-premium">
+                        <div class="ubicacion-card-header">
+                            <div class="ubicacion-icon-float"><i class="fas fa-map-marker-alt"></i></div>
+                            <h4 class="ubicacion-nombre">{{ ubicacion.nombre }}</h4>
+                            <div class="header-decoration"></div>
+                        </div>
+                        <div class="ubicacion-card-body">
+                            <div class="ubicacion-info-list">
+                                <div class="ubicacion-info-item">
+                                    <div class="info-icon"><i class="fas fa-location-dot"></i></div>
+                                    <div class="info-content">
+                                        <span class="info-label">Dirección</span>
+                                        <span class="info-value">{{ ubicacion.direccion }}</span>
+                                    </div>
+                                </div>
+                                {% if ubicacion.localidad %}
+                                <div class="ubicacion-info-item">
+                                    <div class="info-icon"><i class="fas fa-city"></i></div>
+                                    <div class="info-content">
+                                        <span class="info-label">Localidad</span>
+                                        <span class="info-value">{{ ubicacion.localidad.nombre_completo }}</span>
+                                    </div>
+                                </div>
+                                {% elif ubicacion.provincia %}
+                                <div class="ubicacion-info-item">
+                                    <div class="info-icon"><i class="fas fa-map"></i></div>
+                                    <div class="info-content">
+                                        <span class="info-label">Provincia</span>
+                                        <span class="info-value">{{ ubicacion.provincia }}</span>
+                                    </div>
+                                </div>
+                                {% endif %}
+                                {% if ubicacion.telefono %}
+                                <div class="ubicacion-info-item">
+                                    <div class="info-icon phone"><i class="fas fa-phone"></i></div>
+                                    <div class="info-content">
+                                        <span class="info-label">Teléfono</span>
+                                        <a href="tel:{{ ubicacion.telefono }}" class="info-value info-link">{{ ubicacion.telefono }}</a>
+                                    </div>
+                                </div>
+                                {% endif %}
+                                {% if ubicacion.email %}
+                                <div class="ubicacion-info-item">
+                                    <div class="info-icon email"><i class="fas fa-envelope"></i></div>
+                                    <div class="info-content">
+                                        <span class="info-label">Email</span>
+                                        <a href="mailto:{{ ubicacion.email }}" class="info-value info-link">{{ ubicacion.email }}</a>
+                                    </div>
+                                </div>
+                                {% endif %}
+                                {% if ubicacion.horario %}
+                                <div class="ubicacion-info-item">
+                                    <div class="info-icon clock"><i class="fas fa-clock"></i></div>
+                                    <div class="info-content">
+                                        <span class="info-label">Horario</span>
+                                        <span class="info-value">{{ ubicacion.horario }}</span>
+                                    </div>
+                                </div>
+                                {% endif %}
+                            </div>
+                            <div class="ubicacion-actions">
+                                <a class="btn-nav google" href="https://www.google.com/maps/dir/?api=1&destination={{ ubicacion.latitud|stringformat:'f' }},{{ ubicacion.longitud|stringformat:'f' }}" target="_blank" rel="noopener noreferrer">
+                                    <i class="fab fa-google"></i><span>Google Maps</span><div class="btn-shine"></div>
+                                </a>
+                                <a class="btn-nav waze" href="https://waze.com/ul?ll={{ ubicacion.latitud|stringformat:'f' }},{{ ubicacion.longitud|stringformat:'f' }}&navigate=yes" target="_blank" rel="noopener noreferrer">
+                                    <i class="fab fa-waze"></i><span>Waze</span><div class="btn-shine"></div>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="ubicacion-bg-pattern"></div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <!-- Indicadores -->
+        <div class="ubicacion-carousel-indicators">
+            {% for ubicacion in ubicaciones %}
+            <button type="button" data-bs-target="#ubicacionesCarousel" data-bs-slide-to="{{ forloop.counter0 }}"
+                    {% if forloop.first %}class="active" aria-current="true"{% endif %}
+                    aria-label="Ubicación {{ forloop.counter }}"></button>
+            {% endfor %}
+        </div>
     </div>
 
     <!-- Mapa (oculto por ahora) -->
@@ -160,7 +209,7 @@
 /* Fondo de la sección con gradiente y decoraciones */
 #ubicacion {
     position: relative;
-    background: linear-gradient(180deg, #f8fafc 0%, #eef4fb 50%, #e8f0f8 100%);
+    background: #ffffff;
     overflow: hidden;
 }
 
@@ -354,12 +403,59 @@
     opacity: 1;
 }
 
-/* Container de ubicaciones */
+/* Container de ubicaciones (desktop) */
 .ubicaciones-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
-    gap: 2.5rem;
-    padding: 1rem 0;
+    display: none;
+}
+
+@media (min-width: 768px) {
+    .ubicaciones-container {
+        display: grid !important;
+        grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+        gap: 2.5rem;
+        padding: 1rem 0;
+    }
+}
+
+/* Carrusel mobile ubicaciones */
+.ubicacion-carousel-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0.5rem 1rem 1.5rem;
+}
+
+.ubicacion-carousel-wrapper .ubicacion-card-premium {
+    width: 100%;
+    max-width: 400px;
+}
+
+.ubicacion-carousel-indicators {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0 1rem;
+}
+
+.ubicacion-carousel-indicators button {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(0, 52, 102, 0.2);
+    padding: 0;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.ubicacion-carousel-indicators button.active {
+    background: #003466;
+    width: 28px;
+    border-radius: 5px;
+}
+
+#ubicacionesCarousel .carousel-item {
+    transition: transform 0.6s ease-in-out;
 }
 
 /* Wrapper de card para efectos */
@@ -485,7 +581,7 @@
     align-items: flex-start;
     gap: 1rem;
     padding: 0.75rem;
-    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    background: #ffffff;
     border-radius: 0.75rem;
     transition: all 0.3s ease;
 }
@@ -643,7 +739,7 @@
 .empty-state {
     text-align: center;
     padding: 4rem 2rem;
-    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    background: #ffffff;
     border-radius: 1.5rem;
 }
 
@@ -678,26 +774,17 @@
     }
 }
 
-@media (max-width: 768px) {
-    .ubicaciones-container {
-        grid-template-columns: 1fr;
-        gap: 1.5rem;
-    }
-
+@media (max-width: 767px) {
     .ubicacion-card-header {
-        padding: 1.5rem 1.5rem 2rem;
+        padding: 1.25rem 1.25rem 1.5rem;
     }
 
     .ubicacion-card-body {
-        padding: 1.25rem 1.5rem 1.5rem;
-    }
-
-    .ubicacion-number {
-        font-size: 3rem;
+        padding: 1rem 1.25rem 1.25rem;
     }
 
     .ubicacion-nombre {
-        font-size: 1.2rem;
+        font-size: 1.1rem;
     }
 
     .ubicacion-actions {
@@ -705,7 +792,7 @@
     }
 
     .btn-nav {
-        padding: 1rem;
+        padding: 0.85rem;
     }
 }
 
@@ -719,7 +806,7 @@
 
     /* Simplificar el fondo en móvil */
     #ubicacion {
-        background: linear-gradient(180deg, #f9fafb 0%, #f1f5f9 100%);
+        background: #ffffff;
     }
 
     #ubicacion::before {

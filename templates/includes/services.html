@@ -6,65 +6,60 @@
 <div class="services-lines-decoration"></div>
 
 <div class="container">
-    <!-- Header de sección con diseño moderno -->
-    <div class="services-header text-center mb-5">
-        <span class="section-badge" data-aos="fade-down" data-aos-delay="50">Lo que hacemos</span>
+    <!-- Header de sección: completo en desktop, mínimo en mobile -->
+    <div class="services-header text-center mb-5 d-none d-md-flex">
+        <span class="section-badge d-none" data-aos="fade-down" data-aos-delay="50">Lo que hacemos</span>
         <h2 class="section-heading text-uppercase" data-aos="fade-up" data-aos-delay="100">Servicios</h2>
         <p class="section-subheading" data-aos="fade-up" data-aos-delay="150">Soluciones profesionales para tu vehículo</p>
-        <div class="divider-dots" data-aos="fade-up" data-aos-delay="200">
+        <div class="divider-dots d-none" data-aos="fade-up" data-aos-delay="200">
             <span></span>
             <span></span>
             <span></span>
         </div>
     </div>
+    <h2 class="services-mobile-title d-md-none" data-aos="fade-up">Servicios</h2>
 
-    <!-- Grid de servicios con layout moderno -->
-    <div class="services-grid">
+    <!-- Desktop: Grid de servicios -->
+    <div class="services-grid d-none d-md-block">
         {% for service in services %}
-        <div class="service-card-modern {% if forloop.counter|divisibleby:2 %}offset-card{% endif %}"
+        <div class="service-grid-item"
              data-aos="fade-up"
              data-aos-delay="{{ forloop.counter0|add:1 }}00">
-
-            <!-- Icono decorativo de fondo -->
-            <div class="service-bg-icon">
-                <i class="fas {{ service.icon }}"></i>
-            </div>
-
-            <!-- Contenido de la card -->
-            <div class="service-card-content">
-                <!-- Icono principal -->
-                <div class="service-icon-wrapper">
-                    <div class="service-icon" style="background: {{ site_config.service_icon_bgcolor|default:'#003466' }};">
-                        <i class="fas {{ service.icon }}" style="color: {{ site_config.service_icon_fgcolor|default:'#fff' }};"></i>
+            <div class="service-card-modern service-card-desktop">
+                <div class="service-bg-icon">
+                    <i class="fas {{ service.icon }}"></i>
+                </div>
+                <div class="service-card-content">
+                    <div class="service-icon-wrapper">
+                        <div class="service-icon" style="background: {{ site_config.service_icon_bgcolor|default:'#003466' }};">
+                            <i class="fas {{ service.icon }}" style="color: {{ site_config.service_icon_fgcolor|default:'#fff' }};"></i>
+                        </div>
+                        <div class="service-number">0{{ forloop.counter }}</div>
                     </div>
-                    <div class="service-number">0{{ forloop.counter }}</div>
+                    <div class="service-text">
+                        <h4 class="service-title">{{ service.title }}</h4>
+                        <div class="service-divider"></div>
+                        <p class="service-description service-description-clamp-desktop">{{ service.description|linebreaksbr }}</p>
+                    </div>
+                    <div class="service-action">
+                        <button type="button" class="btn-service-detail"
+                                data-bs-toggle="modal" data-bs-target="#serviceDetailModal{{ service.id }}">
+                            <span>Leer todo</span>
+                            <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
                 </div>
-
-                <!-- Título y descripción -->
-                <div class="service-text">
-                    <h4 class="service-title">{{ service.title }}</h4>
-                    <div class="service-divider"></div>
-                    <p class="service-description">
-                        {{ service.description|linebreaksbr }}
-                    </p>
-                </div>
-
-                <!-- Botón de adjunto si existe -->
-                {% if service.attachment_html %}
-                <div class="service-action">
-                    <button type="button"
-                            class="btn-service-detail"
-                            data-bs-toggle="modal"
-                            data-bs-target="#attachmentModal{{ service.id }}">
-                        <span>Ver más detalles</span>
-                        <i class="fas fa-arrow-right"></i>
-                    </button>
-                </div>
-                {% endif %}
+                <div class="service-corner"></div>
             </div>
-
-            <!-- Decoración de esquina -->
-            <div class="service-corner"></div>
+            {% if service.attachment_html %}
+            <div class="service-action-external">
+                <button type="button" class="btn-service-detail"
+                        data-bs-toggle="modal" data-bs-target="#attachmentModal{{ service.id }}">
+                    <span>Ver más detalles</span>
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+            {% endif %}
         </div>
         {% empty %}
         <div class="col-12">
@@ -72,7 +67,84 @@
         </div>
         {% endfor %}
     </div>
+
+    <!-- Mobile: Carrusel de servicios -->
+    <div id="servicesCarousel" class="carousel slide d-md-none" data-bs-ride="carousel" data-bs-interval="4000">
+        <div class="carousel-inner">
+            {% for service in services %}
+            <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                <div class="services-carousel-card-wrapper">
+                    <div class="service-card-modern service-card-fixed">
+                        <div class="service-card-content">
+                            <div class="service-mobile-header">
+                                <div class="service-icon-mini" style="background: {{ site_config.service_icon_bgcolor|default:'#003466' }};">
+                                    <i class="fas {{ service.icon }}" style="color: {{ site_config.service_icon_fgcolor|default:'#fff' }};"></i>
+                                </div>
+                                <h4 class="service-title">{{ service.title }}</h4>
+                            </div>
+                            <div class="service-divider"></div>
+                            <div class="service-text">
+                                <p class="service-description service-description-clamp">{{ service.description|linebreaksbr }}</p>
+                            </div>
+                            <div class="service-action service-action-mobile">
+                                <button type="button" class="btn-service-detail"
+                                        data-bs-toggle="modal" data-bs-target="#serviceDetailModal{{ service.id }}">
+                                    <span>Leer todo</span>
+                                    <i class="fas fa-arrow-right"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    {% if service.attachment_html %}
+                    <div class="service-action-external-mobile">
+                        <button type="button" class="btn-service-detail-mobile"
+                                data-bs-toggle="modal" data-bs-target="#attachmentModal{{ service.id }}">
+                            <i class="fas fa-file-alt me-2"></i>Ver más detalles
+                        </button>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <!-- Indicadores -->
+        <div class="services-carousel-indicators">
+            {% for service in services %}
+            <button type="button" data-bs-target="#servicesCarousel" data-bs-slide-to="{{ forloop.counter0 }}"
+                    {% if forloop.first %}class="active" aria-current="true"{% endif %}
+                    aria-label="Servicio {{ forloop.counter }}"></button>
+            {% endfor %}
+        </div>
+    </div>
 </div>
+
+<!-- Modales de detalle para mobile -->
+{% for service in services %}
+<div class="modal fade" id="serviceDetailModal{{ service.id }}" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content" style="border-radius: 1.5rem; overflow: hidden;">
+            <div class="modal-header" style="background: linear-gradient(135deg, #003466 0%, #0056b3 100%); border: none;">
+                <h5 class="modal-title text-white">
+                    <i class="fas {{ service.icon }} me-2"></i>{{ service.title }}
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body p-4 service-detail-modal-body">
+                <p style="color: #5a6a7a; line-height: 1.75; margin: 0;">{{ service.description|linebreaksbr }}</p>
+                {% if service.attachment_html %}
+                <hr>
+                <div class="attachment-preview">
+                    {{ service.attachment_html|safe }}
+                </div>
+                {% endif %}
+            </div>
+            <div class="modal-footer" style="border: none;">
+                <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal" style="border-radius: 0.75rem;">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
 
 <!-- Modales para archivos adjuntos -->
 {% for service in services %}
@@ -108,7 +180,7 @@
 /* Fondo de la sección con gradiente y decoraciones */
 #services {
     position: relative;
-    background: linear-gradient(180deg, #f8fafc 0%, #eef4fb 50%, #e8f0f8 100%);
+    background: #ffffff;
     overflow: hidden;
 }
 
@@ -325,12 +397,64 @@
     margin-top: 1.5rem;
 }
 
-/* Grid de servicios */
-.services-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-    gap: 2rem;
-    padding: 1rem 0;
+/* Grid de servicios (desktop) */
+.services-grid.d-md-block {
+    display: none !important;
+}
+
+@media (min-width: 768px) {
+    .services-grid.d-md-block {
+        display: grid !important;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 2rem;
+        padding: 1rem 0;
+        align-items: start;
+    }
+}
+
+/* Wrapper por card: flex column para que el botón quede abajo alineado */
+.service-grid-item {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Cards desktop - altura fija */
+.service-card-desktop {
+    height: 420px;
+    display: flex;
+    flex-direction: column;
+}
+
+.service-card-desktop .service-card-content {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.service-card-desktop .service-text {
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+    margin-bottom: 0.75rem;
+}
+
+.service-description-clamp-desktop {
+    display: -webkit-box;
+    -webkit-line-clamp: 6;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.service-card-desktop .service-action {
+    flex-shrink: 0;
+}
+
+/* Botón externo debajo de la card */
+.service-action-external {
+    display: flex;
+    justify-content: center;
+    padding-top: 1rem;
 }
 
 /* Card de servicio moderna */
@@ -375,16 +499,6 @@
     background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
 }
 
-/* Card offset para efecto escalonado */
-.service-card-modern.offset-card {
-    margin-top: 2rem;
-}
-
-@media (max-width: 768px) {
-    .service-card-modern.offset-card {
-        margin-top: 0;
-    }
-}
 
 /* Icono de fondo decorativo */
 .service-bg-icon {
@@ -556,27 +670,211 @@
     }
 }
 
-@media (max-width: 576px) {
-    /* Ocultar decoraciones en móvil */
+/* Modal "Leer todo" - tablas responsivas */
+.service-detail-modal-body table {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+    display: block;
+    border-collapse: collapse;
+}
+
+.service-detail-modal-body table td,
+.service-detail-modal-body table th {
+    word-break: break-word;
+    padding: 0.5rem;
+}
+
+.service-detail-modal-body img {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Título mobile servicios */
+.services-mobile-title {
+    text-align: center;
+    color: #003466;
+    font-size: 1.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+}
+
+/* ========================================
+   CARDS MOBILE - COMPACTAS Y ALTURA FIJA
+======================================== */
+.service-card-fixed {
+    height: 340px;
+    display: flex;
+    flex-direction: column;
+    padding: 1.25rem;
+    overflow: hidden;
+}
+
+.service-card-fixed .service-card-content {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+/* Header compacto: icono mini + título en línea */
+.service-mobile-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+}
+
+.service-icon-mini {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    border-radius: 0.6rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    box-shadow: 0 4px 12px rgba(0, 52, 102, 0.2);
+}
+
+.service-card-fixed .service-title {
+    font-size: 1.1rem;
+    margin-bottom: 0;
+}
+
+.service-card-fixed .service-divider {
+    width: 40px;
+    height: 2px;
+    margin-bottom: 0.6rem;
+}
+
+.service-card-fixed .service-text {
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+    margin-bottom: 0.5rem;
+}
+
+.service-description-clamp {
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.service-card-fixed .service-description {
+    font-size: 0.88rem;
+    line-height: 1.6;
+}
+
+.service-card-fixed .service-action-mobile {
+    flex-shrink: 0;
+    display: flex;
+    gap: 0.5rem;
+    padding-top: 0.25rem;
+}
+
+.service-card-fixed .btn-service-detail {
+    padding: 0.4rem 0.75rem;
+    font-size: 0.75rem;
+}
+
+/* Botón "Ver más detalles" externo mobile */
+.service-action-external-mobile {
+    display: flex;
+    justify-content: center;
+    padding-top: 0.75rem;
+}
+
+.btn-service-detail-mobile {
+    display: inline-flex;
+    align-items: center;
+    background: linear-gradient(135deg, #003466 0%, #0056b3 100%);
+    color: white;
+    border: none;
+    padding: 0.6rem 1.5rem;
+    border-radius: 50px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0, 52, 102, 0.25);
+}
+
+.btn-service-detail-mobile:hover {
+    box-shadow: 0 6px 18px rgba(0, 52, 102, 0.35);
+    transform: translateY(-2px);
+}
+
+/* ========================================
+   CARRUSEL MOBILE - SERVICIOS
+======================================== */
+#servicesCarousel {
+    padding: 0 0.5rem;
+}
+
+.services-carousel-card-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1rem 1rem 2rem;
+}
+
+.services-carousel-card-wrapper .service-card-modern {
+    width: 100%;
+    max-width: 400px;
+}
+
+/* Indicadores del carrusel */
+.services-carousel-indicators {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0 1rem;
+}
+
+.services-carousel-indicators button {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(0, 52, 102, 0.2);
+    padding: 0;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.services-carousel-indicators button.active {
+    background: #003466;
+    width: 28px;
+    border-radius: 5px;
+}
+
+/* Transición suave del carrusel */
+#servicesCarousel .carousel-item {
+    transition: transform 0.6s ease-in-out;
+}
+
+/* Desactivar hover transform en mobile */
+#servicesCarousel .service-card-modern:hover {
+    transform: none;
+}
+
+@media (max-width: 767px) {
     .services-decoration-left,
     .services-decoration-right,
     .services-lines-decoration {
         display: none;
     }
 
-    /* Simplificar el fondo en móvil */
     #services {
-        background: linear-gradient(180deg, #f9fafb 0%, #f1f5f9 100%);
+        background: #ffffff;
     }
 
     #services::before {
         background-size: 30px 30px;
         opacity: 0.5;
-    }
-
-    .services-grid {
-        grid-template-columns: 1fr;
-        gap: 1.5rem;
     }
 
     .service-card-modern {

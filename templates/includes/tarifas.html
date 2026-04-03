@@ -8,10 +8,10 @@
 <div class="container">
     <!-- Header de sección con diseño moderno -->
     <div class="tarifas-header text-center mb-5">
-        <span class="section-badge" data-aos="fade-down" data-aos-delay="50">Precios</span>
+        <span class="section-badge d-none" data-aos="fade-down" data-aos-delay="50">Precios</span>
         <h2 class="section-heading text-uppercase" data-aos="fade-up" data-aos-delay="100">{{ tarifa.titulo|default:'Tarifas' }}</h2>
-        <p class="section-subheading" data-aos="fade-up" data-aos-delay="150">Precios actualizados para tu conveniencia</p>
-        <div class="divider-dots" data-aos="fade-up" data-aos-delay="200">
+        <p class="section-subheading" data-aos="fade-up" data-aos-delay="150">Precios actualizados</p>
+        <div class="divider-dots d-none" data-aos="fade-up" data-aos-delay="200">
             <span></span>
             <span></span>
             <span></span>
@@ -40,6 +40,15 @@
             <!-- Cards para móvil con paginación -->
             <div class="d-block d-md-none">
                 {% if tarifas_list %}
+                <!-- Buscador en tiempo real -->
+                <div class="tarifas-mobile-search">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="tarifasSearchInput" placeholder="Buscar tarifa, tipo, precio...">
+                </div>
+                <div class="tarifas-mobile-no-results d-none" id="tarifasNoResults">
+                    <i class="fas fa-search"></i>
+                    <p>No se encontraron resultados</p>
+                </div>
                 <div class="tarifas-mobile-grid" id="tarifasMobileGrid">
                     {% for tarifa_item in tarifas_list %}
                     <div class="tarifa-mobile-card" data-aos="fade-up">
@@ -124,7 +133,7 @@
 /* Fondo de la sección con gradiente y decoraciones */
 #tarifas {
     position: relative;
-    background: linear-gradient(180deg, #f8fafc 0%, #eef4fb 50%, #e8f0f8 100%) !important;
+    background: #ffffff !important;
     overflow: hidden;
 }
 
@@ -390,7 +399,7 @@
 }
 
 .tarifas-table-wrapper table thead th {
-    background: linear-gradient(135deg, #003466 0%, #0056b3 100%);
+    background: #13304D;
     color: white;
     font-weight: 600;
     padding: 1rem 1.25rem;
@@ -497,6 +506,62 @@
     max-width: 60%;
 }
 
+/* Buscador móvil */
+.tarifas-mobile-search {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: white;
+    border: 2px solid rgba(19, 48, 77, 0.15);
+    border-radius: 50px;
+    padding: 0.7rem 1.25rem;
+    margin-bottom: 1.25rem;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.tarifas-mobile-search:focus-within {
+    border-color: #13304D;
+    box-shadow: 0 0 0 3px rgba(19, 48, 77, 0.1);
+}
+
+.tarifas-mobile-search i {
+    color: #13304D;
+    font-size: 0.9rem;
+    opacity: 0.6;
+}
+
+.tarifas-mobile-search input {
+    border: none;
+    outline: none;
+    background: transparent;
+    width: 100%;
+    font-size: 0.9rem;
+    color: #333;
+}
+
+.tarifas-mobile-search input::placeholder {
+    color: #999;
+}
+
+/* Sin resultados */
+.tarifas-mobile-no-results {
+    text-align: center;
+    padding: 2rem 1rem;
+    color: #64748b;
+}
+
+.tarifas-mobile-no-results i {
+    font-size: 2rem;
+    opacity: 0.3;
+    margin-bottom: 0.75rem;
+    display: block;
+}
+
+.tarifas-mobile-no-results p {
+    margin: 0;
+    font-size: 0.9rem;
+}
+
 /* Paginación móvil */
 .tarifas-mobile-pagination {
     display: flex;
@@ -585,7 +650,7 @@
 .tarifas-empty-state {
     text-align: center;
     padding: 4rem 2rem;
-    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    background: #ffffff;
     border-radius: 1.5rem;
     border: 2px dashed rgba(100, 116, 139, 0.2);
 }
@@ -630,26 +695,26 @@
 }
 
 .btn-tarifa-action.primary {
-    background: linear-gradient(135deg, #003466 0%, #0056b3 100%);
+    background: #13304D;
     color: white;
-    box-shadow: 0 8px 25px rgba(0, 52, 102, 0.3);
+    box-shadow: 0 8px 25px rgba(19, 48, 77, 0.3);
 }
 
 .btn-tarifa-action.primary:hover {
     transform: translateY(-4px);
-    box-shadow: 0 12px 35px rgba(0, 52, 102, 0.4);
+    box-shadow: 0 12px 35px rgba(19, 48, 77, 0.4);
     color: white;
 }
 
 .btn-tarifa-action.secondary {
-    background: linear-gradient(135deg, #0077cc 0%, #0056b3 100%);
+    background: #13304D;
     color: white;
-    box-shadow: 0 8px 25px rgba(0, 86, 179, 0.3);
+    box-shadow: 0 8px 25px rgba(19, 48, 77, 0.3);
 }
 
 .btn-tarifa-action.secondary:hover {
     transform: translateY(-4px);
-    box-shadow: 0 12px 35px rgba(0, 86, 179, 0.4);
+    box-shadow: 0 12px 35px rgba(19, 48, 77, 0.4);
     color: white;
 }
 
@@ -725,7 +790,7 @@
     }
 
     #tarifas {
-        background: linear-gradient(180deg, #f3f6fb 0%, #e8f0f8 100%) !important;
+        background: #ffffff !important;
     }
 
     #tarifas::before {
@@ -769,80 +834,82 @@
 
 <script>
     // ========================================
-    // PAGINACIÓN DE CARDS MÓVILES
+    // PAGINACIÓN + BÚSQUEDA DE CARDS MÓVILES
     // ========================================
     document.addEventListener('DOMContentLoaded', function() {
         const grid = document.getElementById('tarifasMobileGrid');
         const pagination = document.getElementById('tarifasMobilePagination');
+        const searchInput = document.getElementById('tarifasSearchInput');
+        const noResults = document.getElementById('tarifasNoResults');
 
         if (!grid || !pagination) return;
 
-        const cards = grid.querySelectorAll('.tarifa-mobile-card');
+        const allCards = Array.from(grid.querySelectorAll('.tarifa-mobile-card'));
         const prevBtn = document.getElementById('tarifasPrevBtn');
         const nextBtn = document.getElementById('tarifasNextBtn');
         const currentPageSpan = document.getElementById('tarifasCurrentPage');
         const totalPagesSpan = document.getElementById('tarifasTotalPages');
 
-        const itemsPerPage = 5;
+        let filteredCards = [...allCards];
         let currentPage = 1;
-        const totalItems = cards.length;
-        const totalPages = Math.ceil(totalItems / itemsPerPage);
 
-        // Actualizar el total de páginas
-        totalPagesSpan.textContent = totalPages;
-
-        // Si hay menos de 5 items, ocultar la paginación
-        if (totalItems <= itemsPerPage) {
-            pagination.style.display = 'none';
-            return;
-        }
-
-        // Función para mostrar la página actual
         function showPage(page) {
-            const start = (page - 1) * itemsPerPage;
-            const end = start + itemsPerPage;
+            const totalPages = filteredCards.length;
+            if (totalPages === 0) {
+                allCards.forEach(c => c.classList.add('hidden'));
+                pagination.style.display = 'none';
+                noResults.classList.remove('d-none');
+                return;
+            }
 
-            cards.forEach((card, index) => {
-                // Remover clases previas
-                card.classList.remove('hidden', 'fade-in');
+            noResults.classList.add('d-none');
+            pagination.style.display = 'flex';
 
-                if (index >= start && index < end) {
-                    // Mostrar card con animación
-                    card.classList.add('fade-in');
-                } else {
-                    // Ocultar card
-                    card.classList.add('hidden');
-                }
+            allCards.forEach(c => {
+                c.classList.remove('fade-in');
+                c.classList.add('hidden');
             });
 
-            // Actualizar indicador de página
-            currentPageSpan.textContent = page;
+            filteredCards[page - 1].classList.remove('hidden');
+            filteredCards[page - 1].classList.add('fade-in');
 
-            // Actualizar estado de botones
+            currentPageSpan.textContent = page;
+            totalPagesSpan.textContent = totalPages;
             prevBtn.disabled = page === 1;
             nextBtn.disabled = page === totalPages;
         }
 
-        // Event listeners para los botones
         prevBtn.addEventListener('click', function() {
             if (currentPage > 1) {
                 currentPage--;
                 showPage(currentPage);
-                // Scroll suave al inicio del grid
-                grid.scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
         });
 
         nextBtn.addEventListener('click', function() {
-            if (currentPage < totalPages) {
+            if (currentPage < filteredCards.length) {
                 currentPage++;
                 showPage(currentPage);
-                // Scroll suave al inicio del grid
-                grid.scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
         });
 
-        // Mostrar primera página al cargar
+        // Búsqueda en tiempo real
+        searchInput.addEventListener('input', function() {
+            const query = this.value.toLowerCase().trim();
+
+            if (!query) {
+                filteredCards = [...allCards];
+            } else {
+                filteredCards = allCards.filter(card => {
+                    return card.textContent.toLowerCase().includes(query);
+                });
+            }
+
+            currentPage = 1;
+            showPage(1);
+        });
+
+        // Mostrar primera card al cargar
         showPage(1);
     });
 </script>
