@@ -146,12 +146,42 @@ class Service(models.Model):
         if name.endswith('.xlsx') or name.endswith('.xls'):
             try:
                 import pandas as pd
-                df = pd.read_excel(self.attachment.path)
-                # Paginación solo frontend: mostrar todas las filas en la tabla
+                import re
+                from openpyxl import load_workbook
+
+                def _format_cell(value, fmt):
+                    # Respeta el number_format del Excel y lo renderiza en es-AR
+                    # (miles con '.', decimal con ','). Detecta moneda por el '$'
+                    # en el patron (Excel guarda pesos AR como '[$$-2C0A]\\ #,##0').
+                    if value is None:
+                        return ""
+                    if isinstance(value, bool) or not isinstance(value, (int, float)):
+                        return str(value)
+                    pos_fmt = (fmt or "").split(';')[0]
+                    if not pos_fmt or pos_fmt.lower() == 'general':
+                        if isinstance(value, float) and value.is_integer():
+                            return str(int(value))
+                        return str(value)
+                    dec_match = re.search(r'\.(0+)', pos_fmt)
+                    decimals = len(dec_match.group(1)) if dec_match else 0
+                    raw = f"{value:,.{decimals}f}"
+                    num_str = raw.replace(",", "\x00").replace(".", ",").replace("\x00", ".")
+                    is_currency = '$' in pos_fmt or '€' in pos_fmt
+                    return f"${num_str}" if is_currency else num_str
+
+                wb = load_workbook(self.attachment.path, data_only=True)
+                ws = wb.active
+                header_cells = [c for c in ws[1] if c.value is not None]
+                headers = [c.value for c in header_cells]
+                max_col = len(headers)
+                data_rows = []
+                for row in ws.iter_rows(min_row=2, max_col=max_col, values_only=False):
+                    if all(c.value is None for c in row):
+                        continue
+                    data_rows.append([_format_cell(c.value, c.number_format) for c in row])
+                df = pd.DataFrame(data_rows, columns=headers)
                 page_size = 10
                 total_rows = len(df)
-                # Reemplazar NaN/null por string vacío para mostrar celdas vacías
-                df = df.fillna("")
                 table_html = df.to_html(classes='table table-striped table-bordered excel-paginated-table', index=False)
                 num_pages = (total_rows + page_size - 1) // page_size
                 pagination_html = ''
