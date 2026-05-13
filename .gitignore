@@ -118,6 +118,10 @@ dmypy.json
 Thumbs.db
 nul
 
+# Cookies temporales (scraping / sesion)
+cookies.txt
+panel_cookies.txt
+
 # Static files collected (excepto assets propios)
 /static/*
 !/static/assets/
