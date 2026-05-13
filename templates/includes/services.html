@@ -121,7 +121,7 @@
 <!-- Modales de detalle para mobile -->
 {% for service in services %}
 <div class="modal fade" id="serviceDetailModal{{ service.id }}" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
         <div class="modal-content" style="border-radius: 1.5rem; overflow: hidden;">
             <div class="modal-header" style="background: linear-gradient(135deg, #003466 0%, #0056b3 100%); border: none;">
                 <h5 class="modal-title text-white">
@@ -150,7 +150,7 @@
 {% for service in services %}
 {% if service.attachment_html %}
 <div class="modal fade" id="attachmentModal{{ service.id }}" tabindex="-1" aria-labelledby="attachmentModalLabel{{ service.id }}" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content" style="border-radius: 1.5rem; overflow: hidden;">
             <div class="modal-header" style="background: linear-gradient(135deg, #003466 0%, #0056b3 100%); border: none;">
                 <h5 class="modal-title text-white" id="attachmentModalLabel{{ service.id }}">
